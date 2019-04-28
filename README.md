@@ -6,6 +6,8 @@
 ## Gruppe
 
 NAMEN_HIER
+- Jens Rahnfeld
+
 
 Gruppentreffen: DATE_TIME_PLACE
 
