@@ -1,0 +1,25 @@
+# User-specific files
+*.suo
+
+
+# Build results
+[Bb]in/
+[Oo]bj/
+
+
+# Files built by Visual Studio
+*.obj
+*.vs
+
+
+# Resharper
+*.DotSettings.user
+
+
+# Cachefiles
+*.cachefile
+
+
+# Windows trash
+*.thumb
+thumbs.db
