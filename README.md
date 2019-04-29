@@ -7,7 +7,11 @@
 
 NAMEN_HIER
 - Jens Rahnfeld
+- Maximilian Nazarati 
+- Johannes Mannhardt
+- Janek Spaderna
 
+Erstes Gruppentreffen: 30.04. 10:00 vor dem Pool
 
 Gruppentreffen: DATE_TIME_PLACE
 
