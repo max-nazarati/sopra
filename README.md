@@ -7,6 +7,7 @@
 
 NAMEN_HIER
 - Jens Rahnfeld
+- Maximilian Nazarati
 
 
 Gruppentreffen: DATE_TIME_PLACE
