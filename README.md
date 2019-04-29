@@ -8,6 +8,7 @@
 NAMEN_HIER
 - Jens Rahnfeld
 - Maximilian Nazarati 
+- Johannes Mannhardt
 
 
 Gruppentreffen: DATE_TIME_PLACE
