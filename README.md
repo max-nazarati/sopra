@@ -13,7 +13,7 @@ NAMEN_HIER
 
 Erstes Gruppentreffen: 30.04. 10:00 vor dem Pool
 
-Gruppentreffen: DATE_TIME_PLACE
+Gruppentreffen: Dienstag_12.00_Pool
 
 * Product Owner: NAME_HIER
 * Architektur: NAME_HIER
