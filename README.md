@@ -14,7 +14,7 @@ NAMEN_HIER
 
 Erstes Gruppentreffen: 30.04. 10:00 vor dem Pool
 
-Gruppentreffen: Tue 12:00 Pool (082-00-021)
+Gruppentreffen: Dienstag_12.00_Pool
 
 * Product Owner: NAME_HIER
 * Architektur: NAME_HIER
