@@ -10,10 +10,11 @@ NAMEN_HIER
 - Maximilian Nazarati 
 - Johannes Mannhardt
 - Janek Spaderna
+- Zacharias Häringer
 
 Erstes Gruppentreffen: 30.04. 10:00 vor dem Pool
 
-Gruppentreffen: DATE_TIME_PLACE
+Gruppentreffen: Tue 12:00 Pool (082-00-021)
 
 * Product Owner: NAME_HIER
 * Architektur: NAME_HIER
