@@ -11,12 +11,13 @@ NAMEN_HIER
 - Johannes Mannhardt
 - Janek Spaderna
 - Zacharias Häringer
+- Zoë Schaaff
 
 Erstes Gruppentreffen: 30.04. 10:00 vor dem Pool
 
-Gruppentreffen: Dienstag_12.00_Pool
+Gruppentreffen: Tue 12:00 Pool (082-00-021)
 
-* Product Owner: NAME_HIER
+* Product Owner: Zoë Schaaff
 * Architektur: NAME_HIER
 * Qualitätssicherung: NAME_HIER
 
