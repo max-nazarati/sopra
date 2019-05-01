@@ -17,26 +17,26 @@ namespace rahnfelj
     /// </summary>
     public class Game1 : Game
     {
-        readonly GraphicsDeviceManager _mGraphics;
-        SpriteBatch _mSpriteBatch;
-        private float _mBackgroundWidthScale;
-        private float _mBackgroundHeightScale;
-        private Texture2D _mBackground;
-        private Texture2D _mLogoTexture;
-        private Sprite _mLogoSprite;
-        private float _mLogoCenterPositionX;
-        private float _mLogoCenterPositionY;
-        private float _mLogoPoloarCoordinatesRadius;
-        private float _mLogoPolarCoordinateDegree;
-        private SoundEffect _mLogoSoundHit;
-        private SoundEffectInstance _mLogoSoundInstanceHit;
-        private SoundEffect _mLogoSoundMiss;
-        private SoundEffectInstance _mLogoSoundInstanceMiss;
-        private MouseState _mCurrentMouseState;
+        readonly GraphicsDeviceManager mMGraphics;
+        SpriteBatch mMSpriteBatch;
+        private float mMBackgroundWidthScale;
+        private float mMBackgroundHeightScale;
+        private Texture2D mMBackground;
+        private Texture2D mMLogoTexture;
+        private Sprite mMLogoSprite;
+        private float mMLogoCenterPositionX;
+        private float mMLogoCenterPositionY;
+        private float mMLogoPolarCoordinatesRadius;
+        private float mMLogoPolarCoordinateDegree;
+        private SoundEffect mMLogoSoundHit;
+        private SoundEffectInstance mMLogoSoundInstanceHit;
+        private SoundEffect mMLogoSoundMiss;
+        private SoundEffectInstance mMLogoSoundInstanceMiss;
+        private MouseState mMCurrentMouseState;
 
         public Game1()
         {
-            _mGraphics = new GraphicsDeviceManager(this);
+            mMGraphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
 
@@ -49,9 +49,9 @@ namespace rahnfelj
         protected override void Initialize()
         {
             this.IsMouseVisible = true;
-            _mGraphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
-            _mGraphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
-            _mGraphics.ApplyChanges();
+            mMGraphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+            mMGraphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+            mMGraphics.ApplyChanges();
 
             base.Initialize();
         }
@@ -63,32 +63,32 @@ namespace rahnfelj
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            _mSpriteBatch = new SpriteBatch(_mGraphics.GraphicsDevice);
+            mMSpriteBatch = new SpriteBatch(mMGraphics.GraphicsDevice);
 
             // initialize background
-            _mBackground = Content.Load<Texture2D>("Background");
-            _mBackgroundWidthScale = (float) _mGraphics.PreferredBackBufferWidth / _mBackground.Width;
-            _mBackgroundHeightScale = (float) _mGraphics.PreferredBackBufferHeight / _mBackground.Height;
+            mMBackground = Content.Load<Texture2D>("Background");
+            mMBackgroundWidthScale = (float) mMGraphics.PreferredBackBufferWidth / mMBackground.Width;
+            mMBackgroundHeightScale = (float) mMGraphics.PreferredBackBufferHeight / mMBackground.Height;
 
             // initialize Uni-logo sprite
-            _mLogoTexture = Content.Load<Texture2D>("Unilogo");
-            _mLogoPoloarCoordinatesRadius = (float) Math.Min(_mGraphics.PreferredBackBufferWidth, _mGraphics.PreferredBackBufferHeight) / 4;
-            _mLogoPolarCoordinateDegree = 0;
-            float logoWidthScale = 0.2f * (float)Math.Min(_mGraphics.PreferredBackBufferWidth, _mGraphics.PreferredBackBufferHeight) / _mLogoTexture.Width;
-            float logoHeightScale = 0.2f * (float)Math.Min(_mGraphics.PreferredBackBufferWidth, _mGraphics.PreferredBackBufferHeight) / _mLogoTexture.Height;
-            _mLogoCenterPositionX =
-                (float) (_mGraphics.PreferredBackBufferWidth - _mLogoTexture.Width * logoWidthScale) / 2;
-            _mLogoCenterPositionY =
-                (float) (_mGraphics.PreferredBackBufferHeight - _mLogoTexture.Height * logoHeightScale) / 2;
-            float logoPositionX = (float) (_mLogoCenterPositionX +_mLogoPoloarCoordinatesRadius * Math.Cos(_mLogoPolarCoordinateDegree));
-            float logoPositionY = (float) (_mLogoCenterPositionY + _mLogoPoloarCoordinatesRadius * Math.Sin(_mLogoPolarCoordinateDegree));
-            _mLogoSprite = new Sprite(_mLogoTexture, logoPositionX, logoPositionY, logoWidthScale, logoHeightScale, 0, Color.White);
+            mMLogoTexture = Content.Load<Texture2D>("Unilogo");
+            mMLogoPolarCoordinatesRadius = (float) Math.Min(mMGraphics.PreferredBackBufferWidth, mMGraphics.PreferredBackBufferHeight) / 4;
+            mMLogoPolarCoordinateDegree = 0;
+            float logoWidthScale = 0.2f * (float)Math.Min(mMGraphics.PreferredBackBufferWidth, mMGraphics.PreferredBackBufferHeight) / mMLogoTexture.Width;
+            float logoHeightScale = 0.2f * (float)Math.Min(mMGraphics.PreferredBackBufferWidth, mMGraphics.PreferredBackBufferHeight) / mMLogoTexture.Height;
+            mMLogoCenterPositionX =
+                (float) (mMGraphics.PreferredBackBufferWidth - mMLogoTexture.Width * logoWidthScale) / 2;
+            mMLogoCenterPositionY =
+                (float) (mMGraphics.PreferredBackBufferHeight - mMLogoTexture.Height * logoHeightScale) / 2;
+            float logoPositionX = (float) (mMLogoCenterPositionX +mMLogoPolarCoordinatesRadius * Math.Cos(mMLogoPolarCoordinateDegree));
+            float logoPositionY = (float) (mMLogoCenterPositionY + mMLogoPolarCoordinatesRadius * Math.Sin(mMLogoPolarCoordinateDegree));
+            mMLogoSprite = new Sprite(mMLogoTexture, logoPositionX, logoPositionY, logoWidthScale, logoHeightScale, 0, Color.White);
 
             // load sound files
-            _mLogoSoundHit = Content.Load<SoundEffect>("Logo_hit");
-            _mLogoSoundInstanceHit = _mLogoSoundHit.CreateInstance();
-            _mLogoSoundMiss = Content.Load<SoundEffect>("Logo_miss");
-            _mLogoSoundInstanceMiss = _mLogoSoundMiss.CreateInstance();
+            mMLogoSoundHit = Content.Load<SoundEffect>("Logo_hit");
+            mMLogoSoundInstanceHit = mMLogoSoundHit.CreateInstance();
+            mMLogoSoundMiss = Content.Load<SoundEffect>("Logo_miss");
+            mMLogoSoundInstanceMiss = mMLogoSoundMiss.CreateInstance();
         }
 
         /// <summary>
@@ -110,11 +110,11 @@ namespace rahnfelj
                 Exit();
 
             // rotate Uni-logo sprite using polar coordinates
-            _mLogoPolarCoordinateDegree += 0.05f;
-            float logoNewPositionX = (float)(_mLogoCenterPositionX + _mLogoPoloarCoordinatesRadius * Math.Cos(_mLogoPolarCoordinateDegree));
-            float logoNewPositionY = (float)(_mLogoCenterPositionY + _mLogoPoloarCoordinatesRadius * Math.Sin(_mLogoPolarCoordinateDegree));
-            _mLogoSprite.SetPositionX(logoNewPositionX);
-            _mLogoSprite.SetPositionY(logoNewPositionY);
+            mMLogoPolarCoordinateDegree += 0.05f;
+            float logoNewPositionX = (float)(mMLogoCenterPositionX + mMLogoPolarCoordinatesRadius * Math.Cos(mMLogoPolarCoordinateDegree));
+            float logoNewPositionY = (float)(mMLogoCenterPositionY + mMLogoPolarCoordinatesRadius * Math.Sin(mMLogoPolarCoordinateDegree));
+            mMLogoSprite.SetPositionX(logoNewPositionX);
+            mMLogoSprite.SetPositionY(logoNewPositionY);
 
             base.Update(gameTime);
         }
@@ -128,20 +128,20 @@ namespace rahnfelj
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _mSpriteBatch.Begin();
-            _mSpriteBatch.Draw(_mBackground, new Vector2(0, 0), color: Color.White,
-                scale: new Vector2(_mBackgroundWidthScale, _mBackgroundHeightScale));
-            _mLogoSprite.Draw(_mSpriteBatch);
-            _mSpriteBatch.End();
+            mMSpriteBatch.Begin();
+            mMSpriteBatch.Draw(mMBackground, new Vector2(0, 0), color: Color.White,
+                scale: new Vector2(mMBackgroundWidthScale, mMBackgroundHeightScale));
+            mMLogoSprite.Draw(mMSpriteBatch);
+            mMSpriteBatch.End();
 
-            _mCurrentMouseState = Mouse.GetState();
-            if (_mCurrentMouseState.LeftButton == ButtonState.Pressed & _mLogoSprite.TouchesSprite(_mCurrentMouseState.X, _mCurrentMouseState.Y))
+            mMCurrentMouseState = Mouse.GetState();
+            if (mMCurrentMouseState.LeftButton == ButtonState.Pressed & mMLogoSprite.TouchesSprite(mMCurrentMouseState.X, mMCurrentMouseState.Y))
             {
-                _mLogoSoundHit.Play();
+                mMLogoSoundHit.Play();
             }
-            if (_mCurrentMouseState.LeftButton == ButtonState.Pressed & !_mLogoSprite.TouchesSprite(_mCurrentMouseState.X, _mCurrentMouseState.Y))
+            if (mMCurrentMouseState.LeftButton == ButtonState.Pressed & !mMLogoSprite.TouchesSprite(mMCurrentMouseState.X, mMCurrentMouseState.Y))
             {
-                _mLogoSoundMiss.Play();
+                mMLogoSoundMiss.Play();
             }
 
             base.Draw(gameTime);
