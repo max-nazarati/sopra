@@ -11,27 +11,27 @@ namespace rahnfelj
 {
     class Sprite
     {
-        private Texture2D mMTexture;
-        private float mMPositionX = 0;
-        private float mMPositionY = 0;
-        private float mMScaleX = 1;
-        private float mMScaleY = 1;
-        private float mMRotation = 0;
-        private Color mMColor;
-        private float mMSizeX;
-        private float mMSizeY;
+        private Texture2D mTexture;
+        private float mPositionX = 0;
+        private float mPositionY = 0;
+        private float mScaleX = 1;
+        private float mScaleY = 1;
+        private float mRotation = 0;
+        private Color mColor;
+        private float mSizeX;
+        private float mSizeY;
 
         public Sprite(Texture2D texture, float positionX, float positionY, float scaleX, float scaleY, float rotation, Color color)
         {
-            this.mMTexture = texture;
-            this.mMPositionX = positionX;
-            this.mMPositionY = positionY;
-            this.mMScaleX = scaleX;
-            this.mMScaleY = scaleY;
-            this.mMRotation = rotation;
-            this.mMColor = color;
-            this.mMSizeX = texture.Width * scaleX;
-            this.mMSizeY = texture.Height * scaleY;
+            this.mTexture = texture;
+            this.mPositionX = positionX;
+            this.mPositionY = positionY;
+            this.mScaleX = scaleX;
+            this.mScaleY = scaleY;
+            this.mRotation = rotation;
+            this.mColor = color;
+            this.mSizeX = texture.Width * scaleX;
+            this.mSizeY = texture.Height * scaleY;
         }
         /// <summary>
         /// check if given coordinates intersect with coordinates of the sprite object
@@ -42,9 +42,9 @@ namespace rahnfelj
         public Boolean TouchesSprite(float x, float y)
         {
             Boolean result = false;
-            if (this.mMPositionX < x & x < this.mMPositionX + mMSizeX)
+            if (this.mPositionX < x & x < this.mPositionX + mSizeX)
             {
-                if (this.mMPositionY < y & y < this.mMPositionY + mMSizeY)
+                if (this.mPositionY < y & y < this.mPositionY + mSizeY)
                 {
                     result = true;
                 }
@@ -56,31 +56,31 @@ namespace rahnfelj
         [Obsolete]
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(this.mMTexture, new Vector2(this.mMPositionX, this.mMPositionY), color: this.mMColor,
-                scale: new Vector2(this.mMScaleX, this.mMScaleY), rotation: this.mMRotation);
+            spriteBatch.Draw(this.mTexture, new Vector2(this.mPositionX, this.mPositionY), color: this.mColor,
+                scale: new Vector2(this.mScaleX, this.mScaleY), rotation: this.mRotation);
         }
 
         // getters
-        public Texture2D GetTexture() => mMTexture;
-        public float GetPositionX() => mMPositionX;
-        public float GetPositionY() => mMPositionY;
-        public float GetScaleX() => mMScaleX;
-        public float GetScaleY() => mMScaleY;
-        public float GetRotation() => mMRotation;
-        public Color GetColor() => mMColor;
-        public float GetSizeX() => mMSizeX;
-        public float GetSizeY() => mMSizeY;
+        public Texture2D GetTexture() => mTexture;
+        public float GetPositionX() => mPositionX;
+        public float GetPositionY() => mPositionY;
+        public float GetScaleX() => mScaleX;
+        public float GetScaleY() => mScaleY;
+        public float GetRotation() => mRotation;
+        public Color GetColor() => mColor;
+        public float GetSizeX() => mSizeX;
+        public float GetSizeY() => mSizeY;
 
         // setters
-        public void SetTexture(Texture2D texture) => this.mMTexture = texture;
-        public void SetPositionX(float x) => this.mMPositionX = x;
-        public void SetPositionY(float y) => this.mMPositionY = y;
-        public void SetScaleX(float x) => this.mMScaleX = x;
-        public void SetScaleY(float y) => this.mMScaleY = y;
+        public void SetTexture(Texture2D texture) => this.mTexture = texture;
+        public void SetPositionX(float x) => this.mPositionX = x;
+        public void SetPositionY(float y) => this.mPositionY = y;
+        public void SetScaleX(float x) => this.mScaleX = x;
+        public void SetScaleY(float y) => this.mScaleY = y;
 
-        public void SetRotation(float rotation) => this.mMRotation = rotation;
-        public void SetColor(Color color) => this.mMColor = color;
-        public void SetSizeX(float x) => this.mMSizeX = x;
-        public void SetSizeY(float y) => this.mMSizeY = y;
+        public void SetRotation(float rotation) => this.mRotation = rotation;
+        public void SetColor(Color color) => this.mColor = color;
+        public void SetSizeX(float x) => this.mSizeX = x;
+        public void SetSizeY(float y) => this.mSizeY = y;
     }
 }
