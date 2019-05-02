@@ -1,0 +1,89 @@
+\documentclass[version = last]{scrreprt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To create the final version, uncomment the line containing \finaltrue
+\newif\iffinal
+\finalfalse
+% \finaltrue
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Packages & Options
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage{hyperref}
+
+\iffinal
+  % Hide todos in the final version.
+  \usepackage[final, obeyFinal]{todonotes}
+\else
+  \usepackage[ngerman, textsize=footnotesize]{todonotes}
+\fi
+
+\iffinal
+  % Don't show overfull paragraphs in the final version.
+\else
+  % This option helps finding paragraphs which are wider than linewidth by
+  % drawing a black bar on the right side.
+  \KOMAoption{overfullrule}{true}
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom commands & adjustments
+
+% Commands to indicate missing parts.
+\newcommand\missingChapter[2][]{\todo[inline, #1]{\thechapter{} „#2“ schreiben}}
+\newcommand\missingSection[2][]{\todo[inline, #1]{\thesection{} „#2“ schreiben}}
+
+% Decrease the font size slightly from \Large to fit all names in two lines.
+\addtokomafont{author}{\large}
+
+
+\begin{document}
+
+\title{Spielname\todo[noline]{Das Spiel braucht einen Namen}}
+\author{%
+  % Sorted alphabetically by last name.
+  Melissa Hägle,
+  Zacharias Häringer,
+  Johannes Mannhardt,\\
+  Maximilian Nazarati,
+  Jens Rahnfeld,
+  Zo\"e Schaaff,
+  Janek Spaderna}
+\subject{Gruppe 09}
+\publishers{Tutor: Daniel Lux}
+\maketitle
+
+
+\tableofcontents
+\addcontentsline{toc}{chapter}{Inhaltsverzeichnis}
+
+
+\iffinal
+  % Hide the list of TODOs in the final version.
+\else
+  \listoftodos
+  \addcontentsline{toc}{chapter}{TODOs}
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Content starts here
+
+\input{spielkonzept}
+
+\input{benutzeroberflaeche}
+
+\input{technische-merkmale}
+
+\input{spiellogik}
+
+\input{screenplay}
+
+\end{document}
