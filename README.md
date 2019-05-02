@@ -12,6 +12,7 @@ NAMEN_HIER
 - Janek Spaderna
 - Zacharias Häringer
 - Zoë Schaaff
+- Melissa Hägle
 
 Erstes Gruppentreffen: 30.04. 10:00 vor dem Pool
 
