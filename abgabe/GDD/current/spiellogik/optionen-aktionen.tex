@@ -18,3 +18,28 @@
 % und Inhalt an Use Cases (http://de.wikipedia.org/wiki/Use_case) angelehnt.
 
 \missingSection{Optionen \& Aktionen}
+
+{\small
+\begin{longtabu}{X[0.6L]X[0.4L]X[L]X[0.9L]X[0.9L]}
+  \toprule
+  \rowfont[c]{\itshape}
+    \multirow{1}{=}{\centering ID/Name}              &
+    \multirow{1}{=}{\centering Akteure}              &
+    \multirow{1}{=}{\centering Ereignis"-fluss}      &
+    \multirow{1}{=}{Anfangs"-bedingung}   &
+                   {Abschluss"-bedingung} \\
+  \midrule\endhead
+
+  % Example line taken from the SOPRA wiki.
+  ID01: Figur durch Klick bewegen
+    & Spieler
+    & \dots
+    & Der Spieler muss eine oder mehr kontrollierbare, auswählbare Spielfiguren
+      ausgewählt haben.
+    & Die Spielfiguren befinden sich am Zielpunkt, \textbf{oder} die
+      Spielfiguren befinden an einem begehbaren Punkt in der Welt, der möglichst
+      nah am Ziekpunkt liegt.
+  \\
+
+  \bottomrule
+\end{longtabu}}
