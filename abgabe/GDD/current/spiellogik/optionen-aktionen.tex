@@ -19,15 +19,17 @@
 
 \missingSection{Optionen \& Aktionen}
 
-{\small
+\begin{table}[h]
+  \caption{Mögliche Optionen und Aktionen}
+  \small
 \begin{longtabu}{X[0.6L]X[0.4L]X[L]X[0.9L]X[0.9L]}
   \toprule
-  \rowfont[c]{\itshape}
-    \multirow{1}{=}{\centering ID/Name}              &
-    \multirow{1}{=}{\centering Akteure}              &
-    \multirow{1}{=}{\centering Ereignis"-fluss}      &
-    \multirow{1}{=}{Anfangs"-bedingung}   &
-                   {Abschluss"-bedingung} \\
+  \rowfont{\itshape}
+    ID/Name              &
+    Akteure              &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
   \midrule\endhead
 
   % Example line taken from the SOPRA wiki.
@@ -42,4 +44,5 @@
   \\
 
   \bottomrule
-\end{longtabu}}
+\end{longtabu}
+\end{table}
