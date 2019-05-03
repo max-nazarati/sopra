@@ -39,14 +39,13 @@ namespace rahnfelj
         private float mMouseAccelerationX = 0;
         private float mMouseAccelerationY = 0;
         private int mMouseLastScrollValue = 0;
+        private KeyboardState mCurrentKeyboardState;
         private Camera mCam;
 
         public Game1()
         {
             mGraphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
-            mCam = new Camera(Matrix.CreateTranslation(0, 0, 0));
         }
 
         /// <summary>
@@ -61,6 +60,16 @@ namespace rahnfelj
             mGraphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             mGraphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
             mGraphics.ApplyChanges();
+
+            float windowWidth = mGraphics.PreferredBackBufferWidth;
+            float windowHeight = mGraphics.PreferredBackBufferHeight;
+            mCam = new Camera(Matrix.CreateTranslation(0, 0, 0),
+                GraphicsDevice.Viewport,
+                windowWidth,
+                windowHeight,
+                0.2f,
+                5,
+                1);
 
             base.Initialize();
         }
@@ -126,6 +135,7 @@ namespace rahnfelj
             mLogoSprite.SetPositionY(logoNewPositionY);
 
             mCurrentMouseState = Mouse.GetState();
+            mCurrentKeyboardState = Keyboard.GetState();
 
             if (mCurrentMouseState.LeftButton == ButtonState.Pressed & mLogoSprite.TouchesSprite(mCurrentMouseState.X, mCurrentMouseState.Y))
             {
@@ -136,20 +146,23 @@ namespace rahnfelj
                 mLogoSoundMiss.Play();
             }
 
-            if (mCurrentMouseState.X >= mGraphics.PreferredBackBufferWidth - 10 & mCurrentMouseState.X <= mGraphics.PreferredBackBufferWidth)
+            if ((mCurrentMouseState.X >= mGraphics.PreferredBackBufferWidth - 10 &
+                 mCurrentMouseState.X <= mGraphics.PreferredBackBufferWidth) |
+                mCurrentKeyboardState.IsKeyDown(Keys.Right))
             {
                 mCam.MoveRight(20);
             }
-            if (mCurrentMouseState.X <= 10 & mCurrentMouseState.X >= 0)
+            if ((mCurrentMouseState.X <= 10 & mCurrentMouseState.X >= 0) | mCurrentKeyboardState.IsKeyDown(Keys.Left))
             {
                 mCam.MoveLeft(20);
             }
-            if (mCurrentMouseState.Y <= 10 && mCurrentMouseState.Y >= 0)
+            if ((mCurrentMouseState.Y <= 10 && mCurrentMouseState.Y >= 0) | mCurrentKeyboardState.IsKeyDown(Keys.Up))
             {
                 mCam.MoveUp(20);
             }
-            if (mCurrentMouseState.Y >= mGraphics.PreferredBackBufferHeight - 50 &
-                mCurrentMouseState.Y <= mGraphics.PreferredBackBufferHeight)
+            if ((mCurrentMouseState.Y >= mGraphics.PreferredBackBufferHeight - 50 &
+                mCurrentMouseState.Y <= mGraphics.PreferredBackBufferHeight) |
+                mCurrentKeyboardState.IsKeyDown(Keys.Down))
             {
                 mCam.MoveDown(20);
             }
@@ -172,13 +185,13 @@ namespace rahnfelj
 
             if (mCurrentMouseState.ScrollWheelValue < mMouseLastScrollValue)
             {
-                mCam.Zoom(0.9f);
+                mCam.ZoomOut(1.5f);
                 mMouseLastScrollValue = mCurrentMouseState.ScrollWheelValue;
             }
 
             if (mCurrentMouseState.ScrollWheelValue > mMouseLastScrollValue)
             {
-                mCam.Zoom((float) 10/9);
+                mCam.ZoomIn(1.5f);
                 mMouseLastScrollValue = mCurrentMouseState.ScrollWheelValue;
             }
 
