@@ -1,98 +1,98 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Audio;
 
 namespace Game1
 {
     /// <summary>
-    /// This is the main type for your game.
+    ///     This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public sealed class Game1 : Game
     {
-        private Texture2D backgroundTexture;
+        private Texture2D mBackgroundTexture;
+        private MouseState mCurrentMouseState;
 
-        private Texture2D uniLogoTexture;
-        private Vector2 uniLogoCenter;
-        private Vector2 uniLogoOffset;
-        private float uniLogoScale;
-        private Rectangle logoRectangle;
+        private readonly GraphicsDeviceManager mGraphics;
+        private Rectangle mLogoRectangle;
+        private SoundEffect mLogoHit;
+        private SoundEffectInstance mLogoHitInstance;
+        private SoundEffect mLogoMiss;
+        private SoundEffectInstance mLogoMissInstance;
+
+        // Sound
+        private bool mOverlappingSound;
+
+        // Mouse
+        private MouseState mPrevMouseState;
+        private SpriteBatch mSpriteBatch;
+        private Vector2 mUniLogoCenter;
+        private float mUniLogoDegree;
 
 
         // moving circle
-        private float uniLogoMoveRadius;
-        private float uniLogoDegree;
-        private float uniLogoTurningDegree;
+        private float mUniLogoMoveRadius;
+        private Vector2 mUniLogoOffset;
+        private float mUniLogoScale;
 
-        // Sound
-        private bool overlappingSound;
-        SoundEffect mLogoHit;
-        SoundEffect mLogoMiss;
-        SoundEffectInstance mLogoHitInstance;
-        SoundEffectInstance mLogoMissInstance;
-
-        // Mouse
-        private MouseState prevMouseState;
-        private MouseState currentMouseState;
-
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private Texture2D mUniLogoTexture;
+        private float mUniLogoTurningDegree;
 
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            mGraphics = new GraphicsDeviceManager(game: this);
             Content.RootDirectory = "Content";
-            Window.AllowUserResizing = true; 
+            Window.AllowUserResizing = true;
         }
 
         /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
+        ///     Allows the game to perform any initialization it needs to before starting to run.
+        ///     This is where it can query for any required services and load any non-graphic
+        ///     related content.  Calling base.Initialize will enumerate through any components
+        ///     and initialize them as well.
         /// </summary>
         protected override void Initialize()
         {
             // general stuff
-            this.IsMouseVisible = true;
+            IsMouseVisible = true;
 
             // Background
             // backgroundScale = new Vector2(1000000 / graphics.PreferredBackBufferWidth, 1 / graphics.PreferredBackBufferHeight);
 
             // uniLogo
-            uniLogoCenter = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
-            uniLogoMoveRadius = graphics.PreferredBackBufferWidth / 6;
-            uniLogoScale = 0.2f;
-            uniLogoDegree = 0f;
-            uniLogoTurningDegree = (float)Math.PI / 240f;
-            logoRectangle = new Rectangle((int)uniLogoCenter.X, (int)uniLogoCenter.Y, 100, 100);
+            mUniLogoCenter = new Vector2(x: mGraphics.PreferredBackBufferWidth / 2f, y: mGraphics.PreferredBackBufferHeight / 2f);
+            mUniLogoMoveRadius = mGraphics.PreferredBackBufferWidth / 6f;
+            mUniLogoScale = 0.2f;
+            mUniLogoDegree = 0f;
+            mUniLogoTurningDegree = (float) Math.PI / 240f;
+            mLogoRectangle = new Rectangle((int) mUniLogoCenter.X, (int) mUniLogoCenter.Y, width: 100, height: 100);
 
-            overlappingSound = true;
+            mOverlappingSound = true;
             base.Initialize();
         }
 
         /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
+        ///     LoadContent will be called once per game and is the place to load
+        ///     all of your content.
         /// </summary>
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Textures
-            uniLogoTexture = Content.Load<Texture2D>("Unilogo");
-            backgroundTexture = Content.Load<Texture2D>("Background");
+            mUniLogoTexture = Content.Load<Texture2D>("Unilogo");
+            mBackgroundTexture = Content.Load<Texture2D>("Background");
             // Sound
             mLogoHit = Content.Load<SoundEffect>("hitmarker");
             mLogoMiss = Content.Load<SoundEffect>("miss");
         }
 
         /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
+        ///     UnloadContent will be called once per game and is the place to unload
+        ///     game-specific content.
         /// </summary>
         protected override void UnloadContent()
         {
@@ -101,142 +101,125 @@ namespace Game1
         }
 
 
-
-        void InitializeSoundInstanceHit()
+        private void InitializeSoundInstanceHit()
         {
-            if (mLogoHitInstance is null)
-            {
-                mLogoHitInstance = mLogoHit.CreateInstance();
-            }
+            if (mLogoHitInstance is null) mLogoHitInstance = mLogoHit.CreateInstance();
         }
 
-        void InitializeSoundInstanceMiss()
+        private void InitializeSoundInstanceMiss()
         {
-            if (mLogoMissInstance is null)
-            {
-                mLogoMissInstance = mLogoMiss.CreateInstance();
-            }
+            if (mLogoMissInstance is null) mLogoMissInstance = mLogoMiss.CreateInstance();
         }
 
-        void playSoundHit()
+        private void PlaySoundHit()
         {
-            if (overlappingSound)
+            if (mOverlappingSound)
             {
                 mLogoHit.Play();
             }
             else
             {
                 InitializeSoundInstanceHit();
-                if (mLogoHitInstance.State == SoundState.Stopped)
-                {
-                    mLogoHitInstance.Play();
-                }
+                if (mLogoHitInstance.State == SoundState.Stopped) mLogoHitInstance.Play();
             }
         }
 
-        void playSoundMiss()
+        private void PlaySoundMiss()
         {
-            if (overlappingSound)
+            if (mOverlappingSound)
             {
                 mLogoMiss.Play();
             }
             else
             {
                 InitializeSoundInstanceMiss();
-                if(mLogoMissInstance.State == SoundState.Stopped)
-                {
-                    mLogoMissInstance.Play();
-                }
+                if (mLogoMissInstance.State == SoundState.Stopped) mLogoMissInstance.Play();
             }
         }
 
-        void updateLogoRectangle()
+        private void UpdateLogoRectangle()
         {
-            logoRectangle.X = ((int)uniLogoCenter.X) + ((int)uniLogoOffset.X) - ((int)(uniLogoTexture.Width * uniLogoScale / 2f));
-            logoRectangle.Y = ((int)uniLogoCenter.Y) + ((int)uniLogoOffset.Y) - ((int)(uniLogoTexture.Height * uniLogoScale / 2f));
-            logoRectangle.Width = (int)(uniLogoTexture.Width * uniLogoScale);
-            logoRectangle.Height = (int)(uniLogoTexture.Height * uniLogoScale);
+            mLogoRectangle.X = (int) mUniLogoCenter.X + (int) mUniLogoOffset.X -
+                              (int) (mUniLogoTexture.Width * mUniLogoScale / 2f);
+            mLogoRectangle.Y = (int) mUniLogoCenter.Y + (int) mUniLogoOffset.Y -
+                              (int) (mUniLogoTexture.Height * mUniLogoScale / 2f);
+            mLogoRectangle.Width = (int) (mUniLogoTexture.Width * mUniLogoScale);
+            mLogoRectangle.Height = (int) (mUniLogoTexture.Height * mUniLogoScale);
         }
 
 
         /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
+        ///     Allows the game to run logic such as updating the world,
+        ///     checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // update the Angel from 0 to 2pi
-            uniLogoDegree += uniLogoTurningDegree;
-            if (uniLogoDegree >= 2 * Math.PI ) { uniLogoDegree = 0; }  // avoiding silly jumps when overflowing
+            mUniLogoDegree += mUniLogoTurningDegree;
+            if (mUniLogoDegree >= 2 * Math.PI) mUniLogoDegree = 0;
             // calculate the position difference to the center
-            uniLogoOffset = new Vector2(
-                (float)Math.Cos(uniLogoDegree) * uniLogoMoveRadius,
-                (float)Math.Sin(uniLogoDegree) * uniLogoMoveRadius
-                );
-            
+            mUniLogoOffset = new Vector2(
+                (float) Math.Cos(mUniLogoDegree) * mUniLogoMoveRadius,
+                (float) Math.Sin(mUniLogoDegree) * mUniLogoMoveRadius
+            );
 
-
-
-            prevMouseState = currentMouseState;
-            currentMouseState = Mouse.GetState();
+            mPrevMouseState = mCurrentMouseState;
+            mCurrentMouseState = Mouse.GetState();
 
             // change the sound Mode with RightMouseButton
-
-            if (currentMouseState.RightButton == ButtonState.Pressed &&
-                prevMouseState.RightButton != ButtonState.Pressed)
+            if (mCurrentMouseState.RightButton == ButtonState.Pressed &&
+                mPrevMouseState.RightButton != ButtonState.Pressed)
             {
-                overlappingSound = !overlappingSound;
+                mOverlappingSound = !mOverlappingSound;
             }
+                
 
 
-
-            if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton != ButtonState.Pressed)
+            if (mCurrentMouseState.LeftButton == ButtonState.Pressed && mPrevMouseState.LeftButton != ButtonState.Pressed)
             {
-                updateLogoRectangle();  // updating the hitbox only when needed
-                if (logoRectangle.Contains(currentMouseState.Position)){playSoundHit();}else{playSoundMiss();}
+                UpdateLogoRectangle(); // updating the hit box only when needed
+                if (mLogoRectangle.Contains(mCurrentMouseState.Position))
+                    PlaySoundHit();
+                else
+                    PlaySoundMiss();
             }
 
             base.Update(gameTime);
         }
 
         /// <summary>
-        /// This is called when the game should draw itself.
+        ///     This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-            //spriteBatch.Begin();
-            // 
-            //spriteBatch.Draw(backgroundTexture, null, null);
-            //spriteBatch.End();
-
-            spriteBatch.Begin();
-
-            //spriteBatch.Draw(backgroundTexture, color: Color.White, scale: new Vector2(backgroundTexture.Width / graphics.PreferredBackBufferWidth, backgroundTexture.Heigth / graphics.PreferredBackBufferheigth));
-            spriteBatch.Draw(
-                backgroundTexture,
-                new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight),
-                new Rectangle(0,0, backgroundTexture.Width, backgroundTexture.Height),
+            mSpriteBatch.Begin();
+            mSpriteBatch.Draw(
+                mBackgroundTexture,
+                new Rectangle(x: 0, y: 0, mGraphics.PreferredBackBufferWidth, mGraphics.PreferredBackBufferHeight),
+                new Rectangle(x: 0, y: 0, mBackgroundTexture.Width, mBackgroundTexture.Height),
                 Color.White);
 
 
-            spriteBatch.Draw(uniLogoTexture,
-                uniLogoCenter + uniLogoOffset,
-                null,
-                color:Color.Black,
-                0f,
-                new Vector2(uniLogoTexture.Width / 2, uniLogoTexture.Height / 2),
-                uniLogoScale,
-                SpriteEffects.None,
-                0f);
-            spriteBatch.End();
+            if (mUniLogoTexture != null)
+                mSpriteBatch.Draw(mUniLogoTexture,
+                    position: mUniLogoCenter + mUniLogoOffset,
+                    sourceRectangle: null,
+                    Color.Black,
+                    rotation: 0f,
+                    
+                    origin: new Vector2(x: mUniLogoTexture.Width / 2f, y: mUniLogoTexture.Height / 2f),
+                    mUniLogoScale,
+                    SpriteEffects.None,
+                    layerDepth: 0f);
+            mSpriteBatch.End();
             base.Draw(gameTime);
         }
     }
