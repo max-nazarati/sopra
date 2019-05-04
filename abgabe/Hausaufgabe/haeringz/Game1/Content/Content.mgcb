@@ -25,17 +25,17 @@
 /processorParam:TextureFormat=Color
 /build:Background.png
 
-#begin Logo_hit.wav
+#begin hitmarker.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Logo_hit.wav
+/build:hitmarker.wav
 
-#begin Logo_miss.wav
+#begin miss.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Logo_miss.wav
+/build:miss.wav
 
 #begin Unilogo.png
 /importer:TextureImporter
