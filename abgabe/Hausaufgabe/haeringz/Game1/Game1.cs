@@ -20,7 +20,7 @@ namespace Game1
         private Rectangle logoRectangle;
 
 
-        // Variables controlling the size of the moving circle
+        // moving circle
         private float uniLogoMoveRadius;
         private float uniLogoDegree;
         private float uniLogoTurningDegree;
@@ -36,16 +36,9 @@ namespace Game1
         private MouseState prevMouseState;
         private MouseState currentMouseState;
 
-
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        /*
-        public class Circle : Rectangle
-        {
-
-        }
-        */
 
         public Game1()
         {
