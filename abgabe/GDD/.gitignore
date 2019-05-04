@@ -1,0 +1,6 @@
+# Ignore files created by LaTeX
+*.aux
+*.log
+*.out
+*.tdo
+*.toc
