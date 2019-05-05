@@ -23,3 +23,7 @@
 # Windows trash
 *.thumb
 thumbs.db
+
+
+# Files created by the Rider IDE
+.idea
