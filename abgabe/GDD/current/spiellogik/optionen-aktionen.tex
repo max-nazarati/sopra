@@ -20,18 +20,34 @@
 \missingSection{Optionen und Aktionen}
 
 \StartId{A}
-\begin{table}[h]
-  \caption{Mögliche Optionen und Aktionen}
+\begingroup
   \small
   \tabulinesep=1mm
-\begin{longtabu}{X[0.6L]X[0.4L]X[L]X[0.9L]X[0.9L]}
-  \toprule\rowfont{\itshape}
+\begin{longtabu}{X[0.6L]X[0.4L]X[L]X[L]X[L]}
+  \rowfont{\normalsize}
+  \caption{Mögliche Optionen und Aktionen\label{tab:optionen-aktionen}}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Akteure              &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endfirsthead
+
+  \rowfont{\normalsize}
+  \caption[]{Mögliche Optionen und Aktionen (fortges.)}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
     ID/Name              &
     Akteure              &
     Ereignis"-fluss      &
     Anfangs"-bedingung   &
     Abschluss"-bedingung \\
   \midrule\endhead
+
+  \multicolumn{5}{r}{\itshape fortges. auf der nächsten Seite}\\
+  \endfoot
+
+  \endlastfoot
 
   % Example line taken from the SOPRA wiki.
   \defid[move-figure]{Figur durch Klick bewegen}
@@ -43,8 +59,14 @@
     & Die Spielfiguren befinden sich am Zielpunkt, \textbf{oder} die
       Spielfiguren befinden an einem begehbaren Punkt in der Welt, der möglichst
       nah am Zielpunkt liegt.
+  \\\midrule
+  \defid{Andere Aktion}
+    & Spieler
+    & \dots
+    & \dots
+    & \dots
   \\
 
   \bottomrule
 \end{longtabu}
-\end{table}
+\endgroup
