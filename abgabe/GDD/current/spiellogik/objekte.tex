@@ -18,36 +18,157 @@
 
 \missingSection{Spielobjekte}
 
-\begin{table}[ht!]
-  \caption{Eigenschaftswerte von \dots}
+% \begin{table}[ht!]
+%   \caption{Eigenschaftswerte von \dots}
+%   \small
+%   \begin{longtabu}{cX[-1]X}
+%     \toprule\rowfont{\itshape}
+%     & Eigenschaft & Beschreibung \\
+%     \midrule
+%
+%     % Example
+%     LP & Lebenspunkte & \dots \\
+%
+%     \bottomrule
+%   \end{longtabu}
+% \end{table}
+%
+%
+% \begin{table}[ht!]
+%   \caption{Werte von Einheiten}
+%   \small
+%   \begin{longtabu}{cXl}
+%     \toprule
+%
+%     \multicolumn{3}{c}{\bfseries Frosch} \\\midrule
+%     Beschreibung & \dots & \itshape Bild hier? \\
+%     LP & 1 \\
+%     \midrule[\heavyrulewidth]
+%
+%     \multicolumn{3}{c}{\bfseries Dummy} \\\midrule
+%     Beschreibung & \dots & \itshape Bild hier? \\
+%     LP & 2 \\
+%     \bottomrule
+%   \end{longtabu}
+% \end{table}
+
+
+\subsection{Angriffseinheiten}
+
+\begin{description}
+  \item[Truppen]\todo[noline]{Benennung überdenken}
+    kosten relativ wenig, lassen sich jedoch nicht weiter kontrollieren. Diese
+    Einheiten verfolgen das Ziel, möglichst schnell zum gegenerischen Lager zu
+    gelangen um dort Schaden zu verursachen.
+
+    In Tabelle~\ref{tab:attack-unit-props} werden die Eigenschaften jeder
+    Truppeneinheit beschrieben, Tabelle~\ref{tab:attack-units} enthält alle
+    unterschiedlichen Einheiten und weist den Eigenschaften entsprechende Werte
+    zu.
+
+  \item[Helden] kosten mehr als Truppen, diese Einheiten lassen sich jedoch vom
+    Spieler kontrollieren. Sie besitzen zusätzlich noch Fähigkeiten die der
+    Spieler einsetzen kann.
+
+    In Tabelle~\ref{tab:attack-hero-props} werden die Eigenschaften jeder
+    Heldeneinheit beschrieben, Tabelle~\ref{tab:attack-heroes} enthält die
+    unterschiedlichen Helden und weist den Eigenschaften entsprechende Werte
+    zu.
+\end{description}
+
+\begin{table}[htbp]
+  \caption{Eigenschaften von Truppen}
+  \label{tab:attack-unit-props}
   \small
-  \begin{longtabu}{cX[-1]X}
+  \begin{longtabu}{rlX}
     \toprule\rowfont{\itshape}
     & Eigenschaft & Beschreibung \\
     \midrule
 
-    % Example
-    LP & Lebenspunkte & \dots \\
+    LP & Lebenspunkte
+       & Die Zahl der Lebenspunkte einer Einheit: Angriffe von
+         Verteidigungstürmen ziehen Lebenspunkte von diesem Wert ab; fällt er
+         unter Null, so stirbt diese Einheit (\refid{A:die}). \\
+    AS & Angriffsstärke
+       & Schaden, den diese Einheit am gegenerischen Lager verursacht, wenn sie
+         dieses erreicht (\refid{A:damage-base}). \\
+    GS & Geschwindigkeit & Distanz, die pro Zeiteinheit zurückgelegt werden
+         kann. \\
+    K  & Kosten
+       & Die Menge an Gold die aufgewendet werden muss, um eine dieser
+         Einheiten zu kaufen (\refid{A:buy-attack}). \\
 
     \bottomrule
   \end{longtabu}
+  %\todo[inline]{Größe und Kollision evtl. in die Tabelle aufnehmen}
 \end{table}
-
 
 \begin{table}[ht!]
-  \caption{Werte von Einheiten}
+  \caption{Truppen und ihre Werte}
+  \label{tab:attack-units}
   \small
-  \begin{longtabu}{cXl}
+  \begin{longtabu}{rXp{0.191\linewidth}}
     \toprule
 
-    \multicolumn{3}{c}{\bfseries Frosch} \\\midrule
-    Beschreibung & \dots & \itshape Bild hier? \\
+    \multicolumn{3}{c}{\bfseries Bug} \\\midrule
+      & Eine schnelle Sprintereinheit ohne viele Lebenspunkte, die alleine
+        nicht besonders viel Schaden verursacht, aber in großer Masse gekauft
+        werden kann, da sie nicht viel kostet.
+      & \itshape Bild hier? \\
     LP & 1 \\
+    AS & 1 \\
+    GS & 10 \\
+    K  & 1 \\
     \midrule[\heavyrulewidth]
 
-    \multicolumn{3}{c}{\bfseries Dummy} \\\midrule
-    Beschreibung & \dots & \itshape Bild hier? \\
+    \multicolumn{3}{c}{\bfseries Virus} \\\midrule
+      & Durchschnittliche Einheit, die etwas mehr kostet als ein \emph{Bug,}
+        etwas langsamer ist, aber mehr LP hat und mehr Schaden verursacht.
+      & \itshape Bild hier? \\
     LP & 2 \\
+    AS & 2 \\
+    GS & 5 \\
+    K  & 2 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Trojaner} \\\midrule
+      & Stirbt diese Einheit, werden an der Stelle ihres Todes \emph{Bugs} und
+        \emph{Viren} gespawnt. Ein Trojaner ist zwar relativ langsam und kostet
+        mehr als \emph{Viren,} hat dafür aber mehr LP und mehr AS.
+      & \itshape Bild hier? \\
+    LP & 4 \\
+    AS & 4 \\
+    GS & 3 \\
+    K  & 4 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Nokia} \\\midrule
+      & Diese Einheit ist bei gleichen Kosten zwar langsamer als ein
+        \emph{Trojaner,} dafür aber hat sie mehr LP und AS.
+      & \itshape Bild hier? \\
+    LP & 6 \\
+    AS & 6 \\
+    GS & 2 \\
+    K  & 4 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Thunderbird} \\\midrule
+      & Diese Einheit fliegt, daher muss sie nicht den Weg um Mauern und Türme
+        herumfinden, sondern kann einfach auf Luftlinie darüberhinwegfliegen.
+
+        Von den Kosten ist diese Einheit mit \emph{Trojaner} vergleichbar, sie
+        ist ebenso relativ langsam, hat aber nicht viele LP und weniger AS.\\
+
+    LP & 4 \\
+    AS & 3 \\
+    GS & 3 \\
+    K  & 4 \\
+
     \bottomrule
   \end{longtabu}
 \end{table}
+
+
+\subsection{Verteidigungsgebäude}
+
+
