@@ -100,73 +100,88 @@
 
     \bottomrule
   \end{longtabu}
-  %\todo[inline]{Größe und Kollision evtl. in die Tabelle aufnehmen}
+  \todo[inline]{Größe und Kollision evtl. in die Tabelle aufnehmen}
 \end{table}
 
-\begin{table}[ht!]
-  \caption{Truppen und ihre Werte}
-  \label{tab:attack-units}
+\begingroup
   \small
   \begin{longtabu}{rXp{0.191\linewidth}}
-    \toprule
+    \rowfont{\normalsize}
+    \caption{Truppen und ihre Werte\label{tab:attack-units}}
+    \\\midrule[\heavyrulewidth]\endfirsthead
 
-    \multicolumn{3}{c}{\bfseries Bug} \\\midrule
+    % TODO: This seems to introduce too much vertical whitespace between the
+    % midrule and the next row.
+    \rowfont{\normalsize}
+    \caption[]{Truppen und ihre Werte (fortges.)}
+    \\\midrule[\heavyrulewidth]\endhead
+
+    % TODO: At the moment this leads to strange page breaks, revisit when there
+    % is more content!
+    %
+    % \multicolumn{3}{r}{\itshape fortges. auf der nächsten Seite}
+    % \\\endfoot
+    %
+    % \endlastfoot
+
+    \multicolumn{3}{c}{\bfseries Bug} \\*\midrule
       & Eine schnelle Sprintereinheit ohne viele Lebenspunkte, die alleine
         nicht besonders viel Schaden verursacht, aber in großer Masse gekauft
         werden kann, da sie nicht viel kostet.
-      & \itshape Bild hier? \\
-    LP & 1 \\
-    AS & 1 \\
-    GS & 10 \\
-    K  & 1 \\
+      & \itshape Bild hier? \\*
+    LP & 1    \\*
+    AS & 1    \\*
+    GS & 10   \\*
+    K  & 1    \\
     \midrule[\heavyrulewidth]
 
-    \multicolumn{3}{c}{\bfseries Virus} \\\midrule
+    \multicolumn{3}{c}{\bfseries Virus} \\*\midrule
       & Durchschnittliche Einheit, die etwas mehr kostet als ein \emph{Bug,}
         etwas langsamer ist, aber mehr LP hat und mehr Schaden verursacht.
-      & \itshape Bild hier? \\
-    LP & 2 \\
-    AS & 2 \\
-    GS & 5 \\
-    K  & 2 \\
+      & \itshape Bild hier? \\*
+    LP & 2      \\*
+    AS & 2      \\*
+    GS & 5      \\*
+    K  & 2      \\
     \midrule[\heavyrulewidth]
 
-    \multicolumn{3}{c}{\bfseries Trojaner} \\\midrule
+    \multicolumn{3}{c}{\bfseries Trojaner} \\*\nopagebreak\midrule\nopagebreak
       & Stirbt diese Einheit, werden an der Stelle ihres Todes \emph{Bugs} und
         \emph{Viren} gespawnt. Ein Trojaner ist zwar relativ langsam und kostet
         mehr als \emph{Viren,} hat dafür aber mehr LP und mehr AS.
-      & \itshape Bild hier? \\
-    LP & 4 \\
-    AS & 4 \\
-    GS & 3 \\
+      & \itshape Bild hier? \\*
+    LP & 4 \\*
+    AS & 4 \\*
+    GS & 3 \\*
     K  & 4 \\
     \midrule[\heavyrulewidth]
 
-    \multicolumn{3}{c}{\bfseries Nokia} \\\midrule
+    \multicolumn{3}{c}{\bfseries Nokia} \\*\midrule
       & Diese Einheit ist bei gleichen Kosten zwar langsamer als ein
         \emph{Trojaner,} dafür aber hat sie mehr LP und AS.
-      & \itshape Bild hier? \\
-    LP & 6 \\
-    AS & 6 \\
-    GS & 2 \\
+      & \itshape Bild hier? \\*
+    LP & 6 \\*
+    AS & 6 \\*
+    GS & 2 \\*
     K  & 4 \\
     \midrule[\heavyrulewidth]
 
-    \multicolumn{3}{c}{\bfseries Thunderbird} \\\midrule
+    \multicolumn{3}{c}{\bfseries Thunderbird} \\*\midrule
       & Diese Einheit fliegt, daher muss sie nicht den Weg um Mauern und Türme
-        herumfinden, sondern kann einfach auf Luftlinie darüberhinwegfliegen.
+        herumfinden, sondern kann einfach auf Luftlinie darüber hinwegfliegen.
 
         Von den Kosten ist diese Einheit mit \emph{Trojaner} vergleichbar, sie
-        ist ebenso relativ langsam, hat aber nicht viele LP und weniger AS.\\
-
-    LP & 4 \\
-    AS & 3 \\
-    GS & 3 \\
+        ist ebenso relativ langsam, hat aber nicht viele LP und weniger AS.
+      & \itshape Bild hier? \\*
+    LP & 4 \\*
+    AS & 3 \\*
+    GS & 3 \\*
     K  & 4 \\
 
     \bottomrule
   \end{longtabu}
-\end{table}
+  \todo[inline]{Bilder für Truppen}
+\endgroup
 
 
 \subsection{Verteidigungsgebäude}
