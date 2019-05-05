@@ -19,6 +19,7 @@
 \usepackage{hyperref}
 \usepackage{booktabs, longtable, tabu}
 \usepackage{enumitem}
+\usepackage{xparse}
 
 \iffinal
   % Hide todos in the final version.
@@ -48,6 +49,34 @@
 
 % Decrease space between table caption and the table's top-rule.
 \setlength{\abovetopsep}{-0.8em}
+
+% Macros for creating and referencing IDs of actions, objects etc.
+%
+% The intresting macros defined here are
+%   * \StartId{prefix}
+%   * \defid[label]{title}, \defid{title}
+%   * \refid{prefix:label}
+%
+% See README.md for an explanation.
+\makeatletter
+\newcounter{gdd@ids}
+\NewDocumentCommand\StartId{m}{%
+  \setcounter{gdd@ids}{0}%
+  \xdef\gdd@idprefix{#1}}
+\NewDocumentCommand\defid{o m}{%
+  \ifx\gdd@idprefix\undefined%
+    \PackageError{GDD}{Please use \StartId before using \defid!}{}%
+  \else%
+    \leavevmode%
+    \refstepcounter{gdd@ids}%
+    \IfNoValueTF{#1}{}{\label{gdd-\gdd@idprefix:#1}}%
+    \gdd@idprefix\thegdd@ids: #2%
+  \fi}
+\NewDocumentCommand\refid{m}{%
+  \expandafter\gdd@refformat#1\relax}
+\def\gdd@refformat#1:#2\relax{%
+  \hyperref[gdd-#1:#2]{#1\ref*{gdd-#1:#2}}}
+\makeatother
 
 
 \begin{document}
