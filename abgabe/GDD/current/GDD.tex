@@ -65,17 +65,21 @@
   \xdef\gdd@idprefix{#1}}
 \NewDocumentCommand\defid{o m}{%
   \ifx\gdd@idprefix\undefined%
-    \PackageError{GDD}{Please use \StartId before using \defid!}{}%
+    \PackageError{GDD}{Please use \StartId before using \defid}{}%
   \else%
     \leavevmode%
     \refstepcounter{gdd@ids}%
     \IfNoValueTF{#1}{}{\label{gdd-\gdd@idprefix:#1}}%
     \gdd@idprefix\thegdd@ids: #2%
   \fi}
-\NewDocumentCommand\refid{m}{%
+\NewDocumentCommand\refid{>{\SplitArgument{1}{:}} m}{%
   \expandafter\gdd@refformat#1\relax}
-\def\gdd@refformat#1:#2\relax{%
-  \hyperref[gdd-#1:#2]{#1\ref*{gdd-#1:#2}}}
+\newcommand\gdd@refformat[2]{%
+  \IfNoValueTF{#2}
+    {\PackageError{GDD}
+        {The argument to \refid should be {prefix:label}}
+        {It seems you forgot the prefix before the label.}}
+    {\hyperref[gdd-#1:#2]{#1\ref*{gdd-#1:#2}}}}
 \makeatother
 
 
