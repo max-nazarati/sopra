@@ -19,9 +19,11 @@
 
 \missingSection{Optionen und Aktionen}
 
+\StartId{A}
 \begin{table}[h]
   \caption{Mögliche Optionen und Aktionen}
   \small
+  \tabulinesep=1mm
 \begin{longtabu}{X[0.6L]X[0.4L]X[L]X[0.9L]X[0.9L]}
   \toprule\rowfont{\itshape}
     ID/Name              &
@@ -32,14 +34,15 @@
   \midrule\endhead
 
   % Example line taken from the SOPRA wiki.
-  ID01: Figur durch Klick bewegen
+  \defid[move-figure]{Figur durch Klick bewegen}
+    % This can now be referenced using \refid{A:move-figure}
     & Spieler
     & \dots
     & Der Spieler muss eine oder mehr kontrollierbare, auswählbare Spielfiguren
       ausgewählt haben.
     & Die Spielfiguren befinden sich am Zielpunkt, \textbf{oder} die
       Spielfiguren befinden an einem begehbaren Punkt in der Welt, der möglichst
-      nah am Ziekpunkt liegt.
+      nah am Zielpunkt liegt.
   \\
 
   \bottomrule
