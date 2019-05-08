@@ -12,6 +12,19 @@ Multiple subsequent invocations might be necessary for LaTeX to get all table
 column widths and references right.
 
 
+### Images
+
+Images go into the folder `img/` (which might not exist at first). Referencing
+images doesn't require adding this path but just the name is enough. Even in
+all the TeX-Files in the subfolders only the path *inside* the `img/` folder
+should be given to `\includegraphics`.
+
+```latex
+% Requires the image to be located at `img/my-image.png`.
+\includegraphics[width=\linewidth]{my-image.png}
+```
+
+
 ## Packages
 
 * `inputenc`, `fontenc` – Basic packages for UTF-8 support and a non US-ASCII
