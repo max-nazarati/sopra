@@ -19,7 +19,7 @@ entwickelt wird.
 - [ ] Pausefunktion.
 - [ ] Eigenes [Menü][Menü] (komplett mit der Maus steuerbar,
 außer Texteingaben).
-- [ ] Arten von [Spielobjekten][Spielobjekte]:
+- Arten von [Spielobjekten][Spielobjekte]:
  - [ ] a) Min. 5 Kontrollierbare.
  - [ ] b) Min. 5 Auswählbare.
  - [ ] c) Min. 5 Nicht-Kontrollierbare, davon min. 3 Kollidierende.
@@ -30,7 +30,7 @@ außer Texteingaben).
  - [ ] Allen Spielobjekten der Art [(d)][aktive Spielobjekte] muss es möglich sein, von jedem beliebigen Punkt in der Welt zu jedem anderen begehbaren Punkt zu gelangen, ohne sich gegenseitig übermäßig zu behindern, festzustecken, usw. („Pathfinding“).
 - [ ] Soundeffekte und Musik.
 - [ ] Min. 5 verschiedene [Statistiken][Statistiken].
-- [ ] [Achievements][Achievements].
+- [ ] \[Achievements][Achievements].
 
 Sind die Softwarequalitätsanforderungen erfüllt (d.h. gibt es
 keine Compiler/ReSharper Warnungen oder Fehler)?
