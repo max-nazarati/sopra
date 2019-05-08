@@ -25,12 +25,12 @@ außer Texteingaben).
  - [ ] c) Min. 5 Nicht-Kontrollierbare, davon min. 3 Kollidierende.
  - [ ] d) Min. 3 Kontrollierbare, Kollidierende und Bewegliche.
 - [ ] Min. 1000 gleichzeitig [aktive Spielobjekte][aktive Spielobjekte] der Art (d) möglich (Tech-Demo).
-- [ ] Arten von [Aktionen][Aktionen]:
+- Arten von [Aktionen][Aktionen]:
  - [ ] Min. 10 verschiedene Aktionen (inkl. Laufen, Fähigkeiten, usw.).
  - [ ] Allen Spielobjekten der Art [(d)][aktive Spielobjekte] muss es möglich sein, von jedem beliebigen Punkt in der Welt zu jedem anderen begehbaren Punkt zu gelangen, ohne sich gegenseitig übermäßig zu behindern, festzustecken, usw. („Pathfinding“).
 - [ ] Soundeffekte und Musik.
 - [ ] Min. 5 verschiedene [Statistiken][Statistiken].
-- [ ] \[Achievements][Achievements].
+- [ ] and finally [Achievements][Achievements].
 
 Sind die Softwarequalitätsanforderungen erfüllt (d.h. gibt es
 keine Compiler/ReSharper Warnungen oder Fehler)?
