@@ -48,23 +48,159 @@
   \endfoot
 
   \endlastfoot
-
+  
+  \defid[object-selection]{Objekt Auswahl}
+  & Spieler
+  & \begin{enumerate}[nosep, leftmargin=*]
+  \item Spieler clickt auf das Objekt (Turm oder Held).
+  \item Objekt ist jetzt ausgewählt.
+  \end{enumerate}
+  & Objekt ist auf einer der 2 Strecken und gehört dem Spieler.
+  & Objekt ist ausgewählt.
+  
+    \\\midrule
+    \defid[cancel-object-selection]{Objekt Auswahl kündigen}
+    & Spieler
+    & \begin{enumerate}[nosep,leftmargin=*]
+    	\item Spieler druckt TASTE, was den Objekt-Auswahl terminiert.
+    \end{enumerate}
+    & Ein Objekt (Turm oder Held) ist gerade ausgewählt.
+    & Objekt nicht mehr ausgewählt.
+	\\\midrule
   % Example line taken from the SOPRA wiki.
   \defid[move-figure]{Figur durch Klick bewegen}
     % This can now be referenced using \refid{A:move-figure}
     & Spieler
-    & \dots
+    & \begin{enumerate}[nosep,leftmargin=*]
+    	\item Left Click innerhalb der Angriffstrecke.
+    	\item Figur(en) bewegen sich zur
+    	angegebenen Position.
+    \end{enumerate}
     & Der Spieler muss eine oder mehr kontrollierbare, auswählbare Spielfiguren
       ausgewählt haben.
     & Die Spielfiguren befinden sich am Zielpunkt, \textbf{oder} die
       Spielfiguren befinden an einem begehbaren Punkt in der Welt, der möglichst
       nah am Zielpunkt liegt.
+      
   \\\midrule
-  \defid{Andere Aktion}
+  \defid[hero-ability]{Held Fähigkeit Auswahl}
+  & Spieler
+  & \begin{enumerate}[nosep, leftmargin=*]
+  \item click auf Fähigkeit.
+  \item Führe Fähigkeit aus
+  \end{enumerate}
+  & Held ist ausgewählt und kein aktiver cool-down timer für die Fähigkeit.
+  & Fähigkeit war ausgeführt.      
+  
+  \\\midrule
+  \defid[select-building]{Gebäude aus Menu auswählen}
+  & Spieler
+  & \begin{enumerate}[nosep, leftmargin=*]
+  \item Gebäude wird durch click ausgewählt
+  \end{enumerate}
+  & Maus hängt über einen Gebäude-Menueintrag
+  & Gebäude ist jetzt ausgewählt und man kann es auf der Verteidigungsstrecke herum ziehen um
+  Baustelle auszuwählen.
+  
+  \\\midrule
+  \defid[put-defend]{Gebäude kaufen}
+  & Spieler
+  &  \begin{enumerate}[nosep, leftmargin=*]
+  \item Spieler clickt auf der Verteidigungsstrecke.
+  \item Geld für das Gebäude wird abgezogen.
+  \item Gebäude wird auf die Ausgewählte Stelle plaziert.
+  \end{enumerate}
+  & Genug Gold vorhanden,Maus auf der Verteidigungsstrecke und 
+  Umgebung nicht belegt.
+  & Gebäude wird auf der Position gebaut
+  
+  \\\midrule
+  \defid[buy-attack]{Einheit kaufen.}
+  & Spieler
+  & \begin{enumerate}[nosep,leftmargin=*]
+    \item Spieler clickt.
+    \item Gold wird abgezogen.
+    \item Einheit wird produziert
+    \end{enumerate}
+  & \begin{enumerate}[nosep,leftmargin=*]
+  \item Mauszeiger zeigt auf eine Einheitskarte im Einheitenmenu.
+  \item Genug Gold vorhanden.
+  \end{enumerate}
+  & Einheit produziert.
+  
+  \\\midrule
+  \defid[update-defend]{Turm updaten}
+  & Spieler
+  &\begin{enumerate}[nosep, leftmargin=*]
+  \item Spieler clickt auf Update.
+  \item Turm ist aktualisiert.
+  \end{enumerate}
+  & Turm war vorher ausgewählt und genug Gold vorhanden.
+  & Turm ist up-to-date.
+  
+    \\\midrule
+    \defid[select-Upgrade]{Upgrade auswählen}
     & Spieler
-    & \dots
-    & \dots
-    & \dots
+    & \begin{enumerate}[nosep,leftmargin=*]
+    	\item click
+    	\item Wenn genug XP, Fähigkeit wird eingeschaltet. Sonst, irgendeine Meldung.
+    \end{enumerate}
+    & Mauszeiger befindet sich über einen Upgrade-Node
+    & Upgrade wird angewendet oder Meldung wird angezeigt.  
+  
+  \\\midrule
+  \defid[unit-hit]{Turm wird angegriffen}
+  & Turm
+  & \begin{enumerate}[nosep, leftmargin=*]
+  \item Lebenspunkte werden abgezogen
+  \begin{itemize}[nosep, leftmargin=*]
+  	\item Wenn Lebenspunkte noch positiv, das war es
+  	\item Sonst Turm wird vollständing zerstört
+  \end{itemize}
+  \end{enumerate}
+  & gegnerische Angriffseinheit, greift Turm aktiv an.
+  & Turm hat weniger Lebenspunkte, oder Turm ist zerstört.
+  
+    \\\midrule
+    \defid[tower-attack]{Turm Angriff}
+    & Turm
+    &\begin{enumerate}[nosep, leftmargin=*]
+    \item Turm greift Gegner an solange Gegner nah genug.
+    \end{enumerate}
+    & Gegner in Reichweite vom Turm.
+    & Gegner getötet oder entkommen.
+    
+    \\\midrule
+    \defid[die]{Angriffseinheit stirbt}
+    & Einheit
+    & \begin{enumerate}[nosep,leftmargin=*]
+    \item Einheit stribt (nicht mehr auf dem Spielfeld)
+    \end{enumerate}
+    & Einheit hat 0 Lebenspunkte.
+    & Einheit nicht mehr sichtbar und nicht mehr verfügbar.
+    
+    \\\midrule
+    \defid[damage-base]{Gegner-Basis Angreifen}
+    &Angriffs"-einheit.
+    & \begin{enumerate}[nosep, leftmargin=*]
+    \item Entsprechend viele Lebenspunkte sind von der Gegner-Basis abgezogen
+    \item Angriffseinheit wird gelöscht.
+    \end{enumerate}
+    & Angrffseinheit hat Gegner-Basis erreicht.
+    & Gegner-Basis hat weniger Lebenspunkte, Angriffseinheit nicht mehr verfügbar.
+    
+    \\\midrule
+    \defid[base-die]{Basis kaputt}
+    & Basis.
+    & \begin{enumerate}[nosep, leftmargin=*]
+    \item Lebenspunkten sind abgezogen.
+    \item \begin{itemize}[nosep, leftmargin=*]
+    	\item wenn Lebenspunkte noch positiv, das war es.
+    	\item Sonst Basis kaputt, Spiel vorbei.
+    \end{itemize}
+    \end{enumerate}
+    & Gegnerische Angriffseinheit hat Basis erreicht.
+    & Basis jetzt mit weniger Lebenspunkte oder kaputt.
   \\
 
   \bottomrule
