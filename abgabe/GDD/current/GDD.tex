@@ -25,7 +25,7 @@
   % Hide todos in the final version.
   \usepackage[final, obeyFinal]{todonotes}
 \else
-  \usepackage[ngerman, textsize=footnotesize]{todonotes}
+  \usepackage[ngerman, colorinlistoftodos, textsize=footnotesize]{todonotes}
 \fi
 
 \iffinal
@@ -44,9 +44,9 @@
 \graphicspath{{img/}}
 
 % Commands to indicate missing parts.
-\newcommand\missingChapter[2][]{\todo[inline, #1]{\thechapter{} „#2“ schreiben}}
-\newcommand\missingSection[2][]{\todo[inline, #1]{\thesection{} „#2“ schreiben}}
-\newcommand\missingSubsection[2][]{\todo[inline, #1]{\thesubsection{} „#2“ schreiben}}
+\newcommand\missingChapter[2][]{\todo[inline, color=green, #1]{\thechapter{} „#2“ schreiben}}
+\newcommand\missingSection[2][]{\todo[inline, color=green, #1]{\thesection{} „#2“ schreiben}}
+\newcommand\missingSubsection[2][]{\todo[inline, color=green, #1]{\thesubsection{} „#2“ schreiben}}
 
 \makeatletter
 \newcounter{gdd@missingpics}
@@ -127,7 +127,15 @@
   % Hide the list of TODOs in the final version.
 \else
   \listoftodos
-  \addcontentsline{toc}{chapter}{TODOs}
+  \todototoc
+
+  % Legende
+  \vspace{2cm minus 1.5cm}
+  \todo[nolist, inline, color=green]{Fehlende Abschnitte\vphantom{g}}
+  \vspace{1.5ex}
+  \todo[nolist, inline, color=cyan]{Bilder und Abbildungen}
+  \vspace{1.5ex}
+  \todo[nolist, inline]{Sonstiges}
 \fi
 
 % FIXME: When this is activated it is quite obvious that for some reason not
