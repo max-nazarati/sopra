@@ -43,8 +43,8 @@ alle Helden.
     AS & Angriffsstärke
        & Schaden, den diese Einheit am gegenerischen Lager verursacht, wenn sie
          dieses erreicht (\refid{A:damage-base}). \\
-    GS & Geschwindigkeit & Distanz, die pro Zeiteinheit zurückgelegt werden
-         kann. \\
+    GS & Geschwindigkeit
+       & Distanz, die pro Zeiteinheit zurückgelegt werden kann. \\
 
     \bottomrule
   \end{longtabu}
@@ -75,9 +75,9 @@ alle Helden.
     % \endlastfoot
 
     \multicolumn{3}{c}{\bfseries Bug} \\*\midrule
-    B  & Eine schnelle Sprintereinheit ohne viele Lebenspunkte, die alleine
-         nicht besonders viel Schaden verursacht, aber in großer Masse gekauft
-         werden kann, da sie nicht viel kostet.
+    B  & \emph{(nicht kollidierend)} Eine schnelle Sprintereinheit ohne viele
+         Lebenspunkte, die alleine nicht besonders viel Schaden verursacht,
+         aber in großer Masse gekauft werden kann, da sie nicht viel kostet.
        & \missingpic \\*
     K  & 1    \\*
     LP & 1    \\*
@@ -86,8 +86,9 @@ alle Helden.
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Virus} \\*\midrule
-    B  & Durchschnittliche Einheit, die etwas mehr kostet als ein \emph{Bug,}
-         etwas langsamer ist, aber mehr LP hat und mehr Schaden verursacht.
+    B  & \emph{(nicht kollidierend)} Durchschnittliche Einheit, die etwas mehr
+         kostet als ein \emph{Bug,} etwas langsamer ist, aber mehr LP hat und
+         mehr Schaden verursacht.
        & \missingpic \\*
     K  & 2      \\*
     LP & 2      \\*
@@ -96,9 +97,10 @@ alle Helden.
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Trojaner} \\*\nopagebreak\midrule\nopagebreak
-    B  & Stirbt diese Einheit, werden an der Stelle ihres Todes \emph{Bugs} und
-         \emph{Viren} gespawnt. Ein Trojaner ist zwar relativ langsam und kostet
-         mehr als \emph{Viren,} hat dafür aber mehr LP und mehr AS.
+    B  & \emph{(kollidierend)} Stirbt diese Einheit, werden an der Stelle ihres
+         Todes \emph{Bugs} und \emph{Viren} gespawnt. Ein Trojaner ist zwar
+         relativ langsam und kostet mehr als \emph{Viren,} hat dafür aber mehr
+         LP und mehr AS.
        & \missingpic \\*
     K  & 4 \\*
     LP & 4 \\*
@@ -107,8 +109,8 @@ alle Helden.
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Nokia} \\*\midrule
-    B  & Diese Einheit ist bei gleichen Kosten zwar langsamer als ein
-         \emph{Trojaner,} dafür aber hat sie mehr LP und AS.
+    B  & \emph{(kollidierend)} Diese Einheit ist bei gleichen Kosten zwar
+         langsamer als ein \emph{Trojaner,} dafür aber hat sie mehr LP und AS.
        & \missingpic \\*
     K  & 4 \\*
     LP & 6 \\*
@@ -117,8 +119,9 @@ alle Helden.
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Thunderbird} \\*\midrule
-    B  & Diese Einheit fliegt, daher muss sie nicht den Weg um Mauern und Türme
-         herumfinden, sondern kann einfach auf Luftlinie darüber hinwegfliegen.
+    B  & \emph{(kollidierend)} Diese Einheit fliegt, daher muss sie nicht den
+         Weg um Mauern und Türme herumfinden, sondern kann einfach auf
+         Luftlinie darüber hinwegfliegen.
 
          Von den Kosten ist diese Einheit mit \emph{Trojaner} vergleichbar, sie
          ist zwar etwas schneller, hat aber nicht viele LP und weniger AS.
@@ -155,9 +158,9 @@ alle Helden.
     % \endlastfoot
 
     \multicolumn{3}{c}{\bfseries Settings} \\*\midrule
-    B  & Diese Einheit heilt Truppen um sich herum, hat jedoch selbst
-         eher wenig LP; diese ist die langsamste der Heldeneinheiten, sie
-         verursacht am gegenerischen Lager keinen Schaden.
+    B  & \emph{(kollidierend)} Diese Einheit heilt Truppen um sich herum, hat
+         jedoch selbst eher wenig LP; diese ist die langsamste der
+         Heldeneinheiten, sie verursacht am gegenerischen Lager keinen Schaden.
        & \missingpic \\*
     F  & \emph{(passiv)} heilt verbündete Truppen in einem gewissen Radius
          regelmäßig um einen Wert (\refid{H:heal}).\\*
@@ -168,35 +171,35 @@ alle Helden.
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Firefox} \\*\midrule
-    B  & Dieser Held ist eine starke Angriffseinheiten, die mit ihrer Fähigkeit
-         leichter zwischen den Verteidigungsgebäuden hindurchkommt. Der
-         \emph{Firefox} ist relativ schnell, hat durchschnittliche LP und
-         relativ viel~AS.
+    B  & \emph{(kollidierend)} Dieser Held ist eine starke Angriffseinheiten,
+         die mit ihrer Fähigkeit leichter zwischen den Verteidigungsgebäuden
+         hindurchkommt. Der \emph{Firefox} ist relativ schnell, hat
+         durchschnittliche LP und relativ viel~AS.
        & \missingpic \\*
+    F  & \emph{(aktiv)} kann Verteidigungsgebäude überspringen
+         (\refid{H:jump}).\\*
+    K  & 10     \\*
     LP & 6      \\*
     AS & 8      \\*
-    GS & 8      \\*
-    K  & 10     \\*
-    F  & \emph{(aktiv)} kann Verteidigungsgebäude überspringen
-         (\refid{H:jump}).\\
+    GS & 8      \\
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Bluescreen} \\*\nopagebreak\midrule\nopagebreak
-    B  & Diese Einheit unterstützt verbündete Einheit, indem sie gegenerische
-         Verteidigungsgebäude für einen Moment deaktivieren kann; dafür
-         verursacht sie am gegenerischen Lager selbst keinen Schaden, hat wenige
-         LP ist aber schnell.
+    B  & \emph{(kollidierend)} Diese Einheit unterstützt verbündete Einheit,
+         indem sie gegenerische Verteidigungsgebäude für einen Moment
+         deaktivieren kann; dafür verursacht sie am gegenerischen Lager selbst
+         keinen Schaden, hat wenige LP ist aber schnell.
        & \missingpic \\*
-    LP & 4      \\*
-    AS & 0      \\*
-    GS & 10     \\*
-    K  & 10     \\*
     F  & \emph{(aktiv)} kann eine Schockwelle zünden, um gegenerische
          Verteidigungsgebäude in der Nähe für einen Moment zu deaktivieren
          (\refid{H:emp}).
 
          Um diese Fähigkeit erneut einzusetzen, muss diese Einheit zur Basis
-         zurückkehren um sich aufzuladen (\refid{H:reload}).\\
+         zurückkehren um sich aufzuladen (\refid{H:reload}).\\*
+    K  & 10     \\*
+    LP & 4      \\*
+    AS & 0      \\*
+    GS & 10     \\
 
     \bottomrule
   \end{longtabu}

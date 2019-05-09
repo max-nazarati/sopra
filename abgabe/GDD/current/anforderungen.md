@@ -20,10 +20,15 @@ entwickelt wird.
 - [ ] Eigenes [Menü][Menü] (komplett mit der Maus steuerbar,
 außer Texteingaben).
 - Arten von [Spielobjekten][Spielobjekte]:
- - [ ] a) Min. 5 Kontrollierbare.
- - [ ] b) Min. 5 Auswählbare.
- - [ ] c) Min. 5 Nicht-Kontrollierbare, davon min. 3 Kollidierende.
- - [ ] d) Min. 3 Kontrollierbare, Kollidierende und Bewegliche.
+
+| Beschreibung                 | Erfüllt durch |
+| ---------------------------- | ------------- |
+| 5 Kontrollierbare            | Türme (Mauszeigerschütze, CD-Werfer, Antivirusprogramm, Lüftung, Wifi-Router, …) |
+| 5 Auswählbare                | Türme (Mauszeigerschütze, CD-Werfer, Antivirusprogramm, Lüftung, Wifi-Router, …) |
+| 5 Nicht-Kontrollierbare      | Bug, Virus |
+| ↳ davon min. 3 Kollidierende | Nokia, Kabel, Trojaner |
+| 3 Kontrollierbare, Kollidierende, Bewegliche (aktive Spielobjekte) | Helden (Settings, Firefox, Bluescreen) |
+
 - [ ] Min. 1000 gleichzeitig [aktive Spielobjekte][aktive Spielobjekte] der Art (d) möglich (Tech-Demo).
 - Arten von [Aktionen][Aktionen]:
  - [ ] Min. 10 verschiedene Aktionen (inkl. Laufen, Fähigkeiten, usw.).
@@ -55,7 +60,7 @@ keine Compiler/ReSharper Warnungen oder Fehler)?
 [Menü]: ./benutzeroberflaeche/menu.tex
 [Spielobjekte]: ./spiellogik/objekte.tex
 [Aktionen]: ./spiellogik/optionen-aktionen.tex
-[aktive Spielobjekte]: ./benutzeroberflaeche/menu.tex
+[aktive Spielobjekte]: ./spiellogik/objekte.tex
 [Statistiken]: ./spiellogik/statistiken.tex
 [Achievements]: ./spiellogik/achievements.tex
 [Usability]: https://sopra.informatik.uni-freiburg.de/soprawiki/UsabilityForGames
