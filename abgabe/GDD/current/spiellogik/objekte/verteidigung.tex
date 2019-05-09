@@ -1,3 +1,118 @@
 \subsection{Verteidigungsgebäude}
 
-\missingSubsection{Verteidigungsgebäude}
+\begin{table}[htbp]
+  \caption{Eigenschaften von Verteidigungsgebäuden}
+  \label{tab:defend-props}
+  \small
+  \begin{longtabu}{rlX}
+    \toprule\rowfont{\itshape}
+    & Eigenschaft & Beschreibung \\
+    \midrule
+
+    B  & Beschreibung
+       & Eine allgemeine Beschreibung dieser Einheit und Vergleich zu anderen
+         Einheiten. \\
+    K  & Kosten
+       & Die Menge an Gold die aufgewendet werden muss, um eine dieser
+         Einheiten zu kaufen (\refid{A:buy-defend}). \\
+    VS & Verteidigungsstärtke
+       & Schaden, den dieses Gebäude an getroffenen Gegner verursacht
+         (\refid{A:unit-hit}). \\
+    AI & Angriffsinterval
+       & Zeit die vergehen muss, bevor dieses Gebäude erneut Gegner angreifen
+         kann. \\
+
+    \bottomrule
+  \end{longtabu}
+\end{table}
+
+\begingroup
+  \small
+  \begin{longtabu}{rXp{0.191\linewidth}}
+    \rowfont{\normalsize}
+    \caption{Verteidigungsgebäude und ihre Werte\label{tab:defend-units}}
+    \\\midrule[\heavyrulewidth]\endfirsthead
+
+    % TODO: This seems to introduce too much vertical whitespace between the
+    % midrule and the next row.
+    \rowfont{\normalsize}
+    \caption[]{Verteidigungsgebäude und ihre Werte (fortges.)}
+    \\\midrule[\heavyrulewidth]\endhead
+
+    % TODO: At the moment this leads to strange page breaks, revisit when there
+    % is more content!
+    %
+    \multicolumn{3}{r}{\itshape fortges. auf der nächsten Seite}
+    \\\endfoot
+    %
+    \endlastfoot
+
+    \multicolumn{3}{c}{\bfseries Kabel} \\*\midrule
+    B  & Dieses Gebäude kostet wenig, steht gegnerischen Einheiten im Weg und
+         verursacht keinen Schaden.
+       & \missingpic \\*
+    K  & 2 \\*
+    VS & -- \\*
+    AI & -- \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Mauszeigerschütze} \\*\midrule
+    B  & Durchschnittlicher Verteidigungsturm, der Mauszeiger auf ein
+         Einzelziel verschießt.
+       & \missingpic \\*
+    K  & 3 \\*
+    VS & 1 \\*
+    AI & 1 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries CD-Werfer} \\*\midrule
+    B  & Dieser Turm kostet mehr und schießt langsamer als ein
+         \emph{Mauszeigerschütze,} dafür verursacht das Projektil (die CD)
+         jedoch auf ihrem Weg an jedem berührten Gegner den Schaden der Höhe
+         VS.
+       & \missingpic \\*
+    K  & 5 \\*
+    VS & 4 \\*
+    AI & 3 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Antivirusprogramm} \\*\midrule
+    B  & Von den Kosten ist dieser Turm vergleichbar zum \emph{CD-Werfer,}
+         allerdings schießt das \emph{Antivirusprogramm} noch langsamer,
+         verursacht dafür aber an einem Einzelziel erheblichen Schaden.
+       & \missingpic \\*
+    K  & 5 \\*
+    VS & 7 \\*
+    AI & 5 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Lüftung} \\*\midrule
+    B  & \dots
+       & \missingpic \\*
+    K  & 5 \\*
+    VS & 7 \\*
+    AI & 5 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Wifi-Router} \\*\midrule
+    B  & Dieser Turm schießt nahezu dauerhaft kreisförmige Wellen, die wenig
+         Schaden verusachen und durch Gegner hindurchgehen.
+       & \missingpic \\*
+    K  & 5 \\*
+    VS & 2 \\*
+    AI & 1 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Schockfeld} \\*\midrule
+    B  & Dieses „Gebäude“ blockiert die Gegner nicht, sie laufen darüber
+         hinweg. In regelmäßigen Abständen erhalten alle Gegner schaden, die
+         auf einem \emph{Schockfeld} sind.
+       & \missingpic \\*
+    K  & 4 \\*
+    VS & 2 \\*
+    AI & 3 \\
+
+    \bottomrule
+  \end{longtabu}
+  \missingpics{Bilder für Verteidigungsgebäuden}
+\endgroup
