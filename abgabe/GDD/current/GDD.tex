@@ -48,6 +48,18 @@
 \newcommand\missingSection[2][]{\todo[inline, #1]{\thesection{} „#2“ schreiben}}
 \newcommand\missingSubsection[2][]{\todo[inline, #1]{\thesubsection{} „#2“ schreiben}}
 
+\makeatletter
+\newcounter{gdd@missingpics}
+\newcommand\missingpic{%
+  \stepcounter{gdd@missingpics}%
+  \todo[nolist, inline, color=cyan]{Bild hier}}
+\newcommand\missingpics[1]{%
+  \ifnum\the\value{gdd@missingpics}=0\else%
+    \todo[inline, color=cyan]{#1 (\the\value{gdd@missingpics} Stück)}%
+    \setcounter{gdd@missingpics}{0}%
+  \fi}
+\makeatother
+
 % Decrease the font size slightly from \Large to fit all names in two lines.
 \addtokomafont{author}{\large}
 
