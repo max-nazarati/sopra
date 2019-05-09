@@ -43,6 +43,12 @@
 % Images go into the img/ folder.
 \graphicspath{{img/}}
 
+% Better looking cross-references.
+\hypersetup{
+  colorlinks,
+  linkcolor = {black!10!red},
+}
+
 % Commands to indicate missing parts.
 \newcommand\missingChapter[2][]{\todo[inline, color=green, #1]{\thechapter{} „#2“ schreiben}}
 \newcommand\missingSection[2][]{\todo[inline, color=green, #1]{\thesection{} „#2“ schreiben}}
