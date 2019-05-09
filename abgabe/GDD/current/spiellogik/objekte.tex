@@ -27,17 +27,22 @@
 
 \input{spiellogik/objekte/verteidigung}
 
-\subsection{Sonstige}
+\subsection{Basis}
 
-\begin{description}
-  \item[Computer] \todo[noline]{Bezeichnung in Ordnung?}
-    Ein Computer hat eine Ladung, zu Beginn ist diese bei 100\,\%. Jede
-    feindliche Angriffseinheit, die den Computer erreicht, zieht von der Ladung
-    so viele Prozent ab, wie die Einheit AS hat. Fällt die Ladung auf 0\,\% oder
-    einen negativen Wert, so geht dieser Computer aus (\refid{A:base-die}).
-    \todo{Alternative Formulierung: \emph{kaputt}}
+Die Basis eines Spielers erfüllt folgende Funktionen.
 
-  \item[Spieler]
+\begin{itemize}
+  \item Zu Beginn des Spiels eine Ladung (L) von 100\,\%, fällt die Ladung auf
+    0\,\% oder weniger, so geht die Basis kaputt (\refid{A:base-die}).
 
-  \item[Gegner]
-\end{description}
+  \item Die Basis ist das Ziel der feindlichen Angriffseinheiten; wird sie von
+    diesen erreicht, so werden von der Ladung so viel Prozent abgezogen wie die
+    Einheit AS hat (\refid{A:damage-base}).
+
+  \item Kehrt der \emph{Bluescreen} zur Basis zurück, kann er erneut seine
+    Fähigkeit einsetzen (\refid{H:reload}).
+
+  \item Neue Angriffseinheiten, die der Spieler kauft (\refid{A:buy-attack})
+    spawnen bei der Basis und begeben sich auf den Weg zur gegenerischen Basis.
+
+\end{itemize}
