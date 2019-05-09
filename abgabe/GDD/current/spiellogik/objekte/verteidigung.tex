@@ -21,6 +21,9 @@
     AI & Angriffsinterval
        & Zeit die vergehen muss, bevor dieses Gebäude erneut Gegner angreifen
          kann. \\
+    RW & Reichweite
+       & Radius um den Turm, in dem Einheiten angegriffen werden können, und in
+         dem die Effekte der Türme auf die Einheiten wirken. \\
 
     \bottomrule
   \end{longtabu}
@@ -52,8 +55,9 @@
          verursacht keinen Schaden.
        & \missingpic \\*
     K  & 2 \\*
-    VS & -- \\*
-    AI & -- \\
+    VS & --- \\*
+    AI & --- \\*
+    RW & --- \\
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Mauszeigerschütze} \\*\midrule
@@ -62,7 +66,8 @@
        & \missingpic \\*
     K  & 3 \\*
     VS & 1 \\*
-    AI & 1 \\
+    AI & 1 \\*
+    RW & 4 \\
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries CD-Werfer} \\*\midrule
@@ -73,7 +78,8 @@
        & \missingpic \\*
     K  & 5 \\*
     VS & 4 \\*
-    AI & 3 \\
+    AI & 3 \\*
+    RW & 3 \\
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Antivirusprogramm} \\*\midrule
@@ -83,24 +89,27 @@
        & \missingpic \\*
     K  & 5 \\*
     VS & 7 \\*
-    AI & 5 \\
+    AI & 5 \\*
+    RW & 6 \\
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Lüftung} \\*\midrule
-    B  & \dots
+    B  & Dieser Turm verlangsamt alle Einheiten im Einflussbereich.
        & \missingpic \\*
     K  & 5 \\*
     VS & 7 \\*
-    AI & 5 \\
+    AI & 5 \\*
+    RW & 4 \\
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Wifi-Router} \\*\midrule
     B  & Dieser Turm schießt nahezu dauerhaft kreisförmige Wellen, die wenig
-         Schaden verusachen und durch Gegner hindurchgehen.
+         Schaden verusachen und Gegner penetrieren.
        & \missingpic \\*
     K  & 5 \\*
     VS & 2 \\*
-    AI & 1 \\
+    AI & 1 \\*
+    RW & 5 \\
     \midrule[\heavyrulewidth]
 
     \multicolumn{3}{c}{\bfseries Schockfeld} \\*\midrule
@@ -110,7 +119,8 @@
        & \missingpic \\*
     K  & 4 \\*
     VS & 2 \\*
-    AI & 3 \\
+    AI & 3 \\*
+    RW & 0 \\
 
     \bottomrule
   \end{longtabu}
