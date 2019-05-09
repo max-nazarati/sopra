@@ -26,7 +26,7 @@ außer Texteingaben).
 | 5 Kontrollierbare            | Türme (Mauszeigerschütze, CD-Werfer, Antivirusprogramm, Lüftung, Wifi-Router, …) |
 | 5 Auswählbare                | Türme (Mauszeigerschütze, CD-Werfer, Antivirusprogramm, Lüftung, Wifi-Router, …) |
 | 5 Nicht-Kontrollierbare      | Bug, Virus |
-| ↳ davon min. 3 Kollidierende | Nokia, Kabel, Trojaner |
+| ↳ davon min. 3 Kollidierende | Nokia, Trojaner, Kabel |
 | 3 Kontrollierbare, Kollidierende, Bewegliche (aktive Spielobjekte) | Helden (Settings, Firefox, Bluescreen) |
 
 - [ ] Min. 1000 gleichzeitig [aktive Spielobjekte][aktive Spielobjekte] der Art (d) möglich (Tech-Demo).
