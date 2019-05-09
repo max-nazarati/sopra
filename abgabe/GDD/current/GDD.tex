@@ -46,6 +46,7 @@
 % Commands to indicate missing parts.
 \newcommand\missingChapter[2][]{\todo[inline, #1]{\thechapter{} „#2“ schreiben}}
 \newcommand\missingSection[2][]{\todo[inline, #1]{\thesection{} „#2“ schreiben}}
+\newcommand\missingSubsection[2][]{\todo[inline, #1]{\thesubsection{} „#2“ schreiben}}
 
 % Decrease the font size slightly from \Large to fit all names in two lines.
 \addtokomafont{author}{\large}
@@ -116,6 +117,11 @@
   \listoftodos
   \addcontentsline{toc}{chapter}{TODOs}
 \fi
+
+% FIXME: When this is activated it is quite obvious that for some reason not
+% all table numbers are used but some are skipped, e.g. 4.1, 4.2, 4.4, 4.6
+% But why?
+% \listoftables
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

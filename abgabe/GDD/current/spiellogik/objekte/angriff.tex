@@ -1,0 +1,204 @@
+\subsection{Angriffseinheiten}
+
+\begin{description}
+  \item[Truppen]\todo[noline]{Benennung überdenken}
+    kosten relativ wenig, lassen sich jedoch nicht weiter kontrollieren. Diese
+    Einheiten verfolgen das Ziel, möglichst schnell zum gegenerischen Lager zu
+    gelangen um dort Schaden zu verursachen.
+
+  \item[Helden] kosten mehr als Truppen, diese Einheiten lassen sich jedoch vom
+    Spieler kontrollieren und so strategisch einsetzen und außerhalb der
+    Reichweite von Verteidigungsgebäuden positionieren; zusätzlich besitzen sie
+    Fähigkeiten, die der Spieler einsetzen kann.
+
+\end{description}
+
+Tabelle~\ref{tab:attack-unit-props} beschreibt die Eigenschaften die
+Angriffseinheiten haben, in Tabelle~\ref{tab:attack-units} sind alle Truppen
+mit ihren Eigenschaften aufgelistet und Tabelle~\ref{tab:attack-heroes} enthält
+alle Helden.
+
+\begin{table}[htbp]
+  \caption{Eigenschaften von Angriffseinheiten}
+  \label{tab:attack-unit-props}
+  \small
+  \begin{longtabu}{rlX}
+    \toprule\rowfont{\itshape}
+    & Eigenschaft & Beschreibung \\
+    \midrule
+
+    B  & Beschreibung
+       & Eine allgemeine Beschreibung dieser Einheit und Vergleich zu anderen
+         Einheiten. \\
+    F  & Fähigkeit
+       & Nur Helden haben eine Fähigkeit, diese kann vom Spieler aktiviert
+         werden (\refid{A:hero-ability}). \\
+    K  & Kosten
+       & Die Menge an Gold die aufgewendet werden muss, um eine dieser
+         Einheiten zu kaufen (\refid{A:buy-attack}). \\
+    LP & Lebenspunkte
+       & Die Zahl der Lebenspunkte einer Einheit: Angriffe von
+         Verteidigungstürmen ziehen Lebenspunkte von diesem Wert ab; fällt er
+         unter Null, so stirbt diese Einheit (\refid{A:die}). \\
+    AS & Angriffsstärke
+       & Schaden, den diese Einheit am gegenerischen Lager verursacht, wenn sie
+         dieses erreicht (\refid{A:damage-base}). \\
+    GS & Geschwindigkeit & Distanz, die pro Zeiteinheit zurückgelegt werden
+         kann. \\
+
+    \bottomrule
+  \end{longtabu}
+  \todo[inline, caption = {Größe und Kollision}]{%
+    Größe und Kollision evtl. in die Tabelle aufnehmen, aber was sagt die Größe
+    genau aus? Diese ist doch nur interessant, wenn die Einheit kollidiert?}
+\end{table}
+
+\begingroup
+  \small
+  \begin{longtabu}{rXp{0.191\linewidth}}
+    \rowfont{\normalsize}
+    \caption{Truppen und ihre Werte\label{tab:attack-units}}
+    \\\midrule[\heavyrulewidth]\endfirsthead
+
+    % TODO: This seems to introduce too much vertical whitespace between the
+    % midrule and the next row.
+    \rowfont{\normalsize}
+    \caption[]{Truppen und ihre Werte (fortges.)}
+    \\\midrule[\heavyrulewidth]\endhead
+
+    % TODO: At the moment this leads to strange page breaks, revisit when there
+    % is more content!
+    %
+    % \multicolumn{3}{r}{\itshape fortges. auf der nächsten Seite}
+    % \\\endfoot
+    %
+    % \endlastfoot
+
+    \multicolumn{3}{c}{\bfseries Bug} \\*\midrule
+    B  & Eine schnelle Sprintereinheit ohne viele Lebenspunkte, die alleine
+         nicht besonders viel Schaden verursacht, aber in großer Masse gekauft
+         werden kann, da sie nicht viel kostet.
+       & \itshape Bild hier? \\*
+    K  & 1    \\*
+    LP & 1    \\*
+    AS & 1    \\*
+    GS & 10   \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Virus} \\*\midrule
+    B  & Durchschnittliche Einheit, die etwas mehr kostet als ein \emph{Bug,}
+         etwas langsamer ist, aber mehr LP hat und mehr Schaden verursacht.
+       & \itshape Bild hier? \\*
+    K  & 2      \\*
+    LP & 2      \\*
+    AS & 2      \\*
+    GS & 5      \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Trojaner} \\*\nopagebreak\midrule\nopagebreak
+    B  & Stirbt diese Einheit, werden an der Stelle ihres Todes \emph{Bugs} und
+         \emph{Viren} gespawnt. Ein Trojaner ist zwar relativ langsam und kostet
+         mehr als \emph{Viren,} hat dafür aber mehr LP und mehr AS.
+       & \itshape Bild hier? \\*
+    K  & 4 \\*
+    LP & 4 \\*
+    AS & 4 \\*
+    GS & 3 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Nokia} \\*\midrule
+    B  & Diese Einheit ist bei gleichen Kosten zwar langsamer als ein
+         \emph{Trojaner,} dafür aber hat sie mehr LP und AS.
+       & \itshape Bild hier? \\*
+    K  & 4 \\*
+    LP & 6 \\*
+    AS & 6 \\*
+    GS & 2 \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Thunderbird} \\*\midrule
+    B  & Diese Einheit fliegt, daher muss sie nicht den Weg um Mauern und Türme
+         herumfinden, sondern kann einfach auf Luftlinie darüber hinwegfliegen.
+
+         Von den Kosten ist diese Einheit mit \emph{Trojaner} vergleichbar, sie
+         ist zwar etwas schneller, hat aber nicht viele LP und weniger AS.
+       & \itshape Bild hier? \\*
+    K  & 4 \\*
+    LP & 4 \\*
+    AS & 3 \\*
+    GS & 4 \\
+
+    \bottomrule
+  \end{longtabu}
+  \todo[inline]{Bilder für Truppen}
+\endgroup
+
+\begingroup
+  \small
+  \begin{longtabu}{rXp{0.191\linewidth}}
+    \rowfont{\normalsize}
+    \caption{Helden und ihre Werte\label{tab:attack-heroes}}
+    \\\midrule[\heavyrulewidth]\endfirsthead
+
+    % TODO: This seems to introduce too much vertical whitespace between the
+    % midrule and the next row.
+    \rowfont{\normalsize}
+    \caption[]{Helden und ihre Werte (fortges.)}
+    \\\midrule[\heavyrulewidth]\endhead
+
+    % TODO: At the moment this leads to strange page breaks, revisit when there
+    % is more content!
+    %
+    % \multicolumn{3}{r}{\itshape fortges. auf der nächsten Seite}
+    % \\\endfoot
+    %
+    % \endlastfoot
+
+    \multicolumn{3}{c}{\bfseries Settings} \\*\midrule
+    B  & Diese Einheit heilt Truppen um sich herum, hat jedoch selbst
+         eher wenig LP; diese ist die langsamste der Heldeneinheiten, sie
+         verursacht am gegenerischen Lager keinen Schaden.
+       & \itshape Bild hier? \\*
+    F  & \emph{(passiv)} heilt verbündete Truppen in einem gewissen Radius
+         regelmäßig um einen Wert (\refid{H:heal}).\\*
+    K  & 10   \\*
+    LP & 4    \\*
+    AS & 0    \\*
+    GS & 4    \\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Firefox} \\*\midrule
+    B  & Dieser Held ist eine starke Angriffseinheiten, die mit ihrer Fähigkeit
+         leichter zwischen den Verteidigungsgebäuden hindurchkommt. Der
+         \emph{Firefox} ist relativ schnell, hat durchschnittliche LP und
+         relativ viel~AS.
+       & \itshape Bild hier? \\*
+    LP & 6      \\*
+    AS & 8      \\*
+    GS & 8      \\*
+    K  & 10     \\*
+    F  & \emph{(aktiv)} kann Verteidigungsgebäude überspringen
+         (\refid{H:jump}).\\
+    \midrule[\heavyrulewidth]
+
+    \multicolumn{3}{c}{\bfseries Bluescreen} \\*\nopagebreak\midrule\nopagebreak
+    B  & Diese Einheit unterstützt verbündete Einheit, indem sie gegenerische
+         Verteidigungsgebäude für einen Moment deaktivieren kann; dafür
+         verursacht sie am gegenerischen Lager selbst keinen Schaden, hat wenige
+         LP ist aber schnell.
+       & \itshape Bild hier? \\*
+    LP & 4      \\*
+    AS & 0      \\*
+    GS & 10     \\*
+    K  & 10     \\*
+    F  & \emph{(aktiv)} kann eine Schockwelle zünden, um gegenerische
+         Verteidigungsgebäude in der Nähe für einen Moment zu deaktivieren
+         (\refid{H:emp}).
+
+         Um diese Fähigkeit erneut einzusetzen, muss diese Einheit zur Basis
+         zurückkehren um sich aufzuladen (\refid{H:reload}).\\
+
+    \bottomrule
+  \end{longtabu}
+  \todo[inline]{Bilder für Helden}
+\endgroup
