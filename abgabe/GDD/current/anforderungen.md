@@ -19,7 +19,7 @@ entwickelt wird.
 - [ ] Pausefunktion.
 - [ ] Eigenes [Menü][Menü] (komplett mit der Maus steuerbar,
 außer Texteingaben).
-- Arten von [Spielobjekten][Spielobjekte]:
+- [ ] Arten von [Spielobjekten][Spielobjekte]:
 
 | Beschreibung                 | Erfüllt durch |
 | ---------------------------- | ------------- |
@@ -57,7 +57,7 @@ keine Compiler/ReSharper Warnungen oder Fehler)?
 
 
 [Steuerung]:./benutzeroberflaeche/menu.tex
-[Menü]: ./benutzeroberflaeche/menu.tex
+[Menü]: ./benutzeroberflaeche/menu_structure.png
 [Spielobjekte]: ./spiellogik/objekte.tex
 [Aktionen]: ./spiellogik/optionen-aktionen.tex
 [aktive Spielobjekte]: ./spiellogik/objekte.tex
