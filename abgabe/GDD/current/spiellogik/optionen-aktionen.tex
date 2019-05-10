@@ -51,7 +51,7 @@
   
   \defid[object-selection]{Objekt Auswahl}
   & Spieler
-  & \begin{enumerate}[nosep, leftmargin=*]
+  & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
   \item Spieler clickt auf das Objekt (Turm oder Held).
   \item Objekt ist jetzt ausgewählt.
   \end{enumerate}
@@ -61,7 +61,7 @@
     \\\midrule
     \defid[cancel-object-selection]{Objekt Auswahl kündigen}
     & Spieler
-    & \begin{enumerate}[nosep,leftmargin=*]
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep,leftmargin=*]
     	\item Spieler druckt TASTE, was den Objekt-Auswahl terminiert.
     \end{enumerate}
     & Ein Objekt (Turm oder Held) ist gerade ausgewählt.
@@ -71,7 +71,7 @@
   \defid[move-figure]{Figur(en) durch Klick bewegen}
     % This can now be referenced using \refid{A:move-figure}
     & Spieler
-    & \begin{enumerate}[nosep,leftmargin=*]
+    &\vspace*{-0.2cm} \begin{enumerate}[nosep,leftmargin=*]
     	\item Click innerhalb der Angriffstrecke.
     	\item Figur(en) bewegen sich zur
     	angegebenen Position.
@@ -85,7 +85,7 @@
   \\\midrule
   \defid[hero-ability]{Held Fähigkeit Auswahl}
   & Spieler
-  & \begin{enumerate}[nosep, leftmargin=*]
+  &\vspace*{-0.2cm} \begin{enumerate}[nosep, leftmargin=*]
   \item click auf Fähigkeit.
   \item Führe Fähigkeit aus
   \end{enumerate}
@@ -95,7 +95,7 @@
   \\\midrule
   \defid[select-building]{Gebäude aus Menu auswählen}
   & Spieler
-  & \begin{enumerate}[nosep, leftmargin=*]
+  &\vspace*{-0.2cm} \begin{enumerate}[nosep, leftmargin=*]
   \item Gebäude wird durch click ausgewählt
   \end{enumerate}
   & Maus hängt über einen Gebäude-Menueintrag
@@ -105,7 +105,7 @@
   \\\midrule
   \defid[put-defend]{Gebäude kaufen}
   & Spieler
-  &  \begin{enumerate}[nosep, leftmargin=*]
+  & \vspace*{-0.2cm} \begin{enumerate}[nosep, leftmargin=*]
   \item Spieler clickt auf der Verteidigungsstrecke.
   \item Geld für das Gebäude wird abgezogen.
   \item Gebäude wird auf die Ausgewählte Stelle plaziert.
@@ -117,7 +117,7 @@
   \\\midrule
   \defid[buy-attack]{Einheit kaufen.}
   & Spieler
-  & \begin{enumerate}[nosep,leftmargin=*]
+  &\vspace*{-0.2cm} \begin{enumerate}[nosep,leftmargin=*]
     \item Spieler clickt.
     \item Gold wird abgezogen.
     \item Einheit wird produziert
@@ -129,9 +129,38 @@
   & Einheit produziert.
   
   \\\midrule
+  \defid[damage-unit]{Angriffseinheit erhält schaden}
+  & Angriffs"-einheit
+  &\vspace*{-0.2cm} \begin{enumerate}[nosep, leftmargin=*]
+  \item Angriffseinheit wird angegriffen.
+  \item Angriffseinheit verliert entsprechend viele Lebenspunkte.
+  \end{enumerate}
+  & Angriffseinheit war auf einer der Strecken und wird angegriffen.
+  & Angriffseinheit hat weniger Lebenspunkte.
+  
+  \\\midrule
+    \defid[die]{Angriffseinheit stirbt}
+    & Angriffs"-einheit
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep,leftmargin=*]
+    \item Angriffseinheit stribt (nicht mehr auf dem Spielfeld)
+    \end{enumerate}
+    & Angriffseinheit hat 0 Lebenspunkte.
+    & Angriffseinheit nicht mehr sichtbar und nicht mehr verfügbar.
+    
+    \\\midrule
+    \defid[damage-base]{Gegner-Basis Angreifen}
+    &Angriffs"-einheit.
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
+    \item Entsprechend viele Lebenspunkte sind von der Gegner-Basis abgezogen
+    \item Angriffseinheit wird gelöscht.
+    \end{enumerate}
+    & Angrffseinheit hat Gegner-Basis erreicht.
+    & Gegner-Basis hat weniger Lebenspunkte, Angriffseinheit nicht mehr verfügbar.
+  
+  \\\midrule
   \defid[update-defend]{Turm updaten}
   & Spieler
-  &\begin{enumerate}[nosep, leftmargin=*]
+  &\vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
   \item Spieler clickt auf Update.
   \item Turm ist aktualisiert.
   \end{enumerate}
@@ -141,7 +170,7 @@
     \\\midrule
     \defid[select-Upgrade]{Upgrade auswählen}
     & Spieler
-    & \begin{enumerate}[nosep,leftmargin=*]
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep,leftmargin=*]
     	\item click
     	\item Wenn genug XP, Fähigkeit wird eingeschaltet. Sonst, irgendeine Meldung.
     \end{enumerate}
@@ -151,7 +180,7 @@
   \\\midrule
   \defid[unit-hit]{Turm wird angegriffen}
   & Turm
-  & \begin{enumerate}[nosep, leftmargin=*]
+  & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
   \item Lebenspunkte werden abgezogen
   \begin{itemize}[nosep, leftmargin=*]
   	\item Wenn Lebenspunkte noch positiv, das war es
@@ -164,43 +193,33 @@
     \\\midrule
     \defid[tower-attack]{Turm Angriff}
     & Turm
-    &\begin{enumerate}[nosep, leftmargin=*]
+    &\vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
     \item Turm greift Gegner an solange Gegner nah genug.
     \end{enumerate}
     & Gegner in Reichweite vom Turm.
     & Gegner getötet oder entkommen.
-
-    \\\midrule
-    \defid[die]{Angriffseinheit stirbt}
-    & Einheit
-    & \begin{enumerate}[nosep,leftmargin=*]
-    \item Einheit stribt (nicht mehr auf dem Spielfeld)
-    \end{enumerate}
-    & Einheit hat 0 Lebenspunkte.
-    & Einheit nicht mehr sichtbar und nicht mehr verfügbar.
     
     \\\midrule
-    \defid[damage-base]{Gegner-Basis Angreifen}
-    &Angriffs"-einheit.
-    & \begin{enumerate}[nosep, leftmargin=*]
-    \item Entsprechend viele Lebenspunkte sind von der Gegner-Basis abgezogen
-    \item Angriffseinheit wird gelöscht.
+    \defid[base-damage]{Basis Schaden}
+    & Basis
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
+    \item Lebenspunkte werden abgezogen.
+    \item \begin{itemize}[nosep, leftmargin=*]
+    	\item Wenn Lebenspunkte positiv, Spiel macht weiter
+    	\item Sonst, Basis zerstört.
+    	\end{itemize}
     \end{enumerate}
-    & Angrffseinheit hat Gegner-Basis erreicht.
-    & Gegner-Basis hat weniger Lebenspunkte, Angriffseinheit nicht mehr verfügbar.
+    & Gegnerische Einheit hat Basis erreicht.
+    & Basis hat weniger Lebenspunkte.
     
     \\\midrule
     \defid[base-die]{Basis kaputt}
     & Basis.
-    & \begin{enumerate}[nosep, leftmargin=*]
-    \item Lebenspunkten sind abgezogen.
-    \item \begin{itemize}[nosep, leftmargin=*]
-    	\item wenn Lebenspunkte noch positiv, das war es.
-    	\item Sonst Basis kaputt, Spiel vorbei.
-    \end{itemize}
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
+    \item Basis zerstört.
     \end{enumerate}
-    & Gegnerische Angriffseinheit hat Basis erreicht.
-    & Basis jetzt mit weniger Lebenspunkte oder kaputt.
+    & Basis hatte nicht-positive Lebenspunkte.
+    & Spiel vorbei, Gegner gewonnen.
   \\
 
   \bottomrule
