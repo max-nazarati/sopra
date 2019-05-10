@@ -20,24 +20,6 @@
 
 \input{spiellogik/objekte/verteidigung}
 
+\input{spiellogik/objekte/basis}
+
 \input{spiellogik/objekte/upgrades}
-
-\subsection{Basis}
-
-Die Basis eines Spielers erfüllt folgende Funktionen.
-
-\begin{itemize}
-  \item Zu Beginn des Spiels eine Ladung (L) von 100\,\%, fällt die Ladung auf
-    0\,\% oder weniger, so geht die Basis kaputt (\refid{A:base-die}).
-
-  \item Die Basis ist das Ziel der feindlichen Angriffseinheiten; wird sie von
-    diesen erreicht, so werden von der Ladung so viel Prozent abgezogen wie die
-    Einheit AS hat (\refid{A:damage-base}).
-
-  \item Kehrt der \emph{Bluescreen} zur Basis zurück, kann er erneut seine
-    Fähigkeit einsetzen (\refid{H:reload}).
-
-  \item Neue Angriffseinheiten, die der Spieler kauft (\refid{A:buy-attack})
-    spawnen bei der Basis und begeben sich auf den Weg zur gegenerischen Basis.
-
-\end{itemize}
