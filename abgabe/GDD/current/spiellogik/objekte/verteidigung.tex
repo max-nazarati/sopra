@@ -1,5 +1,49 @@
 \subsection{Verteidigungsgebäude}
 
+In Tabelle~\ref{tab:defend-props} werden die Eigenschaften von
+Verteidigungsgebäuden beschrieben, Tabelle~\ref{tab:defend-units} enthält die
+Gebäude und weist den Eigenschaften Werte zu. Der Wert W berechnet sich aus der
+Menge an Gold, die in dieses Gebäude investiert wurde.
+
+Im Laufe des Spiels kann der Spieler folgende Aktionen auf eigenen Türmen
+ausführen:
+
+\begin{description}
+  \item[Verkaufen] (\refid{A:tower-sell}) Das Gebäude verschwindet, es können
+    neue Gebäude an dieser Stelle gebaut werden und feindliche Einheiten können
+    wieder über diese Felder laufen.
+
+    Der Spieler erhält 80\,\% des Gebäudewertes an Gold.
+
+  \item[Verbessern] (\refid{A:tower-improve}) Erhöht die Reichweite des
+    Gebäudes (außer bei \emph{Schockfeld}) um 50\,\% des aktuellen Wertes und
+    reduziert das Angriffsintervall um 20\,\% des aktuellen Wertes.
+
+    Die Verbesserung kostet den Spieler 50\,\% des aktuellen Turmwertes und der
+    Turmwert steigt um diese Kosten.
+
+    Bei \emph{Kabel} ist keine Verbesserung möglich, jedes andere Gebäude kann
+    maximal zweimal verbessert werden.
+
+  \item[Strategie wählen] (\refid{A:tower-strategy}) Mögliche Strategien sind
+    \begin{description}[itemsep=0pt]
+      \item[Erste Einheit] \emph{(ist standardmäßig ausgewählt)}\\
+        Greift die Einheit an, die den kürzesten Weg hat, um Schaden an der Basis
+        zu verusachen.
+
+      \item[Stärkste Einheit] ~\\
+        Greift die Einheit an, die die meisten LP hat.
+
+      \item[Schwächste Einheit] ~\\
+        Greift die Einheit an, die die wenigsten LP hat.
+    \end{description}
+
+    Bei \emph{Kabel} und \emph{Schockfeld} ist ein wählen der Strategie nicht
+    möglich.
+
+\end{description}
+
+
 \begingroup
   \small
   \begin{longtabu}{rlX}
@@ -15,13 +59,13 @@
          Einheiten. \\
     K  & Kosten
        & Die Menge an Gold die aufgewendet werden muss, um eines dieser
-         Gebäude zu platzieren (\refid{A:put-defend}). \\
+         Gebäude zu platzieren~(\refid{A:put-defend}). \\
     VS & Verteidigungsstärke
-       & Schaden, den dieses Gebäude an getroffenen Gegner verursacht
-         (\refid{A:unit-hit}). \\
-    AI & Angriffsinterval
+       & Schaden, den dieses Gebäude an getroffenen Gegner
+         verursacht~(\refid{A:unit-hit}). \\
+    AI & Angriffsintervall
        & Zeit die vergehen muss, bevor dieses Gebäude erneut Gegner angreifen
-         kann (\refid{A:tower-attack}). \\
+         kann~(\refid{A:tower-attack}). \\
     RW & Reichweite
        & Radius um den Turm, in dem Einheiten angegriffen werden können, und in
          dem die Effekte der Türme auf die Einheiten wirken. \\
@@ -37,18 +81,13 @@
     \caption{Verteidigungsgebäude und ihre Werte\label{tab:defend-units}}
     \\\midrule[\heavyrulewidth]\endfirsthead
 
-    % TODO: This seems to introduce too much vertical whitespace between the
-    % midrule and the next row.
     \rowfont{\normalsize}
     \caption[]{Verteidigungsgebäude und ihre Werte (fortges.)}
     \\\midrule[\heavyrulewidth]\endhead
 
-    % TODO: At the moment this leads to strange page breaks, revisit when there
-    % is more content!
-    %
     \multicolumn{3}{r}{\itshape fortges. auf der nächsten Seite}
     \\\endfoot
-    %
+
     \endlastfoot
 
     \multicolumn{3}{c}{\bfseries Kabel} \\*\midrule
