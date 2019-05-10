@@ -18,12 +18,13 @@ Angriffseinheiten haben, in Tabelle~\ref{tab:attack-units} sind alle Truppen
 mit ihren Eigenschaften aufgelistet und Tabelle~\ref{tab:attack-heroes} enthält
 alle Helden.
 
-\begin{table}[htbp]
-  \caption{Eigenschaften von Angriffseinheiten}
-  \label{tab:attack-unit-props}
+\begingroup
   \small
   \begin{longtabu}{rlX}
-    \toprule\rowfont{\itshape}
+    \rowfont{\normalsize}
+    \caption{Eigenschaften von Angriffseinheiten\label{tab:attack-unit-props}}\\
+
+    \midrule[\heavyrulewidth]\rowfont{\itshape}
     & Eigenschaft & Beschreibung \\
     \midrule
 
@@ -51,7 +52,7 @@ alle Helden.
   \todo[inline, caption = {Größe und Kollision}]{%
     Größe und Kollision evtl. in die Tabelle aufnehmen, aber was sagt die Größe
     genau aus? Diese ist doch nur interessant, wenn die Einheit kollidiert?}
-\end{table}
+\endgroup
 
 \begingroup
   \small
