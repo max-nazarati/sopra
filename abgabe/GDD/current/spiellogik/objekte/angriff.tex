@@ -18,12 +18,13 @@ Angriffseinheiten haben, in Tabelle~\ref{tab:attack-units} sind alle Truppen
 mit ihren Eigenschaften aufgelistet und Tabelle~\ref{tab:attack-heroes} enthält
 alle Helden.
 
-\begin{table}[htbp]
-  \caption{Eigenschaften von Angriffseinheiten}
-  \label{tab:attack-unit-props}
+\begingroup
   \small
   \begin{longtabu}{rlX}
-    \toprule\rowfont{\itshape}
+    \rowfont{\normalsize}
+    \caption{Eigenschaften von Angriffseinheiten\label{tab:attack-unit-props}}\\
+
+    \midrule[\heavyrulewidth]\rowfont{\itshape}
     & Eigenschaft & Beschreibung \\
     \midrule
 
@@ -51,7 +52,7 @@ alle Helden.
   \todo[inline, caption = {Größe und Kollision}]{%
     Größe und Kollision evtl. in die Tabelle aufnehmen, aber was sagt die Größe
     genau aus? Diese ist doch nur interessant, wenn die Einheit kollidiert?}
-\end{table}
+\endgroup
 
 \begingroup
   \small
@@ -98,9 +99,9 @@ alle Helden.
 
     \multicolumn{3}{c}{\bfseries Trojaner} \\*\nopagebreak\midrule\nopagebreak
     B  & \emph{(kollidierend)} Stirbt diese Einheit, werden an der Stelle ihres
-         Todes \emph{Bugs} und \emph{Viren} gespawnt. Ein Trojaner ist zwar
-         relativ langsam und kostet mehr als \emph{Viren,} hat dafür aber mehr
-         LP und mehr AS.
+         Todes \emph{Bugs} und \emph{Viren} gespawnt
+         (\refid{A:spawn-children}). Ein Trojaner ist zwar relativ langsam und
+         kostet mehr als \emph{Viren,} hat dafür aber mehr LP und mehr AS.
        & \missingpic \\*
     K  & 4 \\*
     LP & 4 \\*
@@ -162,8 +163,8 @@ alle Helden.
          jedoch selbst eher wenig LP; diese ist die langsamste der
          Heldeneinheiten, sie verursacht am gegenerischen Lager keinen Schaden.
        & \missingpic \\*
-    F  & \emph{(passiv)} heilt verbündete Truppen in einem gewissen Radius
-         regelmäßig um einen Wert (\refid{H:settings-hero}).\\*
+    F  & \emph{(passiv)} heilt verbündete Truppen in Radius 4
+         jede Sekunde um 3 LP (\refid{H:heal}).\\*
     K  & 10   \\*
     LP & 4    \\*
     AS & 0    \\*
@@ -176,8 +177,8 @@ alle Helden.
          hindurchkommt. Der \emph{Firefox} ist relativ schnell, hat
          durchschnittliche LP und relativ viel~AS.
        & \missingpic \\*
-    F  & \emph{(aktiv)} kann Verteidigungsgebäude überspringen
-         (\refid{H:firefox-hero}).\\*
+    F  & \emph{(aktiv)} kann 2 Felder überspringen, auch wenn
+         Verteidigungsgebäude im Weg stehen (\refid{H:jump}). \\*
     K  & 10     \\*
     LP & 6      \\*
     AS & 8      \\*
@@ -191,12 +192,12 @@ alle Helden.
          keinen Schaden, hat wenige LP ist aber schnell.
        & \missingpic \\*
     F  & \emph{(aktiv)} kann eine Schockwelle zünden, um gegenerische
-         Verteidigungsgebäude in der Nähe für einen Moment zu deaktivieren
+         Verteidigungsgebäude in der Nähe für zwei Sekunden zu deaktivieren
          (\refid{H:emp}).
 
          Um diese Fähigkeit erneut einzusetzen, muss diese Einheit zur Basis
-         zurückkehren um sich aufzuladen (\refid{H:bluescreen-hero}).\\*
-    K  & 10     \\*
+         zurückkehren um sich aufzuladen (\refid{H:reload}).\\*
+    K  & 10     \\*	
     LP & 4      \\*
     AS & 0      \\*
     GS & 10     \\

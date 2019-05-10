@@ -1,11 +1,12 @@
 \subsection{Verteidigungsgebäude}
 
-\begin{table}[htbp]
-  \caption{Eigenschaften von Verteidigungsgebäuden}
-  \label{tab:defend-props}
+\begingroup
   \small
   \begin{longtabu}{rlX}
-    \toprule\rowfont{\itshape}
+    \rowfont{\normalsize}
+    \caption{Eigenschaften von Verteidigungsgebäuden\label{tab:defend-props}}\\
+
+    \midrule[\heavyrulewidth]\rowfont{\itshape}
     & Eigenschaft & Beschreibung \\
     \midrule
 
@@ -20,14 +21,14 @@
          (\refid{A:unit-hit}). \\
     AI & Angriffsinterval
        & Zeit die vergehen muss, bevor dieses Gebäude erneut Gegner angreifen
-         kann. \\
+         kann (\refid{A:tower-attack}). \\
     RW & Reichweite
        & Radius um den Turm, in dem Einheiten angegriffen werden können, und in
          dem die Effekte der Türme auf die Einheiten wirken. \\
 
     \bottomrule
   \end{longtabu}
-\end{table}
+\endgroup
 
 \begingroup
   \small
@@ -104,7 +105,7 @@
 
     \multicolumn{3}{c}{\bfseries Wifi-Router} \\*\midrule
     B  & Dieser Turm schießt nahezu dauerhaft kreisförmige Wellen, die wenig
-         Schaden verusachen und Gegner penetrieren.
+         Schaden verursachen und Gegner penetrieren.
        & \missingpic \\*
     K  & 5 \\*
     VS & 2 \\*

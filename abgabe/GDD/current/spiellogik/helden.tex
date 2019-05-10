@@ -1,34 +1,13 @@
-\section{Helden}
-
-% Siehe auch: https://sopra.informatik.uni-freiburg.de/soprawiki/Game_Mechanic
-
-% Dieser Abschnitt beinhaltet die Aktionen, die Spieler oder KI vornehmen
-% können, um den Zustand des Spiels zu verändern (zB das Bauen von Einheiten
-% oder das Abbauen von Ressourcen). Je klarer diese Aktionen formuliert sind,
-% desto leichter fällt einem die Umsetzung der Aktionen bei der Programmierung
-% des Spiels.
-%
-% Wichtig sind auch die Einstellungen, die der Spieler am Spiel vornehmen kann,
-% um das Spielverhalten zu verändern (zB.  Schwierigkeitsgrad ändern).
-%
-% Das Ziel des Spiels sollte schließlich anhand der beschriebenen Aktionen
-% erklärt werden.
-%
-% Die Auflistung der Optionen und Aktionen erfolgt tabellarisch und ist in Form
-% und Inhalt an Use Cases (http://de.wikipedia.org/wiki/Use_case) angelehnt.
-
-\missingSection{Helden in Tabelle}
-
 \StartId{H}
 \begingroup
   \small
   \tabulinesep=1mm
 \begin{longtabu}{X[0.6L]X[0.4L]X[L]X[L]X[L]}
   \rowfont{\normalsize}
-  \caption{Helden\label{tab:helden}}\\
+  \caption{Beschreibung der Heldenfähigkeiten die durch \refid{A:hero-ability} ausgeführt werden\label{tab:helden}}\\
   \midrule[\heavyrulewidth]\rowfont{\itshape}
     ID/Name              &
-    Akteure              &
+    Held                 &
     Ereignis"-fluss      &
     Anfangs"-bedingung   &
     Abschluss"-bedingung \\
@@ -38,7 +17,7 @@
   \caption[]{Helden (fortges.)}\\
   \midrule[\heavyrulewidth]\rowfont{\itshape}
     ID/Name              &
-    Akteure              &
+    Held                 &
     Ereignis"-fluss      &
     Anfangs"-bedingung   &
     Abschluss"-bedingung \\
@@ -49,27 +28,35 @@
 
   \endlastfoot
 
-  % Example line taken from the SOPRA wiki.
-  \defid[settings-hero]{Ubuntu-settings}
-    % This can now be referenced using \refid{A:move-figure}
-    & Spieler
-    & Ubuntu settings heilt alle Einheiten, die sich in einem bestimmten Radius befinden regelmäßig um einen bestimmten Wert.
-    & Einheit befindet sich in Heilradius von Ubuntu-settings.
-    & Einheit verlässt Heilradius von Ubuntu-settings.
+  \defid[heal]{Heilen}
+    & Settings
+    & Heilt die Einheiten, die sich im Radius befinden regelmäßig.
+    & Es befinden sich Einheiten im Radius.
+    & Einheiten haben mehr LP, oder maximale LP.
   \\\midrule
-  \defid[firefox-hero]{Firefox}
-    & Spieler
-    & Der Firefox kann gegnerische Verteidigungsgebäude überspringen.
-    & Firefox läuft auf gegnerisches Verteidigungsgebäude zu.
-    & Firefox erreicht gegnerischen Verteidigungsgebäude und überspringt es.
-  \\\midrule
-  \defid[bluescreen-hero]{Bluescreen}
-    & Spieler
-    & Der Bluescreen kann eine Schockwelle zünden, mit der er gegnerische Verteidigungsgebäude vorübergehend deaktiviert.
-    & Bluescreen wird von Spieler in die Nähe gegnerischer Türme gesteuert. Spieler löst Schockwelle aus, und gegnerische Türme werden deaktiviert.
-    & Bluescreen muss vom Spieler zurück zur Basis gesteuert werden, wo sich seine Spezialfähigkeit wieder auflädt.
-   \\\midrule
 
-  \bottomrule
+  \defid[jump]{Gebäude überspringen}
+    & Firefox
+    & Springt über Einheiten und Gebäude in die gewählte Richtung.
+    & Das Zielfeld des Sprungs muss ein gültiges Feld auf der Angriffsbahn
+      sein.
+    & Firefox hat sich in die gewählte Richtung bewegt.
+  \\\midrule
+
+  \defid[emp]{EMP-Angriff}
+    & Blue"-screen
+    & Das Verteidigungsgebäude, das am nächsten am Helden ist, wird kurzzeitig
+      ausgeschaltet.
+    & Die Fähigkeit ist aufgeladen.
+    & Das nächste Angriffsgebäude wird ausgeschaltet und der EMP-Angriff bis
+      zur Aufladung (\refid{H:reload}) deaktiviert.
+  \\\midrule
+
+  \defid[reload]{EMP-Aufladung}
+    & Blue"-screen
+    & Der EMP-Angriff wir aufgeladen.
+    & EMP-Angriff ist deaktiviert und Blue"-screen ist an der eigenen Basis.
+    & EMP-Angriff ist wieder aufgeladen.
+ \\\bottomrule
 \end{longtabu}
 \endgroup
