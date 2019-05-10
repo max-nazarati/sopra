@@ -49,6 +49,9 @@ keine Compiler/ReSharper Warnungen oder Fehler)?
 * Richtlinen zur Bedienbarkeit von Computerspielen beachten [Usability beim Spieldesign][Usability]).
 
 #### Randbedingungen
+* [Präsentationen][beamer]:
+ - [ ] Eine Aüflösung von 1024x768 muss unterstützt werden (oder Fenstermodus).
+ - [ ] Bei der finalen Präsentation muss Ihr Spiel im Vollbildmodus gezeigt werden
 * Programmiersprache C# und/oder F# mit .NET.
 * MonoGame 3.7.
 * Auf Windows 7 x86/x64 lauffähig.
@@ -64,3 +67,4 @@ keine Compiler/ReSharper Warnungen oder Fehler)?
 [Statistiken]: ./spiellogik/statistiken.tex
 [Achievements]: ./spiellogik/achievements.tex
 [Usability]: https://sopra.informatik.uni-freiburg.de/soprawiki/UsabilityForGames
+[beamer]: https://sopra.informatik.uni-freiburg.de/soprawiki/Pr%C3%A4sentation
