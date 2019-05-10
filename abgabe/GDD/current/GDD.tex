@@ -87,16 +87,19 @@
 \makeatletter
 \newcounter{gdd@ids}
 \NewDocumentCommand\StartId{m}{%
-  \setcounter{gdd@ids}{0}%
-  \xdef\gdd@idprefix{#1}}
+  \xdef\gdd@idprefix{#1}%
+  \newcounter{\gdd@curidcounter}}
+\newcommand\gdd@curidcounter{gdd@ids:\gdd@idprefix}
 \NewDocumentCommand\defid{o m}{%
   \ifx\gdd@idprefix\undefined%
     \PackageError{GDD}{Please use \StartId before using \defid}{}%
   \else%
     \leavevmode%
-    \refstepcounter{gdd@ids}%
+    \expandafter\refstepcounter{\gdd@curidcounter}%
+    %\refstepcounter{gdd@ids:\gdd@idprefix}%
     \IfNoValueTF{#1}{}{\label{gdd-\gdd@idprefix:#1}}%
-    \gdd@idprefix\thegdd@ids: #2%
+    \gdd@idprefix\arabic{\gdd@curidcounter}: #2%
+    %\gdd@idprefix\value{gdd@ids:A}: #2%
   \fi}
 \NewDocumentCommand\refid{>{\SplitArgument{1}{:}} m}{%
   \expandafter\gdd@refformat#1\relax}
