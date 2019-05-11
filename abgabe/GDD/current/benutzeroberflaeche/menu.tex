@@ -13,28 +13,61 @@
 % Ebenso wichtig ist die Vollständigkeit der Beschreibung. Jedes Menü und jedes
 % Untermenü sollten erklärt werden.
 
-% \missingSection{Menü-Struktur}
-Beim Starten von \textit{Kernel Panic!} öffnet sich nach der Hintergrundgeschichte direkt das \textit{Hauptmenü} (siehe Abbildung \ref{fig:menu}). Hier hat man Zugriff auf die \textit{Spielanleitung}, \textit{Statistiken}, \textit{Achievements} und die \textit{Credits}.\\
-Das wählen einer dieser Felder öffnet ein Fenster, in dem man diverse Informationen zum entsprechenden Thema einsehen kann. Mithilfe des Feldes \textit{Zurück} oder dem Betätigen der \textit{Escape}-Taste gelangt man wieder in das Hauptmenü.\\
-Um das Spiel zu beenden wählt man im Hauptmenü das Feld \textit{Beenden}. Damit man nicht versehentlich das Spiel schließt öffnet sich zunächst noch ein zusätzliches Fenster, man kann nun entweder das Beenden bestätigen oder zurückkehren.\\
-Das Feld \textit{Spielen} öffnet das Menü, dass für das Erstellen beziehungsweise das Laden des Spieles zuständig ist. Wenn man nicht durch Wählen der Escape-Taste oder Betätigen des \textit{Zurück}-Feldes das Hauptmenü öffnet, wählt man hier einen von fünf Spielständen, sogenannten \textit{Spielslots}. Jeder \textit{Spielslot} kann entweder genau einen zuvor gespeicherten Spielstand enthalten oder \textit{leer} sein.\\
-Wenn man einen nicht-\textit{leeren} \textit{Spielslot} ausgewählt hat kann man ein angefangenes \textit{Spiel laden} oder ein \textit{Spiel erstellen}; falls der aktuelle \textit{Spielslot} \textit{leer} ist bleibt nur die Option ein neues \textit{Spiel} zu \textit{erstellen}.\\
-Unabhängig davon ob der \textit{Spielslot} frei ist, gelangt man nun in das Spiel.\\
-Während dem Spiel kann man zu jedem Zeitpunkt pausieren - es öffnet sich das \textit{Pause}-Menü.\\
-Hier gibt es unter anderem die beiden Felder \textit{Speichern} und \textit{Laden}.\\
-\textit{Speichern} ersetzt den gesicherten Spielstand des aktuellen \textit{Spielslots} durch eine Kopie des aktuellen Spiels zu diesem Zeitpunkt.\\
-\textit{Spiel Laden} ersetzt das aktuell pausierte Spiel durch das zuvor gesicherte. Innerhalb des Spiels kann weder durch \textit{Spiel speichern}, noch \textit{Spiel laden} den \textit{Spielslot} wechseln, dafür müsste man zunächst in das \textit{Hauptmenü}, welches mithilfe des Feldes \textit{Hauptmenü} erreicht werden kann.\\
-Es gibt noch ein weiteres Menü: die \textit{Optionen}, diese lassen sich durch wählen des Feldes \textit{Optionen} sowohl aus dem \textit{Hauptmenü} als auch direkt aus dem \textit{pausierten} Spiel öffnen. Dementsprechend führt auch das \textit{Zurück} Feld, beziehungsweise die \textit{Escape}-Taste wieder zum vorherigen Menü.\\
-Es lassen sich hier nun verschiedene Audio-Einstellungen treffen. Soundeffekte und Musik können über je ein eigenes Feld stummgeschalten werden. Außerdem hat man die Möglichkeit über einen Schieberegler die Lautstärke der jeweiligen Komponente einzustellen.\\
-Auch die Tastaturbelegung wird im Menü \textit{Optionen} angepasst. Es gibt für alle individualisierbare Aktionen die Möglichkeit die Standartbelegung zu ändern oder eine alternative Taste festzulegen.\\
-Man wählt hierfür das zu ändernde Feld aus und überschreibt die gespeicherte Taste mit dem nächsten Input.
-
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\textwidth]{menu_structure.png}
-	\caption{Menü-Struktur}
+  \caption{Die Struktur des Hauptmenüs und des Pausenmenüs in \emph{Kernel Panic!}}
 	\label{fig:menu}
 \end{figure}
 
+\subsection{Hauptmenü}\label{sec:menu-main}
 
-% \includegraphics[width=\textwidth]{menu_structure.png}
+Beim Starten von \textit{Kernel Panic!} öffnet sich nach der Hintergrundgeschichte direkt das Hauptmenü (siehe Abbildung \ref{fig:menu}). Hier hat man Zugriff auf die \textit{Spielanleitung}, \textit{Statistiken}, \textit{Achievements} und \textit{Credits}.
+
+Durch anklicken eines dieser Felder öffnet sich ein Fenster, in dem man diverse
+Informationen zum entsprechenden Thema einsehen kann. Mithilfe des Feldes
+\textit{Zurück} oder dem Betätigen der \textit{Escape}-Taste gelangt man wieder in das Hauptmenü.\\
+Um das Spiel zu beenden wählt man im Hauptmenü das Feld \textit{Beenden}. Damit man nicht versehentlich das Spiel schließt öffnet sich zunächst noch ein zusätzliches Fenster, man kann nun entweder das Beenden bestätigen oder zurückkehren.
+
+Das Feld \textit{Spielen} öffnet das Menü, dass für das Erstellen und das Laden des Spieles zuständig ist. Wenn man nicht durch Wählen der Escape-Taste oder Betätigen des \textit{Zurück}-Feldes das Hauptmenü öffnet, wählt man hier einen von fünf Spielständen, sogenannten \textit{Spielslots}. Jeder \textit{Spielslot} kann entweder genau einen zuvor gespeicherten Spielstand enthalten oder leer sein.
+
+Wenn man einen nicht-leeren \textit{Spielslot} ausgewählt hat kann man
+ein angefangenes \textit{Spiel laden} oder ein \textit{Spiel erstellen}; falls
+der gewählte \textit{Spielslot} leer ist, bleibt nur die Option, ein neues Spiel zu erstellen.
+Unabhängig davon ob der \textit{Spielslot} frei ist, gelangt man nun in das Spiel.
+
+
+\subsection{Pausenmenü}\label{sec:menu-pause}
+
+Während des Spiel kann man zu jedem Zeitpunkt pausieren -- es öffnet sich das
+Pausenmenü.
+
+Hier gibt es unter anderem die beiden Felder \textit{Speichern} und
+\textit{Laden}:
+\textit{Speichern} ersetzt den gesicherten Spielstand des aktuellen \textit{Spielslots} durch eine Kopie des aktuellen Spiels zu diesem Zeitpunkt.
+\textit{Laden} ersetzt den aktuellen Spielstand durch die zuletzt in diesen
+Slot gespeicherte Version.
+
+Innerhalb des Spiels kann weder durch \textit{Speichern}, noch durch
+\textit{Laden} der \textit{Spielslot} gewechselt werden, dafür musst man
+zunächst in das Hauptmenü, welches mithilfe des Feldes \textit{Hauptmenü}
+erreicht werden kann.
+
+\subsection{Optionsmenü}\label{sec:menu-options}
+
+Das Optionsmenü lässt sich über \textit{Optionen} sowohl aus dem Hauptmenü als
+auch direkt aus dem Pausenmenü öffnen. Das Feld \textit{Zurück} oder die
+\textit{Escape}-Taste führen wieder zu dem Menü zurück, aus dem man ins
+Optionsmenü navigiert ist.
+
+Im diesem Menü lassen sich Audio-Einstellungen verändern: Soundeffekte und
+Musik können über je ein eigenes Feld stummgeschalten werden und die Lautstärke
+der einzelnen Komponenten über Schieberegler einstellen.
+
+Im Optionsmenü lässt sich ebenso auch die Tastaturbelegung anpassen. Es gibt
+für alle individualisierbare Aktionen die Möglichkeit, die Standartbelegung zu
+ändern oder eine alternative Taste festzulegen. Man wählt hierfür das zu
+ändernde Feld aus und überschreibt die gespeicherte Taste mit dem nächsten
+Input.
+
+\clearpage
