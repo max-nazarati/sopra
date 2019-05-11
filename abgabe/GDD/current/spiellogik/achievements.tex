@@ -8,15 +8,28 @@
 % "Zerstöre 2000 gegnerische Einheiten" vs. "Schaffe das gesamte Spiel, ohne
 % einen Schuss abzufeuern".
 
-%\missingSection{Achievements}
-
-\begin{table}[ht]
-  \caption{Achievements}
+Tabelle~\ref{tab:achievements} beschreibt die Achievements in \emph{Kernel Panic!.}
+\begingroup
   \small
-  \begin{longtabu}{X[-1]X}
-    \toprule\rowfont{\itshape}
+  \tabulinesep=1.2mm
+  \begin{longtabu}{X[0.7]X}
+    \rowfont{\normalsize}
+    \caption{Mögliche Achievements in \emph{Kernel Panic!}\label{tab:achievements}}\\
+    \midrule[\heavyrulewidth]\rowfont{\itshape}
+    Name & Beschreibung \\
+    \midrule\endfirsthead
+
+    \rowfont{\normalsize}
+    \caption[]{Achievements (fortges.)}\\
+    \midrule[\heavyrulewidth]\rowfont{\itshape}
     Name & Beschreibung \\
     \midrule\endhead
+
+    \bottomrule
+    \multicolumn{2}{r}{\emph{fortges. auf der nächsten Seite}} \\
+    \endfoot
+
+    \endlastfoot
 
     % Example
     First Victory! / GG EASY / Is Dis Tetris?
@@ -32,10 +45,10 @@
 		& Du besitzt in einem Spiel über X Bitcoin
 		\\
 	while true DO sudo apt-get upgrade DONE
-		& Du hast in einem Spiel über X Bitcoin in (Special-)Upgrades investiert
+		& Du hast in einem Spiel über X Bitcoin in Upgrades investiert
 		\\
 	Iron Fortress
-		& Du gewinnst das Spiel mit einer (Basis-)Ladung von 100\%
+		& Du gewinnst das Spiel mit einer Ladung von 100\%
 		\\
 	Tower's win the game
 		& Du hast in einem Spiel über X Bitcoin in Verteidigungsgebäude investiert
@@ -86,4 +99,4 @@
 		\\
     \bottomrule
   \end{longtabu}
-\end{table}
+\endgroup
