@@ -20,65 +20,53 @@
 % Auch mögliche Taktiken und Strategien im Spiel können hier beschrieben
 % werden.
 
-Das Spiel ist dynamisch. Der Spieler und die KI verändern die Lanes 
-durchgängig während des Spiels, mit dem Bauen und Verbessern der Verteidigung.
-Außerdem gibt es keine Ruhepausen, sobald das Spiel einmal gestartet wurde. 
-Die Angriffswellen laufen nacheinander ab.
+Das Spiel ist dynamisch. Der Spieler und die KI verändern die Bebauung der
+Lanes zur Verbesserung der Verteidigung und damit die Laufrouten der Truppen
+während des Spiels durchgängig. Es keine Ruhepausen, sobald das Spiel einmal
+gestartet wurde. Die Angriffswellen laufen automatisch direkt nacheinander ab.
+Der Spieler hat darauf keinen Einfluss.
 
 \subsection{Kaufoptionen}
 \label{subsec:kaufoptionen}
-    Alle Angriffs- und Verteidigungseinheiten, deren Verbesserungen und deren
-    Upgrades können zu jedem Zeitpunkt während des Spiels gekauft werden, 
-    solange genug Bitcoin vorhanden ist. Unterschiede bestehen beim 
-    Aktivierungszeitpunkt.
+    Alle Angriffseinheiten und Verteidigungsgebäude, deren Verbesserungen und
+    die Upgrades können zu jedem Zeitpunkt während des Spiels gekauft werden, 
+    solange der Spieler genügend Bitcoin hat. Unterschiede bestehen beim 
+    Aktivierungs-/Spawnzeitpunkt.
 
-	\begin{enumerate}
-		\item Verbesserungen: Die Veränderung tritt sofort in Kraft.
-		\item Upgrades: Die Veränderung tritt sofort in Kraft.
-    		\item Kaufen neuer Einheiten
-		\begin{enumerate}
-			\item Türme: Sobald der gewählte Platz leer ist wird
-				gebaut.
-			\item Angriffseinheiten: Käufe bildet die Angreifer 
-				für die nächste Welle.
-    		\end{enumerate}
-	\end{enumerate}
+  \begin{description}[noitemsep]
+    \item[Angriffseinheiten] Helden spawnen direkt, die Truppen die Seit der
+      letzten Welle gekauft wurd, spawnen gemeinsam sobald die nächste Welle
+      startet.
+    \item[Verteidigungsgebäude] werden aktiv, sobald sich an ihrem Platz keine
+      Einheit befindet.
+		\item[Verbesserungen] Die Veränderung tritt sofort in Kraft.
+		\item[Upgrades] Die Veränderung tritt sofort in Kraft.
+	\end{description}
 
 \subsection{Spielablauf}
 
-Beim Starten eines neuen Spiels erscheint ein Feld mit der
-Hintergrundgeschichte. Hier wird kurz in die Idee hinter der Spielwelt
-eingeführt.
+Beim Starten eines Spiels landet man in der Spielwelt. Der Spieler hat zu
+Beginn fünfzig Bitcoin und eine halbe Minute Vorbereitungszeit, sprich seine
+Gebäude aufzustellen und Angriffseinheiten zu kaufen.
 
-Wenn das Feld geschlossen landet man bei der ersten Spielwelt. Jetzt hat der 
-Spieler Zeit die erste Welle vorzubereiten, sprich seine Türme aufzustellen 
-und seine Angriffseinheiten zu kaufen. Dafür hat der Spieler fünfzig Bitcoin
-zur Verfügung.
+Mit Ablauf der Vorbereitungszeit startet die erste Welle, alle bis dahin
+gekauften Angriffseinheiten spawnen in kurzem Abstand an ihrer Basis und
+bewegen sich auf dem kürzesten Weg zur gegnerischen Basis. Ihre Reihenfolge
+entspricht dabei der Kaufreihenfolge. Zusätzlich können ab jetzt die gekauften
+Helden bewegt werden.
+Mit dem Starten jeder Welle erhält der Spieler, der mehr Einheiten gekauft hat,
+die Differenz in Bitcoin gutgeschrieben.
 
-Nun kann die erste Welle gestartet werden.
-Nun laufen die Angriffseinheiten in kurzen Abständen hintereinander von der
-eigenen Basis los, auf die gegnerischen Türme zu. Die Reihenfolge entspricht
-der Kaufreihenfolge. Zusätzlich tauchen die drei kontrollierbaren,
-kollidierenden und bewegbaren Einheiten (Helden) am Ausgang der Basis auf. Diese
-können von nun an mit der Maus gesteuert werden.
+Sobald das Spiel gestartet wird verdient der Spieler pro Sekunde einen Bitcoin,
+die direkt investiert werden können (siehe
+Abschnitt~\ref{subsec:kaufoptionen}).
 
-Sobald das Spiel gestartet wird verdient der Spieler über Zeit Bitcoin. Dieses
-kann auch sofort wieder investiert werden. Für jeden Bitcoin besteht die
-Wahl zwischen Angriff und Verteidigung~(\ref{subsec:kaufoptionen}).
+Hat ein Spieler alle Truppen einer Welle des Gegners getötet, oder haben diese
+seine Basis erreicht, heißt diese Welle \emph{besiegt.} Besiegt ein Spieler
+eine Welle, erhält er einen Erfahrungspunkt, den er in Upgrades inverstieren
+kann. Sobald der erste Spieler eine Welle besiegt, beginnt für beide Parteien
+die nächste Welle.
 
-Die nächste Welle wird gestartet sobald einer der beiden Spieler keine 
-Angriffseinheiten, mit Ausnahme der Helden, mehr auf dem Spielfeld besitzt
-und beide Basen noch Leben besitzen. Die verbliebenen Einheiten des zweiten 
-Spielers attakieren weiter bis sie ebenfalls tot sind.
-
-Sobald die gesamte Angriffseinheit, mit Ausnahme der Helden, tot ist oder die 
-gegnerische Basis erreicht hat, bekommt dieser Spieler einen Erfahrungspunkt. 
-Außerdem bekommt der Spieler mit der höheren Anzahl an Angreifern die 
-Differenz der Anzahl der Angreifer der beiden Spieler in Bitcoin gut geschrieben.
-Die Höhe dieses Betrags ist jedoch pro Welle limitiert und das Limit steigt 
-mit zunehmender Anzahl an Wellen an.
-
-Dieser Prozess wiederholt sich solange bis einer der beiden Basen zerstört 
-wurde. Der Spieler, der die Basis zerstört hat, gewinnt das Spiel. 
-Jetzt erscheint ein Gewonnen oder Verloren Bildschirm vom dem in das Hauptmenü
-zurück gekehrt werden kann.
+Das Spiel geht solange, bis die Ladung einer Basis auf 0\,\% oder weniger
+gesunken ist. Der Spieler, dessen Basis mehr Ladung hat, hat dann gewonnen. Dem
+Spieler wird nun das Ergebnis angezeigt und er kann ins Hauptmenü zurückkehren.
