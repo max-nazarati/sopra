@@ -17,13 +17,18 @@
 % Die Auflistung der Optionen und Aktionen erfolgt tabellarisch und ist in Form
 % und Inhalt an Use Cases (http://de.wikipedia.org/wiki/Use_case) angelehnt.
 
+In Tabelle~\ref{tab:optionen-aktionen} sind die in \emph{Kernel Panic!}
+möglichen Optionen und Aktionen beschriebenen. Tabelle~\ref{tab:helden} geht
+auf die in (\refid{A:hero-ability}) referenzierten Heldenfähigkeiten genauer
+ein.
+
 \StartId{A}
 \begingroup
   \small
   \tabulinesep=1mm
 \begin{longtabu}{X[0.6L]X[0.4L]X[L]X[L]X[L]}
   \rowfont{\normalsize}
-  \caption{Mögliche Optionen und Aktionen\label{tab:optionen-aktionen}}\\
+  \caption{Mögliche Optionen und Aktionen in \emph{Kernel Panic!}\label{tab:optionen-aktionen}}\\
   \midrule[\heavyrulewidth]\rowfont{\itshape}
     ID/Name              &
     Akteure              &
@@ -62,26 +67,11 @@
     & Türme und Einheiten sind nicht mehr ausgewählt.
 	\\\midrule
 
-  \defid[move-figure]{Figur(en) durch Klick bewegen}
-    & Spieler
-    & \vspace*{-0.2cm}\begin{enumerate}[nosep,leftmargin=*]
-        \item Spieler klickt mit der Rechten Maustaste auf einen Punkt auf der
-          Angriffsstrecke.
-        \item Die ausgewählten kontrollierbaren Einheiten bewegen sich auf dem
-          kürzesten Weg auf den ausgewählten Punkt zu, Hindernisse werden
-          rechtzeitig umlaufen.
-      \end{enumerate}
-    & Mindestens eine kontrollierbare Einheit ist ausgewählt.
-    & Die Spielfiguren befinden sich am Zielpunkt, \textbf{\textls{oder}} die
-      Spielfiguren befinden sich an dem erreichbaren Punkt, der möglichst
-      nah am Zielpunkt liegt.
-  \\\midrule
-
   \defid[hero-ability]{Heldenfähigkeit aktivieren}
     & Spieler
     & Der Spieler klickt mit der Linken Maustaste auf die Heldenfähigkeit.
     & Ein Held ist ausgewählt und seine Fähigkeit kann aktiviert werden.
-    & Fähigkeit wird ausgeführt, siehe Tab.~\ref{tab:helden}.
+    & Fähigkeit wird ausgeführt, siehe Tabelle~\ref{tab:helden}.
   \\\midrule
 
   \defid[buy-attack]{Angriffseinheit kaufen}
@@ -95,6 +85,29 @@
     & Der Spieler hat genügend Bitcoin um die Einheit zu kaufen.
     & Beim Beginn der nächsten Welle spawnt eine Einheit mehr der ausgewählten
       Sorte.
+  \\\midrule
+
+  \defid[move-figure]{Figur(en) durch Klick bewegen}
+    & Spieler
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep,leftmargin=*]
+        \item Spieler klickt mit der Rechten Maustaste auf einen Punkt auf der
+          Angriffsstrecke.
+        \item Die ausgewählten eigenen kontrollierbaren Einheiten bewegen sich
+          auf dem kürzesten Weg auf den ausgewählten Punkt zu, Hindernisse
+          werden rechtzeitig umlaufen.
+      \end{enumerate}
+    & Mindestens eine eigene kontrollierbare Einheit ist ausgewählt.
+    & Die ausgewählten eigenen kontrollierbaren Spielfiguren befinden sich am
+      Zielpunkt, \textbf{\textls{oder}} die befinden sich an dem erreichbaren
+      Punkt, der möglichst nah am Zielpunkt liegt.
+  \\\midrule
+
+  \defid[select-upgrade]{Upgrade auswählen}
+    & Spieler
+    & Der Spieler klickt mit der Linken Maustaste auf ein Upgrade, das
+      angewendet wird.
+    & Es sind genügend Erfahrungspunkte verfügbar.
+    & Upgrade wurde angewendet.
   \\\midrule
 
   \defid[tower-attack]{Gebäude verteidigt}
@@ -199,6 +212,18 @@
       (\refid{A:tower-attack}).
   \\\midrule
 
+  \defid[tower-improve]{Gebäude verbessern}
+    & Spieler
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
+        \item Spieler wählt die Verbesserung aus.
+        \item Die Verbesserungskosten werden von den den Bitcoin des Spielers
+          abgezogen.
+        \item Das Gebäude erhält stärkere Werte.
+      \end{enumerate}
+    & Ein eigenes Gebäude ist ausgewählt und Spieler hat genügend Bitcoin.
+    & Das ausgewählte Gebäude hat stärkere Werte und die Bitcoin wurden abgezogen.
+  \\\midrule
+
   \defid[tower-sell]{Gebäude verkaufen}
     & Spieler
     & Der Spieler erhält Bitcoin zurück und das Gebäude verschwindet.
@@ -206,30 +231,11 @@
     & Der Spieler hat Bitcoin zurückerhalten und das Gebäude ist weg.
   \\\midrule
 
-  \defid[tower-improve]{Gebäude verbessern}
-    & Spieler
-    & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
-        \item Spieler wählt die Verbesserung aus.
-        \item Die Verbesserungskosten werden vom Bitcoin des Spielers abgezogen.
-        \item Der Turm wird verbessert.
-      \end{enumerate}
-    & Ein eigenes Gebäude ist ausgewählt und Spieler hat genügend Bitcoin.
-    & Der ausgewählte Turm wurde verbessert und das Bitcoin abgezogen.
-  \\\midrule
-
   \defid[tower-strategy]{Strategie wählen}
     & Spieler
     & Der Spieler klickt mit der Linken Maustaste auf die gewünschte Strategie.
     & Ein eingens Gebäude (nicht \emph{Kabel}) ist ausgewählt.
     & Das Gebäude handelt nun nach der gewählten Strategie.
-  \\\midrule
-
-  \defid[select-upgrade]{Upgrade auswählen}
-    & Spieler
-    & Der Spieler klickt mit der Linken Maustaste auf ein Upgrade, das
-      angewendet wird.
-    & Es sind genügend Erfahrungspunkte verfügbar.
-    & Upgrade wurde angewendet.
   \\\midrule
 
   \defid[object-info]{Informationen anzeigen}
