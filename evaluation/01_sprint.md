@@ -1,5 +1,5 @@
 # sopra09 - Sprint 1
-Sprint eins wird auf Grund eines Tutoren fuck ups nicht gewertet.   
+Sprint eins wird nicht gewertet.   
 Hier trotzdem eure punkte ;)
 ## Punkte
 ## sopra09 
