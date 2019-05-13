@@ -2,6 +2,7 @@
 für alled das hier vermerkt wurde gab es einen punkt abzug
 ## Aufgabe 2: userstorys  - 1 punkt
 spadernj - 
+
 mannhardj - 
 nazarati - 
 schaaffz - 
