@@ -19,7 +19,7 @@ Erstes Gruppentreffen: 30.04. 10:00 vor dem Pool
 Gruppentreffen: Tue 12:00 Pool (082-00-021)
 
 * Product Owner: Zoë Schaaff
-* Architektur: NAME_HIER
+* Architektur: Jens Rahnfeld, Janek Spaderna
 * Qualitätssicherung: NAME_HIER
 
 
