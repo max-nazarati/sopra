@@ -26,6 +26,7 @@ Gruppentreffen: Tue 12:00 Pool (082-00-021)
 ## Definition of Done
 
 * Item in Gitea ist geschlossen und hat Arbeitszeit.
+* Keine Resharper Warnings oder Errors (finale Version).
 * Alle für das Item relevante Daten sind gepushed.
 * Der Tutor hat das Item im Produktinkrement abgenommen.
 
