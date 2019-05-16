@@ -1,27 +1,35 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace KernelPanic
 {
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
+
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch mSpriteBatch;
+        readonly GraphicsDeviceManager _graphics;
+        private SpriteBatch _mSpriteBatch;
 
-        private Texture2D mBackground;
+        private State _currentState;
+        private State _nextState;
+        private readonly List<State> _gameStateList = new List<State>();
+        public void SetGameState(State gameState)
+        {
+            _nextState = _gameStateList.Find(state => state.GetType().Name == gameState.GetType().Name);
+        }
+        
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
-            graphics.ApplyChanges();
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -32,9 +40,7 @@ namespace KernelPanic
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            this.IsMouseVisible = true;
-
+            IsMouseVisible = true;
             base.Initialize();
         }
 
@@ -45,10 +51,12 @@ namespace KernelPanic
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            mSpriteBatch = new SpriteBatch(GraphicsDevice);
+            _mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            mBackground = Content.Load<Texture2D>("GameBackground");
+            _gameStateList.Add(new StartMenuState(this, _graphics, Content));
+            _gameStateList.Add(new GameState(this, _graphics, Content));
+
+            _currentState = _gameStateList.Find(state => state.GetType().Name == "StartMenuState");
         }
 
         /// <summary>
@@ -57,7 +65,6 @@ namespace KernelPanic
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
 
         /// <summary>
@@ -67,10 +74,12 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            // TODO: Add your update logic here
+            if (_nextState != null)
+            {
+                _currentState = _nextState;
+                _nextState = null;
+            }
+            _currentState.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -83,11 +92,8 @@ namespace KernelPanic
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-            mSpriteBatch.Begin();
-            mSpriteBatch.Draw(mBackground, Vector2.Zero, null, Color.White);
-            mSpriteBatch.End();
-
+            _currentState.Draw(gameTime, _mSpriteBatch);
+       
             base.Draw(gameTime);
         }
     }
