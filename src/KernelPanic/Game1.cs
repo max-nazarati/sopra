@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -7,16 +8,16 @@ namespace KernelPanic
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    internal sealed class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch mSpriteBatch;
-
-        private Texture2D mBackground;
+        private SpriteBatch mSpriteBatch;
+        private SoundManager mMusic;
+        private Grid mWorld;
+        private Camera2D mCamera;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            var graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
             graphics.PreferredBackBufferWidth = 1920;
@@ -34,7 +35,7 @@ namespace KernelPanic
         {
             // TODO: Add your initialization logic here
             this.IsMouseVisible = true;
-
+            mCamera = new Camera2D(GraphicsDevice.Viewport);
             base.Initialize();
         }
 
@@ -48,7 +49,11 @@ namespace KernelPanic
             mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            mBackground = Content.Load<Texture2D>("GameBackground");
+            mMusic = new SoundManager("testSoundtrack", Content);
+            mMusic.Init();
+            mMusic.Play();
+
+            mWorld = new Grid(Content, 20, 5, false);
         }
 
         /// <summary>
@@ -69,8 +74,9 @@ namespace KernelPanic
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
             // TODO: Add your update logic here
+            mCamera.Update(gameTime);
+            Console.WriteLine(1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
 
             base.Update(gameTime);
         }
@@ -81,11 +87,12 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.MintCream);
 
             // TODO: Add your drawing code here
-            mSpriteBatch.Begin();
-            mSpriteBatch.Draw(mBackground, Vector2.Zero, null, Color.White);
+            var viewMatrix = mCamera.GetViewMatrix();
+            mSpriteBatch.Begin(transformMatrix: viewMatrix);
+            mWorld.Draw(mSpriteBatch, mCamera);
             mSpriteBatch.End();
 
             base.Draw(gameTime);
