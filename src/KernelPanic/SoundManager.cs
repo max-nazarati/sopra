@@ -20,7 +20,7 @@ namespace KernelPanic
 
         public void Init()
         {
-            //mSong = Content.Load<Song>(mSongName);
+            mSong = Content.Load<Song>(mSongName);
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Volume = 0.2f;
         }
@@ -32,7 +32,7 @@ namespace KernelPanic
 
         public void Play()
         {
-            //MediaPlayer.Play(mSong);
+            MediaPlayer.Play(mSong);
         }
     }
 }
