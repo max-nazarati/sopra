@@ -57,11 +57,20 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\KernelPanic\Camera2d.cs">
+      <Link>Camera2d.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Game1.cs">
       <Link>Game1.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Grid.cs">
+      <Link>Grid.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\SoundManager.cs">
+      <Link>SoundManager.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
