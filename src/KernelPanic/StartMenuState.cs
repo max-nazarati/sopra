@@ -15,7 +15,7 @@ namespace KernelPanic
         private readonly GraphicsDeviceManager _graphics;
         private int Width { get; }
         private int Height { get; }
-        public StartMenuState(Game1 game, GraphicsDeviceManager graphics, ContentManager contentManager) :base(game, graphics, contentManager)
+        public StartMenuState(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager contentManager) :base(stateManager, graphics, contentManager)
         {
             Content = contentManager;
             _graphics = graphics;
@@ -51,11 +51,19 @@ namespace KernelPanic
                     {
                         if (btn.PText == "PLAY")
                         {
-                            Game.SetGameState(new GameState(Game, _graphics, Content));
+                            if (SManager.Count() == 1)
+                            {
+                                SManager.RemoveState();
+                                SManager.AddState(new GameState(SManager, _graphics, Content));
+                                //Game.SetGameState(new GameState(Game, _graphics, Content));
+                            } else
+                            {
+                                SManager.RemoveState();
+                            }
                         }
                         else if (btn.PText == "QUIT")
                         {
-                            Game.Exit();
+                            SManager._game.Exit();
                         }
                     }
                 }

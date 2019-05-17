@@ -15,6 +15,7 @@ namespace KernelPanic
 
         private State _currentState;
         private State _nextState;
+        private StateManager stateManager;
         private readonly List<State> _gameStateList = new List<State>();
         public void SetGameState(State gameState)
         {
@@ -53,10 +54,13 @@ namespace KernelPanic
             // Create a new SpriteBatch, which can be used to draw textures.
             _mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _gameStateList.Add(new StartMenuState(this, _graphics, Content));
+          /*  _gameStateList.Add(new StartMenuState(this, _graphics, Content));
             _gameStateList.Add(new GameState(this, _graphics, Content));
 
-            _currentState = _gameStateList.Find(state => state.GetType().Name == "StartMenuState");
+            _currentState = _gameStateList.Find(state => state.GetType().Name == "StartMenuState");*/
+
+            stateManager = new StateManager(this, _graphics, Content);
+            stateManager.AddState(new StartMenuState(stateManager, _graphics, Content));
         }
 
         /// <summary>
@@ -79,7 +83,8 @@ namespace KernelPanic
                 _currentState = _nextState;
                 _nextState = null;
             }
-            _currentState.Update(gameTime);
+            //_currentState.Update(gameTime);
+            stateManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -92,7 +97,8 @@ namespace KernelPanic
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _currentState.Draw(gameTime, _mSpriteBatch);
+            // _currentState.Draw(gameTime, _mSpriteBatch);
+            stateManager.Draw(gameTime, _mSpriteBatch);
        
             base.Draw(gameTime);
         }

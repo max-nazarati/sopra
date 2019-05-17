@@ -9,18 +9,18 @@ namespace KernelPanic
     {
         protected ContentManager Content;
         protected GraphicsDeviceManager Graphics;
-        protected Game1 Game;
+        protected StateManager SManager;
         protected KeyboardState KeyboardState;
         protected KeyboardState OldKeyboardState;
         protected MouseState MouseState;
         protected MouseState OldMouseState;
 
 
-        protected State(Game1 game, GraphicsDeviceManager graphics, ContentManager content)
+        protected State(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager content)
         {
             Content = content;
             Graphics = graphics;
-            Game = game;
+            SManager = stateManager;
         }
         public virtual void Update(GameTime gameTime)
         {

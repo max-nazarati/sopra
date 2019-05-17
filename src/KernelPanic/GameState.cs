@@ -10,7 +10,7 @@ namespace KernelPanic
     {
         private readonly Texture2D _background;
         private readonly List<Unit> _mobileObjectsList = new List<Unit>();
-        public GameState(Game1 game, GraphicsDeviceManager graphics, ContentManager content) : base(game, graphics, content)
+        public GameState(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager content) : base(stateManager, graphics, content)
         {
             var box1 = new Texture2D(graphics.GraphicsDevice, 1, 1);
             box1.SetData(new[] { Color.Green });
@@ -27,7 +27,8 @@ namespace KernelPanic
 
             if(KeyboardState.IsKeyDown(Keys.Escape) && OldKeyboardState.IsKeyUp(Keys.Escape))
             {
-                Game.SetGameState(new StartMenuState(Game, Graphics, Content));
+                SManager.AddState(new StartMenuState(SManager, Graphics, Content));
+                //Game.SetGameState(new StartMenuState(Game, Graphics, Content));
             }
 
             foreach (Unit obj in _mobileObjectsList)
@@ -37,6 +38,7 @@ namespace KernelPanic
         }
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            //StateManager.Draw(gameTime, spriteBatch);
             spriteBatch.Begin();
             spriteBatch.Draw(_background, Vector2.Zero, null, Color.White);
             spriteBatch.End();
