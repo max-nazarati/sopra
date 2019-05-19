@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace KernelPanic
 {
@@ -12,19 +13,23 @@ namespace KernelPanic
     {
         private SpriteBatch mSpriteBatch;
         private SoundManager mMusic;
-        private Grid mWorld;
+        // private Grid mWorld;
         private Grid mWorld2;
         private Grid mWorld3;
         private Camera2D mCamera;
 
+        readonly GraphicsDeviceManager mGraphics;
+        private StateManager mStateManager;
+        private readonly List<State> mStateList = new List<State>();
+
         public Game1()
         {
-            var graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            mGraphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
-            graphics.ApplyChanges();
+            mGraphics.PreferredBackBufferWidth = 1920;
+            mGraphics.PreferredBackBufferHeight = 1080;
+            mGraphics.ApplyChanges();
         }
 
         /// <summary>
@@ -36,7 +41,7 @@ namespace KernelPanic
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            this.IsMouseVisible = true;
+            IsMouseVisible = true;
             mCamera = new Camera2D(GraphicsDevice.Viewport);
             base.Initialize();
         }
@@ -56,8 +61,12 @@ namespace KernelPanic
             mMusic.Play();
 
             // mWorld = new Grid(Content, 20, 5, false);
-            mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25), 5);
-            mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 10, 25), 5);
+            mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25));
+            mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 10, 25));
+
+            mStateManager = new StateManager(this, mGraphics, Content);
+            mStateList.Add(new StartMenuState(mStateManager, mGraphics, Content));
+            mStateList.Add(new GameState(mStateManager, mGraphics, Content));
         }
 
         /// <summary>
@@ -77,12 +86,21 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+                mStateManager.AddState(new StartMenuState(mStateManager, mGraphics, Content));
             // TODO: Add your update logic here
+
             mCamera.Update(gameTime);
+
             Console.WriteLine( "fps: " + 1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+            if (mStateList != null)
+            {
+                Console.WriteLine(mStateList);
+            }
+
             InputManager.Default.Update();
 
+            mStateManager.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -95,6 +113,7 @@ namespace KernelPanic
             GraphicsDevice.Clear(Color.MintCream);
 
             // TODO: Add your drawing code here
+
             var viewMatrix = mCamera.GetViewMatrix();
             mSpriteBatch.Begin(transformMatrix: viewMatrix);
 
