@@ -57,20 +57,47 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\KernelPanic\Button.cs">
+      <Link>Button.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Camera2d.cs">
       <Link>Camera2d.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entity.cs">
+      <Link>Entity.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Game1.cs">
       <Link>Game1.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\GameState.cs">
+      <Link>GameState.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Grid.cs">
       <Link>Grid.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\GridCalculator.cs">
+      <Link>GridCalculator.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\InputManager.cs">
+      <Link>InputManager.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\SoundManager.cs">
       <Link>SoundManager.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\StartMenuState.cs">
+      <Link>StartMenuState.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\State.cs">
+      <Link>State.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\StateManager.cs">
+      <Link>StateManager.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Unit.cs">
+      <Link>Unit.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -139,12 +166,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\KernelPanic\KernelPanic.csproj">
-      <Project>{5DE3BFAD-4736-427B-81F0-4CF3C16ED356}</Project>
-      <Name>KernelPanic</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
