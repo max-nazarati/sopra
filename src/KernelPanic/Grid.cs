@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
     internal sealed class Grid
     {
-        private readonly int mRows, mColumns;
         private readonly float mScale;
         private readonly ContentManager mContent;
-        private readonly bool mLeft;
         private Texture2D mKacheln, mBase, mSäule, mMauer, mBorder;
-
-        private Color mBorderColor = Color.Red;
+        /*
+        private readonly int mRows, mColumns;
+        
+        
+        private readonly bool mLeft;
+        
 
         internal Grid(ContentManager content, int rows, int columns, bool left)
         {
@@ -25,17 +24,6 @@ namespace KernelPanic
             this.mColumns = columns;
             this.mLeft = left;
             mScale = 0.5F;
-        }
-
-        internal void Draw(SpriteBatch spriteBatch, Camera2D camera)
-        {
-            mKacheln = mContent.Load<Texture2D>("Kachel3");
-            mBase = mContent.Load<Texture2D>("Papier");
-            mSäule = mContent.Load<Texture2D>("Saeule");
-            mMauer = mContent.Load<Texture2D>("Mauer");
-            mBorder = mContent.Load<Texture2D>("Border");
-            DrawFields(spriteBatch);
-            DrawBorder(spriteBatch, camera);
         }
 
         private void DrawFields(SpriteBatch spriteBatch)
@@ -58,10 +46,10 @@ namespace KernelPanic
                         if (j < mColumns || j > mRows - mColumns - 1)
                         {
                             spriteBatch.Draw(mKacheln,
-                                new Rectangle((int) (mScale * mKacheln.Width * i + (mColumns * mScale * mKacheln.Width)),
-                                    (int) (mScale * mKacheln.Height * j),
-                                    (int) (mScale * 200),
-                                    (int) (mScale * 200)),
+                                new Rectangle((int)(mScale * mKacheln.Width * i + (mColumns * mScale * mKacheln.Width)),
+                                    (int)(mScale * mKacheln.Height * j),
+                                    (int)(mScale * 200),
+                                    (int)(mScale * 200)),
                                 null,
                                 Color.AliceBlue);
                         }
@@ -70,10 +58,10 @@ namespace KernelPanic
                     {
                         // draws right lane
                         spriteBatch.Draw(mKacheln,
-                            new Rectangle((int) (mScale * mKacheln.Width * i) + (int) (4000 * mScale),
-                                (int) (mScale * mKacheln.Height * j),
-                                (int) (mScale * 200),
-                                (int) (mScale * 200)),
+                            new Rectangle((int)(mScale * mKacheln.Width * i) + (int)(4000 * mScale),
+                                (int)(mScale * mKacheln.Height * j),
+                                (int)(mScale * 200),
+                                (int)(mScale * 200)),
                             null,
                             Color.AliceBlue);
                         // draws right corners
@@ -81,16 +69,154 @@ namespace KernelPanic
                         {
                             spriteBatch.Draw(mKacheln,
                                 new Rectangle(
-                                    (int) (mScale * mKacheln.Width * i + 4000 * mScale -
+                                    (int)(mScale * mKacheln.Width * i + 4000 * mScale -
                                            (mColumns * mScale * mKacheln.Width)),
-                                    (int) (mScale * mKacheln.Height * j),
-                                    (int) (mScale * 200),
-                                    (int) (mScale * 200)),
+                                    (int)(mScale * mKacheln.Height * j),
+                                    (int)(mScale * 200),
+                                    (int)(mScale * 200)),
                                 null,
                                 Color.AliceBlue);
                         }
                     }
                 }
+            }
+        }
+        */
+
+        /// <summary>
+        /// Left and Right lane
+        /// </summary>
+        public enum LaneSide
+        {
+            Left, Right
+        }
+
+        private readonly LaneSide mLaneSide;
+        private readonly Rectangle mLaneSizeInTilesRectangle;
+        private readonly int mLaneWidthInTiles;
+        private readonly int mKachelPixelSize = 200;
+        private Color mBorderColor = Color.Red;
+
+
+        public Grid(ContentManager content, LaneSide laneSide, Rectangle laneSizeInTilesRectangle, int laneWidthInTiles = 5)
+        {
+            mContent = content;
+            mLaneSide = laneSide;
+            mLaneSizeInTilesRectangle = laneSizeInTilesRectangle;
+            mLaneWidthInTiles = laneWidthInTiles;
+            mScale = 0.5F;
+        }
+
+        /// <summary>
+        /// Draws a single Tile (currently 2x2 sized)
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="color"></param>
+        private void DrawTile(SpriteBatch spriteBatch, int column, int row, Color color)
+        {
+            spriteBatch.Draw(mKacheln,
+                new Rectangle((int)(mScale * mKacheln.Width * column + (0 * mScale * mKacheln.Width)),
+                    (int)(mScale * mKacheln.Height * row),
+                    (int)(mScale * mKachelPixelSize),
+                    (int)(mScale * mKachelPixelSize)),
+                null,
+                color);
+        }
+
+        /// <summary>
+        /// Draws the biggest possible rectangle of the lane (the whole vertical part of the '[' resp. ']')
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="upperLeftPositionTuple"></param>
+        private void DrawVerticalPart(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        {
+            for (var column = 0; column < mLaneWidthInTiles; column++)
+            {
+                for (var row = 0; row < mLaneSizeInTilesRectangle.Height; row++)
+                {
+                    DrawTile(spriteBatch, upperLeftPositionTuple.Item1 + column, upperLeftPositionTuple.Item2 + row, Color.Green);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draws the small corner parts that are left after drawing the vertical part of the lane.
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
+        private void DrawAttachedPart(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        {
+            for (var column = 0; column < mLaneSizeInTilesRectangle.Width - mLaneWidthInTiles; column++)
+            {
+                for (var row = 0; row < mLaneWidthInTiles; row++)
+                {
+                    DrawTile(spriteBatch, upperLeftPositionTuple.Item1 + column, upperLeftPositionTuple.Item2 + row, Color.Black);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calls helper functions to draw the left lane (starting at most top left point)
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
+        private void DrawLeftLane(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        {
+            var leftPart = upperLeftPositionTuple;
+
+            var topRight = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
+                upperLeftPositionTuple.Item2);
+
+            var bottomRight = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
+                upperLeftPositionTuple.Item2 + mLaneSizeInTilesRectangle.Height - mLaneWidthInTiles);
+
+            DrawVerticalPart(spriteBatch, leftPart);
+            DrawAttachedPart(spriteBatch, topRight);
+            DrawAttachedPart(spriteBatch, bottomRight);
+        }
+
+        /// <summary>
+        /// Calls helper functions to draw the right lane (starting at most top left point)
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
+        private void DrawRightLane(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        {
+            // position of the right part of the lane (most top left point)
+            var rightPart = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
+                upperLeftPositionTuple.Item2);
+
+            // position of the top left part of the lane (most top left point)
+            var topLeft = upperLeftPositionTuple;
+
+            // position of the bottom left part of the lane (most top left point)
+            var bottomLeft = new Tuple<int, int>(upperLeftPositionTuple.Item1,
+                upperLeftPositionTuple.Item2 + mLaneSizeInTilesRectangle.Height - mLaneWidthInTiles);
+
+
+            DrawVerticalPart(spriteBatch, rightPart);
+            DrawAttachedPart(spriteBatch, topLeft);
+            DrawAttachedPart(spriteBatch, bottomLeft);
+        }
+
+        /// <summary>
+        /// calls the corresponding draw function for LaneSide
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        private void DrawLane(SpriteBatch spriteBatch)
+        {
+            var upperLeftPositionTuple =
+                new Tuple<int, int>(mLaneSizeInTilesRectangle.X, mLaneSizeInTilesRectangle.Y);
+            switch (mLaneSide)
+            {
+                case LaneSide.Left:
+                    DrawLeftLane(spriteBatch, upperLeftPositionTuple);
+                    break;
+                case LaneSide.Right:
+                    DrawRightLane(spriteBatch ,upperLeftPositionTuple);
+                    break;
             }
         }
 
@@ -101,26 +227,44 @@ namespace KernelPanic
         private void UpdateColor()
         {
             if (!InputManager.Default.DoubleClick()) return;
-            if (mBorderColor == Color.Green)
-            {
-                mBorderColor = Color.Red;
-            }
-            else
-            {
-                mBorderColor = Color.Green;
-            }
+            mBorderColor = mBorderColor == Color.Green ? Color.Red : Color.Green;
         }
 
+        /// <summary>
+        /// Draws the tile marking overlay
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="camera"></param>
         private void DrawBorder(SpriteBatch spriteBatch, Camera2D camera)
         {
-            UpdateColor();
-            var mouseState = Mouse.GetState();
-            var mouseX = (int)((mouseState.X + camera.mPosition.X)/camera.mZoom);
-            var mouseY = (int)((mouseState.Y + camera.mPosition.Y)/camera.mZoom);
-            var posX = (int) ((mouseX / 50) * 50);
-            var posY = (int) ((mouseY / 50) * 50);
-            Console.WriteLine(posX*camera.mZoom);
+            var mouseX = (int)((InputManager.Default.MousePositionX + camera.mPosition.X) / camera.mZoom);
+            var mouseY = (int)((InputManager.Default.MousePositionY + camera.mPosition.Y) / camera.mZoom);
+            var posX = (mouseX / 50) * 50;
+            var posY = (mouseY / 50) * 50;
+
+            Console.WriteLine(posX * camera.mZoom);
+
             spriteBatch.Draw(mBorder, new Rectangle(posX, posY, 50, 50), null, mBorderColor);
         }
+
+        /// <summary>
+        /// calling the different draw function
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="camera"></param>
+        internal void Draw(SpriteBatch spriteBatch, Camera2D camera)
+        {
+            mKacheln = mContent.Load<Texture2D>("Kachel3");
+            mBase = mContent.Load<Texture2D>("Papier");
+            mSäule = mContent.Load<Texture2D>("Saeule");
+            mMauer = mContent.Load<Texture2D>("Mauer");
+            mBorder = mContent.Load<Texture2D>("Border");
+            // DrawFields(spriteBatch);
+            DrawLane(spriteBatch);
+            UpdateColor();
+            DrawBorder(spriteBatch, camera);
+        }
+
+        
     }
 }

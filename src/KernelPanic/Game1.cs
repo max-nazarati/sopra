@@ -13,6 +13,8 @@ namespace KernelPanic
         private SpriteBatch mSpriteBatch;
         private SoundManager mMusic;
         private Grid mWorld;
+        private Grid mWorld2;
+        private Grid mWorld3;
         private Camera2D mCamera;
 
         public Game1()
@@ -53,7 +55,9 @@ namespace KernelPanic
             mMusic.Init();
             mMusic.Play();
 
-            mWorld = new Grid(Content, 20, 5, false);
+            // mWorld = new Grid(Content, 20, 5, false);
+            mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25), 5);
+            mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 10, 25), 5);
         }
 
         /// <summary>
@@ -76,7 +80,7 @@ namespace KernelPanic
                 Exit();
             // TODO: Add your update logic here
             mCamera.Update(gameTime);
-            Console.WriteLine(1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
+            Console.WriteLine( "fps: " + 1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
             InputManager.Default.Update();
 
             base.Update(gameTime);
@@ -93,7 +97,11 @@ namespace KernelPanic
             // TODO: Add your drawing code here
             var viewMatrix = mCamera.GetViewMatrix();
             mSpriteBatch.Begin(transformMatrix: viewMatrix);
-            mWorld.Draw(mSpriteBatch, mCamera);
+
+            //mWorld.Draw(mSpriteBatch, mCamera);
+            mWorld2.Draw(mSpriteBatch, mCamera);
+            mWorld3.Draw(mSpriteBatch, mCamera);
+
             mSpriteBatch.End();
 
             base.Draw(gameTime);

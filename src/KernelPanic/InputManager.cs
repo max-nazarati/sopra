@@ -104,6 +104,11 @@ namespace KernelPanic
             }
         }
 
+        public int MousePositionX => mCurrentMouseState.X;
+
+        public int MousePositionY => mCurrentMouseState.Y;
+
+        /* TODO uncomment this
         /// <summary>
         /// checks if any of the Keyboard Buttons has been pressed (at this exact moment)
         /// </summary>
@@ -121,7 +126,10 @@ namespace KernelPanic
 
             return false;
         }
+        */
 
+
+        /* TODO uncomment this
         /// <summary>
         /// checks if any of the Keyboard Buttons has been released (at this exact moment)
         /// </summary>
@@ -139,6 +147,7 @@ namespace KernelPanic
 
             return false;
         }
+        */
 
         /// <summary>
         /// checks if any of the Keyboard Buttons is currently being pressed
@@ -158,6 +167,7 @@ namespace KernelPanic
             return false;
         }
 
+        /* TODO uncomment this
         /// <summary>
         /// checks if any of the Keyboard Buttons is currently not being pressed
         /// (this is not equal to '!KeyDown(keys)'
@@ -176,6 +186,7 @@ namespace KernelPanic
 
             return false;
         }
+        */
 
         /// <summary>
         /// calculates the X and Y difference since the last update
@@ -218,6 +229,7 @@ namespace KernelPanic
             return pressed;
         }
 
+        /* TODO uncomment this
         /// <summary>
         /// checks if any of the MouseButtons has been released (at this exact moment)
         /// </summary>
@@ -249,6 +261,7 @@ namespace KernelPanic
 
             return released;
         }
+        */
 
         /// <summary>
         /// checks if any of the MouseButtons is currently down
@@ -346,11 +359,12 @@ namespace KernelPanic
             return ScrollWheelMovement() > 5;
         }
 
+        /* TODO uncomment this
         /// <summary>
         /// TODO
         /// </summary>
         /// <returns></returns>
-        public Tuple<bool, Tuple<int, int>, Tuple<int, int>> MouseDragged(MouseButton mouseButton)
+        public Tuple<bool, Tuple<int, int>, Tuple<int, int>> MouseDragged(MouseButton mouseButton) // TODO implement this iff we need a rectangular selection
         {
             var startPointXy = new Tuple<int, int> (mCurrentMouseState.X, mCurrentMouseState.Y);
             var endPointXy = new Tuple<int, int>(mCurrentMouseState.X, mCurrentMouseState.Y);
@@ -358,6 +372,7 @@ namespace KernelPanic
             var result = new Tuple<bool, Tuple<int, int>, Tuple<int, int>>(false, startPointXy, endPointXy);
             return result;
         }
+        */
 
     }
 }
