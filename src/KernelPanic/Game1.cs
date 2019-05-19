@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace KernelPanic
 {
@@ -10,15 +11,17 @@ namespace KernelPanic
     /// </summary>
     internal sealed class Game1 : Game
     {
+        readonly GraphicsDeviceManager graphics;
         private SpriteBatch mSpriteBatch;
         private SoundManager mMusic;
         private Grid mWorld;
         private Camera2D mCamera;
-
+        private StateManager stateManager;
+        private List<State> stateList = new List<State>();
         public Game1()
         {
-            var graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics = new GraphicsDeviceManager(this);
 
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
@@ -54,6 +57,9 @@ namespace KernelPanic
             mMusic.Play();
 
             mWorld = new Grid(Content, 20, 5, false);
+            stateManager = new StateManager(this, graphics, Content);
+            stateList.Add(new StartMenuState(stateManager, graphics, Content));
+            stateList.Add(new GameState(stateManager, graphics, Content));
         }
 
         /// <summary>
@@ -78,6 +84,7 @@ namespace KernelPanic
             mCamera.Update(gameTime);
             Console.WriteLine(1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
 
+            stateManager.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -94,6 +101,8 @@ namespace KernelPanic
             mSpriteBatch.Begin(transformMatrix: viewMatrix);
             mWorld.Draw(mSpriteBatch, mCamera);
             mSpriteBatch.End();
+
+            stateManager.Draw(gameTime, mSpriteBatch);
 
             base.Draw(gameTime);
         }

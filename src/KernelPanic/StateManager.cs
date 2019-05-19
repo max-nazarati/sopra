@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    public class StateManager
+    internal sealed class StateManager
     {
         private Stack<State> _stateStack = new Stack<State>();
         private  GraphicsDeviceManager _graphics;

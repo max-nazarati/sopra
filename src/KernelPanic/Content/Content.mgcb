@@ -37,6 +37,20 @@
 /processorParam:TextureFormat=Color
 /build:Border.png
 
+#begin ButtonFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ButtonFont.spritefont
+
+#begin ButtonFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ButtonFont.spritefont
+
 #begin GameBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -121,9 +135,28 @@
 /processorParam:TextureFormat=Color
 /build:Saeule.png
 
+#begin StartMenuTitle.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:StartMenuTitle.spritefont
+
 #begin testSoundtrack.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
 /build:testSoundtrack.mp3
+
+#begin Unilogo.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Unilogo.png
 

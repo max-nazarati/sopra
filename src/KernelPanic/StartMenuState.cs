@@ -33,7 +33,7 @@ namespace KernelPanic
             _buttonList.Add(new Button(buttonFont, "QUIT", Width / 2, y: (int)(Height / 3.1), 200, Color.LightGray, Color.Black, graphics));
         }
 
-        public override void Update(GameTime gameTime)
+        internal override void Update(GameTime gameTime)
         {
             OldKeyboardState = KeyboardState;
             OldMouseState = MouseState;
@@ -70,7 +70,7 @@ namespace KernelPanic
             }
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        internal override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
             spriteBatch.Draw(MenuBackgroundTexture, new Rectangle(0, 0, Width, Height), Color.White);

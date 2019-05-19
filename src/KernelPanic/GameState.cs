@@ -6,11 +6,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    public class GameState : State
+    internal sealed class GameState : State
     {
         private readonly Texture2D _background;
         private readonly List<Unit> _mobileObjectsList = new List<Unit>();
-        public GameState(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager content) : base(stateManager, graphics, content)
+        internal GameState(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager content) : base(stateManager, graphics, content)
         {
             var box1 = new Texture2D(graphics.GraphicsDevice, 1, 1);
             box1.SetData(new[] { Color.Green });
@@ -21,7 +21,7 @@ namespace KernelPanic
             _mobileObjectsList.Add(box);
         }
 
-        public override void Update(GameTime gameTime)
+        internal override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
@@ -36,12 +36,13 @@ namespace KernelPanic
                 obj.Update(gameTime);
             }
         }
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        internal override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             //StateManager.Draw(gameTime, spriteBatch);
-            spriteBatch.Begin();
+            /*spriteBatch.Begin();
             spriteBatch.Draw(_background, Vector2.Zero, null, Color.White);
             spriteBatch.End();
+            */
             foreach (Unit obj in _mobileObjectsList)
             {
                 obj.Draw(spriteBatch);
