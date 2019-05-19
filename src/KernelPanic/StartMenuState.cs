@@ -63,7 +63,7 @@ namespace KernelPanic
                         }
                         else if (btn.PText == "QUIT")
                         {
-                            SManager._game.Exit();
+                            SManager.Game.Exit();
                         }
                     }
                 }

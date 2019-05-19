@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,18 +8,16 @@ namespace KernelPanic
 {
     internal sealed class StateManager
     {
-        private Stack<State> _stateStack = new Stack<State>();
-        private  GraphicsDeviceManager _graphics;
-        private  ContentManager _content;
-        public Game1 _game { get; set; }
+        private Stack<State> _stateStack;
+        public Game1 Game { get; set; }
 
-        public StateManager(Game1 game, GraphicsDeviceManager graphics, ContentManager content)
+        public StateManager(Game1 game, GraphicsDeviceManager gameGraphics, ContentManager gameContent)
         {
-            this._game = game;
-            this._graphics = graphics;
-            this._content = content;
-            this._stateStack = new Stack<State>();
-            _stateStack.Push(new StartMenuState(this, _graphics, _content));
+            Game = game;
+            var graphics = gameGraphics;
+            var content = gameContent;
+            _stateStack = new Stack<State>();
+            _stateStack.Push(new StartMenuState(this, graphics, content));
         }
 
         public void AddState(State newState)

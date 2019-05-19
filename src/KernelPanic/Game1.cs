@@ -11,21 +11,21 @@ namespace KernelPanic
     /// </summary>
     internal sealed class Game1 : Game
     {
-        readonly GraphicsDeviceManager graphics;
-        private SpriteBatch mSpriteBatch;
-        private SoundManager mMusic;
-        private Grid mWorld;
-        private Camera2D mCamera;
-        private StateManager stateManager;
-        private List<State> stateList = new List<State>();
+        readonly GraphicsDeviceManager _graphics;
+        private SpriteBatch _mSpriteBatch;
+        private SoundManager _mMusic;
+        private Grid _mWorld;
+        private Camera2D _mCamera;
+        private StateManager _stateManager;
+        public readonly List<State> _stateList = new List<State>();
         public Game1()
         {
             Content.RootDirectory = "Content";
-            graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
-            graphics.ApplyChanges();
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -37,8 +37,8 @@ namespace KernelPanic
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            this.IsMouseVisible = true;
-            mCamera = new Camera2D(GraphicsDevice.Viewport);
+            IsMouseVisible = true;
+            _mCamera = new Camera2D(GraphicsDevice.Viewport);
             base.Initialize();
         }
 
@@ -49,17 +49,17 @@ namespace KernelPanic
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            mSpriteBatch = new SpriteBatch(GraphicsDevice);
+            _mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            mMusic = new SoundManager("testSoundtrack", Content);
-            mMusic.Init();
-            mMusic.Play();
+            _mMusic = new SoundManager("testSoundtrack", Content);
+            _mMusic.Init();
+            _mMusic.Play();
 
-            mWorld = new Grid(Content, 20, 5, false);
-            stateManager = new StateManager(this, graphics, Content);
-            stateList.Add(new StartMenuState(stateManager, graphics, Content));
-            stateList.Add(new GameState(stateManager, graphics, Content));
+            _mWorld = new Grid(Content, 20, 5, false);
+            _stateManager = new StateManager(this, _graphics, Content);
+            _stateList.Add(new StartMenuState(_stateManager, _graphics, Content));
+            _stateList.Add(new GameState(_stateManager, _graphics, Content));
         }
 
         /// <summary>
@@ -79,13 +79,13 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+                _stateManager.AddState(new StartMenuState(_stateManager, _graphics, Content));
             // TODO: Add your update logic here
-            mCamera.Update(gameTime);
+            _mCamera.Update(gameTime);
             Console.WriteLine(1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
             InputManager.Default.Update();
 
-            stateManager.Update(gameTime);
+            _stateManager.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -98,12 +98,12 @@ namespace KernelPanic
             GraphicsDevice.Clear(Color.MintCream);
 
             // TODO: Add your drawing code here
-            var viewMatrix = mCamera.GetViewMatrix();
-            mSpriteBatch.Begin(transformMatrix: viewMatrix);
-            mWorld.Draw(mSpriteBatch, mCamera);
-            mSpriteBatch.End();
+            var viewMatrix = _mCamera.GetViewMatrix();
+            _mSpriteBatch.Begin(transformMatrix: viewMatrix);
+            _mWorld.Draw(_mSpriteBatch, _mCamera);
+            _mSpriteBatch.End();
 
-            stateManager.Draw(gameTime, mSpriteBatch);
+            _stateManager.Draw(gameTime, _mSpriteBatch);
 
             base.Draw(gameTime);
         }

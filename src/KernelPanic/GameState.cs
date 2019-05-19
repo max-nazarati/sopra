@@ -8,13 +8,13 @@ namespace KernelPanic
 {
     internal sealed class GameState : State
     {
-        private readonly Texture2D _background;
+        //private readonly Texture2D _background;
         private readonly List<Unit> _mobileObjectsList = new List<Unit>();
         internal GameState(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager content) : base(stateManager, graphics, content)
         {
             var box1 = new Texture2D(graphics.GraphicsDevice, 1, 1);
             box1.SetData(new[] { Color.Green });
-            _background = Content.Load<Texture2D>("GameBackground");
+            //_background = Content.Load<Texture2D>("GameBackground");
             Unit logo = new Unit(0, 0, 200, 200, Content.Load<Texture2D>("Unilogo"), Graphics);
             Unit box = new Unit(400, 400, 100, 100, box1, Graphics);
             _mobileObjectsList.Add(logo);
