@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +15,8 @@ namespace KernelPanic
         private readonly ContentManager mContent;
         private readonly bool mLeft;
         private Texture2D mKacheln, mBase, mSäule, mMauer, mBorder;
+
+        private Color mBorderColor = Color.Red;
 
         internal Grid(ContentManager content, int rows, int columns, bool left)
         {
@@ -91,15 +94,33 @@ namespace KernelPanic
             }
         }
 
+        /// <summary>
+        /// change the color of the selected square on doubleClick
+        /// mainly for testing purpose
+        /// </summary>
+        private void UpdateColor()
+        {
+            if (!InputManager.Default.DoubleClick()) return;
+            if (mBorderColor == Color.Green)
+            {
+                mBorderColor = Color.Red;
+            }
+            else
+            {
+                mBorderColor = Color.Green;
+            }
+        }
+
         private void DrawBorder(SpriteBatch spriteBatch, Camera2D camera)
         {
+            UpdateColor();
             var mouseState = Mouse.GetState();
             var mouseX = (int)((mouseState.X + camera.mPosition.X)/camera.mZoom);
             var mouseY = (int)((mouseState.Y + camera.mPosition.Y)/camera.mZoom);
             var posX = (int) ((mouseX / 50) * 50);
             var posY = (int) ((mouseY / 50) * 50);
             Console.WriteLine(posX*camera.mZoom);
-            spriteBatch.Draw(mBorder, new Rectangle(posX, posY, 50, 50), null, Color.White);
+            spriteBatch.Draw(mBorder, new Rectangle(posX, posY, 50, 50), null, mBorderColor);
         }
     }
 }
