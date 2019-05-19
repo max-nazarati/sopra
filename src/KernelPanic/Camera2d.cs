@@ -6,9 +6,9 @@ namespace KernelPanic
 {
     internal sealed class Camera2D
     {
-        internal Vector2 mPosition;
+        public Vector2 mPosition;
         private readonly float mRotation;
-        internal float mZoom;
+        public float mZoom;
         private readonly Vector2 mOrigin;
 
         internal Camera2D(Viewport viewport)
@@ -96,7 +96,7 @@ namespace KernelPanic
             get => mZoom;
             set
             {
-                if (value > 0.8 && value < 6)
+                if (value > 0.1 && value < 6)
                 {
                     mZoom = value;
                 }
