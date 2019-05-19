@@ -14,9 +14,11 @@ namespace KernelPanic
         private Tuple<int, int> mLatestMouseLeftClickPosition = new Tuple<int, int>(-1, -1);
         private Tuple<int, int> mLatestMouseMiddleClickPosition = new Tuple<int, int>(-1, -1);
         private Tuple<int, int> mLatestMouseRightClickPosition = new Tuple<int, int>(-1, -1);
-        private const int MaximumDoubleClickDelay = 20; // You have 30 frames to enter your double click (1/2 sec at 60 FPS)
-        private int mDoubleClickFrameCount = 0; // Left MouseButton
+        private const int MaximumDoubleClickDelay = 20; // You have 30 frames to enter your double click (1/3 sec at 60 FPS)
+        private int mDoubleClickFrameCount; // Left MouseButton
         private bool mRecentDoubleClicked;
+        private Tuple<int, int> mScreenSizeTuple = new Tuple<int, int> (1920, 1080);
+        private const int ScreenBorderDistance = 100;
 
         /// <summary>
         /// Left, Middle and Right MouseButton
@@ -42,14 +44,11 @@ namespace KernelPanic
             mCurrentMouseState = Mouse.GetState();
 
             DoubleClickUpdate();
-
-            
             UpdateMouseClickPosition();
-            
         }
 
         /// <summary>
-        /// TODO
+        /// Updates the mRecentDoubleClicked Variable
         /// </summary>
         private void DoubleClickUpdate()
         {
@@ -75,12 +74,12 @@ namespace KernelPanic
             {
                 mRecentDoubleClicked = false;
             }
-                
-
-
-
         }
 
+        /// <summary>
+        /// TODO make as get function
+        /// </summary>
+        /// <returns></returns>
         public bool DoubleClick()
         {
             return mRecentDoubleClicked;
@@ -104,7 +103,6 @@ namespace KernelPanic
                 mLatestMouseRightClickPosition = new Tuple<int, int>(mCurrentMouseState.X, mCurrentMouseState.Y);
             }
         }
-
 
         /// <summary>
         /// checks if any of the Keyboard Buttons has been pressed (at this exact moment)
@@ -189,7 +187,7 @@ namespace KernelPanic
         }
 
         /// <summary>
-        /// TODO
+        /// checks if any of the MouseButtons has been pressed (at this exact moment => de-bounced)
         /// </summary>
         /// <param name="mouseButtons">enum object: Left, Middle, Right</param>
         /// <returns>true if any of the buttons is freshly pressed</returns>
@@ -221,7 +219,7 @@ namespace KernelPanic
         }
 
         /// <summary>
-        /// TODO
+        /// checks if any of the MouseButtons has been released (at this exact moment)
         /// </summary>
         /// <param name="mouseButtons"></param>
         /// <returns></returns>
@@ -253,7 +251,7 @@ namespace KernelPanic
         }
 
         /// <summary>
-        /// TODO
+        /// checks if any of the MouseButtons is currently down
         /// </summary>
         /// <param name="mouseButtons"></param>
         /// <returns></returns>
@@ -287,7 +285,8 @@ namespace KernelPanic
         /// <returns></returns>
         public bool MouseAtLeftScreenBorder()
         {
-            return mCurrentMouseState.X < 400 && mCurrentMouseState.X > 0;
+            return mCurrentMouseState.X < ScreenBorderDistance
+                   && mCurrentMouseState.X > 0;
         }
 
         /// <summary>
@@ -296,7 +295,8 @@ namespace KernelPanic
         /// <returns></returns>
         public bool MouseAtTopScreenBorder()
         {
-            return mCurrentMouseState.Y < 200 && mCurrentMouseState.Y > 0;
+            return mCurrentMouseState.Y < ScreenBorderDistance
+                   && mCurrentMouseState.Y > 0;
         }
 
         /// <summary>
@@ -305,7 +305,8 @@ namespace KernelPanic
         /// <returns></returns>
         public bool MouseAtRightScreenBorder()
         {
-            return mCurrentMouseState.X < 1520 && mCurrentMouseState.X > 1920;
+            return mCurrentMouseState.X > mScreenSizeTuple.Item1 - ScreenBorderDistance
+                   && mCurrentMouseState.X < mScreenSizeTuple.Item1;
         }
 
         /// <summary>
@@ -314,23 +315,42 @@ namespace KernelPanic
         /// <returns></returns>
         public bool MouseAtBottomScreenBorder()
         {
-            return mCurrentMouseState.Y < 1080 && mCurrentMouseState.Y > 880;
+            return mCurrentMouseState.Y > mScreenSizeTuple.Item2 - ScreenBorderDistance
+                   && mCurrentMouseState.Y < mScreenSizeTuple.Item2;
         }
 
         /// <summary>
         /// calculate how far the scroll wheel got turned
         /// </summary>
         /// <returns>negative value for zooming out</returns>
-        public int ScrollWheelMovement()
+        private int ScrollWheelMovement()
         {
             return mCurrentMouseState.ScrollWheelValue - mPreviousMouseState.ScrollWheelValue;
+        }
+
+        /// <summary>
+        /// Checking for 'Zoom Out' since last Update
+        /// </summary>
+        /// <returns></returns>
+        public bool ScrolledDown()
+        {
+            return ScrollWheelMovement() < -5;
+        }
+
+        /// <summary>
+        /// Checking for 'Zoom In' since last Update
+        /// </summary>
+        /// <returns></returns>
+        public bool ScrolledUp()
+        {
+            return ScrollWheelMovement() > 5;
         }
 
         /// <summary>
         /// TODO
         /// </summary>
         /// <returns></returns>
-        private Tuple<bool, Tuple<int, int>, Tuple<int, int>> MouseDragged(MouseButton mouseButton)
+        public Tuple<bool, Tuple<int, int>, Tuple<int, int>> MouseDragged(MouseButton mouseButton)
         {
             var startPointXy = new Tuple<int, int> (mCurrentMouseState.X, mCurrentMouseState.Y);
             var endPointXy = new Tuple<int, int>(mCurrentMouseState.X, mCurrentMouseState.Y);
@@ -338,5 +358,6 @@ namespace KernelPanic
             var result = new Tuple<bool, Tuple<int, int>, Tuple<int, int>>(false, startPointXy, endPointXy);
             return result;
         }
+
     }
 }

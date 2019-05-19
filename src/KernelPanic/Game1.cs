@@ -77,6 +77,7 @@ namespace KernelPanic
             // TODO: Add your update logic here
             mCamera.Update(gameTime);
             Console.WriteLine(1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
+            InputManager.Default.Update();
 
             base.Update(gameTime);
         }

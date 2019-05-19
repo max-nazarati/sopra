@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -9,11 +8,9 @@ namespace KernelPanic
     {
         internal Vector2 mPosition;
         private readonly float mRotation;
-        private int mOldMouseX, mOldMouseY;
         internal float mZoom;
         private readonly Vector2 mOrigin;
 
-        private int mScrollValue, mPreviousScrollValue;
         internal Camera2D(Viewport viewport)
         {
             mRotation = 0;
@@ -23,68 +20,65 @@ namespace KernelPanic
             mPosition.Y = 1150;
         }
 
-        internal void Update(GameTime gameTime)
+        /// <summary>
+        /// Asks if the camera should be moved and reacts accordingly
+        /// </summary>
+        /// <param name="deltaTime"></param>
+        private void MoveCamera(float deltaTime)
         {
-            var mouseState = Mouse.GetState();
-            mScrollValue = mouseState.ScrollWheelValue;
-            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            var keyboardState = Keyboard.GetState();
+            // Movement via Dragging (with InputManager) disables the other inputs
+            if (InputManager.Default.MouseDown(InputManager.MouseButton.Middle))
+            {
+                PosX -= InputManager.Default.MouseMovementTuple().Item1;
+                PosY -= InputManager.Default.MouseMovementTuple().Item2;
+            }
+            else
+            {
+                // Movement wia Button
+                if (InputManager.Default.KeyDown(Keys.W) || InputManager.Default.MouseAtTopScreenBorder())
+                {
+                    // mPosition += new Vector2(0, -600) * deltaTime;
+                    PosY += -10 / mZoom;
+                }
+                if (InputManager.Default.KeyDown(Keys.A) || InputManager.Default.MouseAtLeftScreenBorder())
+                {
+                    // mPosition += new Vector2(-600, 0) * deltaTime;
+                    PosX += -10 / mZoom;
+                }
+                if (InputManager.Default.KeyDown(Keys.S) || InputManager.Default.MouseAtBottomScreenBorder())
+                {
+                    // mPosition += new Vector2(0, 600) * deltaTime;
+                    PosY += 10 / mZoom;
+                }
+                if (InputManager.Default.KeyDown(Keys.D) || InputManager.Default.MouseAtRightScreenBorder())
+                {
+                    // mPosition += new Vector2(600, 0) * deltaTime;
+                    PosX += 10 / mZoom;
+                }
+            }
+        }
 
-            // movement
-            if (keyboardState.IsKeyDown(Keys.W))
-                mPosition -= new Vector2(0, 600) * deltaTime;
-
-            if (keyboardState.IsKeyDown(Keys.S))
-               mPosition += new Vector2(0, 600) * deltaTime;
-
-            if (keyboardState.IsKeyDown(Keys.A))
-                mPosition -= new Vector2(600, 0) * deltaTime;
-
-            if (keyboardState.IsKeyDown(Keys.D))
-                mPosition += new Vector2(600, 0) * deltaTime;
-
-            if (mScrollValue + 5 < mPreviousScrollValue)
+        /// <summary>
+        /// Asks if the camera should be zoomed and reacts accordingly
+        /// </summary>
+        private void ZoomCamera()
+        {
+            if (InputManager.Default.ScrolledDown())
             {
                 Zoom -= 0.1f * mZoom;
             }
-            else if (mScrollValue - 5 > mPreviousScrollValue)
+            else if (InputManager.Default.ScrolledUp())
             {
                 Zoom += 0.1f * mZoom;
             }
+        }
 
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                if (mouseState.Position.X != mOldMouseX)
-                {
-                    PosX -= (mouseState.X - mOldMouseX) / mZoom;
-                }
+        internal void Update(GameTime gameTime)
+        {
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                if (mouseState.Position.Y != 0)
-                {
-                    mPosition.Y -= (mouseState.Y - mOldMouseY) / mZoom;
-                }
-            }
-
-            if (mouseState.X < 400 && mouseState.X > 0)
-            {
-                PosX -= 10/mZoom;
-            }
-            if (mouseState.X > 1520 && mouseState.X < 1920)
-            {
-                PosX += 10/mZoom;
-            }
-            if (mouseState.Y < 200 && mouseState.Y > 0)
-            {
-                PosY -= 10/mZoom;
-            }
-            if (mouseState.Y > 880 && mouseState.Y < 1080)
-            {
-                PosY += 10/mZoom;
-            }
-
-            mOldMouseX = mouseState.X;
-            mOldMouseY = mouseState.Y;
-            mPreviousScrollValue = mScrollValue;
+            MoveCamera(deltaTime);
+            ZoomCamera();
         }
 
         internal Matrix GetViewMatrix()
@@ -99,7 +93,7 @@ namespace KernelPanic
 
         private float Zoom
         {
-            get => this.mZoom;
+            get => mZoom;
             set
             {
                 if (value > 0.8 && value < 6)
@@ -109,9 +103,10 @@ namespace KernelPanic
             }
         }
 
+
         private float PosX
         {
-            get => this.mPosition.X;
+            get => mPosition.X;
             set
             {
                 if (mPosition.X >= -1050 && mPosition.X <= 1150)
@@ -132,7 +127,7 @@ namespace KernelPanic
 
         private float PosY
         {
-            get => this.mPosition.Y;
+            get => mPosition.Y;
             set
             {
                 if (mPosition.Y >= -1000 && mPosition.Y <= 1500)
