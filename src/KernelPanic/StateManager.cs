@@ -9,7 +9,7 @@ namespace KernelPanic
     internal sealed class StateManager
     {
         private Stack<State> _stateStack;
-        public Game1 Game { get; set; }
+        public Game1 Game { get; }
 
         public StateManager(Game1 game, GraphicsDeviceManager gameGraphics, ContentManager gameContent)
         {
@@ -32,7 +32,7 @@ namespace KernelPanic
 
         public void Update(GameTime gameTime)
         {
-            _stateStack.Peek().Update(gameTime);
+            _stateStack.Peek().Update();
         }
 
         public int Count()
@@ -42,7 +42,7 @@ namespace KernelPanic
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            _stateStack.Peek().Draw(gameTime, spriteBatch);
+            _stateStack.Peek().Draw(spriteBatch);
         }
     }
 }

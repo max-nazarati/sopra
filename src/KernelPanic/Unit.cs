@@ -15,20 +15,20 @@ namespace KernelPanic
          * Spacebar to unselect unit
          */
 
-        private bool _selected;
-        private Point _movementGoal = new Point(-1, -1);
+        private bool mSelected;
+        private Point mMovementGoal = new Point(-1, -1);
 
-        public Unit(int x, int y, int width, int height, Texture2D texture, GraphicsDeviceManager graphics) : base(x, y,
-            width, height, texture, graphics)
+        public Unit(int x, int y, int width, int height, Texture2D texture) : base(x, y,
+            width, height, texture)
         {
         }
 
         private bool LeftClick()
         {
-            if (ContainerRectangle.Contains(MouseState.Position))
+            if (mContainerRectangle.Contains(mMouseState.Position))
             {
-                if (MouseState.LeftButton == ButtonState.Pressed && 
-                    OldMouseState.LeftButton == ButtonState.Released)
+                if (mMouseState.LeftButton == ButtonState.Pressed && 
+                    mOldMouseState.LeftButton == ButtonState.Released)
                 {
                     return true;
                 }
@@ -38,63 +38,63 @@ namespace KernelPanic
 
         private void MoveToClick(Point target, int speed)
         {
-            Vector2 direction = new Vector2(target.X - (ContainerRectangle.Width / 2) - ContainerRectangle.X,
-                target.Y - (ContainerRectangle.Height / 2) - ContainerRectangle.Y);
+            Vector2 direction = new Vector2(target.X - (mContainerRectangle.Width / 2) - mContainerRectangle.X,
+                target.Y - (mContainerRectangle.Height / 2) - mContainerRectangle.Y);
             direction.Normalize();
             Vector2 normalizedDirection = direction;
 
             if (normalizedDirection.Length() >= 0.99)
             {
-                ContainerRectangle.X += (int)(normalizedDirection.X * speed);
-                ContainerRectangle.Y += (int)(normalizedDirection.Y * speed);
+                mContainerRectangle.X += (int)(normalizedDirection.X * speed);
+                mContainerRectangle.Y += (int)(normalizedDirection.Y * speed);
             }
 
-            if (Math.Abs(ContainerRectangle.X + (ContainerRectangle.Width / 2) - target.X) <= 4 &&
-                Math.Abs(ContainerRectangle.Y + (ContainerRectangle.Height / 2) - target.Y) <= 4)
+            if (Math.Abs(mContainerRectangle.X + (mContainerRectangle.Width / 2) - target.X) <= 4 &&
+                Math.Abs(mContainerRectangle.Y + (mContainerRectangle.Height / 2) - target.Y) <= 4)
             {
-                _movementGoal = new Point(-1, -1);
+                mMovementGoal = new Point(-1, -1);
             }
         }
 
         private void JumpToClick(MouseState mouseState)
         {
-            ContainerRectangle.Location = new Point(mouseState.X - ContainerRectangle.Width / 2, 
-                mouseState.Y - ContainerRectangle.Height / 2);
+            mContainerRectangle.Location = new Point(mouseState.X - mContainerRectangle.Width / 2, 
+                mouseState.Y - mContainerRectangle.Height / 2);
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
-            base.Update(gameTime);
+            base.Update();
 
-            if (_selected)
+            if (mSelected)
             {
-                if (MouseState.RightButton == ButtonState.Pressed &&
-                    OldMouseState.RightButton == ButtonState.Released)
+                if (mMouseState.RightButton == ButtonState.Pressed &&
+                    mOldMouseState.RightButton == ButtonState.Released)
                 {
-                    _movementGoal = MouseState.Position;
+                    mMovementGoal = mMouseState.Position;
                     return;
                 }
-                else if (MouseState.LeftButton == ButtonState.Pressed)
+                else if (mMouseState.LeftButton == ButtonState.Pressed)
                 {
-                    JumpToClick(MouseState);
+                    JumpToClick(mMouseState);
                     return;
                 }
-                else if (_movementGoal != new Point(-1, -1))
+                else if (mMovementGoal != new Point(-1, -1))
                 {
-                    MoveToClick(_movementGoal, 10);
+                    MoveToClick(mMovementGoal, 10);
                 }
 
-                if (KeyboardState.IsKeyDown(Keys.Space) &&
-                    OldKeyboardState.IsKeyUp(Keys.Space))
+                if (mKeyboardState.IsKeyDown(Keys.Space) &&
+                    mOldKeyboardState.IsKeyUp(Keys.Space))
                 {
-                    _selected = false;
-                    _movementGoal = new Point(-1, -1);
+                    mSelected = false;
+                    mMovementGoal = new Point(-1, -1);
                     return;
                 }
             }
-            if (LeftClick() && !_selected)
+            if (LeftClick() && !mSelected)
             {
-                _selected = true;
+                mSelected = true;
             }
         }
     }

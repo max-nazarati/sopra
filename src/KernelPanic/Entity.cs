@@ -6,32 +6,32 @@ namespace KernelPanic
 {
     public abstract class Entity
     {
-        protected Rectangle ContainerRectangle;
-        protected GraphicsDeviceManager Graphics;
-        protected Texture2D Texture;
-        protected MouseState OldMouseState;
-        protected MouseState MouseState;
-        protected KeyboardState KeyboardState;
-        protected KeyboardState OldKeyboardState;
+        protected Rectangle mContainerRectangle;
+        //private GraphicsDeviceManager mGraphics;
+        private Texture2D Texture;
+        protected MouseState mOldMouseState;
+        protected MouseState mMouseState;
+        protected KeyboardState mKeyboardState;
+        protected KeyboardState mOldKeyboardState;
 
-        protected Entity(int x, int y, int width, int height, Texture2D texture, GraphicsDeviceManager graphics)
+        protected Entity(int x, int y, int width, int height, Texture2D texture)
         {
-            ContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
+            mContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
             Texture = texture;
-            Graphics = graphics;
+            //mGraphics = graphics;
         }
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update()
         {
-            OldMouseState = MouseState;
-            OldKeyboardState = KeyboardState;
-            KeyboardState = Keyboard.GetState();
-            MouseState = Mouse.GetState();
+            mOldMouseState = mMouseState;
+            mOldKeyboardState = mKeyboardState;
+            mKeyboardState = Keyboard.GetState();
+            mMouseState = Mouse.GetState();
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(Texture, ContainerRectangle, Color.White);
+            spriteBatch.Draw(Texture, mContainerRectangle, Color.White);
             spriteBatch.End();
         }
     }

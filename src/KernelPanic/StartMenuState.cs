@@ -9,52 +9,52 @@ namespace KernelPanic
     class StartMenuState : State
     {
         private Texture2D MenuBackgroundTexture { get; }
-        private readonly SpriteFont _titleFont;
-        private readonly List<Button> _buttonList = new List<Button>();
+        private readonly SpriteFont mTitleFont;
+        private readonly List<Button> mButtonList = new List<Button>();
         //private ContentManager Content;
-        private readonly GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager mGraphics;
         private int Width { get; }
         private int Height { get; }
         public StartMenuState(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager contentManager) :base(stateManager, graphics, contentManager)
         {
-            Content = contentManager;
-            _graphics = graphics;
-            MenuBackgroundTexture = new Texture2D(_graphics.GraphicsDevice, 1, 1);
+            mContent = contentManager;
+            mGraphics = graphics;
+            MenuBackgroundTexture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
             MenuBackgroundTexture.SetData(new[] { Color.Black });
 
-            var buttonFont = Content.Load <SpriteFont>("ButtonFont");
-            _titleFont = Content.Load<SpriteFont>("StartMenuTitle");
+            var buttonFont = mContent.Load <SpriteFont>("ButtonFont");
+            mTitleFont = mContent.Load<SpriteFont>("StartMenuTitle");
             Height = graphics.PreferredBackBufferHeight;
             Width = graphics.PreferredBackBufferWidth;
             var buttonBackground = new Texture2D(graphics.GraphicsDevice, 1, 1);
             buttonBackground.SetData(new[] { Color.DarkGray });
-            _buttonList.Add(new Button(buttonFont, "PLAY", Width / 2, Height / 4, 200, Color.LightGray, Color.Black, graphics));
-            _buttonList.Add(new Button(buttonFont, "OPTIONS", Width / 2, (int)(Height / 3.5), 200, Color.LightGray, Color.Black, graphics));
-            _buttonList.Add(new Button(buttonFont, "QUIT", Width / 2, y: (int)(Height / 3.1), 200, Color.LightGray, Color.Black, graphics));
+            mButtonList.Add(new Button(buttonFont, "PLAY", Width / 2, Height / 4, 200, Color.LightGray, Color.Black, graphics));
+            mButtonList.Add(new Button(buttonFont, "OPTIONS", Width / 2, (int)(Height / 3.5), 200, Color.LightGray, Color.Black, graphics));
+            mButtonList.Add(new Button(buttonFont, "QUIT", Width / 2, y: (int)(Height / 3.1), 200, Color.LightGray, Color.Black, graphics));
         }
 
-        internal override void Update(GameTime gameTime)
+        internal override void Update()
         {
-            OldKeyboardState = KeyboardState;
-            OldMouseState = MouseState;
-            base.Update(gameTime);
+            mOldKeyboardState = mKeyboardState;
+            mOldMouseState = mMouseState;
+            base.Update();
 
-            if (KeyboardState.IsKeyDown(Keys.Escape) && !OldKeyboardState.IsKeyDown(Keys.Escape))
+            if (mKeyboardState.IsKeyDown(Keys.Escape) && !mOldKeyboardState.IsKeyDown(Keys.Escape))
             {
                 
             }
-            foreach (Button btn in _buttonList)
+            foreach (Button btn in mButtonList)
             {
-                if (btn.ContainsMouse(MouseState))
+                if (btn.ContainsMouse(mMouseState))
                 {
-                    if (MouseState.LeftButton == ButtonState.Pressed && OldMouseState.LeftButton == ButtonState.Released)
+                    if (mMouseState.LeftButton == ButtonState.Pressed && mOldMouseState.LeftButton == ButtonState.Released)
                     {
                         if (btn.PText == "PLAY")
                         {
                             if (SManager.Count() == 1)
                             {
                                 SManager.RemoveState();
-                                SManager.AddState(new GameState(SManager, _graphics, Content));
+                                SManager.AddState(new GameState(SManager, mGraphics, mContent));
                                 //Game.SetGameState(new GameState(Game, _graphics, Content));
                             } else
                             {
@@ -70,15 +70,15 @@ namespace KernelPanic
             }
         }
 
-        internal override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        internal override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
             spriteBatch.Draw(MenuBackgroundTexture, new Rectangle(0, 0, Width, Height), Color.White);
-            spriteBatch.DrawString(_titleFont, "MAIN MENU", new Vector2((int)(Width / 2.5), y: (int)(Height / 6.0)), Color.Yellow);
+            spriteBatch.DrawString(mTitleFont, "MAIN MENU", new Vector2((int)(Width / 2.5), y: (int)(Height / 6.0)), Color.Yellow);
             spriteBatch.End();
-            foreach(Button btn in _buttonList)
+            foreach(Button btn in mButtonList)
             {
-                btn.Draw(gameTime, spriteBatch);
+                btn.Draw(spriteBatch);
             }
         }
     }
