@@ -95,7 +95,7 @@ namespace KernelPanic
 
             if (mStateList != null)
             {
-                Console.WriteLine(mStateList);
+                // Console.WriteLine(mStateList);
             }
 
             InputManager.Default.Update();
@@ -118,8 +118,8 @@ namespace KernelPanic
             mSpriteBatch.Begin(transformMatrix: viewMatrix);
 
             //mWorld.Draw(mSpriteBatch, mCamera);
-            mWorld2.Draw(mSpriteBatch, mCamera);
-            mWorld3.Draw(mSpriteBatch, mCamera);
+            mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix());
+            mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix());
 
             mSpriteBatch.End();
 

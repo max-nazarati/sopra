@@ -86,7 +86,7 @@ namespace KernelPanic
             return
                 Matrix.CreateTranslation(new Vector3(-mPosition, 0.0f)) *
                 Matrix.CreateTranslation(new Vector3(-mOrigin, 0.0f)) *
-                Matrix.CreateRotationZ(mRotation) *
+                // Matrix.CreateRotationZ(mRotation) *
                 Matrix.CreateScale(mZoom, mZoom, 1) *
                 Matrix.CreateTranslation(new Vector3(mOrigin, 0.0f));
         }

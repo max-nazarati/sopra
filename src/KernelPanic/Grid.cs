@@ -9,7 +9,8 @@ namespace KernelPanic
     {
         private readonly float mScale;
         private readonly ContentManager mContent;
-        private Texture2D mKacheln, mBase, mSäule, mMauer, mBorder;
+        private int mRelativeX, mRelativeY;
+        private Texture2D mKacheln, mBorder;
         /*
         private readonly int mRows, mColumns;
         
@@ -235,15 +236,11 @@ namespace KernelPanic
         /// </summary>
         /// <param name="spriteBatch"></param>
         /// <param name="camera"></param>
-        private void DrawBorder(SpriteBatch spriteBatch, Camera2D camera)
+        private void DrawBorder(SpriteBatch spriteBatch)
         {
-            var mouseX = (int)((InputManager.Default.MousePositionX + camera.mPosition.X) / camera.mZoom);
-            var mouseY = (int)((InputManager.Default.MousePositionY + camera.mPosition.Y) / camera.mZoom);
-            var posX = (mouseX / 50) * 50;
-            var posY = (mouseY / 50) * 50;
-
-            Console.WriteLine(posX * camera.mZoom);
-
+            var posX = (int)((int)((mRelativeX) / 50) * 50);
+            var posY = (int)((int)((mRelativeY) / 50) * 50);
+            Console.WriteLine(posX);
             spriteBatch.Draw(mBorder, new Rectangle(posX, posY, 50, 50), null, mBorderColor);
         }
 
@@ -252,17 +249,19 @@ namespace KernelPanic
         /// </summary>
         /// <param name="spriteBatch"></param>
         /// <param name="camera"></param>
-        internal void Draw(SpriteBatch spriteBatch, Camera2D camera)
+        internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix)
         {
             mKacheln = mContent.Load<Texture2D>("Kachel3");
-            mBase = mContent.Load<Texture2D>("Papier");
-            mSäule = mContent.Load<Texture2D>("Saeule");
-            mMauer = mContent.Load<Texture2D>("Mauer");
             mBorder = mContent.Load<Texture2D>("Border");
+            var relativeVector = Vector2.Transform(new Vector2(InputManager.Default.MousePositionX,InputManager.Default.MousePositionY),
+                Matrix.Invert(viewMatrix));
+            mRelativeX = (int)relativeVector.X;
+            mRelativeY = (int)relativeVector.Y;
+
             // DrawFields(spriteBatch);
             DrawLane(spriteBatch);
             UpdateColor();
-            DrawBorder(spriteBatch, camera);
+            DrawBorder(spriteBatch);
         }
 
         
