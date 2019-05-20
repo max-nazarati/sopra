@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
@@ -18,8 +17,8 @@ namespace KernelPanic
         private bool mSelected;
         private Point mMovementGoal = new Point(-1, -1);
 
-        public Unit(int x, int y, int width, int height, Texture2D texture) : base(x, y,
-            width, height, texture)
+        public Unit(int x, int y, int width, int height) : base(x, y,
+            width, height)
         {
         }
 

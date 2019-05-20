@@ -15,8 +15,8 @@ namespace KernelPanic
             var box1 = new Texture2D(graphics.GraphicsDevice, 1, 1);
             box1.SetData(new[] { Color.Green });
             //_background = Content.Load<Texture2D>("GameBackground");
-            Unit logo = new Unit(0, 0, 200, 200, mContent.Load<Texture2D>("Unilogo"));
-            Unit box = new Unit(400, 400, 100, 100, box1);
+            Unit logo = new Unit(0, 0, 200, 200);
+            Unit box = new Unit(400, 400, 100, 100);
             mMobileObjectsList.Add(logo);
             mMobileObjectsList.Add(box);
         }
@@ -42,11 +42,12 @@ namespace KernelPanic
             /*spriteBatch.Begin();
             spriteBatch.Draw(_background, Vector2.Zero, null, Color.White);
             spriteBatch.End();
-            */
+            
             foreach (Unit obj in mMobileObjectsList)
             {
                 obj.Draw(spriteBatch);
             }
+            */
         }
     }
 }

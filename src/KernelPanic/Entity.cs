@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
@@ -8,16 +7,16 @@ namespace KernelPanic
     {
         protected Rectangle mContainerRectangle;
         //private GraphicsDeviceManager mGraphics;
-        private Texture2D Texture;
+        //private Texture2D Texture;
         protected MouseState mOldMouseState;
         protected MouseState mMouseState;
         protected KeyboardState mKeyboardState;
         protected KeyboardState mOldKeyboardState;
 
-        protected Entity(int x, int y, int width, int height, Texture2D texture)
+        protected Entity(int x, int y, int width, int height)
         {
             mContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
-            Texture = texture;
+            //Texture = texture;
             //mGraphics = graphics;
         }
         public virtual void Update()
@@ -28,11 +27,11 @@ namespace KernelPanic
             mMouseState = Mouse.GetState();
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        /*public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
             spriteBatch.Draw(Texture, mContainerRectangle, Color.White);
             spriteBatch.End();
-        }
+        }*/
     }
 }

@@ -85,6 +85,7 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            mStateManager.Update();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 mStateManager.AddState(new StartMenuState(mStateManager, mGraphics, Content));
             // TODO: Add your update logic here
@@ -99,8 +100,6 @@ namespace KernelPanic
             }
 
             InputManager.Default.Update();
-
-            mStateManager.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -110,19 +109,28 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.MintCream);
+            if ((mStateManager.CheckState()).GetType() == typeof(StartMenuState))
+            {
+                mStateManager.Draw(mSpriteBatch);
+            }
+            else
+            {
+                GraphicsDevice.Clear(Color.MintCream);
 
-            // TODO: Add your drawing code here
+                // TODO: Add your drawing code here
 
-            var viewMatrix = mCamera.GetViewMatrix();
-            mSpriteBatch.Begin(transformMatrix: viewMatrix);
+                var viewMatrix = mCamera.GetViewMatrix();
 
-            //mWorld.Draw(mSpriteBatch, mCamera);
-            mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix());
-            mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix());
+                mSpriteBatch.Begin(transformMatrix: viewMatrix);
 
-            mSpriteBatch.End();
+                //mWorld.Draw(mSpriteBatch, mCamera);
+                mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix());
+                mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix());
 
+                mSpriteBatch.End();
+
+                mStateManager.Draw(mSpriteBatch);
+            }
             base.Draw(gameTime);
         }
     }

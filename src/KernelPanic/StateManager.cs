@@ -30,7 +30,7 @@ namespace KernelPanic
             _stateStack.Pop();
         }
 
-        public void Update(GameTime gameTime)
+        public void Update()
         {
             _stateStack.Peek().Update();
         }
@@ -40,9 +40,14 @@ namespace KernelPanic
             return _stateStack.Count();
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             _stateStack.Peek().Draw(spriteBatch);
+        }
+
+        public State CheckState()
+        {
+            return _stateStack.Peek();
         }
     }
 }
