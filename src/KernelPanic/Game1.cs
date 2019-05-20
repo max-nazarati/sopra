@@ -56,9 +56,8 @@ namespace KernelPanic
             mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            mMusic = new SoundManager("testSoundtrack", Content);
-            mMusic.Init();
-            mMusic.Play();
+            SoundManager.Instance.Init(Content);
+            SoundManager.Instance.PlayBackgroundMusic();
 
             // mWorld = new Grid(Content, 20, 5, false);
             mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25));
