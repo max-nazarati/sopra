@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
@@ -14,8 +15,9 @@ namespace KernelPanic
         private Tuple<int, int> mLatestMouseLeftClickPosition = new Tuple<int, int>(-1, -1);
         private Tuple<int, int> mLatestMouseMiddleClickPosition = new Tuple<int, int>(-1, -1);
         private Tuple<int, int> mLatestMouseRightClickPosition = new Tuple<int, int>(-1, -1);
-        private const int MaximumDoubleClickDelay = 20; // You have 30 frames to enter your double click (1/3 sec at 60 FPS)
-        private int mDoubleClickFrameCount; // Left MouseButton
+        private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
+        private double mTimeLastClick = MaximumDoubleClickDelay; // Left MouseButton (init is for 'reset')
+        // private int mDoubleClickFrameCount; 
         private bool mRecentDoubleClicked;
         private Tuple<int, int> mScreenSizeTuple = new Tuple<int, int> (1920, 1080);
         private const int ScreenBorderDistance = 100;
@@ -33,7 +35,7 @@ namespace KernelPanic
         /// <summary>
         /// updates the Input states, should be called in the main update function.
         /// </summary>
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             // updating the keyboard
             mPreviousKeyboardState = mCurrentKeyboardState;
@@ -43,32 +45,29 @@ namespace KernelPanic
             mPreviousMouseState = mCurrentMouseState;
             mCurrentMouseState = Mouse.GetState();
 
-            DoubleClickUpdate();
+            DoubleClickUpdate(gameTime);
             UpdateMouseClickPosition();
         }
 
         /// <summary>
         /// Updates the mRecentDoubleClicked Variable
         /// </summary>
-        private void DoubleClickUpdate()
+        private void DoubleClickUpdate(GameTime gameTime)
         {
-            // update the timing variable
-            if (mDoubleClickFrameCount > 0)
-            {
-                mDoubleClickFrameCount -= 1;
-            }
+            // time has past :)
+            mTimeLastClick += gameTime.ElapsedGameTime.Milliseconds;
 
-            // check for Input to reset timer or return successful double click
+            // check for Input to reset timer or mark recent double click as success
             if (MousePressed(MouseButton.Left))
             {
-                if (mDoubleClickFrameCount > 0)
+                if (mTimeLastClick < MaximumDoubleClickDelay)
                 {
-                    mDoubleClickFrameCount = 0;
+                    mTimeLastClick = MaximumDoubleClickDelay; // 'resetting' the double click
                     mRecentDoubleClicked = true;
                     return;
                 }
-                mDoubleClickFrameCount = MaximumDoubleClickDelay;
                 mRecentDoubleClicked = false;
+                mTimeLastClick = 0;
             }
             else
             {

@@ -51,19 +51,19 @@ namespace KernelPanic
                     {
                         if (btn.PText == "PLAY")
                         {
-                            if (SManager.Count() == 1)
+                            if (mSManager.Count() == 1)
                             {
-                                SManager.RemoveState();
-                                SManager.AddState(new GameState(SManager, mGraphics, mContent));
+                                mSManager.RemoveState();
+                                mSManager.AddState(new GameState(mSManager, mGraphics, mContent));
                                 //Game.SetGameState(new GameState(Game, _graphics, Content));
                             } else
                             {
-                                SManager.RemoveState();
+                                mSManager.RemoveState();
                             }
                         }
                         else if (btn.PText == "QUIT")
                         {
-                            SManager.Game.Exit();
+                            mSManager.Game.Exit();
                         }
                     }
                 }

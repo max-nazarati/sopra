@@ -8,8 +8,8 @@ namespace KernelPanic
     internal abstract class State
     {
         protected ContentManager mContent;
-        protected GraphicsDeviceManager Graphics;
-        internal StateManager SManager;
+        protected readonly GraphicsDeviceManager mGraphics;
+        internal readonly StateManager mSManager;
         protected KeyboardState mKeyboardState;
         protected KeyboardState mOldKeyboardState;
         protected MouseState mMouseState;
@@ -19,8 +19,8 @@ namespace KernelPanic
         internal State(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager content)
         {
             mContent = content;
-            Graphics = graphics;
-            SManager = stateManager;
+            mGraphics = graphics;
+            mSManager = stateManager;
         }
         internal virtual void Update()
         {

@@ -99,7 +99,7 @@ namespace KernelPanic
                 // Console.WriteLine(mStateList);
             }
 
-            InputManager.Default.Update();
+            InputManager.Default.Update(gameTime);
             base.Update(gameTime);
         }
 

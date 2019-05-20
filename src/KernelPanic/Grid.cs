@@ -235,11 +235,10 @@ namespace KernelPanic
         /// Draws the tile marking overlay
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="camera"></param>
         private void DrawBorder(SpriteBatch spriteBatch)
         {
-            var posX = (int)((int)((mRelativeX) / 50) * 50);
-            var posY = (int)((int)((mRelativeY) / 50) * 50);
+            var posX = (((mRelativeX) / 50) * 50);
+            var posY = (((mRelativeY) / 50) * 50);
             Console.WriteLine(posX);
             spriteBatch.Draw(mBorder, new Rectangle(posX, posY, 50, 50), null, mBorderColor);
         }
@@ -248,7 +247,7 @@ namespace KernelPanic
         /// calling the different draw function
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="camera"></param>
+        /// <param name="viewMatrix"></param>
         internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix)
         {
             mKacheln = mContent.Load<Texture2D>("Kachel3");

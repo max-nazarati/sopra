@@ -27,7 +27,7 @@ namespace KernelPanic
 
             if(mKeyboardState.IsKeyDown(Keys.Escape) && mOldKeyboardState.IsKeyUp(Keys.Escape))
             {
-                SManager.AddState(new StartMenuState(SManager, Graphics, mContent));
+                mSManager.AddState(new StartMenuState(mSManager, mGraphics, mContent));
                 //Game.SetGameState(new StartMenuState(Game, Graphics, Content));
             }
 

@@ -6,14 +6,14 @@ namespace KernelPanic
 {
     internal sealed class Camera2D
     {
-        public Vector2 mPosition;
-        private readonly float mRotation;
-        public float mZoom;
+        private Vector2 mPosition;
+        // private readonly float mRotation;
+        private float mZoom;
         private readonly Vector2 mOrigin;
 
         internal Camera2D(Viewport viewport)
         {
-            mRotation = 0;
+            // mRotation = 0;
             mZoom = 1;
             mOrigin = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
             mPosition.X = 290;
