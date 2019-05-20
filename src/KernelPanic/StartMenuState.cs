@@ -30,7 +30,7 @@ namespace KernelPanic
             buttonBackground.SetData(new[] { Color.DarkGray });
             mButtonList.Add(new Button(buttonFont, "PLAY", Width / 2, Height / 4, 200, Color.LightGray, Color.Black, graphics));
             mButtonList.Add(new Button(buttonFont, "OPTIONS", Width / 2, (int)(Height / 3.5), 200, Color.LightGray, Color.Black, graphics));
-            mButtonList.Add(new Button(buttonFont, "QUIT", Width / 2, y: (int)(Height / 3.1), 200, Color.LightGray, Color.Black, graphics));
+            mButtonList.Add(new Button(buttonFont, "QUIT", Width / 2, (int)(Height / 3.1), 200, Color.LightGray, Color.Black, graphics));
         }
 
         internal override void Update()
