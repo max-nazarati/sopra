@@ -12,24 +12,26 @@ namespace KernelPanic
     internal sealed class Game1 : Game
     {
         private SpriteBatch mSpriteBatch;
-        private SoundManager mMusic;
         // private Grid mWorld;
         private Grid mWorld2;
         private Grid mWorld3;
         private Camera2D mCamera;
 
-        readonly GraphicsDeviceManager mGraphics;
+        private readonly GraphicsDeviceManager mGraphics;
         private StateManager mStateManager;
         private readonly List<State> mStateList = new List<State>();
 
         public Game1()
         {
             Content.RootDirectory = "Content";
-            mGraphics = new GraphicsDeviceManager(this);
+            mGraphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = 1920,
+                PreferredBackBufferHeight = 1080
+            };
 
-            mGraphics.PreferredBackBufferWidth = 1920;
-            mGraphics.PreferredBackBufferHeight = 1080;
-            mGraphics.ApplyChanges();
+            // No mGraphics.ApplyChanges() required as explained here:
+            // https://stackoverflow.com/a/11287316/1592765
         }
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace KernelPanic
                 mStateManager.AddState(new StartMenuState(mStateManager, mGraphics, Content));
             // TODO: Add your update logic here
 
-            mCamera.Update(gameTime);
+            mCamera.Update();
 
             Console.WriteLine( "fps: " + 1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -108,7 +110,7 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if ((mStateManager.CheckState()).GetType() == typeof(StartMenuState))
+            if (mStateManager.CheckState() is StartMenuState)
             {
                 mStateManager.Draw(mSpriteBatch);
             }

@@ -23,14 +23,13 @@ namespace KernelPanic
         /// <summary>
         /// Asks if the camera should be moved and reacts accordingly
         /// </summary>
-        /// <param name="deltaTime"></param>
-        private void MoveCamera(float deltaTime)
+        private void MoveCamera()
         {
             // Movement via Dragging (with InputManager) disables the other inputs
             if (InputManager.Default.MouseDown(InputManager.MouseButton.Middle))
             {
-                PosX -= InputManager.Default.MouseMovementTuple().Item1;
-                PosY -= InputManager.Default.MouseMovementTuple().Item2;
+                PosX -= InputManager.Default.MouseMovement.X;
+                PosY -= InputManager.Default.MouseMovement.Y;
             }
             else
             {
@@ -73,11 +72,9 @@ namespace KernelPanic
             }
         }
 
-        internal void Update(GameTime gameTime)
+        internal void Update()
         {
-            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            MoveCamera(deltaTime);
+            MoveCamera();
             ZoomCamera();
         }
 

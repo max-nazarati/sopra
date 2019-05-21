@@ -1,31 +1,17 @@
-﻿using System;
-using System.Net.Mime;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
 
 namespace KernelPanic
 {
     internal sealed class SoundManager
     {
-        private SoundEffect mWalking, mShooting, mBuildTower;
         private Song mBackgroundSong1;
-
-        // singleton pattern
-        private static readonly SoundManager sInstance = new SoundManager();
-
-        static SoundManager()
-        {
-        }
 
         private SoundManager()
         {
         }
 
-        internal static SoundManager Instance => sInstance;
+        internal static SoundManager Instance { get; } = new SoundManager();
 
         /// <summary>
         /// loads content
@@ -35,9 +21,12 @@ namespace KernelPanic
         {
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Volume = 0.2f;
+            
+            // Uncomment if these are used.
             // mWalking = content.Load<SoundEffect>("");
             // mShooting = content.Load<SoundEffect>("");
             // mBuildTower = content.Load<SoundEffect>("");
+            
             mBackgroundSong1 = content.Load<Song>("testSoundtrack");
         }
 
@@ -48,6 +37,10 @@ namespace KernelPanic
         {
             MediaPlayer.Play(mBackgroundSong1);
         }
+
+#if false // Currently not used.
+        private SoundEffect mWalking, mShooting, mBuildTower;
+
         /// <summary>
         /// plays the sound according to the given string
         /// </summary>
@@ -70,5 +63,6 @@ namespace KernelPanic
                     break;
             }
         }
+#endif
     }
 }

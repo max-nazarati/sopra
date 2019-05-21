@@ -95,7 +95,7 @@ namespace KernelPanic
         private readonly LaneSide mLaneSide;
         private readonly Rectangle mLaneSizeInTilesRectangle;
         private readonly int mLaneWidthInTiles;
-        private readonly int mKachelPixelSize = 200;
+        private const int KachelPixelSize = 200;
         private Color mBorderColor = Color.Red;
 
 
@@ -118,10 +118,10 @@ namespace KernelPanic
         private void DrawTile(SpriteBatch spriteBatch, int column, int row, Color color)
         {
             spriteBatch.Draw(mKacheln,
-                new Rectangle((int)(mScale * mKacheln.Width * column + (0 * mScale * mKacheln.Width)),
+                new Rectangle((int)(mScale * mKacheln.Width * column + 0 * mScale * mKacheln.Width),
                     (int)(mScale * mKacheln.Height * row),
-                    (int)(mScale * mKachelPixelSize),
-                    (int)(mScale * mKachelPixelSize)),
+                    (int)(mScale * KachelPixelSize),
+                    (int)(mScale * KachelPixelSize)),
                 null,
                 color);
         }
@@ -130,14 +130,14 @@ namespace KernelPanic
         /// Draws the biggest possible rectangle of the lane (the whole vertical part of the '[' resp. ']')
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="upperLeftPositionTuple"></param>
-        private void DrawVerticalPart(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        /// <param name="upperLeft"></param>
+        private void DrawVerticalPart(SpriteBatch spriteBatch, Point upperLeft)
         {
             for (var column = 0; column < mLaneWidthInTiles; column++)
             {
                 for (var row = 0; row < mLaneSizeInTilesRectangle.Height; row++)
                 {
-                    DrawTile(spriteBatch, upperLeftPositionTuple.Item1 + column, upperLeftPositionTuple.Item2 + row, Color.Green);
+                    DrawTile(spriteBatch, upperLeft.X + column, upperLeft.Y + row, Color.Green);
                 }
             }
         }
@@ -146,14 +146,14 @@ namespace KernelPanic
         /// Draws the small corner parts that are left after drawing the vertical part of the lane.
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
-        private void DrawAttachedPart(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        /// <param name="upperLeft">most top left coordinate</param>
+        private void DrawAttachedPart(SpriteBatch spriteBatch, Point upperLeft)
         {
             for (var column = 0; column < mLaneSizeInTilesRectangle.Width - mLaneWidthInTiles; column++)
             {
                 for (var row = 0; row < mLaneWidthInTiles; row++)
                 {
-                    DrawTile(spriteBatch, upperLeftPositionTuple.Item1 + column, upperLeftPositionTuple.Item2 + row, Color.Black);
+                    DrawTile(spriteBatch, upperLeft.X + column, upperLeft.Y + row, Color.Black);
                 }
             }
         }
@@ -162,16 +162,14 @@ namespace KernelPanic
         /// Calls helper functions to draw the left lane (starting at most top left point)
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
-        private void DrawLeftLane(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        /// <param name="upperLeft">most top left coordinate</param>
+        private void DrawLeftLane(SpriteBatch spriteBatch, Point upperLeft)
         {
-            var leftPart = upperLeftPositionTuple;
-
-            var topRight = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
-                upperLeftPositionTuple.Item2);
-
-            var bottomRight = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
-                upperLeftPositionTuple.Item2 + mLaneSizeInTilesRectangle.Height - mLaneWidthInTiles);
+            var leftPart = upperLeft;
+            var topRight = new Point(upperLeft.X + mLaneWidthInTiles, upperLeft.Y);
+            var bottomRight = new Point(
+                upperLeft.X + mLaneWidthInTiles,
+                upperLeft.Y + mLaneSizeInTilesRectangle.Height - mLaneWidthInTiles);
 
             DrawVerticalPart(spriteBatch, leftPart);
             DrawAttachedPart(spriteBatch, topRight);
@@ -182,19 +180,18 @@ namespace KernelPanic
         /// Calls helper functions to draw the right lane (starting at most top left point)
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
-        private void DrawRightLane(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        /// <param name="upperLeft">most top left coordinate</param>
+        private void DrawRightLane(SpriteBatch spriteBatch, Point upperLeft)
         {
             // position of the right part of the lane (most top left point)
-            var rightPart = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
-                upperLeftPositionTuple.Item2);
-
+            var rightPart = new Point(upperLeft.X + mLaneWidthInTiles, upperLeft.Y);
+ 
             // position of the top left part of the lane (most top left point)
-            var topLeft = upperLeftPositionTuple;
+            var topLeft = upperLeft;
 
             // position of the bottom left part of the lane (most top left point)
-            var bottomLeft = new Tuple<int, int>(upperLeftPositionTuple.Item1,
-                upperLeftPositionTuple.Item2 + mLaneSizeInTilesRectangle.Height - mLaneWidthInTiles);
+            var bottomLeft = new Point(upperLeft.X,
+                upperLeft.Y + mLaneSizeInTilesRectangle.Height - mLaneWidthInTiles);
 
 
             DrawVerticalPart(spriteBatch, rightPart);
@@ -209,15 +206,17 @@ namespace KernelPanic
         private void DrawLane(SpriteBatch spriteBatch)
         {
             var upperLeftPositionTuple =
-                new Tuple<int, int>(mLaneSizeInTilesRectangle.X, mLaneSizeInTilesRectangle.Y);
+                new Point(mLaneSizeInTilesRectangle.X, mLaneSizeInTilesRectangle.Y);
             switch (mLaneSide)
             {
                 case LaneSide.Left:
                     DrawLeftLane(spriteBatch, upperLeftPositionTuple);
                     break;
                 case LaneSide.Right:
-                    DrawRightLane(spriteBatch ,upperLeftPositionTuple);
+                    DrawRightLane(spriteBatch, upperLeftPositionTuple);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mLaneSide));
             }
         }
 
@@ -227,7 +226,9 @@ namespace KernelPanic
         /// </summary>
         private void UpdateColor()
         {
-            if (!InputManager.Default.DoubleClick()) return;
+            if (!InputManager.Default.DoubleClick)
+                return;
+            
             mBorderColor = mBorderColor == Color.Green ? Color.Red : Color.Green;
         }
 
@@ -237,8 +238,8 @@ namespace KernelPanic
         /// <param name="spriteBatch"></param>
         private void DrawBorder(SpriteBatch spriteBatch)
         {
-            var posX = (((mRelativeX) / 50) * 50);
-            var posY = (((mRelativeY) / 50) * 50);
+            var posX = mRelativeX / 50 * 50;
+            var posY = mRelativeY / 50 * 50;
             Console.WriteLine(posX);
             spriteBatch.Draw(mBorder, new Rectangle(posX, posY, 50, 50), null, mBorderColor);
         }

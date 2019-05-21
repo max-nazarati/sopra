@@ -15,8 +15,8 @@ namespace KernelPanic
             var box1 = new Texture2D(graphics.GraphicsDevice, 1, 1);
             box1.SetData(new[] { Color.Green });
             //_background = Content.Load<Texture2D>("GameBackground");
-            Unit logo = new Unit(0, 0, 200, 200);
-            Unit box = new Unit(400, 400, 100, 100);
+            var logo = new Unit(0, 0, 200, 200);
+            var box = new Unit(400, 400, 100, 100);
             mMobileObjectsList.Add(logo);
             mMobileObjectsList.Add(box);
         }
@@ -31,7 +31,7 @@ namespace KernelPanic
                 //Game.SetGameState(new StartMenuState(Game, Graphics, Content));
             }
 
-            foreach (Unit obj in mMobileObjectsList)
+            foreach (var obj in mMobileObjectsList)
             {
                 obj.Update();
             }

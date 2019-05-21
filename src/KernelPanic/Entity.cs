@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    public abstract class Entity
+    internal abstract class Entity
     {
         protected Rectangle mContainerRectangle;
         //private GraphicsDeviceManager mGraphics;
@@ -19,7 +19,8 @@ namespace KernelPanic
             //Texture = texture;
             //mGraphics = graphics;
         }
-        public virtual void Update()
+
+        internal virtual void Update()
         {
             mOldMouseState = mMouseState;
             mOldKeyboardState = mKeyboardState;

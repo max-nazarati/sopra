@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    public class Unit : Entity
+    internal class Unit : Entity
     {
         /* To select a unit, left-click on it
          * Further lef-clicks place the unit on different positions
@@ -17,30 +17,24 @@ namespace KernelPanic
         private bool mSelected;
         private Point mMovementGoal = new Point(-1, -1);
 
-        public Unit(int x, int y, int width, int height) : base(x, y,
-            width, height)
+        internal Unit(int x, int y, int width, int height) : base(x, y, width, height)
         {
         }
 
         private bool LeftClick()
         {
-            if (mContainerRectangle.Contains(mMouseState.Position))
-            {
-                if (mMouseState.LeftButton == ButtonState.Pressed && 
-                    mOldMouseState.LeftButton == ButtonState.Released)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return
+                mContainerRectangle.Contains(mMouseState.Position) &&
+                mMouseState.LeftButton == ButtonState.Pressed &&
+                mOldMouseState.LeftButton == ButtonState.Released;
         }
 
         private void MoveToClick(Point target, int speed)
         {
-            Vector2 direction = new Vector2(target.X - (mContainerRectangle.Width / 2) - mContainerRectangle.X,
-                target.Y - (mContainerRectangle.Height / 2) - mContainerRectangle.Y);
+            var direction = new Vector2(target.X - mContainerRectangle.Width / 2 - mContainerRectangle.X,
+                target.Y - mContainerRectangle.Height / 2 - mContainerRectangle.Y);
             direction.Normalize();
-            Vector2 normalizedDirection = direction;
+            var normalizedDirection = direction;
 
             if (normalizedDirection.Length() >= 0.99)
             {
@@ -48,8 +42,8 @@ namespace KernelPanic
                 mContainerRectangle.Y += (int)(normalizedDirection.Y * speed);
             }
 
-            if (Math.Abs(mContainerRectangle.X + (mContainerRectangle.Width / 2) - target.X) <= 4 &&
-                Math.Abs(mContainerRectangle.Y + (mContainerRectangle.Height / 2) - target.Y) <= 4)
+            if (Math.Abs(mContainerRectangle.X + mContainerRectangle.Width / 2 - target.X) <= 4 &&
+                Math.Abs(mContainerRectangle.Y + mContainerRectangle.Height / 2 - target.Y) <= 4)
             {
                 mMovementGoal = new Point(-1, -1);
             }
@@ -61,7 +55,7 @@ namespace KernelPanic
                 mouseState.Y - mContainerRectangle.Height / 2);
         }
 
-        public override void Update()
+        internal override void Update()
         {
             base.Update();
 
@@ -73,12 +67,14 @@ namespace KernelPanic
                     mMovementGoal = mMouseState.Position;
                     return;
                 }
-                else if (mMouseState.LeftButton == ButtonState.Pressed)
+
+                if (mMouseState.LeftButton == ButtonState.Pressed)
                 {
                     JumpToClick(mMouseState);
                     return;
                 }
-                else if (mMovementGoal != new Point(-1, -1))
+
+                if (mMovementGoal != new Point(-1, -1))
                 {
                     MoveToClick(mMovementGoal, 10);
                 }

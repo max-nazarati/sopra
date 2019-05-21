@@ -6,19 +6,18 @@ using Microsoft.Xna.Framework.Content;
 
 namespace KernelPanic
 {
-    class StartMenuState : State
+    internal sealed class StartMenuState : State
     {
         private Texture2D MenuBackgroundTexture { get; }
         private readonly SpriteFont mTitleFont;
         private readonly List<Button> mButtonList = new List<Button>();
         //private ContentManager Content;
-        private readonly GraphicsDeviceManager mGraphics;
+
         private int Width { get; }
         private int Height { get; }
         public StartMenuState(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager contentManager) :base(stateManager, graphics, contentManager)
         {
             mContent = contentManager;
-            mGraphics = graphics;
             MenuBackgroundTexture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
             MenuBackgroundTexture.SetData(new[] { Color.Black });
 
@@ -43,29 +42,27 @@ namespace KernelPanic
             {
                 
             }
-            foreach (Button btn in mButtonList)
+            foreach (var btn in mButtonList)
             {
-                if (btn.ContainsMouse(mMouseState))
+                if (!btn.ContainsMouse(mMouseState)) continue;
+                if (mMouseState.LeftButton != ButtonState.Pressed ||
+                    mOldMouseState.LeftButton != ButtonState.Released) continue;
+                
+                if (btn.Text == "PLAY")
                 {
-                    if (mMouseState.LeftButton == ButtonState.Pressed && mOldMouseState.LeftButton == ButtonState.Released)
+                    if (mSManager.Count() == 1)
                     {
-                        if (btn.PText == "PLAY")
-                        {
-                            if (mSManager.Count() == 1)
-                            {
-                                mSManager.RemoveState();
-                                mSManager.AddState(new GameState(mSManager, mGraphics, mContent));
-                                //Game.SetGameState(new GameState(Game, _graphics, Content));
-                            } else
-                            {
-                                mSManager.RemoveState();
-                            }
-                        }
-                        else if (btn.PText == "QUIT")
-                        {
-                            mSManager.Game.Exit();
-                        }
+                        mSManager.RemoveState();
+                        mSManager.AddState(new GameState(mSManager, mGraphics, mContent));
+                        //Game.SetGameState(new GameState(Game, _graphics, Content));
+                    } else
+                    {
+                        mSManager.RemoveState();
                     }
+                }
+                else if (btn.Text == "QUIT")
+                {
+                    mSManager.Game.Exit();
                 }
             }
         }
@@ -74,9 +71,9 @@ namespace KernelPanic
         {
             spriteBatch.Begin();
             spriteBatch.Draw(MenuBackgroundTexture, new Rectangle(0, 0, Width, Height), Color.White);
-            spriteBatch.DrawString(mTitleFont, "MAIN MENU", new Vector2((int)(Width / 2.5), y: (int)(Height / 6.0)), Color.Yellow);
+            spriteBatch.DrawString(mTitleFont, "MAIN MENU", new Vector2((int)(Width / 2.5), (int)(Height / 6.0)), Color.Yellow);
             spriteBatch.End();
-            foreach(Button btn in mButtonList)
+            foreach(var btn in mButtonList)
             {
                 btn.Draw(spriteBatch);
             }
