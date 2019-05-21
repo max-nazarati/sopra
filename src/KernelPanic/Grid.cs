@@ -253,8 +253,7 @@ namespace KernelPanic
         {
             mKacheln = mContent.Load<Texture2D>("Kachel3");
             mBorder = mContent.Load<Texture2D>("Border");
-            var relativeVector = Vector2.Transform(new Vector2(InputManager.Default.MousePositionX,InputManager.Default.MousePositionY),
-                Matrix.Invert(viewMatrix));
+            var relativeVector = Vector2.Transform(InputManager.Default.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
             mRelativeX = (int)relativeVector.X;
             mRelativeY = (int)relativeVector.Y;
 
@@ -263,7 +262,5 @@ namespace KernelPanic
             UpdateColor();
             DrawBorder(spriteBatch);
         }
-
-        
     }
 }

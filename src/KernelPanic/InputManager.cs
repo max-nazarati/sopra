@@ -9,8 +9,7 @@ namespace KernelPanic
     /// </summary>
     internal sealed class InputManager
     {
-        private KeyboardState mCurrentKeyboardState;
-        // private KeyboardState mPreviousKeyboardState;
+        private KeyboardState mCurrentKeyboardState, mPreviousKeyboardState;
         private MouseState mCurrentMouseState, mPreviousMouseState;
         private static InputManager sInstance;
         private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
@@ -35,7 +34,7 @@ namespace KernelPanic
         internal void Update(GameTime gameTime)
         {
             // updating the keyboard
-            // mPreviousKeyboardState = mCurrentKeyboardState;
+            mPreviousKeyboardState = mCurrentKeyboardState;
             mCurrentKeyboardState = Keyboard.GetState();
 
             // updating the mouse
@@ -107,13 +106,8 @@ namespace KernelPanic
         }
 #endif
 
-        internal int MousePositionX => mCurrentMouseState.X;
+        internal Point MousePosition => mCurrentMouseState.Position;
 
-        internal int MousePositionY => mCurrentMouseState.Y;
-        
-        
-
-        /* TODO uncomment this
         /// <summary>
         /// checks if any of the Keyboard Buttons has been pressed (at this exact moment)
         /// </summary>
@@ -131,7 +125,6 @@ namespace KernelPanic
 
             return false;
         }
-        */
 
 
         /* TODO uncomment this
@@ -205,7 +198,7 @@ namespace KernelPanic
         /// </summary>
         /// <param name="mouseButtons">enum object: Left, Middle, Right</param>
         /// <returns>true if any of the buttons is freshly pressed</returns>
-        private bool MousePressed(params MouseButton[] mouseButtons)
+        internal bool MousePressed(params MouseButton[] mouseButtons)
         {
             var pressed = false;
             foreach (var mouseButton in mouseButtons)
