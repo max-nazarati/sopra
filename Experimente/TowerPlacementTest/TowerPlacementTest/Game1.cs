@@ -40,6 +40,7 @@ namespace TowerPlacementTest
             // TODO: Add your initialization logic here
             IsMouseVisible = true;
             mCamera = new Camera2D(GraphicsDevice.Viewport);
+            SoundManager.Instance.Init(Content);
             base.Initialize();
         }
 

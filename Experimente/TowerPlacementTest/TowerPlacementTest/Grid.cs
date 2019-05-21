@@ -251,6 +251,7 @@ namespace TowerPlacementTest
             {
                 mTowerList.Add(new Tower(mContent, (mRelativeX / 50) * 50, (mRelativeY / 50) * 50));
                 mUsedGrids.Add(new Vector2((mRelativeX / 50) * 50, (mRelativeY / 50) * 50));
+                SoundManager.Instance.PlaySound("placement");
             }
 
 

@@ -37,6 +37,12 @@
 /processorParam:TextureFormat=Color
 /build:KachelDark.png
 
+#begin placement.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:placement.mp3
+
 #begin projectile.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -48,6 +54,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:projectile.png;Projectile.png
+
+#begin shoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:shoot.mp3
 
 #begin tower.png
 /importer:TextureImporter

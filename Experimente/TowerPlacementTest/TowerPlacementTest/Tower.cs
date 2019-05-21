@@ -42,6 +42,7 @@ namespace TowerPlacementTest
             {
                 mProjektilListe.Add(new Projectile(mContent, new Vector2((float)Math.Sin(mRotation % (3.14159265f * 2)),
                     -(float)Math.Cos(mRotation % (3.14159265f * 2))), new Vector2(mPosX + 25, mPosY + 25)));
+                SoundManager.Instance.PlaySound("shoot");
                 if (mProjektilListe.Count > 50)
                 {
                     mProjektilListe.RemoveAt(0);
