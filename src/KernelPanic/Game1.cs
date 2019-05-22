@@ -21,6 +21,10 @@ namespace KernelPanic
         private StateManager mStateManager;
         private readonly List<State> mStateList = new List<State>();
 
+        private UnitManager mUnitManager;
+        private CollisionManager mCollisionManager;
+        private Unit mUnit;
+
         public Game1()
         {
             Content.RootDirectory = "Content";
@@ -68,6 +72,12 @@ namespace KernelPanic
             mStateManager = new StateManager(this, mGraphics, Content);
             mStateList.Add(new StartMenuState(mStateManager, mGraphics, Content));
             mStateList.Add(new GameState(mStateManager, mGraphics, Content));
+
+            mUnitManager = new UnitManager();
+            mCollisionManager = new CollisionManager();
+            mUnit = new Unit(0, 0, 100, 100);
+            mUnitManager.AddUnit(mUnit);
+            mCollisionManager.CreatedObject(mUnit);
         }
 
         /// <summary>
@@ -101,6 +111,10 @@ namespace KernelPanic
             }
 
             InputManager.Default.Update(gameTime);
+
+            mUnitManager.Update();
+            mCollisionManager.Update();
+
             base.Update(gameTime);
         }
 

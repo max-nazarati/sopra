@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    internal class Unit : Entity
+    internal sealed class Unit : Entity
     {
         /* To select a unit, left-click on it.
          * Further left-clicks place the unit on different positions.
@@ -14,7 +14,7 @@ namespace KernelPanic
          * Use Space to unselect the unit.
          */
 
-        private bool mSelected;
+        public bool mSelected;
         private Point? mMovementGoal;
 
         internal Unit(int x, int y, int width, int height) : base(x, y, width, height)

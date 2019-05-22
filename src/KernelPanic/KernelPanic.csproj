@@ -58,6 +58,8 @@
     <Compile Include="State.cs" />
     <Compile Include="StateManager.cs" />
     <Compile Include="Unit.cs" />
+    <Compile Include="UnitManager.cs" />
+    <Compile Include="CollisionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
