@@ -2,7 +2,7 @@
 
 * Hausaufgaben und weitere Informationen im [SopraWiki](https://sopra.informatik.uni-freiburg.de/)
 * Mailingliste sopra09@informatik.uni-freiburg.de
-* ![Buildserver](https://sopramake.informatik.uni-freiburg.de) (user: sopra09, pw: bG8CnWT9gSrj1VEJRtmVrLyeX9dUKXtn)	
+* ![Buildserver](https://sopramake.informatik.uni-freiburg.de), ![Sonar](https://sopramake.informatik.uni-freiburg.de/sonar/) (user: sopra09, pw: bG8CnWT9gSrj1VEJRtmVrLyeX9dUKXtn)	
 
 ## Gruppe
 
