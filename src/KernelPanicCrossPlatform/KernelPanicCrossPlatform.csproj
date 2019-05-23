@@ -81,6 +81,9 @@
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Projectile.cs">
+      <Link>Projectile.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\SoundManager.cs">
       <Link>SoundManager.cs</Link>
     </Compile>
@@ -92,6 +95,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\StateManager.cs">
       <Link>StateManager.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Tower.cs">
+      <Link>Tower.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Unit.cs">
       <Link>Unit.cs</Link>
