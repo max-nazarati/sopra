@@ -49,7 +49,6 @@
     <Compile Include="Entity.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameState.cs" />
-    <Compile Include="GridCalculator.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Projectile.cs" />
