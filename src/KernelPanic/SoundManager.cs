@@ -1,10 +1,13 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
 
 namespace KernelPanic
 {
     internal sealed class SoundManager
     {
+        private SoundEffect mShoot, mPlacement;
         private Song mBackgroundSong1;
 
         private SoundManager()
@@ -21,15 +24,14 @@ namespace KernelPanic
         {
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Volume = 0.2f;
-            
-            // Uncomment if these are used.
-            // mWalking = content.Load<SoundEffect>("");
-            // mShooting = content.Load<SoundEffect>("");
-            // mBuildTower = content.Load<SoundEffect>("");
-            
-            mBackgroundSong1 = content.Load<Song>("testSoundtrack");
-        }
 
+            // Uncomment if these are used.
+            mPlacement = content.Load<SoundEffect>("placement");
+            mShoot = content.Load<SoundEffect>("shoot");
+            mBackgroundSong1 = content.Load<Song>("testSoundtrack");
+            // mBuildTower = content.Load<SoundEffect>("");
+        }
+#if true
         /// <summary>
         /// Plays background music when called
         /// </summary>
@@ -37,9 +39,8 @@ namespace KernelPanic
         {
             MediaPlayer.Play(mBackgroundSong1);
         }
-
-#if false // Currently not used.
-        private SoundEffect mWalking, mShooting, mBuildTower;
+#endif
+#if true // Currently not used.
 
         /// <summary>
         /// plays the sound according to the given string
@@ -49,17 +50,14 @@ namespace KernelPanic
         {
             switch (actionName)
             {
-                case "walking":
-                    mWalking.Play(1f, 1f, 1f);
+                case "placement":
+                    mPlacement.Play(0.4f, 1f, 0.5f);
                     break;
                 case "shoot":
-                    mShooting.Play();
-                    break;
-                case "buildTower":
-                    mBuildTower.Play();
+                    mShoot.Play(0.4f, 1f, 1f);
                     break;
                 default:
-                    Console.WriteLine("No valid sound name. Try 'walk', 'shoot' or 'buildTower' ");
+                    Console.WriteLine("No valid sound name. Try 'shoot' or 'placement' ");
                     break;
             }
         }

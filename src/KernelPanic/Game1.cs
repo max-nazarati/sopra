@@ -65,8 +65,9 @@ namespace KernelPanic
             SoundManager.Instance.Init(Content);
             SoundManager.Instance.PlayBackgroundMusic();
 
-            // mWorld = new Grid(Content, 20, 5, false);
+            // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 20, 50));
             mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25));
+            // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
             mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 10, 25));
 
             mStateManager = new StateManager(this, mGraphics, Content);
@@ -139,8 +140,8 @@ namespace KernelPanic
                 mSpriteBatch.Begin(transformMatrix: viewMatrix);
 
                 //mWorld.Draw(mSpriteBatch, mCamera);
-                mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix());
-                mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix());
+                mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
+                mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
 
                 mSpriteBatch.End();
 
