@@ -14,11 +14,15 @@ namespace KernelPanic
         private float mRotation;
         private float mTimer = 3f;
         private const float Timer = 3f;
+        private int mRadius;
+        
+        // stores the projectiles
         private readonly List<Projectile> mProjektilListe = new List<Projectile>();
         internal Tower(ContentManager content, int x, int y)
         {
             mPosX = x;
             mPosY = y;
+            mRadius = 300;
             mContent = content;
             mTower = mContent.Load<Texture2D>("tower");
         }
@@ -48,7 +52,7 @@ namespace KernelPanic
             mTimer -= elapsed;
             
             // only shoots, if cursor is less then 300 pixel away
-            if (distance < 300)
+            if (distance < mRadius)
             {
                 // calculates the Rotation, so that the tower attacks the mouse Cursor
                 mRotation =
@@ -58,7 +62,7 @@ namespace KernelPanic
                 {
                     mProjektilListe.Add(new Projectile(mContent, new Vector2(
                         (float)Math.Sin(mRotation % (3.14159265f * 2)),
-                        -(float)Math.Cos(mRotation % (3.14159265f * 2))), new Vector2(mPosX, mPosY)));
+                        -(float)Math.Cos(mRotation % (3.14159265f * 2))), new Vector2(mPosX, mPosY), mRadius));
                     SoundManager.Instance.PlaySound("shoot");
                     if (mProjektilListe.Count > 5)
                     {
