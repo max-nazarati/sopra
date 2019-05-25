@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../../KernelPanic/Content/ball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/ball.png;Projectile.png
+
 #begin ../../KernelPanic/Content/Base.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -116,6 +128,12 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/Papier.jpg;Papier.jpg
 
+#begin ../../KernelPanic/Content/placement.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/placement.mp3;placement.mp3
+
 #begin ../../KernelPanic/Content/Saeule.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -127,6 +145,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/Saeule.png;Saeule.png
+
+#begin ../../KernelPanic/Content/shoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/shoot.mp3;shoot.mp3
 
 #begin ../../KernelPanic/Content/StartMenuTitle.spritefont
 /importer:FontDescriptionImporter
@@ -140,6 +164,18 @@
 /processor:SongProcessor
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/testSoundtrack.mp3;testSoundtrack.mp3
+
+#begin ../../KernelPanic/Content/tower.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tower.png;tower.png
 
 #begin ../../KernelPanic/Content/Unilogo.png
 /importer:TextureImporter

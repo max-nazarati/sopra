@@ -260,7 +260,6 @@ namespace TowerPlacementTest
                 tower.Update(gameTime);
                 tower.Draw(spriteBatch);
             }
-
         }
 
         /// <summary>

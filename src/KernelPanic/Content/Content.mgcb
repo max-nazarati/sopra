@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ball.png;Projectile.png
+
 #begin Base.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -36,13 +48,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Border.png
-
-#begin ButtonFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:ButtonFont.spritefont
 
 #begin ButtonFont.spritefont
 /importer:FontDescriptionImporter
@@ -123,6 +128,12 @@
 /processorParam:TextureFormat=Color
 /build:Papier.jpg
 
+#begin placement.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:placement.mp3
+
 #begin Saeule.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -134,6 +145,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Saeule.png
+
+#begin shoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:shoot.mp3
 
 #begin StartMenuTitle.spritefont
 /importer:FontDescriptionImporter
@@ -147,6 +164,18 @@
 /processor:SongProcessor
 /processorParam:Quality=Best
 /build:testSoundtrack.mp3
+
+#begin tower.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:tower.png
 
 #begin Unilogo.png
 /importer:TextureImporter

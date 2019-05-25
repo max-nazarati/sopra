@@ -18,9 +18,12 @@ namespace KernelPanic
         private Camera2D mCamera;
 
         private readonly GraphicsDeviceManager mGraphics;
-        //private StateManager mStateManager;
-        private GameStateManager mGameStateManager;
-        private readonly List<GState> mStateList = new List<GState>();
+        private StateManager mStateManager;
+        private readonly List<State> mStateList = new List<State>();
+
+        private UnitManager mUnitManager;
+        private CollisionManager mCollisionManager;
+        private Unit mUnit;
 
         public Game1()
         {
@@ -62,17 +65,20 @@ namespace KernelPanic
             SoundManager.Instance.Init(Content);
             SoundManager.Instance.PlayBackgroundMusic();
 
-            // mWorld = new Grid(Content, 20, 5, false);
+            // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 20, 50));
             mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25));
+            // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
             mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 10, 25));
 
-            mGameStateManager = new GameStateManager(this, Content);
-
-            mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager, false));
-
-            /*mStateManager = new StateManager(this, mGraphics, Content);
+            mStateManager = new StateManager(this, mGraphics, Content);
             mStateList.Add(new StartMenuState(mStateManager, mGraphics, Content));
-            mStateList.Add(new GameState(mStateManager, mGraphics, Content));*/
+            mStateList.Add(new GameState(mStateManager, mGraphics, Content));
+
+            mUnitManager = new UnitManager();
+            mCollisionManager = new CollisionManager();
+            mUnit = new Unit(0, 0, 100, 100);
+            mUnitManager.AddUnit(mUnit);
+            mCollisionManager.CreatedObject(mUnit);
         }
 
         /// <summary>
@@ -91,33 +97,25 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            InputManager.Default.Update(gameTime);
-            //mStateManager.Update();
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || InputManager.Default.KeyPressed(Keys.Escape))
-            {
-                mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager, false));
-
-            }
-
-            //mStateManager.AddState(new StartMenuState(mStateManager, mGraphics, Content));
+            mStateManager.Update();
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                mStateManager.AddState(new StartMenuState(mStateManager, mGraphics, Content));
             // TODO: Add your update logic here
 
-            if (!mGameStateManager.Empty())
-            {
-                mGameStateManager.Update(gameTime, false);
-            }
-            else
-            {
-                mCamera.Update();
+            mCamera.Update();
 
-                Console.WriteLine("fps: " + 1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
+            Console.WriteLine( "fps: " + 1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                if (mStateList != null)
-                {
-                    // Console.WriteLine(mStateList);
-                }
-                //mGameStateManager.Update(gameTime, false);
+            if (mStateList != null)
+            {
+                // Console.WriteLine(mStateList);
             }
+
+            InputManager.Default.Update(gameTime);
+
+            mUnitManager.Update();
+            mCollisionManager.Update();
+
             base.Update(gameTime);
         }
 
@@ -127,9 +125,11 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-
-            //mStateManager.Draw(mSpriteBatch);
-            if (mGameStateManager.Empty())
+            if (mStateManager.CheckState() is StartMenuState)
+            {
+                mStateManager.Draw(mSpriteBatch);
+            }
+            else
             {
                 GraphicsDevice.Clear(Color.MintCream);
 
@@ -140,19 +140,13 @@ namespace KernelPanic
                 mSpriteBatch.Begin(transformMatrix: viewMatrix);
 
                 //mWorld.Draw(mSpriteBatch, mCamera);
-                mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix());
-                mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix());
+                mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
+                mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
 
                 mSpriteBatch.End();
-                mGameStateManager.Draw(mSpriteBatch, gameTime);
 
+                mStateManager.Draw(mSpriteBatch);
             }
-            else
-            {
-                mGameStateManager.Draw(mSpriteBatch, gameTime);
-            }
-            //mStateManager.Draw(mSpriteBatch);
-
             base.Draw(gameTime);
         }
     }
