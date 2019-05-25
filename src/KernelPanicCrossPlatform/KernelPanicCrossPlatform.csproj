@@ -57,11 +57,17 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\KernelPanic\AGameState.cs">
+      <Link>AGameState.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Button.cs">
       <Link>Button.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Camera2d.cs">
       <Link>Camera2d.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\CompositeSprite.cs">
+      <Link>CompositeSprite.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entity.cs">
       <Link>Entity.cs</Link>
@@ -69,14 +75,20 @@
     <Compile Include="..\KernelPanic\Game1.cs">
       <Link>Game1.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\GameState.cs">
-      <Link>GameState.cs</Link>
+    <Compile Include="..\KernelPanic\GameStateManager.cs">
+      <Link>GameStateManager.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Grid.cs">
       <Link>Grid.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\ImageSprite.cs">
+      <Link>ImageSprite.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\InputManager.cs">
       <Link>InputManager.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\MenuState.cs">
+      <Link>MenuState.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
@@ -87,17 +99,20 @@
     <Compile Include="..\KernelPanic\SoundManager.cs">
       <Link>SoundManager.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\StartMenuState.cs">
-      <Link>StartMenuState.cs</Link>
+    <Compile Include="..\KernelPanic\Sprite.cs">
+      <Link>Sprite.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\State.cs">
-      <Link>State.cs</Link>
+    <Compile Include="..\KernelPanic\SpriteManager.cs">
+      <Link>SpriteManager.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\StateManager.cs">
-      <Link>StateManager.cs</Link>
+    <Compile Include="..\KernelPanic\TextSprite.cs">
+      <Link>TextSprite.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Tower.cs">
       <Link>Tower.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\UIComponent.cs">
+      <Link>UIComponent.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Unit.cs">
       <Link>Unit.cs</Link>
