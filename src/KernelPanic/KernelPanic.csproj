@@ -68,6 +68,7 @@
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteManager.cs" />
     <Compile Include="StaticComponent.cs" />
+    <Compile Include="StorageManager.cs" />
     <Compile Include="StrategicTower.cs" />
     <Compile Include="TextSprite.cs" />
     <Compile Include="Tower.cs" />
@@ -83,6 +84,7 @@
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>

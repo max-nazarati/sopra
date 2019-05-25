@@ -124,12 +124,14 @@
     <Compile Include="..\KernelPanic\CollisionManager.cs">
       <Link>CollisionManager.cs</Link>
     </Compile>
+    <Compile Include="StorageManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
