@@ -5,9 +5,11 @@ namespace KernelPanic
 {
     sealed class ImageSprite : Sprite
     {
+        /*
         public new float Height { get; set; }
-        public Texture2D Texture { get; set; }
         public new float Width { get; set; }
+        */
+        private Texture2D Texture { get; }
         public ImageSprite(Texture2D texture, int x, int y, int width, int height) : base(x, y, width, height)
         {
             Texture = texture;

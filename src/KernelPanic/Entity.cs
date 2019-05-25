@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
@@ -9,6 +10,15 @@ namespace KernelPanic
         //private GraphicsDeviceManager mGraphics;
         //private Texture2D Texture;
 
+        protected Entity(int param)
+        {
+
+        }
+
+        protected Entity(TimeSpan timeSpan)
+        {
+
+        }
         protected Entity(int x, int y, int width, int height)
         {
             mContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));

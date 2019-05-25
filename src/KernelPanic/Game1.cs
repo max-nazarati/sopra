@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 
 namespace KernelPanic
 {
@@ -18,8 +17,10 @@ namespace KernelPanic
         private Camera2D mCamera;
 
         private readonly GraphicsDeviceManager mGraphics;
-        private StateManager mStateManager;
-        private readonly List<State> mStateList = new List<State>();
+
+        private GameStateManager mGameStateManager;
+        //private StateManager mStateManager;
+        //private readonly List<State> mStateList = new List<State>();
 
         private UnitManager mUnitManager;
         private CollisionManager mCollisionManager;
@@ -61,6 +62,8 @@ namespace KernelPanic
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
+            mGameStateManager = new GameStateManager(this, Content);
+
             // TODO: use this.Content to load your game content here
             SoundManager.Instance.Init(Content);
             SoundManager.Instance.PlayBackgroundMusic();
@@ -69,10 +72,6 @@ namespace KernelPanic
             mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25));
             // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
             mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 10, 25));
-
-            mStateManager = new StateManager(this, mGraphics, Content);
-            mStateList.Add(new StartMenuState(mStateManager, mGraphics, Content));
-            mStateList.Add(new GameState(mStateManager, mGraphics, Content));
 
             mUnitManager = new UnitManager();
             mCollisionManager = new CollisionManager();
@@ -97,25 +96,30 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            mStateManager.Update();
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                mStateManager.AddState(new StartMenuState(mStateManager, mGraphics, Content));
             // TODO: Add your update logic here
-
-            mCamera.Update();
-
-            Console.WriteLine( "fps: " + 1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
-
-            if (mStateList != null)
+            if (mGameStateManager.Empty())
             {
-                // Console.WriteLine(mStateList);
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || InputManager.Default.KeyPressed(Keys.Escape))
+                    mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager, false));
+                mCamera.Update();
+
+                Console.WriteLine("fps: " + 1 / (float) gameTime.ElapsedGameTime.TotalSeconds);
+
+                /* if (mStateList != null)
+                 {
+                     // Console.WriteLine(mStateList);
+                 }*/
+
+
+                mUnitManager.Update();
+                mCollisionManager.Update();
+            }
+            else
+            {
+                mGameStateManager.Update(gameTime, false);
             }
 
             InputManager.Default.Update(gameTime);
-
-            mUnitManager.Update();
-            mCollisionManager.Update();
-
             base.Update(gameTime);
         }
 
@@ -125,9 +129,9 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if (mStateManager.CheckState() is StartMenuState)
+            if (!mGameStateManager.Empty())
             {
-                mStateManager.Draw(mSpriteBatch);
+                mGameStateManager.Draw(mSpriteBatch, gameTime);
             }
             else
             {
@@ -145,7 +149,7 @@ namespace KernelPanic
 
                 mSpriteBatch.End();
 
-                mStateManager.Draw(mSpriteBatch);
+                //mStateManager.Draw(mSpriteBatch);
             }
             base.Draw(gameTime);
         }

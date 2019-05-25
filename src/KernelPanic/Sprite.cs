@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
@@ -16,9 +11,9 @@ namespace KernelPanic
         public int Y { get; set; }
         public int Height { get; }
         public int Width { get; }
-        public Rectangle Container { get; protected set; }
+        public Rectangle Container { get; private set; }
 
-        public Sprite(int x, int y, int width, int height)
+        protected Sprite(int x, int y, int width, int height)
         {
             Container = new Rectangle(new Point(x, y), new Point(width, height));
         }
@@ -26,9 +21,11 @@ namespace KernelPanic
         {
 
         }
+        /*
         protected void Draw(SpriteBatch spriteBatch, GameTime gameTime, Point position)
         {
 
         }
+        */
     }
 }

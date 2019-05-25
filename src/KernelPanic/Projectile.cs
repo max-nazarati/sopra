@@ -23,7 +23,7 @@ namespace KernelPanic
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (distance() < mRadius)
+            if (Distance() < mRadius)
             {
                 spriteBatch.Draw(mProjectile, new Rectangle((int)mX, (int)mY, 8, 8), null, Color.Red);
             }
@@ -35,7 +35,7 @@ namespace KernelPanic
             mY += mDirection.Y * 7;
         }
 
-        private int distance()
+        private int Distance()
         {
             return (int) Math.Sqrt((int) Math.Pow(mX - mStartpoint.X, 2) +
                                    (int) Math.Pow(mY - mStartpoint.Y, 2));

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    internal sealed class Unit : Entity
+    internal class Unit : Entity
     {
         public int AttackStrength { get; set; }
         public Point? MoveTarget { get; set; }

@@ -1,34 +1,26 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
     public delegate void ClickedDelegate();
 
-    public class Button :UIComponent
+    public sealed class Button :UIComponent
     {
         public event ClickedDelegate Clicked;
 
-
+        /*
         public void ButtonDelegate()
         {
 
         }
+        */
         public override void Update(GameTime gameTime)
         {
-            if (Clicked != null)
-            {
-                Clicked();
-            }
+            Clicked?.Invoke();
         }
-        public Button()
-        {
 
-        }
-        
         // old stuff below
+        /*
         private SpriteFont Font { get; }
         public string Text { get; }
         private int X { get; }
@@ -63,6 +55,7 @@ namespace KernelPanic
             spriteBatch.DrawString(Font, Text, new Vector2(X, Y), TextColor);
             spriteBatch.End();
         }
-
+        */
     }
+    
 }

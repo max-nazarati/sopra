@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace KernelPanic
 {
-    class Hero : Unit
+    internal class Hero : Unit
     {
         public Hero(int param) : base(param)
         {

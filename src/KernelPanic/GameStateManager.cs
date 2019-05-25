@@ -8,10 +8,17 @@ namespace KernelPanic
 {
     sealed class GameStateManager
     {
+        /*
         public AGameState ActiveState { get; }
         public InputManager Input { get; }
         //public Settings Settings { get; }
         public SoundManager Sounds { get; }
+        public void Switch(AGameState newGameState)
+        {
+            mGameStates.Pop();
+            mGameStates.Push(newGameState);
+        }
+        */
         public SpriteManager Sprite { get; }
         public Game1 Game { get; }
         private Stack<AGameState> mGameStates = new Stack<AGameState>();
@@ -31,11 +38,6 @@ namespace KernelPanic
         }
         public void Push(AGameState newGameState)
         {
-            mGameStates.Push(newGameState);
-        }
-        public void Switch(AGameState newGameState)
-        {
-            mGameStates.Pop();
             mGameStates.Push(newGameState);
         }
         public void Update(GameTime gameTime, bool isOverlay)
