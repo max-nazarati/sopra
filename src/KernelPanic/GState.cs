@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    internal abstract class State
+    internal abstract class GState
     {
         protected ContentManager mContent;
         protected readonly GraphicsDeviceManager mGraphics;
@@ -16,7 +16,7 @@ namespace KernelPanic
         protected MouseState mOldMouseState;
 
 
-        internal State(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager content)
+        internal GState(StateManager stateManager, GraphicsDeviceManager graphics, ContentManager content)
         {
             mContent = content;
             mGraphics = graphics;

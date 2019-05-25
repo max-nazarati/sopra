@@ -18,8 +18,9 @@ namespace KernelPanic
         private Camera2D mCamera;
 
         private readonly GraphicsDeviceManager mGraphics;
-        private StateManager mStateManager;
-        private readonly List<State> mStateList = new List<State>();
+        //private StateManager mStateManager;
+        private GameStateManager mGameStateManager;
+        private readonly List<GState> mStateList = new List<GState>();
 
         public Game1()
         {
@@ -65,9 +66,13 @@ namespace KernelPanic
             mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25));
             mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 10, 25));
 
-            mStateManager = new StateManager(this, mGraphics, Content);
+            mGameStateManager = new GameStateManager(this, Content);
+
+            mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager, false));
+
+            /*mStateManager = new StateManager(this, mGraphics, Content);
             mStateList.Add(new StartMenuState(mStateManager, mGraphics, Content));
-            mStateList.Add(new GameState(mStateManager, mGraphics, Content));
+            mStateList.Add(new GameState(mStateManager, mGraphics, Content));*/
         }
 
         /// <summary>
@@ -86,21 +91,33 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            mStateManager.Update();
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                mStateManager.AddState(new StartMenuState(mStateManager, mGraphics, Content));
-            // TODO: Add your update logic here
-
-            mCamera.Update();
-
-            Console.WriteLine( "fps: " + 1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
-
-            if (mStateList != null)
+            InputManager.Default.Update(gameTime);
+            //mStateManager.Update();
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || InputManager.Default.KeyPressed(Keys.Escape))
             {
-                // Console.WriteLine(mStateList);
+                mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager, false));
+
             }
 
-            InputManager.Default.Update(gameTime);
+            //mStateManager.AddState(new StartMenuState(mStateManager, mGraphics, Content));
+            // TODO: Add your update logic here
+
+            if (!mGameStateManager.Empty())
+            {
+                mGameStateManager.Update(gameTime, false);
+            }
+            else
+            {
+                mCamera.Update();
+
+                Console.WriteLine("fps: " + 1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+                if (mStateList != null)
+                {
+                    // Console.WriteLine(mStateList);
+                }
+                //mGameStateManager.Update(gameTime, false);
+            }
             base.Update(gameTime);
         }
 
@@ -110,11 +127,9 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if (mStateManager.CheckState() is StartMenuState)
-            {
-                mStateManager.Draw(mSpriteBatch);
-            }
-            else
+
+            //mStateManager.Draw(mSpriteBatch);
+            if (mGameStateManager.Empty())
             {
                 GraphicsDevice.Clear(Color.MintCream);
 
@@ -129,9 +144,15 @@ namespace KernelPanic
                 mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix());
 
                 mSpriteBatch.End();
+                mGameStateManager.Draw(mSpriteBatch, gameTime);
 
-                mStateManager.Draw(mSpriteBatch);
             }
+            else
+            {
+                mGameStateManager.Draw(mSpriteBatch, gameTime);
+            }
+            //mStateManager.Draw(mSpriteBatch);
+
             base.Draw(gameTime);
         }
     }

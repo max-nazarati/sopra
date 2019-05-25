@@ -1,11 +1,34 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    internal sealed class Button
+    public delegate void ClickedDelegate();
+
+    public class Button :UIComponent
     {
+        public event ClickedDelegate Clicked;
+
+
+        public void ButtonDelegate()
+        {
+
+        }
+        public override void Update(GameTime gameTime)
+        {
+            if (Clicked != null)
+            {
+                Clicked();
+            }
+        }
+        public Button()
+        {
+
+        }
+        
+        // old stuff below
         private SpriteFont Font { get; }
         public string Text { get; }
         private int X { get; }

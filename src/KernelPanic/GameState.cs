@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
-
+// OLD
 namespace KernelPanic
 {
-    internal sealed class GameState : State
+    internal sealed class GameState : GState
     {
         //private readonly Texture2D _background;
         private readonly List<Unit> mMobileObjectsList = new List<Unit>();

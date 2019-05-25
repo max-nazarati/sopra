@@ -2,15 +2,15 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
+// LD
 namespace KernelPanic
 {
-    internal sealed class StateManager
+    public class StateManager
     {
-        private readonly Stack<State> mStateStack = new Stack<State>();
-        public Game1 Game { get; }
+        private readonly Stack<GState> mStateStack = new Stack<GState>();
+        internal Game1 Game { get; }
 
-        public StateManager(Game1 game, GraphicsDeviceManager gameGraphics, ContentManager gameContent)
+        internal StateManager(Game1 game, GraphicsDeviceManager gameGraphics, ContentManager gameContent)
         {
             Game = game;
             var graphics = gameGraphics;
@@ -18,7 +18,7 @@ namespace KernelPanic
             mStateStack.Push(new StartMenuState(this, graphics, content));
         }
 
-        public void AddState(State newState)
+        internal void AddState(GState newState)
         {
             mStateStack.Push(newState);
         }
@@ -42,8 +42,7 @@ namespace KernelPanic
         {
             mStateStack.Peek().Draw(spriteBatch);
         }
-
-        public State CheckState()
+        internal GState CheckState()
         {
             return mStateStack.Peek();
         }

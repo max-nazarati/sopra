@@ -198,7 +198,7 @@ namespace KernelPanic
         /// </summary>
         /// <param name="mouseButtons">enum object: Left, Middle, Right</param>
         /// <returns>true if any of the buttons is freshly pressed</returns>
-        internal bool MousePressed(params MouseButton[] mouseButtons)
+        public bool MousePressed(params MouseButton[] mouseButtons)
         {
             var pressed = false;
             foreach (var mouseButton in mouseButtons)

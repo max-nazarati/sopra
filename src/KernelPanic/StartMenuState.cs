@@ -6,7 +6,8 @@ using Microsoft.Xna.Framework.Content;
 
 namespace KernelPanic
 {
-    internal sealed class StartMenuState : State
+    // OLD
+    internal sealed class StartMenuState : GState
     {
         private Texture2D MenuBackgroundTexture { get; }
         private readonly SpriteFont mTitleFont;

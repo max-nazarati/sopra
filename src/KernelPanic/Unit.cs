@@ -7,6 +7,38 @@ namespace KernelPanic
 {
     internal class Unit : Entity
     {
+        public int AttackStrength { get; set; }
+        public Point? MoveTarget { get; set; }
+        public int RemainingLife { get; set; }
+        public int Speed { get; set; }
+
+        public Unit(int param) : base(param)
+        {
+
+        }
+
+        public void DealDamage(int dmg)
+        {
+
+        }
+        public void Kill()
+        {
+
+        }
+        public int MaximumLife()
+        {
+            return -1;
+        }
+        public void WillSpawn(Action<Unit> unit)
+        {
+
+        }
+
+        private int mCosts;
+        /// <summary>
+        /// Below, redundant stuff, perhaps?
+        /// </summary>
+        /// 
         /* To select a unit, left-click on it.
          * Further left-clicks place the unit on different positions.
          * Hold left-mouse button to drag the unit around.
