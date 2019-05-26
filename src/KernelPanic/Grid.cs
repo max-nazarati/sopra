@@ -227,7 +227,7 @@ namespace KernelPanic
             DrawLane(spriteBatch);
             UpdateColor();
             DrawBorder(spriteBatch);
-            DrawTower(spriteBatch, gameTime, viewMatrix);
+            // DrawTower(spriteBatch, gameTime, viewMatrix);
         }
     }
 }

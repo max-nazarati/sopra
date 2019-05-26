@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-// using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
@@ -39,12 +39,12 @@ namespace KernelPanic
             }
         }
 
-        /*public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             foreach (var Object in mUnits)
             {
                 Object.Draw(spriteBatch);
             }
-        }*/
+        }
     }
 }

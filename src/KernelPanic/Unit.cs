@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace KernelPanic
@@ -49,7 +50,7 @@ namespace KernelPanic
         public bool mSelected;
         private Point? mMovementGoal;
 
-        internal Unit(int x, int y, int width, int height) : base(x, y, width, height)
+        internal Unit(int x, int y, int width, int height, Texture2D texture) : base(x, y, width, height, texture)
         {
         }
 
@@ -69,7 +70,7 @@ namespace KernelPanic
             if (Math.Abs(mContainerRectangle.X + mContainerRectangle.Width / 2 - target.X) <= 4 &&
                 Math.Abs(mContainerRectangle.Y + mContainerRectangle.Height / 2 - target.Y) <= 4)
             {
-                mMovementGoal = new Point(-1, -1);
+                mMovementGoal = null;
             }
         }
 
@@ -79,12 +80,13 @@ namespace KernelPanic
                 position.Y - mContainerRectangle.Height / 2);
         }
 
-        internal override void Update()
+
+        internal void Update(Matrix viewMatrix)
         {
             base.Update();
-
             var input = InputManager.Default;
-
+            Vector2 vector = Vector2.Transform(input.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
+            Point position = new Point((int)vector.X, (int)vector.Y);
             if (!mSelected)
             {
                 mSelected = input.MousePressed(InputManager.MouseButton.Left);
@@ -93,13 +95,13 @@ namespace KernelPanic
 
             if (input.MousePressed(InputManager.MouseButton.Right))
             {
-                mMovementGoal = input.MousePosition;
+                mMovementGoal = position;
                 return;
             }
 
             if (input.MousePressed(InputManager.MouseButton.Left))
             {
-                JumpToClick(input.MousePosition);
+                JumpToClick(position);
                 return;
             }
 
