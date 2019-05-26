@@ -69,9 +69,9 @@ namespace KernelPanic
             SoundManager.Instance.PlayBackgroundMusic();
 
             // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 20, 50));
-            mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 10, 25));
+            mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 16, 42));
             // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
-            mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 10, 25));
+            mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 16, 42));
 
             mUnitManager = new UnitManager();
             mCollisionManager = new CollisionManager();
