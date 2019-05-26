@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    public class UIComponent
+    public class InterfaceComponent
     {
         public bool Enabled { get; }
         public SpriteManager SpriteManager { get; set; }

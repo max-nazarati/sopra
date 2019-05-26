@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
@@ -8,7 +9,7 @@ namespace KernelPanic
         protected Rectangle mContainerRectangle;
         private Rectangle mOldContainerRectangle;
         //private GraphicsDeviceManager mGraphics;
-        //private Texture2D Texture;
+        private Texture2D Texture;
 
         protected Entity(int param)
         {
@@ -19,11 +20,11 @@ namespace KernelPanic
         {
 
         }
-        protected Entity(int x, int y, int width, int height)
+        protected Entity(int x, int y, int width, int height, Texture2D texture)
         {
             mContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
             mOldContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
-            //Texture = texture;
+            Texture = texture;
             //mGraphics = graphics;
         }
 
@@ -44,11 +45,9 @@ namespace KernelPanic
             mOldContainerRectangle = mContainerRectangle;
         }
 
-        /*public virtual void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
             spriteBatch.Draw(Texture, mContainerRectangle, Color.White);
-            spriteBatch.End();
-        }*/
+        }
     }
 }

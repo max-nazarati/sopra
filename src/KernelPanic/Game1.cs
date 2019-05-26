@@ -75,9 +75,10 @@ namespace KernelPanic
 
             mUnitManager = new UnitManager();
             mCollisionManager = new CollisionManager();
-            mUnit = new Unit(0, 0, 100, 100);
+            Texture2D mTexture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
+            mTexture.SetData(new[] { Color.Green });
+            mUnit = new Unit(0, 0, 100, 100, mTexture);
             mUnitManager.AddUnit(mUnit);
-            mCollisionManager.CreatedObject(mUnit);
         }
 
         /// <summary>
@@ -109,10 +110,6 @@ namespace KernelPanic
                  {
                      // Console.WriteLine(mStateList);
                  }*/
-
-
-                mUnitManager.Update();
-                mCollisionManager.Update();
             }
             else
             {
@@ -146,6 +143,9 @@ namespace KernelPanic
                 //mWorld.Draw(mSpriteBatch, mCamera);
                 mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
                 mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
+
+                mUnit.Update(mCamera.GetViewMatrix());
+                mUnit.Draw(mSpriteBatch);
 
                 mSpriteBatch.End();
 

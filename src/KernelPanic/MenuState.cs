@@ -11,7 +11,7 @@ namespace KernelPanic
             IsOverlay = isOverlay;
         }
 
-        private UIComponent[] mComponents;
+        private InterfaceComponent[] mComponents;
         /*
         private MenuState()
         {
@@ -45,8 +45,8 @@ namespace KernelPanic
         */
         public static MenuState CreateMainMenu(GameStateManager stateManager, bool isOverlay)
         {
-            MenuState menu = new MenuState(stateManager, isOverlay) {mComponents = new UIComponent[4]};
-            menu.mComponents[0] = new UIComponent
+            MenuState menu = new MenuState(stateManager, isOverlay) {mComponents = new InterfaceComponent[4]};
+            menu.mComponents[0] = new InterfaceComponent
             {
                 Sprite = new ImageSprite(stateManager.Sprite.LoadImage("Base"), 0, 0, 1920, 1080)
             };
@@ -115,8 +115,8 @@ namespace KernelPanic
         {
             MenuState menu = new MenuState(stateManager, false);
 
-            menu.mComponents = new UIComponent[4];
-            menu.mComponents[0] = new UIComponent();
+            menu.mComponents = new InterfaceComponent[4];
+            menu.mComponents[0] = new InterfaceComponent();
             menu.mComponents[0].Sprite = new ImageSprite(stateManager.Sprite.LoadImage("Base"), 0, 0, 1920, 1080);
             Button x = new Button();
             x.Sprite = new CompositeSprite(stateManager.Sprite.LoadImage("Papier"),
@@ -147,14 +147,14 @@ namespace KernelPanic
        
         public override void Update(GameTime gameTime, bool isOverlay)
         {
-            foreach(UIComponent component in mComponents)
+            foreach(InterfaceComponent component in mComponents)
             {
                 component.Update(gameTime);
             }
         }
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
         {
-            foreach (UIComponent component in mComponents)
+            foreach (InterfaceComponent component in mComponents)
             {
                 component.Sprite.Draw(spriteBatch, gameTime);
             }
