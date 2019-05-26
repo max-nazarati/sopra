@@ -126,6 +126,9 @@
     <Compile Include="..\KernelPanic\StaticComponent.cs">
       <Link>StaticComponent.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\StorageManager.cs">
+      <Link>StorageManager.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\TextSprite.cs">
       <Link>TextSprite.cs</Link>
     </Compile>
@@ -142,7 +145,6 @@
     <Compile Include="..\KernelPanic\CollisionManager.cs">
       <Link>CollisionManager.cs</Link>
     </Compile>
-    <Compile Include="StorageManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
