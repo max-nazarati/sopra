@@ -90,14 +90,29 @@
     <Compile Include="..\KernelPanic\InterfaceComponent.cs">
       <Link>InterfaceComponent.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\IPriced.cs">
+      <Link>IPriced.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Lane.cs">
+      <Link>Lane.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Player.cs">
+      <Link>Player.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Projectile.cs">
       <Link>Projectile.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\PurchasableAction.cs">
+      <Link>PurchasableAction.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\SinglePurchasableAction.cs">
+      <Link>SinglePurchasableAction.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\SoundManager.cs">
       <Link>SoundManager.cs</Link>

@@ -71,13 +71,13 @@ namespace KernelPanic
             // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 20, 50));
             mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 16, 42));
             // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
-            mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(15, 0, 16, 42));
+            mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(32, 0, 16, 42));
 
             mUnitManager = new UnitManager();
             mCollisionManager = new CollisionManager();
-            Texture2D mTexture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
-            mTexture.SetData(new[] { Color.Green });
-            mUnit = new Unit(0, 0, 100, 100, mTexture);
+            Texture2D texture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
+            texture.SetData(new[] { Color.Green });
+            mUnit = new Unit(0, 0, 100, 100, texture);
             mUnitManager.AddUnit(mUnit);
         }
 

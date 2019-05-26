@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -23,10 +24,10 @@ namespace KernelPanic
         private readonly Rectangle mLaneRectangle;
         private readonly int mLaneWidthInTiles;
 
-        private readonly List<Point> mCoordinateSystem = new List<Point>();
+        private readonly List<Point> mCoordinateSystem = new List<Point>();  // coordinates are saved absolute/globaly 
 
-        private const int KachelPixelSize = 200;  // TODO
-        private const int TilesPerSprite = 2;
+        private const int KachelPixelSize = 100;  // TODO
+        private const int TilesPerSprite = 1;  // per Dimension
         private const int SingleTileSizePixel = KachelPixelSize / TilesPerSprite;
 
         private readonly List<Tower> mTowerList = new List<Tower>();
@@ -35,25 +36,56 @@ namespace KernelPanic
         private Color mBorderColor = Color.Red;
 
 
-        public Grid(ContentManager content, LaneSide laneSide, Rectangle laneSizeInTilesRectangle, int laneWidthInTiles = 10)
+        // static readonly List<Rectangle> sExistingGrids = new List<Rectangle>();
+
+
+        public Grid(ContentManager content, LaneSide laneSide, Rectangle laneRectangle, int laneWidthInTiles = 10)
         {
             // TODO add assertions so the lane cant be created with weird numbers. 
             mContent = content;
             mLaneSide = laneSide;
-            mLaneRectangle = laneSizeInTilesRectangle;
+            mLaneRectangle = laneRectangle;
             mLaneWidthInTiles = laneWidthInTiles;
             CreateCoordinateSystem();
-
+            // sExistingGrids.Add(laneRectangle);
+            
         }
 
         /*
+        ~Grid()
+        {
+            // delete the class level information about the grid
+            sExistingGrids.Remove(mLaneRectangle);
+        }
+        */
+
+        /* TODO implement when needed
+        private static bool CoordinateInGrid(Point coordinate)
+        {
+            coordinate = CoordinatePositionFromScreen(coordinate);
+            foreach (var rectangle in sExistingGrids)
+            {
+                if (rectangle.X <= coordinate.X && coordinate.X <= rectangle.X + rectangle.Width && 
+                    rectangle.Y <= coordinate.Y && coordinate.Y <= rectangle.Y + rectangle.Height)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        */
+
+        /* TODO implement when needed
         /// <summary>
         /// calculates the position in the Grid for a given MousePosition on the screen
         /// </summary>
         /// <returns></returns>
-        private Point CoordinatePositionFromScreen()
+        private static Point CoordinatePositionFromScreen(Point screenCoordinate)
         {
-            //
+            var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
+            var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
+            return new Point(screenCoordinate.X * 100, screenCoordinate.Y * 100);
         }
         */
 
@@ -63,10 +95,10 @@ namespace KernelPanic
         /// </summary>
         /// <param name="upperLeft"></param>
         /// <returns></returns>
-        private Point ScreenPositionFromCoordinate(Point upperLeft)
+        private static Point ScreenPositionFromCoordinate(Point upperLeft)
         {
-            var xPositionGlobal = upperLeft.X + mLaneRectangle.X;
-            var yPositionGlobal = upperLeft.Y + mLaneRectangle.Y;
+            var xPositionGlobal = upperLeft.X; // this is now saved in the grid + mLaneRectangle.X;
+            var yPositionGlobal = upperLeft.Y; // this is now saved in the grid + mLaneRectangle.Y;
             var x = (SingleTileSizePixel * TilesPerSprite * xPositionGlobal);
             var y = (SingleTileSizePixel * TilesPerSprite * yPositionGlobal);
             var result = new Point(x, y);
@@ -105,7 +137,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x, y));
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
             // adding the middle part
@@ -113,7 +145,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < laneWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x, y));
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
             // adding the bottom part
@@ -121,7 +153,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x, y));
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
         }
@@ -156,7 +188,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x, y));
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
             // adding the middle part
@@ -164,7 +196,7 @@ namespace KernelPanic
             {
                 for (var x = rectangleWidth - laneWidth; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x, y));
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
             // adding the bottom part
@@ -172,7 +204,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x, y));
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
         }
@@ -235,14 +267,14 @@ namespace KernelPanic
         /// <param name="spriteBatch"></param>
         private void DrawBorder(SpriteBatch spriteBatch)
         {
-            var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel; // TODO make this 100 a variable
+            var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
             var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
             spriteBatch.Draw(mBorder, new Rectangle(posX, posY, SingleTileSizePixel, SingleTileSizePixel), null, mBorderColor);
         }
         
         private void DrawTower(SpriteBatch spriteBatch, GameTime gameTime, Matrix viewMatrix)
         {
-            if (InputManager.Default.MouseDown(InputManager.MouseButton.Left) && !mUsedGrids.Contains(new Vector2((mRelativeX / 50) * 50, (mRelativeY / 50) * 50)))
+            if (InputManager.Default.KeyDown(Keys.T) && !mUsedGrids.Contains(new Vector2((mRelativeX / 50) * 50, (mRelativeY / 50) * 50)))
             {
                 mTowerList.Add(new Tower(mContent, (mRelativeX / 50) * 50, (mRelativeY / 50) * 50));
                 mUsedGrids.Add(new Vector2((mRelativeX / 50) * 50, (mRelativeY / 50) * 50));
@@ -266,7 +298,7 @@ namespace KernelPanic
         /// <param name="gameTime"></param>
         internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
         {
-            mKacheln = mContent.Load<Texture2D>("Kachel3");
+            mKacheln = mContent.Load<Texture2D>("LaneTile");
             mBorder = mContent.Load<Texture2D>("Border");
             var relativeVector = Vector2.Transform(InputManager.Default.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
             mRelativeX = (int)relativeVector.X;
@@ -276,7 +308,13 @@ namespace KernelPanic
             DrawGrid(spriteBatch);
             UpdateColor();
             DrawBorder(spriteBatch);
-            // DrawTower(spriteBatch, gameTime, viewMatrix);
+            DrawTower(spriteBatch, gameTime, viewMatrix);
+            /*
+            foreach (var point in mCoordinateSystem)
+            {
+                Console.WriteLine(point);
+            }
+            */
         }
     }
 }
