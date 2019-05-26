@@ -42,7 +42,6 @@ namespace KernelPanic
         /// 
         /* To select a unit, left-click on it.
          * Further left-clicks place the unit on different positions.
-         * Hold left-mouse button to drag the unit around.
          * Right-clicks make the unit float to a different position.
          * Use Space to unselect the unit.
          */
@@ -89,23 +88,22 @@ namespace KernelPanic
             Point position = new Point((int)vector.X, (int)vector.Y);
             if (!mSelected)
             {
-                mSelected = input.MousePressed(InputManager.MouseButton.Left);
-                return;
+                if (mContainerRectangle.Contains(position))
+                {
+                    // select object
+                    mSelected = input.MousePressed(InputManager.MouseButton.Left);
+                }
             }
-
-            if (input.MousePressed(InputManager.MouseButton.Right))
+            else if (input.MousePressed(InputManager.MouseButton.Right))
             {
                 mMovementGoal = position;
-                return;
             }
-
-            if (input.MousePressed(InputManager.MouseButton.Left))
+            else if (input.MousePressed(InputManager.MouseButton.Left))
             {
                 JumpToClick(position);
-                return;
+                mMovementGoal = null;
             }
-
-            if (mMovementGoal is Point goal)
+            else if (mMovementGoal is Point goal)
             {
                 MoveToClick(goal, 10);
             }

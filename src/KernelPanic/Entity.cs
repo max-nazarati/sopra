@@ -9,13 +9,16 @@ namespace KernelPanic
         protected Rectangle mContainerRectangle;
         private Rectangle mOldContainerRectangle;
         //private GraphicsDeviceManager mGraphics;
-        private Texture2D Texture;
+        private readonly Texture2D mTexture;
 
+        // ReSharper disable once UnusedParameter.Local
         protected Entity(int param)
         {
 
         }
 
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once UnusedParameter.Local
         protected Entity(TimeSpan timeSpan)
         {
 
@@ -24,7 +27,7 @@ namespace KernelPanic
         {
             mContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
             mOldContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
-            Texture = texture;
+            mTexture = texture;
             //mGraphics = graphics;
         }
 
@@ -47,7 +50,7 @@ namespace KernelPanic
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, mContainerRectangle, Color.White);
+            spriteBatch.Draw(mTexture, mContainerRectangle, Color.White);
         }
     }
 }

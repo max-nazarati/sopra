@@ -19,9 +19,9 @@ namespace KernelPanic
         public void Update()
         {
             // check for collisions between objects
-            foreach (var movedObject in mObjectList)
+            foreach (Entity movedObject in mObjectList)
             {
-                foreach (var collidingObject in mObjectList)
+                foreach (Entity collidingObject in mObjectList)
                 {
                     if (movedObject == collidingObject) continue;
                     if (movedObject.IsColliding(collidingObject))

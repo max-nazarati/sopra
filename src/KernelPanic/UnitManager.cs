@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
@@ -19,21 +20,24 @@ namespace KernelPanic
             mUnits.Add(unit);
         }
 
-        public void Update()
+        public void Update(Matrix viewMatrix)
         {
             var i = 0;
             foreach (var Object in mUnits)
             {
-                Object.Update();
+                Object.Update(viewMatrix);
                 // check if a new unit has been selected
                 if (Object.mSelected)
                 {
-                    if (mActiveUnit != null)
+                    if (mActiveUnit is int active)
                     {
-                        mUnits[mActiveUnit.Value].mSelected = false;
+                        if (i != active)
+                        {
+                            mUnits[active].mSelected = false;
+                        }
                     }
                     mActiveUnit = i;
-                    break;
+                    //break;
                 }
                 i++;
             }

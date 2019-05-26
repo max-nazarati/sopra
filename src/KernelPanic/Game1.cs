@@ -24,7 +24,8 @@ namespace KernelPanic
 
         private UnitManager mUnitManager;
         private CollisionManager mCollisionManager;
-        private Unit mUnit;
+        private Unit mUnit1;
+        private Unit mUnit2;
 
         public Game1()
         {
@@ -77,8 +78,14 @@ namespace KernelPanic
             mCollisionManager = new CollisionManager();
             Texture2D texture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
             texture.SetData(new[] { Color.Green });
-            mUnit = new Unit(0, 0, 100, 100, texture);
-            mUnitManager.AddUnit(mUnit);
+            mUnit1 = new Unit(0, 0, 100, 100, texture);
+            Texture2D texture2 = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
+            texture2.SetData(new[] { Color.Red });
+            mUnit2 = new Unit(200, 200, 100, 100, texture2);
+            mUnitManager.AddUnit(mUnit1);
+            mUnitManager.AddUnit(mUnit2);
+            mCollisionManager.CreatedObject(mUnit1);
+            mCollisionManager.CreatedObject(mUnit2);
         }
 
         /// <summary>
@@ -106,6 +113,8 @@ namespace KernelPanic
 
                 Console.WriteLine("fps: " + 1 / (float) gameTime.ElapsedGameTime.TotalSeconds);
 
+                mUnitManager.Update(mCamera.GetViewMatrix());
+                mCollisionManager.Update();
                 /* if (mStateList != null)
                  {
                      // Console.WriteLine(mStateList);
@@ -144,8 +153,8 @@ namespace KernelPanic
                 mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
                 mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
 
-                mUnit.Update(mCamera.GetViewMatrix());
-                mUnit.Draw(mSpriteBatch);
+
+                mUnitManager.Draw(mSpriteBatch);
 
                 mSpriteBatch.End();
 
