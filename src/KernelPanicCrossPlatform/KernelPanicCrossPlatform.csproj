@@ -87,6 +87,9 @@
     <Compile Include="..\KernelPanic\InputManager.cs">
       <Link>InputManager.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\InterfaceComponent.cs">
+      <Link>InterfaceComponent.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
     </Compile>
@@ -105,14 +108,14 @@
     <Compile Include="..\KernelPanic\SpriteManager.cs">
       <Link>SpriteManager.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\StaticComponent.cs">
+      <Link>StaticComponent.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\TextSprite.cs">
       <Link>TextSprite.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Tower.cs">
       <Link>Tower.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\UIComponent.cs">
-      <Link>UIComponent.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Unit.cs">
       <Link>Unit.cs</Link>

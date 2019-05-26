@@ -1,7 +1,7 @@
 ﻿
 namespace KernelPanic
 {
-    class StaticComponent : UIComponent
+    class StaticComponent : InterfaceComponent
     {
         public StaticComponent(Sprite sprite)
         {

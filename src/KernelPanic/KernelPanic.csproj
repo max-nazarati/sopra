@@ -56,6 +56,7 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="ImageSprite.cs" />
     <Compile Include="InputManager.cs" />
+    <Compile Include="InterfaceComponent.cs" />
     <Compile Include="IPriced.cs" />
     <Compile Include="IUpdatable.cs" />
     <Compile Include="MenuState.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="Tower.cs" />
     <Compile Include="Trojan.cs" />
     <Compile Include="Troupe.cs" />
-    <Compile Include="UIComponent.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="UnitManager.cs" />
     <Compile Include="CollisionManager.cs" />
