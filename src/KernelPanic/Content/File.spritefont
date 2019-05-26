@@ -51,9 +51,46 @@ with.
     See the documentation for more information.
     -->
     <CharacterRegions>
+      <!-- ASCII -->
       <CharacterRegion>
         <Start>&#32;</Start>
         <End>&#126;</End>
+      </CharacterRegion>
+
+      <!-- UMLAUTE -->
+      <CharacterRegion>
+        <Start>Ä</Start>
+        <End>Ä</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>Ö</Start>
+        <End>Ö</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>Ü</Start>
+        <End>Ü</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>ä</Start>
+        <End>ä</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>ö</Start>
+        <End>ö</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>ü</Start>
+        <End>ü</End>
+      </CharacterRegion>
+
+      <!-- SHARP S -->
+      <CharacterRegion>
+        <Start>ß</Start>
+        <End>ß</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x1E9E;</Start>
+        <End>&#x1E9E;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>
