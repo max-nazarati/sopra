@@ -1,22 +1,66 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    class TextSprite : Sprite
+    internal sealed class TextSprite : Sprite
     {
-        private SpriteFont Font { get; }
-        private string Text { get; }
-        public TextSprite(SpriteFont font, string text, int x, int y, int width, int height) : base(x, y, width, height)
+        private string mText;
+        private SpriteFont mFont;
+
+        private SpriteFont Font
         {
-            Font = font;
-            Text = text;
+            get => mFont;
+            set
+            {
+                mFont = value ?? throw new ArgumentNullException();
+                ResetLazySize();
+            }
         }
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+
+        public string Text
         {
-            spriteBatch.Begin();
-            spriteBatch.DrawString(Font, Text, Container.Location.ToVector2(), Color.White);
-            spriteBatch.End();
+            get => mText;
+            set
+            {
+                mText = value ?? throw new ArgumentNullException();
+                ResetLazySize();
+            }
+        }
+
+        public TextSprite(SpriteFont font, string text, float x, float y) : base(x, y)
+        {
+            mFont = font ?? throw new ArgumentNullException(nameof(font));
+            mText = text ?? throw new ArgumentNullException(nameof(text));
+            ResetLazySize();
+        }
+        
+        private Lazy<Vector2> mLazySize;
+        public override float UnscaledWidth => Size.X;
+        public override float UnscaledHeight => Size.Y;
+        public override Vector2 UnscaledSize => mLazySize.Value;
+        
+        private void ResetLazySize()
+        {
+            mLazySize = new Lazy<Vector2>(() => Font.MeasureString(Text));
+        }
+
+        internal override void Draw(SpriteBatch spriteBatch,
+            GameTime gameTime,
+            Vector2 offset,
+            float rotation,
+            float scale)
+        {
+            spriteBatch.DrawString(Font,
+                Text,
+                Position + offset,
+                Color.White,
+                rotation,
+                Origin,
+                scale,
+                SpriteEffects.None,
+                1.0f);
         }
     }
 }

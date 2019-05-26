@@ -1,26 +1,38 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    class CompositeSprite : Sprite
+    internal sealed class CompositeSprite : Sprite
     {
-        private List<Sprite> mChildren = new List<Sprite>();
-        /*
-        public new int Height { get; set; }
-        public new int Width { get; set; }
-        */
-        public CompositeSprite(Texture2D texture, SpriteFont font, string text, int x, int y, int width, int height) : base(x, y, width, height)
+        public List<Sprite> Children { get; } = new List<Sprite>();
+
+        internal CompositeSprite(float x, float y) : base(x, y)
         {
-            mChildren.Add(new ImageSprite(texture, x, y, width, height));
-            mChildren.Add(new TextSprite(font, text, x, (int)(y + height/2 - font.MeasureString(text).Y/2), width, height));
         }
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+
+        public override float UnscaledWidth => Children.Max(sprite => new float?(sprite.X - sprite.Origin.X + sprite.UnscaledWidth)) ?? 0.0f;
+        public override float UnscaledHeight => Children.Max(sprite => new float?(sprite.Y - sprite.Origin.Y + sprite.UnscaledHeight)) ?? 0.0f;
+
+        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach(Sprite child in mChildren)
+            Draw(spriteBatch, gameTime, Vector2.Zero, 0.0f, 1.0f);
+        }
+
+        internal override void Draw(SpriteBatch spriteBatch,
+            GameTime gameTime,
+            Vector2 offset,
+            float rotation,
+            float scale)
+        {
+            offset += Position;
+            rotation += Rotation;
+            scale *= Scale;
+            foreach (var child in Children)
             {
-                child.Draw(spriteBatch, gameTime);
+                child.Draw(spriteBatch, gameTime, offset, rotation, scale);
             }
         }
     }

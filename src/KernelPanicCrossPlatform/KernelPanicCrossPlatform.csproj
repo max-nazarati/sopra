@@ -108,6 +108,9 @@
     <Compile Include="..\KernelPanic\Player.cs">
       <Link>Player.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\PatternSprite.cs">
+      <Link>PatternSprite.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>

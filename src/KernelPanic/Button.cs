@@ -1,61 +1,46 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
-    public delegate void ClickedDelegate();
-
     public sealed class Button : InterfaceComponent
     {
-        public event ClickedDelegate Clicked;
+        public delegate void Delegate(Button sender);
+        public event Delegate Clicked;
 
-        /*
-        public void ButtonDelegate()
+        private readonly TextSprite mTitleSprite;
+
+        public override Sprite Sprite { get; }
+
+        public Button(string title, float x, float y, SpriteManager sprites)
         {
+            var texture = sprites.LoadImage("Papier");
+            var background = new ImageSprite(texture, 0, 0)
+            {
+                DestinationRectangle = new Rectangle(0, 0, 250, 70)
+            };
+            mTitleSprite = new TextSprite(sprites.LoadFont("buttonFont"),
+                title,
+                background.Width / 2,
+                background.Height / 2);
+            mTitleSprite.Origin = new Vector2(mTitleSprite.Width / 2, mTitleSprite.Height / 2);
 
+            var sprite = new CompositeSprite(x, y);
+            sprite.Children.Add(background);
+            sprite.Children.Add(mTitleSprite);
+            Sprite = sprite;
         }
-        */
+
+        public string Title
+        {
+            get => mTitleSprite.Text;
+            set => mTitleSprite.Text = value ?? throw new ArgumentNullException();
+        }
+
         public override void Update(GameTime gameTime)
         {
-            Clicked?.Invoke();
+            if (Enabled && ContainsMouse() && InputManager.Default.MousePressed(InputManager.MouseButton.Left))
+                Clicked?.Invoke(this);
         }
-
-        // old stuff below
-        /*
-        private SpriteFont Font { get; }
-        public string Text { get; }
-        private int X { get; }
-        private int Y { get; }
-        private Color TextColor { get;}
-        private Color BackgroundColor { get; }
-        private Rectangle mButtonRectangle;
-        private readonly Texture2D mButtonBackgroundTexture;
-
-
-        public Button(SpriteFont font, string text, int x, int y, int width, Color backgroundColor, Color textColor, IGraphicsDeviceService graphics)
-        {
-            Font = font;
-            Text = text;
-            TextColor = textColor;
-            BackgroundColor = backgroundColor;
-            X = (int)(x - width/1.5);
-            Y = y;
-            mButtonRectangle = new Rectangle(new Point(X, Y), new Point(width, (int)font.MeasureString(text).Y));
-            mButtonBackgroundTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
-            mButtonBackgroundTexture.SetData(new[] { BackgroundColor });
-        }
-        public bool ContainsMouse(MouseState mouseState)
-        {
-            return mButtonRectangle.Contains(mouseState.Position);
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Begin();
-            spriteBatch.Draw(mButtonBackgroundTexture, mButtonRectangle, BackgroundColor);
-            spriteBatch.DrawString(Font, Text, new Vector2(X, Y), TextColor);
-            spriteBatch.End();
-        }
-        */
     }
-    
 }

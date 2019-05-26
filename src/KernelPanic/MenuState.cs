@@ -45,120 +45,102 @@ namespace KernelPanic
             return new MenuState();
         }
         */
-        public static MenuState CreateMainMenu(GameStateManager stateManager, bool isOverlay)
+        public static MenuState CreateMainMenu(Point screenSize, GameStateManager stateManager, bool isOverlay)
         {
-            MenuState menu = new MenuState(stateManager, isOverlay) {mComponents = new InterfaceComponent[4]};
-            menu.mComponents[0] = new InterfaceComponent
-            {
-                Sprite = new ImageSprite(stateManager.Sprite.LoadImage("Base"), 0, 0, 1920, 1080)
-            };
-            Button playBtn = new Button
-            {
-                Sprite = new CompositeSprite(stateManager.Sprite.LoadImage("Papier"),
-                    stateManager.Sprite.LoadFont("ButtonFont"),
-                    "PLAY",
-                    800,
-                    200,
-                    200,
-                    100)
-            };
-            playBtn.Clicked += () =>
-            {
-                if (InputManager.Default.MousePressed(InputManager.MouseButton.Left))
-                {
-                    if (playBtn.Sprite.Container.Contains(InputManager.Default.MousePosition))
-                    {
-                        menu.GameStateManager.Pop();
-                    }
-                }
-            };
-            menu.mComponents[1] = playBtn;
+            var playButton = CreateButton(screenSize, stateManager.Sprite, "SPIELEN", 200);
+            playButton.Clicked += _ => stateManager.Pop();  // TODO: Push `InGameState` when it exists.
 
-            Button optionsBtn = new Button
-            {
-                Sprite = new CompositeSprite(stateManager.Sprite.LoadImage("Papier"),
-                    stateManager.Sprite.LoadFont("ButtonFont"),
-                    "OPTIONS",
-                    800,
-                    325,
-                    200,
-                    100)
-            };
-            optionsBtn.Clicked += () =>
-            {
-                if (InputManager.Default.MousePressed(InputManager.MouseButton.Left))
-                {
-                    if (optionsBtn.Sprite.Container.Contains(InputManager.Default.MousePosition))
-                    {
-                        menu.GameStateManager.Push(CreateOptionsMenu(stateManager));
-                    }
-                }
-            };
-            menu.mComponents[2] = optionsBtn;
+            var optionsButton = CreateButton(screenSize, stateManager.Sprite, "OPTIONEN", 325);
+            optionsButton.Clicked += _ => stateManager.Push(CreateOptionsMenu(screenSize, stateManager));
 
-            Button quitBtn = new Button();
-            quitBtn.Sprite = new CompositeSprite(stateManager.Sprite.LoadImage("Papier"),
-                    stateManager.Sprite.LoadFont("ButtonFont"), "QUIT", 800, 450, 200, 100);
-            quitBtn.Clicked += () =>
+            var quitButton = CreateButton(screenSize, stateManager.Sprite, "BEENDEN", 450);
+            quitButton.Clicked += _ => stateManager.Game.Exit();
+            
+            return new MenuState(stateManager, isOverlay)
             {
-                if (InputManager.Default.MousePressed(InputManager.MouseButton.Left))
+                mComponents = new InterfaceComponent[]
                 {
-                    if (quitBtn.Sprite.Container.Contains(InputManager.Default.MousePosition))
-                    {
-                        menu.GameStateManager.Game.Exit();
-                    }
+                    CreateBackground(screenSize, stateManager.Sprite),
+                    playButton,
+                    optionsButton,
+                    quitButton
                 }
             };
-            menu.mComponents[3] = quitBtn;
-            return menu;
         }
 
-        private static MenuState CreateOptionsMenu(GameStateManager stateManager)
+        private static MenuState CreateOptionsMenu(Point screenSize, GameStateManager stateManager)
         {
-            MenuState menu = new MenuState(stateManager, false);
+            var backButton = CreateButton(screenSize, stateManager.Sprite, "ZURÜCK", 450);
+            backButton.Clicked += _ => stateManager.Pop();
 
-            menu.mComponents = new InterfaceComponent[4];
-            menu.mComponents[0] = new InterfaceComponent();
-            menu.mComponents[0].Sprite = new ImageSprite(stateManager.Sprite.LoadImage("Base"), 0, 0, 1920, 1080);
-            Button x = new Button();
-            x.Sprite = new CompositeSprite(stateManager.Sprite.LoadImage("Papier"),
-                stateManager.Sprite.LoadFont("ButtonFont"), "OPTION 1", 800, 200, 200, 100);
-            menu.mComponents[1] = x;
-
-            menu.mComponents[2] = new Button();
-            menu.mComponents[2].Sprite = new CompositeSprite(stateManager.Sprite.LoadImage("Papier"),
-                stateManager.Sprite.LoadFont("ButtonFont"), "OPTION 2", 800, 325, 200, 100);
-
-            Button btn3 = new Button();
-            btn3.Sprite = new CompositeSprite(stateManager.Sprite.LoadImage("Papier"),
-                stateManager.Sprite.LoadFont("ButtonFont"), "BACK", 800, 450, 200, 100);
-            btn3.Clicked += () =>
+            return new MenuState(stateManager, false)
             {
-                if (InputManager.Default.MousePressed(InputManager.MouseButton.Left))
+                mComponents = new InterfaceComponent[]
                 {
-                    if (btn3.Sprite.Container.Contains(InputManager.Default.MousePosition))
-                    {
-                        menu.GameStateManager.Pop();
-                    }
+                    CreateBackground(screenSize, stateManager.Sprite),
+                    CreateButton(screenSize, stateManager.Sprite, "OPTION 1", 200),
+                    CreateButton(screenSize, stateManager.Sprite, "OPTION 2", 325),
+                    backButton
                 }
             };
-            menu.mComponents[3] = btn3;
-
-            return menu;
         }
-       
+
+        private static StaticComponent CreateBackground(Point screenSize, SpriteManager sprites)
+        {
+            var texture = sprites.LoadImage("Base");
+            var fullRows = screenSize.Y / texture.Height;
+            var fullCols = screenSize.X / texture.Width;
+            var bottomRem = screenSize.Y - fullRows * texture.Height;
+            var rightRem = screenSize.X - fullCols * texture.Width;
+            
+            var fullTile = new ImageSprite(texture, 0, 0);
+            var pattern = new PatternSprite(fullTile, 0, 0, fullRows, fullCols);
+
+            var bottomTile = new ImageSprite(texture, 0, 0)
+            {
+                SourceRectangle = new Rectangle(0, 0, texture.Width, bottomRem)
+            };
+            var rightTile = new ImageSprite(texture, 0, 0)
+            {
+                SourceRectangle = new Rectangle(0, 0, rightRem, texture.Height)
+            };
+            var cornerTile = new ImageSprite(texture, pattern.Width, pattern.Height)
+            {
+                SourceRectangle = new Rectangle(0, 0, rightRem, bottomRem)
+            };
+
+            return new StaticComponent(new CompositeSprite(0, 0)
+            {
+                Children =
+                {
+                    pattern,
+                    new PatternSprite(bottomTile, 0, pattern.Height, 1, fullCols),
+                    new PatternSprite(rightTile, pattern.Width, 0, fullRows, 1),
+                    cornerTile
+                }
+            });
+        }
+
+        private static Button CreateButton(Point screenSize, SpriteManager sprites, string title, int position)
+        {
+            var button = new Button(title, 0, position, sprites);
+            button.Sprite.X = screenSize.X / 2.0f - button.Sprite.Width / 2.0f;
+            return button;
+        }
+        
         public override void Update(GameTime gameTime, bool isOverlay)
         {
-            foreach(InterfaceComponent component in mComponents)
+            foreach(var component in mComponents)
             {
                 component.Update(gameTime);
             }
         }
+        
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
         {
-            foreach (InterfaceComponent component in mComponents)
+            foreach (var component in mComponents)
             {
-                component.Sprite.Draw(spriteBatch, gameTime);
+                component.Draw(spriteBatch, gameTime);
             }
         }
     }

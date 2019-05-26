@@ -119,7 +119,7 @@ namespace KernelPanic
             if (mGameStateManager.Empty())
             {
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || InputManager.Default.KeyPressed(Keys.Escape))
-                    mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager, false));
+                    mGameStateManager.Push(MenuState.CreateMainMenu(GraphicsDevice.Viewport.Bounds.Size, mGameStateManager, false));
                 mCamera.Update();
 
                 Console.WriteLine("fps: " + 1 / (float) gameTime.ElapsedGameTime.TotalSeconds);
@@ -150,7 +150,9 @@ namespace KernelPanic
         {
             if (!mGameStateManager.Empty())
             {
+                mSpriteBatch.Begin();
                 mGameStateManager.Draw(mSpriteBatch, gameTime);
+                mSpriteBatch.End();
             }
             else
             {

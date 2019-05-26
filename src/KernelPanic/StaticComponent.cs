@@ -1,11 +1,19 @@
-﻿
+﻿using Microsoft.Xna.Framework;
+
 namespace KernelPanic
 {
-    class StaticComponent : InterfaceComponent
+    internal sealed class StaticComponent : InterfaceComponent
     {
+        public override Sprite Sprite { get; }
+        
         public StaticComponent(Sprite sprite)
         {
             Sprite = sprite;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            // Nothing to update.
         }
     }
 }

@@ -66,6 +66,7 @@
     <Compile Include="IPriced.cs" />
     <Compile Include="IUpdatable.cs" />
     <Compile Include="MenuState.cs" />
+    <Compile Include="PatternSprite.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
