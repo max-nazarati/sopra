@@ -4,7 +4,7 @@ namespace KernelPanic
 {
     public delegate void ClickedDelegate();
 
-    public sealed class Button :UIComponent
+    public sealed class Button : InterfaceComponent
     {
         public event ClickedDelegate Clicked;
 
