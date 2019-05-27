@@ -138,6 +138,7 @@
     <Compile Include="..\KernelPanic\Unit.cs">
       <Link>Unit.cs</Link>
     </Compile>
+    <Compile Include="InGameState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\KernelPanic\UnitManager.cs">
       <Link>UnitManager.cs</Link>

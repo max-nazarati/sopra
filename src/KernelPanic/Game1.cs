@@ -86,6 +86,11 @@ namespace KernelPanic
             mUnitManager.AddUnit(mUnit2);
             mCollisionManager.CreatedObject(mUnit1);
             mCollisionManager.CreatedObject(mUnit2);
+
+            // Testing Storage Manager
+            StorageManager storageManager = new StorageManager();
+            InGameState testState = new InGameState(mCamera);
+            storageManager.SaveGame("testSave.xml", testState);
         }
 
         /// <summary>

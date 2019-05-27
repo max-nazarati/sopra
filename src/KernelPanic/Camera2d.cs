@@ -1,14 +1,19 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal sealed class Camera2D
     {
+        [DataMember]
         private Vector2 mPosition;
         // private readonly float mRotation;
+        [DataMember]
         private float mZoom;
+        [DataMember]
         private readonly Vector2 mOrigin;
 
         internal Camera2D(Viewport viewport)

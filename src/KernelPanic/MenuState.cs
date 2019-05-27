@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
     sealed class MenuState : AGameState
     {
         private MenuState(GameStateManager mngr, bool isOverlay)

@@ -1,8 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
+    [KnownType(typeof(InGameState))]
+    [KnownType(typeof(MenuState))]
     abstract class AGameState
     {
         protected GameStateManager GameStateManager { get; set; }
