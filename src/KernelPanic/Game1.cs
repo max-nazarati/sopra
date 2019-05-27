@@ -63,7 +63,7 @@ namespace KernelPanic
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            mGameStateManager = new GameStateManager(this, Content);
+            mGameStateManager = new GameStateManager(Content);
 
             // TODO: use this.Content to load your game content here
             SoundManager.Instance.Init(Content);
@@ -120,7 +120,7 @@ namespace KernelPanic
             if (mGameStateManager.Empty())
             {
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || InputManager.Default.KeyPressed(Keys.Escape))
-                    mGameStateManager.Push(MenuState.CreateMainMenu(GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
+                    mGameStateManager.Push(MenuState.CreateMainMenu(Exit, GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
                 mCamera.Update();
 
                 Console.WriteLine("fps: " + 1 / (float) gameTime.ElapsedGameTime.TotalSeconds);

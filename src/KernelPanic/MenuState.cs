@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -40,7 +41,7 @@ namespace KernelPanic
         }
         */
         
-        public static MenuState CreateMainMenu(Point screenSize, GameStateManager stateManager)
+        public static MenuState CreateMainMenu(Action exitAction, Point screenSize, GameStateManager stateManager)
         {
             var playButton = CreateButton(screenSize, stateManager.Sprite, "SPIELEN", 200);
             playButton.Clicked += _ => stateManager.Pop();  // TODO: Push `InGameState` when it exists.
@@ -49,7 +50,7 @@ namespace KernelPanic
             optionsButton.Clicked += _ => stateManager.Push(CreateOptionsMenu(screenSize, stateManager));
 
             var quitButton = CreateButton(screenSize, stateManager.Sprite, "BEENDEN", 450);
-            quitButton.Clicked += _ => stateManager.Game.Exit();
+            quitButton.Clicked += _ => exitAction();
             
             return new MenuState(stateManager)
             {
