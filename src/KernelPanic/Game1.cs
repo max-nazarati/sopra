@@ -151,7 +151,7 @@ namespace KernelPanic
         {
             if (!mGameStateManager.Empty())
             {
-                mSpriteBatch.Begin();
+                mSpriteBatch.Begin(transformMatrix: mGameStateManager.Active.Camera?.GetViewMatrix());
                 mGameStateManager.Draw(mSpriteBatch, gameTime);
                 mSpriteBatch.End();
             }

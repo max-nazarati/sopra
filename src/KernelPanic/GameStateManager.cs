@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace KernelPanic
 {
-    sealed class GameStateManager
+    internal sealed class GameStateManager
     {
         /*
         public AGameState ActiveState { get; }
@@ -19,6 +19,7 @@ namespace KernelPanic
             mGameStates.Push(newGameState);
         }
         */
+        
         public SpriteManager Sprite { get; }
         public Game1 Game { get; }
         private Stack<AGameState> mGameStates = new Stack<AGameState>();
@@ -28,6 +29,8 @@ namespace KernelPanic
             Sprite = new SpriteManager(cntnt);
             Game = game;
         }
+        
+        internal AGameState Active => mGameStates.Peek();
 
         public void Pop()
         {
