@@ -89,8 +89,9 @@ namespace KernelPanic
 
             // Testing Storage Manager
             StorageManager storageManager = new StorageManager();
-            InGameState testState = new InGameState(mCamera);
-            storageManager.SaveGame("testSave.xml", testState);
+            InGameState testSaveState = new InGameState(mCamera);
+            storageManager.SaveGame("testSave.xml", testSaveState);
+            InGameState testLoadState = storageManager.LoadGame("testSave.xml");
         }
 
         /// <summary>

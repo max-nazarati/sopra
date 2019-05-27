@@ -17,12 +17,12 @@ namespace KernelPanic
             writer.Close();
         }
 
-        public AGameState LoadGame(String fileName)
+        public InGameState LoadGame(String fileName)
         {
             FileStream fs = new FileStream(fileName, FileMode.Open);
             XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
-            mSerializer = new DataContractSerializer(typeof(Grid));
-            AGameState deserializedGameState = (AGameState)mSerializer.ReadObject(reader, true);
+            mSerializer = new DataContractSerializer(typeof(InGameState));
+            InGameState deserializedGameState = (InGameState)mSerializer.ReadObject(reader, true);
             fs.Close();
 
             return deserializedGameState;
