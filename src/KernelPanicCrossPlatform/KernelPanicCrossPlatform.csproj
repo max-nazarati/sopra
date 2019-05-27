@@ -108,6 +108,9 @@
     <Compile Include="..\KernelPanic\Grid.cs">
       <Link>Grid.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\IDrawable.cs">
+      <Link>IDrawable.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\InGameState.cs">
       <Link>InGameState.cs</Link>
     </Compile>
@@ -125,6 +128,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\IPriced.cs">
       <Link>IPriced.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\IUpdatable.cs">
+      <Link>IUpdatable.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Lane.cs">
       <Link>Lane.cs</Link>

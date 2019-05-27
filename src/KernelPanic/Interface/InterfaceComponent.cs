@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    public abstract class InterfaceComponent
+    public abstract class InterfaceComponent: IUpdatable, IDrawable
     {
         public bool Enabled { get; set; } = true;
         
