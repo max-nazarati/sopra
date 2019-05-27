@@ -42,6 +42,11 @@ namespace KernelPanic
             mContainerRectangle = mOldContainerRectangle;
         }
 
+        public void CooledDownDelegate(Object source)
+        {
+            mTexture.SetData(new[] { Color.Blue });
+        }
+
         internal virtual void Update()
         {
             // store last position

@@ -26,6 +26,7 @@ namespace KernelPanic
         private CollisionManager mCollisionManager;
         private Unit mUnit1;
         private Unit mUnit2;
+        private CooldownComponent mCoolDown;
 
         public Game1()
         {
@@ -74,6 +75,7 @@ namespace KernelPanic
             // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
             mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(32, 0, 16, 42));
 
+            // testing movable objects and collision
             mUnitManager = new UnitManager();
             mCollisionManager = new CollisionManager();
             Texture2D texture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
@@ -86,6 +88,9 @@ namespace KernelPanic
             mUnitManager.AddUnit(mUnit2);
             mCollisionManager.CreatedObject(mUnit1);
             mCollisionManager.CreatedObject(mUnit2);
+            // testing cooldown component
+            mCoolDown = new CooldownComponent(new TimeSpan(0, 0, 5));
+            mCoolDown.CooledDown += mUnit1.CooledDownDelegate;
 
             // Testing Storage Manager
             StorageManager storageManager = new StorageManager();
@@ -130,6 +135,8 @@ namespace KernelPanic
             {
                 mGameStateManager.Update(gameTime, false);
             }
+
+            mCoolDown.Update(gameTime);
 
             InputManager.Default.Update(gameTime);
             base.Update(gameTime);

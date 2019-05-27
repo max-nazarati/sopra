@@ -146,6 +146,9 @@
     <Compile Include="..\KernelPanic\CollisionManager.cs">
       <Link>CollisionManager.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\CooldownComponent.cs">
+      <Link>CooldownComponent.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

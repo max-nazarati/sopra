@@ -83,6 +83,7 @@
     <Compile Include="Unit.cs" />
     <Compile Include="UnitManager.cs" />
     <Compile Include="CollisionManager.cs" />
+    <Compile Include="CooldownComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
