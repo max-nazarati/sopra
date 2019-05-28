@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    internal sealed class Grid
+    public sealed class Grid
     {
         /// <summary>
         /// Left and Right lane

@@ -11,10 +11,8 @@ namespace KernelPanic
     internal sealed class Game1 : Game
     {
         private SpriteBatch mSpriteBatch;
-        // private Grid mWorld;
-        private Grid mWorld2;
-        private Grid mWorld3;
         private Camera2D mCamera;
+        private Board mBoard;
 
         private readonly GraphicsDeviceManager mGraphics;
 
@@ -71,9 +69,11 @@ namespace KernelPanic
             SoundManager.Instance.PlayBackgroundMusic();
 
             // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 20, 50));
-            mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 16, 42));
+            // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 16, 42));
             // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
-            mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(32, 0, 16, 42));
+            // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(32, 0, 16, 42));
+            
+            mBoard = new Board(Content);
 
             // testing movable objects and collision
             mUnitManager = new UnitManager();
@@ -93,10 +93,10 @@ namespace KernelPanic
             mCoolDown.CooledDown += mUnit1.CooledDownDelegate;
 
             // Testing Storage Manager
-            StorageManager storageManager = new StorageManager();
-            InGameState testSaveState = new InGameState(mCamera);
+            var storageManager = new StorageManager();
+            var testSaveState = new InGameState(mCamera);
             storageManager.SaveGame("testSave.xml", testSaveState);
-            InGameState testLoadState = storageManager.LoadGame("testSave.xml");
+            var testLoadState = storageManager.LoadGame("testSave.xml");
         }
 
         /// <summary>
@@ -162,11 +162,12 @@ namespace KernelPanic
 
                 mSpriteBatch.Begin(transformMatrix: viewMatrix);
 
-                //mWorld.Draw(mSpriteBatch, mCamera);
-                mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
-                mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
-
-
+                // mWorld.Draw(mSpriteBatch, mCamera);
+                // mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
+                // mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
+                
+                mBoard.DrawLane(mSpriteBatch, viewMatrix, gameTime);
+                
                 mUnitManager.Draw(mSpriteBatch);
 
                 mSpriteBatch.End();

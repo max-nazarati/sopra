@@ -5,8 +5,8 @@
         private int mBitcoins;
         // private Base mBase;
         // private List<Upgrade> Upgrades;
-        // private Lane mAttackingLane;
-        // private Lane mDefendingLane;
+        private Lane mAttackingLane;
+        private Lane mDefendingLane;
         // private int mExperiencePoints;
 
         public Player(int bitcoins = 50)

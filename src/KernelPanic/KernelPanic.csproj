@@ -45,6 +45,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AGameState.cs" />
+    <Compile Include="Board.cs" />
     <Compile Include="Building.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Camera2d.cs" />
