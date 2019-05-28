@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal sealed class UnitManager
+    internal sealed class EntityGraph
     {
         private readonly List<Unit> mUnits;
         private int? mActiveUnit;
 
-        public UnitManager()
+        public EntityGraph()
         {
             mUnits = new List<Unit>();
             mActiveUnit = null;

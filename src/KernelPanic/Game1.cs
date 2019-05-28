@@ -20,7 +20,7 @@ namespace KernelPanic
         //private StateManager mStateManager;
         //private readonly List<State> mStateList = new List<State>();
 
-        private UnitManager mUnitManager;
+        private EntityGraph mEntityGraph;
         private CollisionManager mCollisionManager;
         private Unit mUnit1;
         private Unit mUnit2;
@@ -77,7 +77,7 @@ namespace KernelPanic
             mBoard = new Board(Content);
 
             // testing movable objects and collision
-            mUnitManager = new UnitManager();
+            mEntityGraph = new EntityGraph();
             mCollisionManager = new CollisionManager();
             Texture2D texture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
             texture.SetData(new[] { Color.Green });
@@ -85,8 +85,8 @@ namespace KernelPanic
             Texture2D texture2 = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
             texture2.SetData(new[] { Color.Red });
             mUnit2 = new Unit(200, 200, 100, 100, texture2);
-            mUnitManager.AddUnit(mUnit1);
-            mUnitManager.AddUnit(mUnit2);
+            mEntityGraph.AddUnit(mUnit1);
+            mEntityGraph.AddUnit(mUnit2);
             mCollisionManager.CreatedObject(mUnit1);
             mCollisionManager.CreatedObject(mUnit2);
             // testing cooldown component
@@ -125,7 +125,7 @@ namespace KernelPanic
 
                 Console.WriteLine("fps: " + 1 / (float) gameTime.ElapsedGameTime.TotalSeconds);
 
-                mUnitManager.Update(mCamera.GetViewMatrix());
+                mEntityGraph.Update(mCamera.GetViewMatrix());
                 mCollisionManager.Update();
                 /* if (mStateList != null)
                  {
@@ -171,7 +171,7 @@ namespace KernelPanic
                 
                 mBoard.DrawLane(mSpriteBatch, viewMatrix, gameTime);
                 
-                mUnitManager.Draw(mSpriteBatch);
+                mEntityGraph.Draw(mSpriteBatch);
 
                 mSpriteBatch.End();
 

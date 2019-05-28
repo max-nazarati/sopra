@@ -84,7 +84,7 @@
     <Compile Include="Sprites\Sprite.cs" />
     <Compile Include="Sprites\TextSprite.cs" />
     <Compile Include="StorageManager.cs" />
-    <Compile Include="UnitManager.cs" />
+    <Compile Include="EntityGraph.cs" />
     <Compile Include="CollisionManager.cs" />
     <Compile Include="CooldownComponent.cs" />
   </ItemGroup>
