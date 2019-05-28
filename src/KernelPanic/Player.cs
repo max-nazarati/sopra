@@ -2,20 +2,18 @@
 {
     class Player
     {
-        private int mBitcoins;
         // private Base mBase;
         // private List<Upgrade> Upgrades;
         private Lane mAttackingLane;
         private Lane mDefendingLane;
-        // private int mExperiencePoints;
 
         public Player(int bitcoins = 50)
         {
-            mBitcoins = bitcoins;
+            Bitcoins = bitcoins;
         }
 
 
-        public int Bitcoins => mBitcoins;
-
+        public int Bitcoins { get; set; }
+        public int ExperiencePoints { get; set; }
     }
 }

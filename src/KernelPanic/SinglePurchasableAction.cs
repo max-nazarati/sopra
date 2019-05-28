@@ -1,19 +1,20 @@
 ﻿namespace KernelPanic
 {
-    class SinglePurchasableAction : PurchasableAction
+    internal class SinglePurchasableAction<TResource> : PurchasableAction<TResource> where TResource : IPriced
     {
-        protected SinglePurchasableAction(Currency currency, int price, Resource resource) : base(currency, price)
-        {
-            // nothing else to do then calling the parent constructor i guess
-        }
-        private Resource mResource;
-        private bool mPurchased = false;
+        internal bool IsPurchased { get; set; }
 
-        private bool Purchased
+        internal SinglePurchasableAction(TResource resource, bool isPurchased = false) : base(resource)
         {
-            get => mPurchased;
-            set => mPurchased = value;
+            IsPurchased = isPurchased;
         }
 
+        internal override bool Available(Player buyer) => !IsPurchased && base.Available(buyer);
+
+        internal override void Purchase(Player buyer)
+        {
+            IsPurchased = true;
+            base.Purchase(buyer);
+        }
     }
 }
