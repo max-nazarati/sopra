@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal class Tower
+    internal class Tower : Building
     {
         private readonly ContentManager mContent;
         private readonly Texture2D mTower;
@@ -19,11 +19,11 @@ namespace KernelPanic
         // stores the projectiles
         private readonly List<Projectile> mProjektilListe = new List<Projectile>();
 
-        internal Tower(TimeSpan timeSpan)
+        internal Tower(TimeSpan timeSpan) : base(timeSpan)
         {
-
         }
-        internal Tower(ContentManager content, int x, int y)
+        
+        internal Tower(ContentManager content, int x, int y) : base(TimeSpan.Zero)
         {
             mPosX = x;
             mPosY = y;
