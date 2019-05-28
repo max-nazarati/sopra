@@ -11,7 +11,7 @@
 
         internal override bool Available(Player buyer) => !IsPurchased && base.Available(buyer);
 
-        internal override void Purchase(Player buyer)
+        protected override void Purchase(Player buyer)
         {
             IsPurchased = true;
             base.Purchase(buyer);

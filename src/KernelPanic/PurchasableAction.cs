@@ -25,7 +25,7 @@ namespace KernelPanic
             return available;
         }
 
-        internal virtual void Purchase(Player buyer)
+        protected virtual void Purchase(Player buyer)
         {
             var resources = ResourceModifier(buyer);
             resources.set(resources.get() - Resource.Price);
