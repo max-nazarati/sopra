@@ -2,18 +2,14 @@
 
 namespace KernelPanic
 {
-    class StrategicTower : Tower
+    internal class StrategicTower : Tower
     {
-        private TowerStrategy mStrategy = TowerStrategy.First;
-        public void Strategy()
-        {
-
-        }
+        internal TowerStrategy Strategy { get; set; } = TowerStrategy.First;
+        
         public StrategicTower(TimeSpan timeSpan) : base(timeSpan)
         {
-
         }
     }
-    enum TowerStrategy { First, Strongest, Weakest };
 
+    internal enum TowerStrategy { First, Strongest, Weakest };
 }
