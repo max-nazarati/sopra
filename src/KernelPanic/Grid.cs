@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,21 +14,21 @@ namespace KernelPanic
         /// </summary>
         public enum LaneSide
         {
-            Left, Right
+            Left,
+            Right
         }
 
         private readonly ContentManager mContent;
         private int mRelativeX, mRelativeY;
-        private Texture2D mKacheln, mBorder;
 
         private readonly LaneSide mLaneSide;
         private readonly Rectangle mLaneRectangle;
         private readonly int mLaneWidthInTiles;
 
-        private readonly List<Point> mCoordinateSystem = new List<Point>();  // coordinates are saved absolute/globaly 
+        private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly 
 
-        private const int KachelPixelSize = 100;  // TODO
-        private const int TilesPerSprite = 1;  // per Dimension
+        private const int KachelPixelSize = 100; // TODO
+        private const int TilesPerSprite = 1; // per Dimension
         private const int SingleTileSizePixel = KachelPixelSize / TilesPerSprite;
 
         private readonly List<Tower> mTowerList = new List<Tower>();
@@ -35,9 +36,9 @@ namespace KernelPanic
 
         private Color mBorderColor = Color.Red;
 
+        private Sprite mSprite;
 
         // static readonly List<Rectangle> sExistingGrids = new List<Rectangle>();
-
 
         public Grid(ContentManager content, LaneSide laneSide, Rectangle laneRectangle, int laneWidthInTiles = 10)
         {
@@ -48,7 +49,43 @@ namespace KernelPanic
             mLaneWidthInTiles = laneWidthInTiles;
             CreateCoordinateSystem();
             // sExistingGrids.Add(laneRectangle);
-            
+
+            var tile = content.Load<Texture2D>("LaneTile");
+            var kachelSprite = new ImageSprite(tile, 0, 0) {Scale = (float) KachelPixelSize / tile.Width};
+            var mainPart = new PatternSprite(kachelSprite, 0, 0, laneRectangle.Height, laneWidthInTiles);
+            var topPart = new PatternSprite(kachelSprite,
+                0,
+                0,
+                laneWidthInTiles,
+                laneRectangle.Width - mLaneWidthInTiles);
+            var bottomPart = new PatternSprite(kachelSprite,
+                0,
+                0,
+                laneWidthInTiles,
+                laneRectangle.Width - mLaneWidthInTiles);
+
+            switch (laneSide)
+            {
+                case LaneSide.Right:
+                    topPart.X = -topPart.Width;
+                    bottomPart.X = -bottomPart.Width;
+                    bottomPart.Y = mainPart.Height - bottomPart.Height;
+                    break;
+
+                case LaneSide.Left:
+                    topPart.X = mainPart.Width;
+                    bottomPart.X = mainPart.Width;
+                    bottomPart.Y = mainPart.Height - bottomPart.Height;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(laneSide));
+            }
+
+            mSprite = new CompositeSprite(laneRectangle.X * KachelPixelSize, laneRectangle.Y * KachelPixelSize)
+            {
+                Children = {mainPart, bottomPart, topPart}
+            };
         }
 
         /*
@@ -140,6 +177,7 @@ namespace KernelPanic
                     mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
+
             // adding the middle part
             for (var y = laneWidth; y < rectangleHeight - laneWidth; y++)
             {
@@ -148,6 +186,7 @@ namespace KernelPanic
                     mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
+
             // adding the bottom part
             for (var y = rectangleHeight - laneWidth; y < rectangleHeight; y++)
             {
@@ -191,6 +230,7 @@ namespace KernelPanic
                     mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
+
             // adding the middle part
             for (var y = laneWidth; y < rectangleHeight - laneWidth; y++)
             {
@@ -199,6 +239,7 @@ namespace KernelPanic
                     mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
+
             // adding the bottom part
             for (var y = rectangleHeight - laneWidth; y < rectangleHeight; y++)
             {
@@ -227,30 +268,6 @@ namespace KernelPanic
 
 
         /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        private void DrawGrid(SpriteBatch spriteBatch)
-        {
-            foreach (var point in mCoordinateSystem)
-            {
-                DrawTile(spriteBatch, point);
-            }
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="point"></param>
-        private void DrawTile(SpriteBatch spriteBatch, Point point)
-        {
-            var pos = ScreenPositionFromCoordinate(point);
-            spriteBatch.Draw(mKacheln, new Rectangle(pos.X, pos.Y, (SingleTileSizePixel * TilesPerSprite), (SingleTileSizePixel * TilesPerSprite)), Color.White);
-        }
-
-
-        /// <summary>
         /// change the color of the selected square on doubleClick mainly for testing purpose
         /// </summary>
         private void UpdateColor()
@@ -261,16 +278,6 @@ namespace KernelPanic
             mBorderColor = mBorderColor == Color.White ? Color.Red : Color.White;
         }
 
-        /// <summary>
-        /// Draws the tile marking overlay
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        private void DrawBorder(SpriteBatch spriteBatch)
-        {
-            var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
-            var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
-            spriteBatch.Draw(mBorder, new Rectangle(posX, posY, SingleTileSizePixel, SingleTileSizePixel), null, mBorderColor);
-        }
         
         private void DrawTower(SpriteBatch spriteBatch, GameTime gameTime, Matrix viewMatrix)
         {
@@ -298,6 +305,8 @@ namespace KernelPanic
         /// <param name="gameTime"></param>
         internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
         {
+            mSprite.Draw(spriteBatch, gameTime);
+            /*
             mKacheln = mContent.Load<Texture2D>("LaneTile");
             mBorder = mContent.Load<Texture2D>("Border");
             var relativeVector = Vector2.Transform(InputManager.Default.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
@@ -308,7 +317,7 @@ namespace KernelPanic
             DrawGrid(spriteBatch);
             UpdateColor();
             DrawBorder(spriteBatch);
-            DrawTower(spriteBatch, gameTime, viewMatrix);
+            DrawTower(spriteBatch, gameTime, viewMatrix);*/
             /*
             foreach (var point in mCoordinateSystem)
             {

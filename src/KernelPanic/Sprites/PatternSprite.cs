@@ -17,13 +17,13 @@ namespace KernelPanic
             Sprite = sprite;
         }
 
-        public override float UnscaledWidth => Sprite.UnscaledWidth * Columns;
-        public override float UnscaledHeight => Sprite.UnscaledHeight * Rows;
+        public override float UnscaledWidth => Sprite.Width * Columns;
+        public override float UnscaledHeight => Sprite.Height * Rows;
         
         internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime, Vector2 offset, float rotation, float scale)
         {
-            var patternWidth = scale * Sprite.UnscaledWidth;
-            var patternHeight = scale * Sprite.UnscaledHeight;
+            var patternWidth = scale * Sprite.Width;
+            var patternHeight = scale * Sprite.Height;
             for (var i = 0; i < Rows; i++)
             {
                 for (var j = 0; j < Columns; ++j)
