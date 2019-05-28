@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
-    internal class CooldownComponent
+    internal sealed class CooldownComponent
     {
         private bool mEnabled = true;
         private TimeSpan mCooldown;
@@ -15,9 +15,9 @@ namespace KernelPanic
             mRemainingCooldown = time;
         }
 
-        public delegate void CooleddownDelegate(CooldownComponent cooldownComponent);
+        public delegate void CooledDownDelegate(CooldownComponent cooldownComponent);
 
-        public event CooleddownDelegate CooledDown;
+        public event CooledDownDelegate CooledDown;
 
         // ReSharper disable once UnusedMember.Global
         public void Reset()
@@ -39,12 +39,10 @@ namespace KernelPanic
             if (!mEnabled) { return; }
             mRemainingCooldown -= time.ElapsedGameTime;
             // check if time is over
-            if (mRemainingCooldown <= TimeSpan.Zero)
-            {
-                mRemainingCooldown = TimeSpan.Zero;
-                mEnabled = false;
-                CooledDown?.Invoke(this);
-            }
+            if (mRemainingCooldown > TimeSpan.Zero) return;
+            mRemainingCooldown = TimeSpan.Zero;
+            mEnabled = false;
+            CooledDown?.Invoke(this);
         }
     }
 }

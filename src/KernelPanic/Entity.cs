@@ -42,7 +42,7 @@ namespace KernelPanic
             mContainerRectangle = mOldContainerRectangle;
         }
 
-        public void CooledDownDelegate(Object source)
+        public void CooledDownDelegate(CooldownComponent source)
         {
             mTexture.SetData(new[] { Color.Blue });
         }
