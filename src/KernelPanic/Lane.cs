@@ -7,12 +7,17 @@ namespace KernelPanic
     public class Lane
     {
         private readonly Grid mGrid;
+        // private BuildingSpawner mBuildingSpawner;
+        // private EntityGraph mEntityGraph;
+        private Base mBase;
+        // private UnitSpawner mUnitSpawner;
 
         public Lane(Grid.LaneSide laneSide, ContentManager content)
         {
             this.mGrid = laneSide == Grid.LaneSide.Left ? new Grid(content, laneSide, 
                 new Rectangle(0, 0, 16, 42)) : new Grid(content, laneSide, 
                 new Rectangle(15, 0, 16, 42));
+            mBase = new Base();
         }
 
         public void Update()
