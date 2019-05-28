@@ -14,9 +14,9 @@ namespace KernelPanic
 
         public Lane(Grid.LaneSide laneSide, ContentManager content)
         {
-            this.mGrid = laneSide == Grid.LaneSide.Left ? new Grid(content, laneSide, 
+            mGrid = laneSide == Grid.LaneSide.Left ? new Grid(content, laneSide, 
                 new Rectangle(0, 0, 16, 42)) : new Grid(content, laneSide, 
-                new Rectangle(15, 0, 16, 42));
+                new Rectangle(32, 0, 16, 42));
             mBase = new Base();
         }
 
