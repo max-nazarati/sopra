@@ -85,8 +85,8 @@ namespace KernelPanic
             Texture2D texture2 = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
             texture2.SetData(new[] { Color.Red });
             mUnit2 = new Unit(200, 200, 100, 100, texture2);
-            mEntityGraph.AddUnit(mUnit1);
-            mEntityGraph.AddUnit(mUnit2);
+            mEntityGraph.Add(mUnit1);
+            mEntityGraph.Add(mUnit2);
             mCollisionManager.CreatedObject(mUnit1);
             mCollisionManager.CreatedObject(mUnit2);
             // testing cooldown component

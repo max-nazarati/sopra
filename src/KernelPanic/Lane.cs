@@ -7,6 +7,8 @@ namespace KernelPanic
     public class Lane
     {
         private readonly Grid mGrid;
+
+        private EntityGraph mEntityGraph;
         // private BuildingSpawner mBuildingSpawner;
         // private EntityGraph mEntityGraph;
         private Base mBase;

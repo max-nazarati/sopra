@@ -36,17 +36,6 @@ namespace KernelPanic
         }
 
         private int mCosts;
-        /// <summary>
-        /// Below, redundant stuff, perhaps?
-        /// </summary>
-        /// 
-        /* To select a unit, left-click on it.
-         * Further left-clicks place the unit on different positions.
-         * Right-clicks make the unit float to a different position.
-         * Use Space to unselect the unit.
-         */
-
-        public bool mSelected;
         private Point? mMovementGoal;
 
         internal Unit(int x, int y, int width, int height, Texture2D texture) : base(x, y, width, height, texture)
@@ -80,18 +69,18 @@ namespace KernelPanic
         }
 
 
-        internal void Update(Matrix viewMatrix)
+        internal override void Update(Matrix viewMatrix)
         {
-            base.Update();
+            base.Update(viewMatrix);
             var input = InputManager.Default;
             Vector2 vector = Vector2.Transform(input.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
             Point position = new Point((int)vector.X, (int)vector.Y);
-            if (!mSelected)
+            if (!Selected)
             {
                 if (mContainerRectangle.Contains(position))
                 {
                     // select object
-                    mSelected = input.MousePressed(InputManager.MouseButton.Left);
+                    Selected = input.MousePressed(InputManager.MouseButton.Left);
                 }
             }
             else if (input.MousePressed(InputManager.MouseButton.Right))
@@ -109,7 +98,7 @@ namespace KernelPanic
             }
             else if (input.KeyPressed(Keys.Space))
             {
-                mSelected = false;
+                Selected = false;
                 mMovementGoal = null;
             }
         }

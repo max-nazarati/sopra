@@ -31,6 +31,18 @@ namespace KernelPanic
             //mGraphics = graphics;
         }
 
+        /// <summary>
+        /// Below, redundant stuff, perhaps?
+        /// </summary>
+        /// 
+        /* To select a unit, left-click on it.
+         * Further left-clicks place the unit on different positions.
+         * Right-clicks make the unit float to a different position.
+         * Use Space to unselect the unit.
+         */
+
+        public bool Selected { get; set; }
+
         public bool IsColliding(Entity Object)
         {
             return mContainerRectangle.Intersects(Object.mContainerRectangle);
@@ -47,7 +59,7 @@ namespace KernelPanic
             mTexture.SetData(new[] { Color.Blue });
         }
 
-        internal virtual void Update()
+        internal virtual void Update(Matrix viewMatrix)
         {
             // store last position
             mOldContainerRectangle = mContainerRectangle;

@@ -6,34 +6,34 @@ namespace KernelPanic
 {
     internal sealed class EntityGraph
     {
-        private readonly List<Unit> mUnits;
+        private readonly List<Entity> mEntities;
         private int? mActiveUnit;
 
         public EntityGraph()
         {
-            mUnits = new List<Unit>();
+            mEntities = new List<Entity>();
             mActiveUnit = null;
         }
 
-        public void AddUnit(Unit unit)
+        public void Add(Unit unit)
         {
-            mUnits.Add(unit);
+            mEntities.Add(unit);
         }
 
         public void Update(Matrix viewMatrix)
         {
             var i = 0;
-            foreach (var Object in mUnits)
+            foreach (var Object in mEntities)
             {
                 Object.Update(viewMatrix);
                 // check if a new unit has been selected
-                if (Object.mSelected)
+                if (Object.Selected)
                 {
                     if (mActiveUnit is int active)
                     {
                         if (i != active)
                         {
-                            mUnits[active].mSelected = false;
+                            mEntities[active].Selected = false;
                         }
                     }
                     mActiveUnit = i;
@@ -45,7 +45,7 @@ namespace KernelPanic
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            foreach (var Object in mUnits)
+            foreach (var Object in mEntities)
             {
                 Object.Draw(spriteBatch);
             }
