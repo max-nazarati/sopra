@@ -7,14 +7,18 @@ namespace KernelPanic
     [DataContract]
     [KnownType(typeof(InGameState))]
     [KnownType(typeof(MenuState))]
-    abstract class AGameState
+    internal abstract class AGameState
     {
-        protected GameStateManager GameStateManager { get; set; }
-        //public Camera2D Camera { get; protected set; }
+        protected GameStateManager GameStateGameStateManager { get; }
+        internal virtual bool IsOverlay => false;
+        internal virtual Camera2D Camera => null;
 
-        public bool IsOverlay { get; protected set; }
+        protected AGameState(GameStateManager gameStateManager)
+        {
+            GameStateGameStateManager = gameStateManager;
+        }
+        
         public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay);
         public abstract void Update(GameTime gameTime, bool isOverlay);
-
     }
 }

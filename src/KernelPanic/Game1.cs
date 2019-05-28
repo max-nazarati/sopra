@@ -29,6 +29,7 @@ namespace KernelPanic
         public Game1()
         {
             Content.RootDirectory = "Content";
+
             mGraphics = new GraphicsDeviceManager(this)
             {
                 PreferredBackBufferWidth = 1920,
@@ -93,8 +94,8 @@ namespace KernelPanic
             mCoolDown.CooledDown += mUnit1.CooledDownDelegate;
 
             // Testing Storage Manager
-            var storageManager = new StorageManager();
-            var testSaveState = new InGameState(mCamera);
+            StorageManager storageManager = new StorageManager();
+            InGameState testSaveState = new InGameState(mCamera, mGameStateManager);
             storageManager.SaveGame("testSave.xml", testSaveState);
             var testLoadState = storageManager.LoadGame("testSave.xml");
         }
@@ -119,7 +120,7 @@ namespace KernelPanic
             if (mGameStateManager.Empty())
             {
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || InputManager.Default.KeyPressed(Keys.Escape))
-                    mGameStateManager.Push(MenuState.CreateMainMenu(GraphicsDevice.Viewport.Bounds.Size, mGameStateManager, false));
+                    mGameStateManager.Push(MenuState.CreateMainMenu(GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
                 mCamera.Update();
 
                 Console.WriteLine("fps: " + 1 / (float) gameTime.ElapsedGameTime.TotalSeconds);

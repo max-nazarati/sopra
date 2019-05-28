@@ -108,6 +108,9 @@
     <Compile Include="..\KernelPanic\Grid.cs">
       <Link>Grid.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\InGameState.cs">
+      <Link>InGameState.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\InputManager.cs">
       <Link>InputManager.cs</Link>
     </Compile>
@@ -165,7 +168,6 @@
     <Compile Include="..\KernelPanic\StorageManager.cs">
       <Link>StorageManager.cs</Link>
     </Compile>
-    <Compile Include="InGameState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\KernelPanic\UnitManager.cs">
       <Link>UnitManager.cs</Link>

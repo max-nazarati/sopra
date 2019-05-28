@@ -5,21 +5,15 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic
 {
     [DataContract]
-    sealed class MenuState : AGameState
+    internal sealed class MenuState : AGameState
     {
-        private MenuState(GameStateManager mngr, bool isOverlay)
-        {
-            GameStateManager = mngr;
-            IsOverlay = isOverlay;
-        }
-
         private InterfaceComponent[] mComponents;
-        /*
-        private MenuState()
-        {
-
-        }
         
+        private MenuState(GameStateManager gameStateManager) : base(gameStateManager)
+        {
+        }
+
+        /*
         public static MenuState CreateAchievementsMenu(GameStateManager stateManager)
         {
             return new MenuState();
@@ -45,7 +39,8 @@ namespace KernelPanic
             return new MenuState();
         }
         */
-        public static MenuState CreateMainMenu(Point screenSize, GameStateManager stateManager, bool isOverlay)
+        
+        public static MenuState CreateMainMenu(Point screenSize, GameStateManager stateManager)
         {
             var playButton = CreateButton(screenSize, stateManager.Sprite, "SPIELEN", 200);
             playButton.Clicked += _ => stateManager.Pop();  // TODO: Push `InGameState` when it exists.
@@ -56,7 +51,7 @@ namespace KernelPanic
             var quitButton = CreateButton(screenSize, stateManager.Sprite, "BEENDEN", 450);
             quitButton.Clicked += _ => stateManager.Game.Exit();
             
-            return new MenuState(stateManager, isOverlay)
+            return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
                 {
@@ -73,7 +68,7 @@ namespace KernelPanic
             var backButton = CreateButton(screenSize, stateManager.Sprite, "ZURÜCK", 450);
             backButton.Clicked += _ => stateManager.Pop();
 
-            return new MenuState(stateManager, false)
+            return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
                 {
