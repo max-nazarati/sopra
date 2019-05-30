@@ -21,11 +21,13 @@ namespace KernelPanic
         */
         
         public SpriteManager Sprite { get; }
+        public Game1 Game { get; }
         private readonly Stack<AGameState> mGameStates = new Stack<AGameState>();
 
-        public GameStateManager(ContentManager contentManager)
+        public GameStateManager(Game1 game, ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
-            Sprite = new SpriteManager(contentManager);
+            Sprite = new SpriteManager(contentManager, graphicsDevice);
+            Game = game;
         }
         
         internal AGameState Active => mGameStates.Peek();

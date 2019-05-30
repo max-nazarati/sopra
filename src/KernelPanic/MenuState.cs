@@ -44,7 +44,7 @@ namespace KernelPanic
         public static MenuState CreateMainMenu(Action exitAction, Point screenSize, GameStateManager stateManager)
         {
             var playButton = CreateButton(screenSize, stateManager.Sprite, "SPIELEN", 200);
-            playButton.Clicked += _ => stateManager.Pop();  // TODO: Push `InGameState` when it exists.
+            playButton.Clicked += _ => stateManager.Push(new InGameState(stateManager));  // TODONE: Push `InGameState` when it exists.
 
             var optionsButton = CreateButton(screenSize, stateManager.Sprite, "OPTIONEN", 325);
             optionsButton.Clicked += _ => stateManager.Push(CreateOptionsMenu(screenSize, stateManager));
@@ -134,10 +134,12 @@ namespace KernelPanic
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
         {
+            spriteBatch.Begin();
             foreach (var component in mComponents)
             {
                 component.Draw(spriteBatch, gameTime);
             }
+            spriteBatch.End();
         }
     }
 }
