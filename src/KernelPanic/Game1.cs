@@ -63,7 +63,8 @@ namespace KernelPanic
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            mGameStateManager = new GameStateManager(Content);
+            mGameStateManager = new GameStateManager(this, Content, GraphicsDevice);
+            mGameStateManager.Push(new InGameState(mGameStateManager));
 
             // TODO: use this.Content to load your game content here
             SoundManager.Instance.Init(Content);
@@ -74,7 +75,7 @@ namespace KernelPanic
             // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
             // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(32, 0, 16, 42));
             
-            mBoard = new Board(Content);
+            /*mBoard = new Board(Content);
 
             // testing movable objects and collision
             mEntityGraph = new EntityGraph();
@@ -92,12 +93,13 @@ namespace KernelPanic
             // testing cooldown component
             mCoolDown = new CooldownComponent(new TimeSpan(0, 0, 5));
             mCoolDown.CooledDown += mUnit1.CooledDownDelegate;
-
+            */
             // Testing Storage Manager
             StorageManager storageManager = new StorageManager();
-            InGameState testSaveState = new InGameState(mCamera, mGameStateManager);
+            InGameState testSaveState = new InGameState(mGameStateManager);
             storageManager.SaveGame("testSave.xml", testSaveState);
             var testLoadState = storageManager.LoadGame("testSave.xml");
+            
         }
 
         /// <summary>
@@ -117,7 +119,7 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             // TODO: Add your update logic here
-            if (mGameStateManager.Empty())
+           /* if (mGameStateManager.Empty())
             {
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || InputManager.Default.KeyPressed(Keys.Escape))
                     mGameStateManager.Push(MenuState.CreateMainMenu(Exit, GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
@@ -130,7 +132,7 @@ namespace KernelPanic
                 /* if (mStateList != null)
                  {
                      // Console.WriteLine(mStateList);
-                 }*/
+                 }// puts comment end here
             }
             else
             {
@@ -138,8 +140,9 @@ namespace KernelPanic
             }
 
             mCoolDown.Update(gameTime);
-
+            */
             InputManager.Default.Update(gameTime);
+            mGameStateManager.Update(gameTime, false);
             base.Update(gameTime);
         }
 
@@ -149,7 +152,9 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if (!mGameStateManager.Empty())
+            GraphicsDevice.Clear(Color.MintCream);
+            mGameStateManager.Draw(mSpriteBatch, gameTime);
+            /*if (!mGameStateManager.Empty())
             {
                 mSpriteBatch.Begin(transformMatrix: mGameStateManager.Active.Camera?.GetViewMatrix());
                 mGameStateManager.Draw(mSpriteBatch, gameTime);
@@ -176,7 +181,7 @@ namespace KernelPanic
                 mSpriteBatch.End();
 
                 //mStateManager.Draw(mSpriteBatch);
-            }
+            }*/
             base.Draw(gameTime);
         }
     }

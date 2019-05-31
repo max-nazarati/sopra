@@ -5,7 +5,8 @@ namespace KernelPanic
 {
     public class SpriteManager
     {
-        private ContentManager ContentManager { get; }
+        public ContentManager ContentManager { get; private set; }
+        public GraphicsDevice GraphicsDevice { get; private set; }
         public Texture2D LoadImage(string textureName)
         {
             return ContentManager.Load<Texture2D>(textureName);
@@ -14,9 +15,10 @@ namespace KernelPanic
         {
             return ContentManager.Load<SpriteFont>(fontName);
         }
-        public SpriteManager(ContentManager contentManager)
+        public SpriteManager(ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
             ContentManager = contentManager;
+            GraphicsDevice = graphicsDevice;
         }
     }
 }
