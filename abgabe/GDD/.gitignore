@@ -1,4 +1,5 @@
 # Ignore files created by LaTeX
+*.dvi
 *.aux
 *.log
 *.out

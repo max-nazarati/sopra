@@ -1,38 +1,66 @@
-﻿using System.Net.Mime;
-using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 namespace KernelPanic
 {
-    public class SoundManager
+    internal sealed class SoundManager
     {
-        private Song mSong;
-        private string mSongName;
-        private ContentManager Content;
-        public SoundManager(string songName, ContentManager content)
+        private SoundEffect mShoot, mPlacement;
+        private Song mBackgroundSong1;
+
+        private SoundManager()
         {
-            this.Content = content;
-            this.mSongName = songName;
         }
 
-        public void Init()
+        internal static SoundManager Instance { get; } = new SoundManager();
+
+        /// <summary>
+        /// loads content
+        /// </summary>
+        /// <param name="content">ContentManager object</param>
+        public void Init(ContentManager content)
         {
-            mSong = Content.Load<Song>(mSongName);
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Volume = 0.2f;
-        }
 
-        public void Pause()
-        {
-            MediaPlayer.Pause();
+            // Uncomment if these are used.
+            mPlacement = content.Load<SoundEffect>("placement");
+            mShoot = content.Load<SoundEffect>("shoot");
+            mBackgroundSong1 = content.Load<Song>("testSoundtrack");
+            // mBuildTower = content.Load<SoundEffect>("");
         }
+#if true
+        /// <summary>
+        /// Plays background music when called
+        /// </summary>
+        internal void PlayBackgroundMusic()
+        {
+            MediaPlayer.Play(mBackgroundSong1);
+        }
+#endif
+#if true // Currently not used.
 
-        public void Play()
+        /// <summary>
+        /// plays the sound according to the given string
+        /// </summary>
+        /// <param name="actionName">Sound to play. walk, shoot, buildTower</param>
+        internal void PlaySound(string actionName)
         {
-            MediaPlayer.Play(mSong);
+            switch (actionName)
+            {
+                case "placement":
+                    mPlacement.Play(0.4f, 1f, 0.5f);
+                    break;
+                case "shoot":
+                    mShoot.Play(0.4f, 1f, 1f);
+                    break;
+                default:
+                    Console.WriteLine("No valid sound name. Try 'shoot' or 'placement' ");
+                    break;
+            }
         }
+#endif
     }
 }

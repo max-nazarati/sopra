@@ -1,19 +1,24 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal sealed class Camera2D
     {
-        public Vector2 mPosition;
-        private readonly float mRotation;
-        public float mZoom;
+        [DataMember]
+        private Vector2 mPosition;
+        // private readonly float mRotation;
+        [DataMember]
+        private float mZoom;
+        [DataMember]
         private readonly Vector2 mOrigin;
 
         internal Camera2D(Viewport viewport)
         {
-            mRotation = 0;
+            // mRotation = 0;
             mZoom = 1;
             mOrigin = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
             mPosition.X = 290;
@@ -23,14 +28,13 @@ namespace KernelPanic
         /// <summary>
         /// Asks if the camera should be moved and reacts accordingly
         /// </summary>
-        /// <param name="deltaTime"></param>
-        private void MoveCamera(float deltaTime)
+        private void MoveCamera()
         {
             // Movement via Dragging (with InputManager) disables the other inputs
             if (InputManager.Default.MouseDown(InputManager.MouseButton.Middle))
             {
-                PosX -= InputManager.Default.MouseMovementTuple().Item1;
-                PosY -= InputManager.Default.MouseMovementTuple().Item2;
+                PosX -= InputManager.Default.MouseMovement.X;
+                PosY -= InputManager.Default.MouseMovement.Y;
             }
             else
             {
@@ -73,11 +77,9 @@ namespace KernelPanic
             }
         }
 
-        internal void Update(GameTime gameTime)
+        internal void Update()
         {
-            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            MoveCamera(deltaTime);
+            MoveCamera();
             ZoomCamera();
         }
 

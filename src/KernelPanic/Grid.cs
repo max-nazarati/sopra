@@ -1,269 +1,329 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    internal sealed class Grid
+    public sealed class Grid
     {
-        private readonly float mScale;
-        private readonly ContentManager mContent;
-        private int mRelativeX, mRelativeY;
-        private Texture2D mKacheln, mBorder;
-        /*
-        private readonly int mRows, mColumns;
-        
-        
-        private readonly bool mLeft;
-        
-
-        internal Grid(ContentManager content, int rows, int columns, bool left)
-        {
-            this.mContent = content;
-            this.mRows = rows;
-            this.mColumns = columns;
-            this.mLeft = left;
-            mScale = 0.5F;
-        }
-
-        private void DrawFields(SpriteBatch spriteBatch)
-        {
-            for (var i = 0; i < mColumns; i++)
-            {
-                for (var j = 0; j < mRows; j++)
-                {
-                    if (mLeft)
-                    {
-                        // draws left lane
-                        spriteBatch.Draw(mKacheln,
-                            new Rectangle((int)(mScale * mKacheln.Width * i),
-                                (int)(mScale * mKacheln.Height * j),
-                                (int)(mScale * 200),
-                                (int)(mScale * 200)),
-                            null,
-                            Color.AliceBlue);
-                        // draws left corners
-                        if (j < mColumns || j > mRows - mColumns - 1)
-                        {
-                            spriteBatch.Draw(mKacheln,
-                                new Rectangle((int)(mScale * mKacheln.Width * i + (mColumns * mScale * mKacheln.Width)),
-                                    (int)(mScale * mKacheln.Height * j),
-                                    (int)(mScale * 200),
-                                    (int)(mScale * 200)),
-                                null,
-                                Color.AliceBlue);
-                        }
-                    }
-                    else
-                    {
-                        // draws right lane
-                        spriteBatch.Draw(mKacheln,
-                            new Rectangle((int)(mScale * mKacheln.Width * i) + (int)(4000 * mScale),
-                                (int)(mScale * mKacheln.Height * j),
-                                (int)(mScale * 200),
-                                (int)(mScale * 200)),
-                            null,
-                            Color.AliceBlue);
-                        // draws right corners
-                        if (j < mColumns || j > mRows - mColumns - 1)
-                        {
-                            spriteBatch.Draw(mKacheln,
-                                new Rectangle(
-                                    (int)(mScale * mKacheln.Width * i + 4000 * mScale -
-                                           (mColumns * mScale * mKacheln.Width)),
-                                    (int)(mScale * mKacheln.Height * j),
-                                    (int)(mScale * 200),
-                                    (int)(mScale * 200)),
-                                null,
-                                Color.AliceBlue);
-                        }
-                    }
-                }
-            }
-        }
-        */
-
         /// <summary>
         /// Left and Right lane
         /// </summary>
         public enum LaneSide
         {
-            Left, Right
+            Left,
+            Right
         }
+
+        private readonly ContentManager mContent;
+        private int mRelativeX, mRelativeY;
 
         private readonly LaneSide mLaneSide;
-        private readonly Rectangle mLaneSizeInTilesRectangle;
+        private readonly Rectangle mLaneRectangle;
         private readonly int mLaneWidthInTiles;
-        private readonly int mKachelPixelSize = 200;
+
+        private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly 
+
+        private const int KachelPixelSize = 100; // TODO
+        private const int TilesPerSprite = 1; // per Dimension
+        private const int SingleTileSizePixel = KachelPixelSize / TilesPerSprite;
+
+        private readonly List<Tower> mTowerList = new List<Tower>();
+        private readonly List<Vector2> mUsedGrids = new List<Vector2>();
+
         private Color mBorderColor = Color.Red;
 
+        private Sprite mSprite;
 
-        public Grid(ContentManager content, LaneSide laneSide, Rectangle laneSizeInTilesRectangle, int laneWidthInTiles = 5)
+        // static readonly List<Rectangle> sExistingGrids = new List<Rectangle>();
+
+        public Grid(ContentManager content, LaneSide laneSide, Rectangle laneRectangle, int laneWidthInTiles = 10)
         {
+            // TODO add assertions so the lane cant be created with weird numbers. 
             mContent = content;
             mLaneSide = laneSide;
-            mLaneSizeInTilesRectangle = laneSizeInTilesRectangle;
+            mLaneRectangle = laneRectangle;
             mLaneWidthInTiles = laneWidthInTiles;
-            mScale = 0.5F;
-        }
+            CreateCoordinateSystem();
+            // sExistingGrids.Add(laneRectangle);
 
-        /// <summary>
-        /// Draws a single Tile (currently 2x2 sized)
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="column"></param>
-        /// <param name="row"></param>
-        /// <param name="color"></param>
-        private void DrawTile(SpriteBatch spriteBatch, int column, int row, Color color)
-        {
-            spriteBatch.Draw(mKacheln,
-                new Rectangle((int)(mScale * mKacheln.Width * column + (0 * mScale * mKacheln.Width)),
-                    (int)(mScale * mKacheln.Height * row),
-                    (int)(mScale * mKachelPixelSize),
-                    (int)(mScale * mKachelPixelSize)),
-                null,
-                color);
-        }
+            var tile = content.Load<Texture2D>("LaneTile");
+            var kachelSprite = new ImageSprite(tile, 0, 0) {Scale = (float) KachelPixelSize / tile.Width};
+            var mainPart = new PatternSprite(kachelSprite, 0, 0, laneRectangle.Height, laneWidthInTiles);
+            var topPart = new PatternSprite(kachelSprite,
+                0,
+                0,
+                laneWidthInTiles,
+                laneRectangle.Width - mLaneWidthInTiles);
+            var bottomPart = new PatternSprite(kachelSprite,
+                0,
+                0,
+                laneWidthInTiles,
+                laneRectangle.Width - mLaneWidthInTiles);
 
-        /// <summary>
-        /// Draws the biggest possible rectangle of the lane (the whole vertical part of the '[' resp. ']')
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="upperLeftPositionTuple"></param>
-        private void DrawVerticalPart(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
-        {
-            for (var column = 0; column < mLaneWidthInTiles; column++)
+            switch (laneSide)
             {
-                for (var row = 0; row < mLaneSizeInTilesRectangle.Height; row++)
+                case LaneSide.Right:
+                    topPart.X = -topPart.Width;
+                    bottomPart.X = -bottomPart.Width;
+                    bottomPart.Y = mainPart.Height - bottomPart.Height;
+                    break;
+
+                case LaneSide.Left:
+                    topPart.X = mainPart.Width;
+                    bottomPart.X = mainPart.Width;
+                    bottomPart.Y = mainPart.Height - bottomPart.Height;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(laneSide));
+            }
+
+            mSprite = new CompositeSprite(laneRectangle.X * KachelPixelSize, laneRectangle.Y * KachelPixelSize)
+            {
+                Children = {mainPart, bottomPart, topPart}
+            };
+        }
+
+        /*
+        ~Grid()
+        {
+            // delete the class level information about the grid
+            sExistingGrids.Remove(mLaneRectangle);
+        }
+        */
+
+        /* TODO implement when needed
+        private static bool CoordinateInGrid(Point coordinate)
+        {
+            coordinate = CoordinatePositionFromScreen(coordinate);
+            foreach (var rectangle in sExistingGrids)
+            {
+                if (rectangle.X <= coordinate.X && coordinate.X <= rectangle.X + rectangle.Width && 
+                    rectangle.Y <= coordinate.Y && coordinate.Y <= rectangle.Y + rectangle.Height)
                 {
-                    DrawTile(spriteBatch, upperLeftPositionTuple.Item1 + column, upperLeftPositionTuple.Item2 + row, Color.Green);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        */
+
+        /* TODO implement when needed
+        /// <summary>
+        /// calculates the position in the Grid for a given MousePosition on the screen
+        /// </summary>
+        /// <returns></returns>
+        private static Point CoordinatePositionFromScreen(Point screenCoordinate)
+        {
+            var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
+            var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
+            return new Point(screenCoordinate.X * 100, screenCoordinate.Y * 100);
+        }
+        */
+
+        /// <summary>
+        /// calculates the position on the screen for a grid coordinate point,
+        /// so things can be drawn correctly
+        /// </summary>
+        /// <param name="upperLeft"></param>
+        /// <returns></returns>
+        private static Point ScreenPositionFromCoordinate(Point upperLeft)
+        {
+            var xPositionGlobal = upperLeft.X; // this is now saved in the grid + mLaneRectangle.X;
+            var yPositionGlobal = upperLeft.Y; // this is now saved in the grid + mLaneRectangle.Y;
+            var x = (SingleTileSizePixel * TilesPerSprite * xPositionGlobal);
+            var y = (SingleTileSizePixel * TilesPerSprite * yPositionGlobal);
+            var result = new Point(x, y);
+            return result;
+
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// In this example:
+        ///  * lane width = 3
+        ///  * height = 11
+        ///  * width = 6
+        /// [ ][ ][ ][ ][ ][ ]    \
+        /// [ ][ ][ ][ ][ ][ ]     > 1st for loop: top part
+        /// [ ][ ][ ][ ][ ][ ]    /
+        /// [ ][ ][ ]            \
+        /// [ ][ ][ ]             \
+        /// [ ][ ][ ]              > 2nd for loop: middle part
+        /// [ ][ ][ ]             /
+        /// [ ][ ][ ]            /
+        /// [ ][ ][ ][ ][ ][ ]    \
+        /// [ ][ ][ ][ ][ ][ ]     > 3rd for loop: bottom part
+        /// [ ][ ][ ][ ][ ][ ]    /
+        private void CreateCoordinateSystemLeft()
+        {
+            // calculate new Values depending on the Size of the sprite
+            var laneWidth = mLaneWidthInTiles / TilesPerSprite;
+            var rectangleWidth = mLaneRectangle.Width / TilesPerSprite;
+            var rectangleHeight = mLaneRectangle.Height / TilesPerSprite;
+
+            // adding the top part
+            for (var y = 0; y < laneWidth; y++)
+            {
+                for (var x = 0; x < rectangleWidth; x++)
+                {
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                }
+            }
+
+            // adding the middle part
+            for (var y = laneWidth; y < rectangleHeight - laneWidth; y++)
+            {
+                for (var x = 0; x < laneWidth; x++)
+                {
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                }
+            }
+
+            // adding the bottom part
+            for (var y = rectangleHeight - laneWidth; y < rectangleHeight; y++)
+            {
+                for (var x = 0; x < rectangleWidth; x++)
+                {
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
         }
 
         /// <summary>
-        /// Draws the small corner parts that are left after drawing the vertical part of the lane.
+        /// TODO 1st and 3rd loop can be put in one function and be called by left and right (4times ~same code)
         /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
-        private void DrawAttachedPart(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        /// In this example:
+        ///  * lane width = 3
+        ///  * height = 11
+        ///  * width = 6
+        /// [ ][ ][ ][ ][ ][ ]    \
+        /// [ ][ ][ ][ ][ ][ ]     > 1st for loop: top part
+        /// [ ][ ][ ][ ][ ][ ]    /
+        ///          [ ][ ][ ]   \
+        ///          [ ][ ][ ]    \
+        ///          [ ][ ][ ]     > 2nd for loop: middle part
+        ///          [ ][ ][ ]    /
+        ///          [ ][ ][ ]   /
+        /// [ ][ ][ ][ ][ ][ ]    \
+        /// [ ][ ][ ][ ][ ][ ]     > 3rd for loop: bottom part
+        /// [ ][ ][ ][ ][ ][ ]    /
+        private void CreateCoordinateSystemRight()
         {
-            for (var column = 0; column < mLaneSizeInTilesRectangle.Width - mLaneWidthInTiles; column++)
+            // calculate new Values depending on the Size of the sprite
+            var laneWidth = mLaneWidthInTiles / TilesPerSprite;
+            var rectangleWidth = mLaneRectangle.Width / TilesPerSprite;
+            var rectangleHeight = mLaneRectangle.Height / TilesPerSprite;
+
+            // adding the top part
+            for (var y = 0; y < laneWidth; y++)
             {
-                for (var row = 0; row < mLaneWidthInTiles; row++)
+                for (var x = 0; x < rectangleWidth; x++)
                 {
-                    DrawTile(spriteBatch, upperLeftPositionTuple.Item1 + column, upperLeftPositionTuple.Item2 + row, Color.Black);
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                }
+            }
+
+            // adding the middle part
+            for (var y = laneWidth; y < rectangleHeight - laneWidth; y++)
+            {
+                for (var x = rectangleWidth - laneWidth; x < rectangleWidth; x++)
+                {
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                }
+            }
+
+            // adding the bottom part
+            for (var y = rectangleHeight - laneWidth; y < rectangleHeight; y++)
+            {
+                for (var x = 0; x < rectangleWidth; x++)
+                {
+                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
                 }
             }
         }
 
         /// <summary>
-        /// Calls helper functions to draw the left lane (starting at most top left point)
+        /// TODO
         /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
-        private void DrawLeftLane(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
+        private void CreateCoordinateSystem()
         {
-            var leftPart = upperLeftPositionTuple;
-
-            var topRight = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
-                upperLeftPositionTuple.Item2);
-
-            var bottomRight = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
-                upperLeftPositionTuple.Item2 + mLaneSizeInTilesRectangle.Height - mLaneWidthInTiles);
-
-            DrawVerticalPart(spriteBatch, leftPart);
-            DrawAttachedPart(spriteBatch, topRight);
-            DrawAttachedPart(spriteBatch, bottomRight);
-        }
-
-        /// <summary>
-        /// Calls helper functions to draw the right lane (starting at most top left point)
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="upperLeftPositionTuple">most top left coordinate</param>
-        private void DrawRightLane(SpriteBatch spriteBatch, Tuple<int, int> upperLeftPositionTuple)
-        {
-            // position of the right part of the lane (most top left point)
-            var rightPart = new Tuple<int, int>(upperLeftPositionTuple.Item1 + mLaneWidthInTiles,
-                upperLeftPositionTuple.Item2);
-
-            // position of the top left part of the lane (most top left point)
-            var topLeft = upperLeftPositionTuple;
-
-            // position of the bottom left part of the lane (most top left point)
-            var bottomLeft = new Tuple<int, int>(upperLeftPositionTuple.Item1,
-                upperLeftPositionTuple.Item2 + mLaneSizeInTilesRectangle.Height - mLaneWidthInTiles);
-
-
-            DrawVerticalPart(spriteBatch, rightPart);
-            DrawAttachedPart(spriteBatch, topLeft);
-            DrawAttachedPart(spriteBatch, bottomLeft);
-        }
-
-        /// <summary>
-        /// calls the corresponding draw function for LaneSide
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        private void DrawLane(SpriteBatch spriteBatch)
-        {
-            var upperLeftPositionTuple =
-                new Tuple<int, int>(mLaneSizeInTilesRectangle.X, mLaneSizeInTilesRectangle.Y);
             switch (mLaneSide)
             {
                 case LaneSide.Left:
-                    DrawLeftLane(spriteBatch, upperLeftPositionTuple);
+                    CreateCoordinateSystemLeft();
                     break;
                 case LaneSide.Right:
-                    DrawRightLane(spriteBatch ,upperLeftPositionTuple);
+                    CreateCoordinateSystemRight();
                     break;
             }
         }
 
+
         /// <summary>
-        /// change the color of the selected square on doubleClick
-        /// mainly for testing purpose
+        /// change the color of the selected square on doubleClick mainly for testing purpose
         /// </summary>
         private void UpdateColor()
         {
-            if (!InputManager.Default.DoubleClick()) return;
-            mBorderColor = mBorderColor == Color.Green ? Color.Red : Color.Green;
+            if (!InputManager.Default.DoubleClick)
+                return;
+            
+            mBorderColor = mBorderColor == Color.White ? Color.Red : Color.White;
         }
 
-        /// <summary>
-        /// Draws the tile marking overlay
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="camera"></param>
-        private void DrawBorder(SpriteBatch spriteBatch)
+        
+        private void DrawTower(SpriteBatch spriteBatch, GameTime gameTime, Matrix viewMatrix)
         {
-            var posX = (int)((int)((mRelativeX) / 50) * 50);
-            var posY = (int)((int)((mRelativeY) / 50) * 50);
-            Console.WriteLine(posX);
-            spriteBatch.Draw(mBorder, new Rectangle(posX, posY, 50, 50), null, mBorderColor);
+            if (InputManager.Default.KeyDown(Keys.T) && !mUsedGrids.Contains(new Vector2((mRelativeX / 50) * 50, (mRelativeY / 50) * 50)))
+            {
+                mTowerList.Add(new Tower(mContent, (mRelativeX / 50) * 50, (mRelativeY / 50) * 50));
+                mUsedGrids.Add(new Vector2((mRelativeX / 50) * 50, (mRelativeY / 50) * 50));
+                SoundManager.Instance.PlaySound("placement");
+            }
+
+
+            foreach (var tower in mTowerList)
+            {
+                tower.Update(gameTime, viewMatrix);
+                tower.Draw(spriteBatch);
+            }
         }
+
 
         /// <summary>
         /// calling the different draw function
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="camera"></param>
-        internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix)
+        /// <param name="viewMatrix"></param>
+        /// <param name="gameTime"></param>
+        internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
         {
-            mKacheln = mContent.Load<Texture2D>("Kachel3");
+            mSprite.Draw(spriteBatch, gameTime);
+            /*
+            mKacheln = mContent.Load<Texture2D>("LaneTile");
             mBorder = mContent.Load<Texture2D>("Border");
-            var relativeVector = Vector2.Transform(new Vector2(InputManager.Default.MousePositionX,InputManager.Default.MousePositionY),
-                Matrix.Invert(viewMatrix));
+            var relativeVector = Vector2.Transform(InputManager.Default.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
             mRelativeX = (int)relativeVector.X;
             mRelativeY = (int)relativeVector.Y;
 
             // DrawFields(spriteBatch);
-            DrawLane(spriteBatch);
+            DrawGrid(spriteBatch);
             UpdateColor();
             DrawBorder(spriteBatch);
+            DrawTower(spriteBatch, gameTime, viewMatrix);*/
+            /*
+            foreach (var point in mCoordinateSystem)
+            {
+                Console.WriteLine(point);
+            }
+            */
         }
-
-        
     }
 }
