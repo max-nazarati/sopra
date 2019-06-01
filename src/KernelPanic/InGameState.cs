@@ -78,7 +78,7 @@ namespace KernelPanic
         {
             var viewMatrix = Camera.GetViewMatrix();
             spriteBatch.Begin(transformMatrix: viewMatrix);
-            mBoard.DrawLane(spriteBatch, viewMatrix, gameTime);
+            mBoard.Draw(spriteBatch, viewMatrix, gameTime);
             mEntityGraph.Draw(spriteBatch, gameTime);
             mTestSprite.Draw(spriteBatch, gameTime);
             spriteBatch.End();

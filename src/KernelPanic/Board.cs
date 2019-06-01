@@ -14,7 +14,7 @@ namespace KernelPanic
             mRightLane = new Lane(Grid.LaneSide.Right, content);
         }
 
-        internal void DrawLane(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
+        internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
         {
             mLeftLane.Draw(spriteBatch, viewMatrix, gameTime);
             mRightLane.Draw(spriteBatch, viewMatrix, gameTime);
