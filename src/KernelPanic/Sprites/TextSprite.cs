@@ -6,6 +6,16 @@ namespace KernelPanic
 {
     internal sealed class TextSprite : Sprite
     {
+        internal delegate void SizeChangedDelegate(TextSprite sprite);
+
+        /// <summary>
+        /// This event is invoked when the size of this sprite changes because <see cref="Font"/> or
+        /// <see cref="Text"/> were changed.
+        ///
+        /// This event can be used to reposition this sprite or other sprites based on the new size.
+        /// </summary>
+        internal event SizeChangedDelegate SizeChanged;
+        
         private string mText;
         private SpriteFont mFont;
 
@@ -44,6 +54,7 @@ namespace KernelPanic
         private void ResetLazySize()
         {
             mLazySize = new Lazy<Vector2>(() => Font.MeasureString(Text));
+            SizeChanged?.Invoke(this);
         }
 
         internal override void Draw(SpriteBatch spriteBatch,
