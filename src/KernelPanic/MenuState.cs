@@ -88,8 +88,9 @@ namespace KernelPanic
 
         private static Button CreateButton(Point screenSize, SpriteManager sprites, string title, int position)
         {
-            var button = new Button(title, 0, position, sprites);
+            var button = new Button(sprites) {Title = title};
             button.Sprite.X = screenSize.X / 2.0f - button.Sprite.Width / 2.0f;
+            button.Sprite.Y = position;
             return button;
         }
         

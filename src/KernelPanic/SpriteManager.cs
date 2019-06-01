@@ -7,11 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    public sealed class SpriteManager
+    internal sealed class SpriteManager
     {
         private enum Image
         {
-            MenuBackground
+            MenuBackground,
+            ButtonBackground
         }
 
         private enum Font
@@ -22,20 +23,24 @@ namespace KernelPanic
         private readonly (Image image, Texture2D texture)[] mTextures;
         private readonly (Font font, SpriteFont spriteFont)[] mFonts;
 
-        public SpriteManager(ContentManager contentManager, GraphicsDevice graphicsDevice)
+        internal SpriteManager(ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
             ContentManager = contentManager;
             GraphicsDevice = graphicsDevice;
 
+            (Image, Texture2D) Texture(Image image, string name) => (image, contentManager.Load<Texture2D>(name));
+            (Font, SpriteFont) SpriteFont(Font font, string name) => (font, contentManager.Load<SpriteFont>(name));
+
             mTextures = new[]
             {
-                (Image.MenuBackground, contentManager.Load<Texture2D>("Base"))
+                Texture(Image.MenuBackground, "Base"),
+                Texture(Image.ButtonBackground, "Papier")
             };
             Array.Sort(mTextures);
 
             mFonts = new[]
             {
-                (Font.Button, contentManager.Load<SpriteFont>("buttonFont"))
+                SpriteFont(Font.Button, "buttonFont")
             };
             Array.Sort(mFonts);
         }
@@ -53,19 +58,11 @@ namespace KernelPanic
             Trace.Assert(realFont == font, "Texture array not ordered correctly");
             return texture;
         }
-        
-        public ContentManager ContentManager { get; private set; }
-        public GraphicsDevice GraphicsDevice { get; private set; }
-        public Texture2D LoadImage(string textureName)
-        {
-            return ContentManager.Load<Texture2D>(textureName);
-        }
-        public SpriteFont LoadFont(string fontName)
-        {
-            return ContentManager.Load<SpriteFont>(fontName);
-        }
 
-        public Sprite CreateMenuBackground(Point screenSize)
+        internal ContentManager ContentManager { get; private set; }
+        internal GraphicsDevice GraphicsDevice { get; private set; }
+
+        internal Sprite CreateMenuBackground(Point screenSize)
         {
             var texture = Lookup(Image.MenuBackground);
             var fullRows = screenSize.Y / texture.Height;
@@ -99,6 +96,30 @@ namespace KernelPanic
                     cornerTile
                 }
             };
+        }
+
+        internal (Sprite, TextSprite) CreateButton()
+        {
+            var texture = Lookup(Image.ButtonBackground);
+            var background = new ImageSprite(texture, 0, 0)
+            {
+                DestinationRectangle = new Rectangle(0, 0, 250, 70)
+            };
+
+            var titleSprite = new TextSprite(
+                Lookup(Font.Button),
+                "",
+                background.Width / 2,
+                background.Height / 2);
+            titleSprite.SizeChanged += sprite => sprite.Origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
+
+            return (
+                new CompositeSprite(0, 0)
+                {
+                    Children = {background, titleSprite}
+                },
+                titleSprite
+            );
         }
     }
 }

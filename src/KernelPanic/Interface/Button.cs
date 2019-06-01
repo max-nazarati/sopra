@@ -12,29 +12,15 @@ namespace KernelPanic
 
         public override Sprite Sprite { get; }
 
-        public Button(string title, float x, float y, SpriteManager sprites)
+        internal Button(SpriteManager sprites)
         {
-            var texture = sprites.LoadImage("Papier");
-            var background = new ImageSprite(texture, 0, 0)
-            {
-                DestinationRectangle = new Rectangle(0, 0, 250, 70)
-            };
-            mTitleSprite = new TextSprite(sprites.LoadFont("buttonFont"),
-                title,
-                background.Width / 2,
-                background.Height / 2);
-            mTitleSprite.Origin = new Vector2(mTitleSprite.Width / 2, mTitleSprite.Height / 2);
-
-            var sprite = new CompositeSprite(x, y);
-            sprite.Children.Add(background);
-            sprite.Children.Add(mTitleSprite);
-            Sprite = sprite;
+            (Sprite, mTitleSprite) = sprites.CreateButton();
         }
 
-        public string Title
+        internal string Title
         {
             get => mTitleSprite.Text;
-            set => mTitleSprite.Text = value ?? throw new ArgumentNullException();
+            set => mTitleSprite.Text = value;
         }
 
         public override void Update(GameTime gameTime)
