@@ -10,8 +10,8 @@ namespace KernelPanic
 
         internal Board(SpriteManager content)
         {
-            mLeftLane = new Lane(Grid.LaneSide.Left, new EntityGraph(), content);
-            mRightLane = new Lane(Grid.LaneSide.Right, new EntityGraph(), content);
+            mLeftLane = new Lane(Grid.LaneSide.Left, content);
+            mRightLane = new Lane(Grid.LaneSide.Right, content);
         }
 
         internal void DrawLane(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
