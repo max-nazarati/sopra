@@ -14,11 +14,9 @@ namespace KernelPanic
         private Base mBase;
         // private UnitSpawner mUnitSpawner;
 
-        public Lane(Grid.LaneSide laneSide, EntityGraph entityGraph, ContentManager content)
+        public Lane(Grid.LaneSide laneSide, EntityGraph entityGraph, SpriteManager sprites)
         {
-            mGrid = laneSide == Grid.LaneSide.Left ? new Grid(content, laneSide, 
-                new Rectangle(0, 0, 16, 42)) : new Grid(content, laneSide, 
-                new Rectangle(32, 0, 16, 42));
+            mGrid = laneSide == Grid.LaneSide.Left ? new Grid(sprites, laneSide) : new Grid(sprites, laneSide);
             EntityGraph = entityGraph;
             mBase = new Base();
         }

@@ -12,7 +12,8 @@ namespace KernelPanic
         private enum Image
         {
             MenuBackground,
-            ButtonBackground
+            ButtonBackground,
+            LaneTile
         }
 
         private enum Font
@@ -25,7 +26,6 @@ namespace KernelPanic
 
         internal SpriteManager(ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
-            ContentManager = contentManager;
             GraphicsDevice = graphicsDevice;
 
             (Image, Texture2D) Texture(Image image, string name) => (image, contentManager.Load<Texture2D>(name));
@@ -34,7 +34,8 @@ namespace KernelPanic
             mTextures = new[]
             {
                 Texture(Image.MenuBackground, "Base"),
-                Texture(Image.ButtonBackground, "Papier")
+                Texture(Image.ButtonBackground, "Papier"),
+                Texture(Image.LaneTile, "LaneTile")
             };
             Array.Sort(mTextures);
 
@@ -59,7 +60,6 @@ namespace KernelPanic
             return texture;
         }
 
-        internal ContentManager ContentManager { get; private set; }
         internal GraphicsDevice GraphicsDevice { get; private set; }
 
         internal Sprite CreateMenuBackground(Point screenSize)
@@ -120,6 +120,11 @@ namespace KernelPanic
                 },
                 titleSprite
             );
+        }
+
+        internal ImageSprite CreateLaneTile()
+        {
+            return new ImageSprite(Lookup(Image.LaneTile), 0, 0);
         }
     }
 }

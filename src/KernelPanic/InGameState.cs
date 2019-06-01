@@ -31,7 +31,7 @@ namespace KernelPanic
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
             Camera = new Camera2D(gameStateManager.Sprite.GraphicsDevice.Viewport);
-            mBoard = new Board(gameStateManager.Sprite.ContentManager);
+            mBoard = new Board(gameStateManager.Sprite);
             mGameStateManager = gameStateManager;
 
             // testing movable objects and collision
