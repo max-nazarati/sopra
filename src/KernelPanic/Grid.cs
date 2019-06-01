@@ -9,6 +9,39 @@ namespace KernelPanic
 {
     public sealed class Grid
     {
+        // ------------------------------------------------------------------------------------------------------------
+        private AStar mAStar;
+        private Texture2D mKacheln;
+
+        private void InitAStar()
+        {
+            mAStar = new AStar(mCoordinateSystem, mCoordinateSystem[0], mCoordinateSystem[mCoordinateSystem.Count]);
+        }
+
+        private void NewStart(Point start)
+        {
+            mAStar.SetStart(start);
+        }
+
+        private void NewTarget(Point target)
+        {
+            mAStar.SetTarget(target);
+        }
+
+        private void DrawPath(SpriteBatch spriteBatch)
+        {
+            List < Point > path = mAStar.FindPath();
+            foreach (var position in path)
+            {
+                DrawTile(spriteBatch, position);
+            }
+        }
+        private void DrawTile(SpriteBatch spriteBatch, Point point){
+            mKacheln = mContent.Load<Texture2D>("LaneTile");
+            var pos = ScreenPositionFromCoordinate(point);
+            spriteBatch.Draw(mKacheln, new Rectangle(pos.X, pos.Y, (SingleTileSizePixel * TilesPerSprite), (SingleTileSizePixel * TilesPerSprite)), Color.Red);}
+        // ------------------------------------------------------------------------------------------------------------
+        
         /// <summary>
         /// Left and Right lane
         /// </summary>
@@ -306,6 +339,7 @@ namespace KernelPanic
         internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
         {
             mSprite.Draw(spriteBatch, gameTime);
+            DrawPath(spriteBatch); // debug AStar
             /*
             mKacheln = mContent.Load<Texture2D>("LaneTile");
             mBorder = mContent.Load<Texture2D>("Border");
