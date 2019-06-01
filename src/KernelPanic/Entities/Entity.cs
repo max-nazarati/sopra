@@ -4,17 +4,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal abstract class Entity
+    internal abstract class Entity : IPriced
     {
         protected Rectangle mContainerRectangle;
         private Rectangle mOldContainerRectangle;
         //private GraphicsDeviceManager mGraphics;
         private readonly Texture2D mTexture;
 
-        // ReSharper disable once UnusedParameter.Local
         protected Entity(int price)
         {
-
+            Price = price;
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -69,5 +68,8 @@ namespace KernelPanic
         {
             spriteBatch.Draw(mTexture, mContainerRectangle, Color.White);
         }
+
+        public int Price { get; }
+        public Currency Currency => Currency.Bitcoin;
     }
 }
