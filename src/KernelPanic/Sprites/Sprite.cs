@@ -36,6 +36,18 @@ namespace KernelPanic
             Y = y;
         }
 
+        /// <summary>
+        /// Modifies <see cref="Scale"/> so that <see cref="Width"/> equals <paramref name="wantedWidth"/>.
+        /// </summary>
+        /// <param name="wantedWidth">The width to scale to</param>
+        internal void ScaleToWidth(float wantedWidth) => Scale = wantedWidth / UnscaledWidth;
+
+        /// <summary>
+        /// Modifies <see cref="Scale"/> so that <see cref="Height"/> equals <paramref name="wantedHeight"/>.
+        /// </summary>
+        /// <param name="wantedHeight">The height to scale to</param>
+        internal void ScaleToHeight(float wantedHeight) => Scale = wantedHeight / UnscaledHeight;
+
         internal virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Draw(spriteBatch, gameTime, Vector2.Zero, Rotation, Scale);   
