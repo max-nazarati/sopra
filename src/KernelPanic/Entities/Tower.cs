@@ -17,7 +17,7 @@ namespace KernelPanic
         private int mRadius;
         
         // stores the projectiles
-        private readonly List<Projectile> mProjektilListe = new List<Projectile>();
+        private readonly List<Projectile> mProjectiles = new List<Projectile>();
 
         internal Tower(TimeSpan timeSpan) : base(timeSpan)
         {
@@ -36,7 +36,7 @@ namespace KernelPanic
         {
             spriteBatch.Draw(mTower, new Vector2(mPosX + 25, mPosY + 25), null, Color.White, mRotation,
                 new Vector2(mTower.Width / 2f, mTower.Height / 2f), 0.08f, SpriteEffects.None, 0);
-            foreach (var projectile in mProjektilListe)
+            foreach (var projectile in mProjectiles)
             {
                 projectile.Draw(spriteBatch);
             }
@@ -65,13 +65,13 @@ namespace KernelPanic
                         mPosX + 25 - relativeMouseVector.X) - (float)Math.PI / 2;
                 if (mTimer < 0)
                 {
-                    mProjektilListe.Add(new Projectile(mContent, new Vector2(
+                    mProjectiles.Add(new Projectile(mContent, new Vector2(
                         (float)Math.Sin(mRotation % (3.14159265f * 2)),
                         -(float)Math.Cos(mRotation % (3.14159265f * 2))), new Vector2(mPosX, mPosY), mRadius));
                     SoundManager.Instance.PlaySound("shoot");
-                    if (mProjektilListe.Count > 5)
+                    if (mProjectiles.Count > 5)
                     {
-                        mProjektilListe.RemoveAt(0);
+                        mProjectiles.RemoveAt(0);
                     }
 
                     mTimer = Timer;
@@ -83,7 +83,7 @@ namespace KernelPanic
                 mRotation = ((float)Math.Sin((gameTime.TotalGameTime.TotalSeconds*10) % (2*Math.PI)) / 2);
             }
 
-            foreach (var projectile in mProjektilListe)
+            foreach (var projectile in mProjectiles)
             {
                 projectile.Update();
             }
