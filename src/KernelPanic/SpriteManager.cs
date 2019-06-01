@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -13,7 +12,9 @@ namespace KernelPanic
         {
             MenuBackground,
             ButtonBackground,
-            LaneTile
+            LaneTile,
+            Tower,
+            Projectile
         }
 
         private enum Font
@@ -35,7 +36,9 @@ namespace KernelPanic
             {
                 Texture(Image.MenuBackground, "Base"),
                 Texture(Image.ButtonBackground, "Papier"),
-                Texture(Image.LaneTile, "LaneTile")
+                Texture(Image.LaneTile, "LaneTile"),
+                Texture(Image.Tower, "tower"),
+                Texture(Image.Projectile, "Projectile")
             };
             Array.Sort(mTextures);
 
@@ -60,7 +63,7 @@ namespace KernelPanic
             return texture;
         }
 
-        internal GraphicsDevice GraphicsDevice { get; private set; }
+        internal GraphicsDevice GraphicsDevice { get; }
 
         internal Sprite CreateMenuBackground(Point screenSize)
         {
@@ -122,9 +125,8 @@ namespace KernelPanic
             );
         }
 
-        internal ImageSprite CreateLaneTile()
-        {
-            return new ImageSprite(Lookup(Image.LaneTile), 0, 0);
-        }
+        internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile), 0, 0);
+        internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower), 0, 0) {Scale = 0.8f};
+        internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile), 0, 0);
     }
 }
