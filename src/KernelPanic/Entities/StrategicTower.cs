@@ -6,7 +6,7 @@ namespace KernelPanic
     {
         internal TowerStrategy Strategy { get; set; } = TowerStrategy.First;
         
-        public StrategicTower(TimeSpan timeSpan) : base(timeSpan)
+        public StrategicTower(TimeSpan timeSpan, SpriteManager sprites) : base(timeSpan, sprites)
         {
         }
     }

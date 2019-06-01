@@ -19,11 +19,11 @@ namespace KernelPanic
         // stores the projectiles
         private readonly List<Projectile> mProjectiles = new List<Projectile>();
 
-        internal Tower(TimeSpan timeSpan) : base(timeSpan)
+        internal Tower(TimeSpan cooldown, SpriteManager sprites) : base(0)
         {
         }
         
-        internal Tower(ContentManager content, int x, int y) : base(TimeSpan.Zero)
+        internal Tower(ContentManager content, int x, int y) : base(0)
         {
             mPosX = x;
             mPosY = y;

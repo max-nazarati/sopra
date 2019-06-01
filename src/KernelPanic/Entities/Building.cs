@@ -1,22 +1,15 @@
-﻿using System;
-
-namespace KernelPanic
+﻿namespace KernelPanic
 {
-    internal class Building :Entity
+    internal abstract class Building :Entity
     {
-
-        public Building(int price) : base(price)
+        protected Building(int price) : base(price)
         {
-
-        }
-        public Building(TimeSpan timeSpan) : base(timeSpan)
-        {
-
+            BitcoinWorth = price;
         }
 
-        public int BitcoinWorth { get; set; }
+        internal int BitcoinWorth { get; set; }
 
-        public State StateProperty { get; set; }
+        internal State StateProperty { get; set; }
         
         internal enum State
         {
