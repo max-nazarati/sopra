@@ -29,7 +29,7 @@ namespace KernelPanic
         }
 
         public Point Position { get => mPosition; set => mPosition = value; }
-
+        public Node Parent { get => mParent; set => mParent = value; }
         public double Cost { get => mCost; set => mCost = value; }
         public double EstimatedCost { get => mEstimatedCost; set => mEstimatedCost = value; }
         public double Key => mKey;
@@ -85,32 +85,52 @@ namespace KernelPanic
         /// <returns></returns>
         private Node Remove(int currentIndex)
         {
-            mCount--;
-            var item = mItems[currentIndex];
+            // assert to check for indexError
             var lastIndex = mItems.Count - 1;
+            if (currentIndex > lastIndex)
+            {
+                return null;
+            }
+            mCount--;
+
+            // swap the item we want to last place for easier removal
+            var item = mItems[currentIndex];
             Swap(currentIndex, lastIndex);
 
-            while (mItems[currentIndex].Key > mItems[Left(currentIndex)].Key ||
-                   mItems[currentIndex].Key > mItems[Right(currentIndex)].Key)
+            // as long as the current item has both children
+            while (Right(currentIndex) <= lastIndex)
             {
-                if (Right(currentIndex) > mItems.Count &&
-                    mItems[Left(currentIndex)].Key <= mItems[Right(currentIndex)].Key)
+                // if left child is smaller, swap with left child
+                if (mItems[Left(currentIndex)].Key <= mItems[Right(currentIndex)].Key)
+                {
+                    if (mItems[currentIndex].Key < mItems[Left(currentIndex)].Key)
+                    {
+                        Swap(currentIndex, Left(currentIndex));
+                    }
+                    currentIndex = Left(currentIndex);
+
+                }
+                // if right child is smaller, swap with right child
+                else
+                {
+                    if (mItems[currentIndex].Key < mItems[Right(currentIndex)].Key)
+                    {
+                        Swap(currentIndex, Right(currentIndex));
+                    }
+                    currentIndex = Right(currentIndex);
+                }
+            }
+            // maybe there is still a left child but not a right child:
+            if (Left(currentIndex) <= lastIndex)
+            {
+                // if left child is smaller, swap with left child
+                if (mItems[currentIndex].Key > mItems[Left(currentIndex)].Key)
                 {
                     Swap(currentIndex, Left(currentIndex));
-                    currentIndex = Right(currentIndex);
-                    continue;
                 }
-
-                if (Right(currentIndex) > mItems.Count &&
-                    mItems[Left(currentIndex)].Key >= mItems[Right(currentIndex)].Key)
-                {
-                    Swap(currentIndex, Right(currentIndex));
-                    currentIndex = Left(currentIndex);
-                    continue;
-                }
-
-                return item;
             }
+
+            
 
             return item;
         }
@@ -157,20 +177,24 @@ namespace KernelPanic
             }
         } */
 
+        // parent of 'i' is at '(i-1)/2'
         private static int Parent(int currentIndex)
         {
-            return currentIndex / 2;
+            return (currentIndex - 1) / 2;
         }
+        // right child of 'i' is at '(2 * i) + 1'
         private static int Left(int currentIndex)
         {
-            return currentIndex * 2;
+            return (currentIndex * 2) + 1;
         }
+        // right child of 'i' is at '(2 * i) + 2' 
         private static int Right(int currentIndex)
         {
-            return currentIndex * 2 + 1;
+            return (currentIndex * 2) + 2;
         }
 
         public bool IsEmpty() => mCount == 0;
+        public int Count { get => mCount; }
     }
     public class AStar
     {
@@ -182,7 +206,8 @@ namespace KernelPanic
 
         public AStar(List<Point> coordinateList, Point start, Point target)
         {
-            // LoadListIntoQueue(coordinateList, start);
+            mCoordinateList = coordinateList;
+            mExploredNodes = new List<Point>();
             mTarget = target;
             mStart = start;
         }
@@ -270,8 +295,10 @@ namespace KernelPanic
             foreach (var neighbour in neighbours)
             {
                 mHeap.Insert(neighbour);
+                // Console.WriteLine(neighbour.Position.ToString());
             }
             mExploredNodes.Add(node.Position);
+            // Console.WriteLine(node.Position.ToString());
         }
         public Node FindTarget()
         {
@@ -282,13 +309,33 @@ namespace KernelPanic
             while (!mHeap.IsEmpty())
             {
                 var heapNode = mHeap.RemoveMin();
+                Console.WriteLine(mHeap.Count);
+                Console.WriteLine(heapNode.Position.ToString());
                 if (IsTargetPosition(heapNode.Position)) return heapNode;
                 ExpandNode(heapNode);
             }
 
             return null;
         }
-        
+
+        public List<Point> FindPath()
+        {
+            List<Point> path = new List<Point>();
+            Node goalNode = FindTarget();
+            path.Add(goalNode.Position);
+            Node currenNode = goalNode;
+            Point currentPosition = goalNode.Position;
+            int count = 0;
+            while (!IsStartPosition(currentPosition) && count < 1000)
+            {
+                count++;
+                currenNode = currenNode.Parent;
+                currentPosition = currenNode.Position;
+                path.Add(currentPosition);
+            }
+
+            return path;
+        }
     }
  
 }
