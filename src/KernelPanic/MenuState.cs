@@ -83,38 +83,7 @@ namespace KernelPanic
 
         private static StaticComponent CreateBackground(Point screenSize, SpriteManager sprites)
         {
-            var texture = sprites.LoadImage("Base");
-            var fullRows = screenSize.Y / texture.Height;
-            var fullCols = screenSize.X / texture.Width;
-            var bottomRem = screenSize.Y - fullRows * texture.Height;
-            var rightRem = screenSize.X - fullCols * texture.Width;
-            
-            var fullTile = new ImageSprite(texture, 0, 0);
-            var pattern = new PatternSprite(fullTile, 0, 0, fullRows, fullCols);
-
-            var bottomTile = new ImageSprite(texture, 0, 0)
-            {
-                SourceRectangle = new Rectangle(0, 0, texture.Width, bottomRem)
-            };
-            var rightTile = new ImageSprite(texture, 0, 0)
-            {
-                SourceRectangle = new Rectangle(0, 0, rightRem, texture.Height)
-            };
-            var cornerTile = new ImageSprite(texture, pattern.Width, pattern.Height)
-            {
-                SourceRectangle = new Rectangle(0, 0, rightRem, bottomRem)
-            };
-
-            return new StaticComponent(new CompositeSprite(0, 0)
-            {
-                Children =
-                {
-                    pattern,
-                    new PatternSprite(bottomTile, 0, pattern.Height, 1, fullCols),
-                    new PatternSprite(rightTile, pattern.Width, 0, fullRows, 1),
-                    cornerTile
-                }
-            });
+            return new StaticComponent(sprites.CreateMenuBackground(screenSize));
         }
 
         private static Button CreateButton(Point screenSize, SpriteManager sprites, string title, int position)
