@@ -217,7 +217,7 @@ namespace KernelPanic
             mStart = start;
         }
 
-        private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X, 2) + Math.Pow(point.Y, 2));
+        private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
 
         // private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
 
@@ -317,7 +317,6 @@ namespace KernelPanic
             while (!mHeap.IsEmpty())
             {
                 var heapNode = mHeap.RemoveMin();
-                Console.WriteLine(heapNode.Position.ToString());
                 if (IsTargetPosition(heapNode.Position)) return heapNode;
                 ExpandNode(heapNode);
             }

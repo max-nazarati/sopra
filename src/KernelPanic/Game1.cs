@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -60,6 +61,23 @@ namespace KernelPanic
         /// </summary>
         protected override void LoadContent()
         {
+            List<Point> map = new List<Point>();
+            for (int i = 0; i < 500; i++)
+            {
+                for (int j = 0; j < 500; j++)
+                {
+                    Point testPoint = new Point(i, j);
+                    map.Add(testPoint);
+                }
+            }
+
+            AStar testAStar = new AStar(map, new Point(0, 0), new Point(10, 10));
+            List<Point> path = testAStar.FindPath();
+            for (int i = path.Count - 1; i > 0; i--)
+            {
+                Console.WriteLine(path[i].ToString());
+            }
+
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -118,6 +136,7 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            // List <Point> path = testAStar.FindPath();
             // TODO: Add your update logic here
            /* if (mGameStateManager.Empty())
             {
