@@ -65,7 +65,7 @@ namespace KernelPanic
             mOldContainerRectangle = mContainerRectangle;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Draw(mTexture, mContainerRectangle, Color.White);
         }

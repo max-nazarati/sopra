@@ -43,11 +43,11 @@ namespace KernelPanic
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             foreach (var Object in mEntities)
             {
-                Object.Draw(spriteBatch);
+                Object.Draw(spriteBatch, gameTime);
             }
         }
     }
