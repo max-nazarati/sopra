@@ -26,6 +26,7 @@ namespace KernelPanic
         private Unit mUnit1;
         private Unit mUnit2;
         private CooldownComponent mCoolDown;
+        private Sprites.AnimatedSprite mTestSprite;
 
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
@@ -48,6 +49,11 @@ namespace KernelPanic
             mCollisionManager.CreatedObject(mUnit1);
             mCollisionManager.CreatedObject(mUnit2);
 
+            List<Texture2D> Textures = new List<Texture2D>();
+            Textures.Add(texture);
+            Textures.Add(texture2);
+            mTestSprite = new Sprites.AnimatedSprite(Textures, 400, 400, 100, 100);
+
             // testing cooldown component
             // TODO: see where it fits into the Architecture and move it there
             mCoolDown = new CooldownComponent(new TimeSpan(0, 0, 5));
@@ -64,6 +70,7 @@ namespace KernelPanic
             }
             mEntityGraph.Update(Camera.GetViewMatrix());
             mCollisionManager.Update();
+            mTestSprite.Update(gameTime);
             Camera.Update();
         }
 
@@ -73,6 +80,7 @@ namespace KernelPanic
             spriteBatch.Begin(transformMatrix: viewMatrix);
             mBoard.DrawLane(spriteBatch, viewMatrix, gameTime);
             mEntityGraph.Draw(spriteBatch);
+            mTestSprite.Draw(spriteBatch, gameTime);
             spriteBatch.End();
         }
     }
