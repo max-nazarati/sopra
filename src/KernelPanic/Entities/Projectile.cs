@@ -9,9 +9,10 @@ namespace KernelPanic
     {
         private readonly Vector2 mDirection, mStartpoint;
         private float mX, mY;
-        private int mRadius;
+        private readonly float mRadius;
         private readonly Texture2D mProjectile;
-        public Projectile(ContentManager content, Vector2 direction, Vector2 startPoint, int radius)
+        
+        public Projectile(ContentManager content, Vector2 direction, Vector2 startPoint, float radius)
         {
             mStartpoint = startPoint;
             mDirection = direction;
@@ -35,10 +36,10 @@ namespace KernelPanic
             mY += mDirection.Y * 7;
         }
 
-        private int Distance()
+        private float Distance()
         {
-            return (int) Math.Sqrt((int) Math.Pow(mX - mStartpoint.X, 2) +
-                                   (int) Math.Pow(mY - mStartpoint.Y, 2));
+            return (float) Math.Sqrt(Math.Pow(mX - mStartpoint.X, 2) +
+                                     Math.Pow(mY - mStartpoint.Y, 2));
         }
     }
 }
