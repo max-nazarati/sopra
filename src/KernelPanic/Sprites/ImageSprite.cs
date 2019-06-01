@@ -8,6 +8,7 @@ namespace KernelPanic
         private Texture2D Texture { get; }
         public Rectangle? SourceRectangle { get; set; }
         public Rectangle? DestinationRectangle { get; set; }
+        public Color TintColor { get; set; } = Color.White;
 
         public ImageSprite(Texture2D texture, float x, float y) : base(x, y)
         {
@@ -31,7 +32,7 @@ namespace KernelPanic
                 spriteBatch.Draw(Texture,
                     destinationRectangle,
                     SourceRectangle,
-                    Color.White,
+                    TintColor,
                     rotation,
                     Origin,
                     SpriteEffects.None,
@@ -42,7 +43,7 @@ namespace KernelPanic
                 spriteBatch.Draw(Texture,
                     Position + offset,
                     SourceRectangle,
-                    Color.White,
+                    TintColor,
                     Rotation,
                     Origin,
                     Scale,
