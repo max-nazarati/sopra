@@ -187,6 +187,9 @@
     <Compile Include="..\KernelPanic\CooldownComponent.cs">
       <Link>CooldownComponent.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Sprites\AnimatedSprite.cs">
+      <Link>Sprites\AnimatedSprite.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
