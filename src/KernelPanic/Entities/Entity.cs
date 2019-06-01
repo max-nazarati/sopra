@@ -12,7 +12,7 @@ namespace KernelPanic
         private readonly Texture2D mTexture;
 
         // ReSharper disable once UnusedParameter.Local
-        protected Entity(int param)
+        protected Entity(int price)
         {
 
         }

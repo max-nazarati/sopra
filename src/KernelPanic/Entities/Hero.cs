@@ -3,7 +3,7 @@ namespace KernelPanic
 {
     internal class Hero : Unit
     {
-        public Hero(int param) : base(param)
+        public Hero(int price) : base(price)
         {
 
         }

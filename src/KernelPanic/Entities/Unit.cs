@@ -13,7 +13,7 @@ namespace KernelPanic
         public int RemainingLife { get; set; }
         public int Speed { get; set; }
 
-        public Unit(int param) : base(param)
+        public Unit(int price) : base(price)
         {
 
         }

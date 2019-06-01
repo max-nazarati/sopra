@@ -5,7 +5,7 @@ namespace KernelPanic
     internal class Building :Entity
     {
 
-        public Building(int param) : base(param)
+        public Building(int price) : base(price)
         {
 
         }
