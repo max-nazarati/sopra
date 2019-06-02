@@ -40,6 +40,33 @@ namespace KernelPanic
                     return position;
             }
         }
+        
+        internal static Vector2 RectangleOrigin(this RelativePosition position, Vector2 rectangle)
+        {
+            switch (position)
+            {
+                case RelativePosition.TopLeft:
+                    return Vector2.Zero;
+                case RelativePosition.TopRight:
+                    return new Vector2(rectangle.X, 0);
+                case RelativePosition.BottomLeft:
+                    return new Vector2(0, rectangle.Y);
+                case RelativePosition.BottomRight:
+                    return new Vector2(rectangle.X, rectangle.Y);
+                case RelativePosition.Center:
+                    return rectangle * 0.5f;
+                case RelativePosition.CenterLeft:
+                    return new Vector2(0, rectangle.Y / 2);
+                case RelativePosition.CenterRight:
+                    return new Vector2(rectangle.X, rectangle.Y / 2);
+                case RelativePosition.CenterTop:
+                    return new Vector2(rectangle.X / 2, 0);
+                case RelativePosition.CenterBottom:
+                    return new Vector2(rectangle.X / 2, rectangle.Y);
+                default:
+                    throw new InvalidEnumArgumentException(nameof(position), (int) position, typeof(RelativePosition));
+            }
+        }
     }
     
     public abstract class Sprite
@@ -98,38 +125,7 @@ namespace KernelPanic
         /// <exception cref="InvalidEnumArgumentException">If <paramref name="origin"/> isn't one of the listed enum values.</exception>
         internal void SetOrigin(RelativePosition origin)
         {
-            switch (origin)
-            {
-                case RelativePosition.TopLeft:
-                    Origin = Vector2.Zero;
-                    break;
-                case RelativePosition.TopRight:
-                    Origin = new Vector2(Width, 0);
-                    break;
-                case RelativePosition.BottomLeft:
-                    Origin = new Vector2(0, Height);
-                    break;
-                case RelativePosition.BottomRight:
-                    Origin = new Vector2(Width, Height);
-                    break;
-                case RelativePosition.Center:
-                    Origin = new Vector2(Width / 2, Height / 2);
-                    break;
-                case RelativePosition.CenterLeft:
-                    Origin = new Vector2(0, Height / 2);
-                    break;
-                case RelativePosition.CenterRight:
-                    Origin = new Vector2(Width, Height / 2);
-                    break;
-                case RelativePosition.CenterTop:
-                    Origin = new Vector2(Width / 2, 0);
-                    break;
-                case RelativePosition.CenterBottom:
-                    Origin = new Vector2(Width / 2, Height);
-                    break;
-                default:
-                    throw new InvalidEnumArgumentException(nameof(origin), (int)origin, typeof(RelativePosition));
-            }
+            Origin = origin.RectangleOrigin(UnscaledSize);
         }
         
         internal virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
