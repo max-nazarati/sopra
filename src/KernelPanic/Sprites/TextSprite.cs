@@ -39,7 +39,7 @@ namespace KernelPanic
             }
         }
 
-        public Color Color { get; set; } = Color.Black;
+        public Color TextColor { get; set; } = Color.Black;
 
         public TextSprite(SpriteFont font, string text, float x, float y) : base(x, y)
         {
@@ -73,7 +73,7 @@ namespace KernelPanic
             spriteBatch.DrawString(Font,
                 Text,
                 Position + offset,
-                Color,
+                TextColor,
                 rotation,
                 Origin,
                 scale,
