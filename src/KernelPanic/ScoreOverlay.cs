@@ -8,28 +8,28 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    sealed class ScoreOverlay
+    internal sealed class ScoreOverlay
     {
         private readonly Player mPlayerA;
         private readonly Player mPlayerB;
-        private PlayTime mPlayTime;
+        private readonly PlayTime mPlayTime;
         
-        private Sprite mSprite;
-        private TextSprite mTextA, mTextB, mTextTime;
-        
+        private readonly Sprite mSprite;
+        private readonly TextSprite mTextA;
+        private readonly TextSprite mTextB;
+        private readonly TextSprite mTextTime;
+
         private static Point PowerIndicatorSize => new Point(100, 30);
         private static Point ClockSize => new Point(100, 20);
 
-        private readonly Point mScreenSize = SpriteManager.Default.GraphicsDevice.Viewport.Bounds.Size;
-
-        public ScoreOverlay(Player player1, Player player2)
+        public ScoreOverlay(Player player1, Player player2, SpriteManager spriteManager)
         {
             mPlayerA = player1;
             mPlayerB = player2;
             mPlayTime = new PlayTime();
 
             (mSprite, mTextA, mTextB, mTextTime) =
-                SpriteManager.Default.CreateScoreDisplay(mScreenSize, PowerIndicatorSize, ClockSize);
+                spriteManager.CreateScoreDisplay(PowerIndicatorSize, ClockSize);
             mTextTime.Text = mPlayTime.Time;
         }
 
@@ -39,7 +39,7 @@ namespace KernelPanic
         {
             mPlayTime.Update(gameTime);
             mTextA.Text = "A: " + mPlayerA.Base.Power + "%";
-            mTextB.Text = "B: " + mPlayerA.Base.Power + "%";
+            mTextB.Text = "B: " + mPlayerB.Base.Power + "%";
             mTextTime.Text = mPlayTime.Time;
         }
 

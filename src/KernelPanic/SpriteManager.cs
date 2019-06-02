@@ -76,13 +76,13 @@ namespace KernelPanic
             return texture;
         }
 
-        internal Sprite CreateMenuBackground(Point screenSize)
+        internal Sprite CreateMenuBackground()
         {
             var texture = Lookup(Image.MenuBackground);
-            var fullRows = screenSize.Y / texture.Height;
-            var fullCols = screenSize.X / texture.Width;
-            var bottomRem = screenSize.Y - fullRows * texture.Height;
-            var rightRem = screenSize.X - fullCols * texture.Width;
+            var fullRows = ScreenSize.Y / texture.Height;
+            var fullCols = ScreenSize.X / texture.Width;
+            var bottomRem = ScreenSize.Y - fullRows * texture.Height;
+            var rightRem = ScreenSize.X - fullCols * texture.Width;
             
             var fullTile = new ImageSprite(texture, 0, 0);
             var pattern = new PatternSprite(fullTile, 0, 0, fullRows, fullCols);
@@ -134,7 +134,7 @@ namespace KernelPanic
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower), 0, 0);
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile), 0, 0);
 
-        internal (Sprite Main, TextSprite Left, TextSprite Right, TextSprite Clock) CreateScoreDisplay(Point screenSize, Point powerIndicatorSize, Point clockSize)
+        internal (Sprite Main, TextSprite Left, TextSprite Right, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
         {
             var texture = Lookup(Image.ButtonBackground);
             var font = Lookup(Font.HUD);
@@ -158,15 +158,15 @@ namespace KernelPanic
             var rightText = AutoCenteredTextSprite(font, rightBackground);
             var clockText = AutoCenteredTextSprite(font, clockBackground);
 
-            var left = new CompositeSprite((screenSize.X - powerIndicatorSize.X) / 2.0f - clockSize.X, 0)
+            var left = new CompositeSprite((ScreenSize.X - powerIndicatorSize.X) / 2.0f - clockSize.X, 0)
             {
                 Children = {leftBackground, leftText}
             };
-            var right = new CompositeSprite((screenSize.X - clockSize.X) / 2.0f, 0)
+            var right = new CompositeSprite((ScreenSize.X - clockSize.X) / 2.0f, 0)
             {
                 Children = {rightBackground, rightText}
             };
-            var clock = new CompositeSprite((screenSize.X - clockSize.X) / 2.0f, 0)
+            var clock = new CompositeSprite((ScreenSize.X - clockSize.X) / 2.0f, 0)
             {
                 Children = {clockBackground, clockText}
             };
@@ -177,6 +177,8 @@ namespace KernelPanic
             };
             return (sprite, leftText, rightText, clockText);
         }
+
+        private Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
 
         /// <summary>
         /// <para>

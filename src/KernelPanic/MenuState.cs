@@ -41,7 +41,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(screenSize, stateManager.Sprite),
+                    CreateBackground(stateManager.Sprite),
                     playButton,
                     optionsButton,
                     instructionsButton,
@@ -68,7 +68,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(screenSize, stateManager.Sprite),
+                    CreateBackground(stateManager.Sprite),
                     newGameButton,
                     loadGameButton,
                     backButton
@@ -113,7 +113,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(screenSize, stateManager.Sprite),
+                    CreateBackground(stateManager.Sprite),
                     musicButton,
                     musicOnOffButton,
                     soundButton,
@@ -135,7 +135,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(screenSize, stateManager.Sprite),
+                    CreateBackground(stateManager.Sprite),
                     backButton
                 }
             };
@@ -151,7 +151,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(screenSize, stateManager.Sprite),
+                    CreateBackground(stateManager.Sprite),
                     backButton
                 }
             };   
@@ -169,7 +169,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(screenSize, stateManager.Sprite),
+                    CreateBackground(stateManager.Sprite),
                     backButton
                 }
             };
@@ -209,7 +209,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(screenSize, stateManager.Sprite),
+                    CreateBackground(stateManager.Sprite),
                     janekButton,
                     johannesButton,
                     maxButton,
@@ -240,7 +240,7 @@ namespace KernelPanic
            {
                mComponents = new InterfaceComponent[]
                {
-                   CreateBackground(screenSize, stateManager.Sprite),
+                   CreateBackground(stateManager.Sprite),
                    optionsButton,
                    saveButton,
                    mainMenuButton,
@@ -250,9 +250,9 @@ namespace KernelPanic
        }
        
 
-        private static StaticComponent CreateBackground(Point screenSize, SpriteManager sprites)
+        private static StaticComponent CreateBackground(SpriteManager sprites)
         {
-            return new StaticComponent(sprites.CreateMenuBackground(screenSize));
+            return new StaticComponent(sprites.CreateMenuBackground());
         }
 
         private static Button CreateButton(Point screenSize, SpriteManager sprites, string title, int position)
