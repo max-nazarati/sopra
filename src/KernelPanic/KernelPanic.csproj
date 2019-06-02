@@ -48,8 +48,6 @@
     <Compile Include="AStar.cs" />
     <Compile Include="Base.cs" />
     <Compile Include="Board.cs" />
-    <Compile Include="BuildingBuyingMenu.cs" />
-    <Compile Include="BuyingMenuOverlay.cs" />
     <Compile Include="Camera2d.cs" />
     <Compile Include="Entities\Building.cs" />
     <Compile Include="Entities\Entity.cs" />
