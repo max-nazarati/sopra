@@ -23,9 +23,13 @@ namespace KernelPanic
 
         private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly 
 
-        private const int KachelPixelSize = 100; // TODO
+        /// <summary>
+        /// The size of a single tile in pixels.
+        /// </summary>
+        internal const int KachelSize = 100; // TODO
+        
         private const int TilesPerSprite = 1; // per Dimension
-        private const int SingleTileSizePixel = KachelPixelSize / TilesPerSprite;
+        private const int SingleTileSizePixel = KachelSize / TilesPerSprite;
         private const int LaneWidthInTiles = 10;
 
         private readonly Sprite mSprite;
@@ -36,7 +40,7 @@ namespace KernelPanic
             mLaneSide = laneSide;
 
             var tile = sprites.CreateLaneTile();
-            tile.ScaleToWidth(KachelPixelSize);
+            tile.ScaleToWidth(KachelSize);
             var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, LaneWidthInTiles);
             
             float xOffset;
@@ -72,7 +76,7 @@ namespace KernelPanic
             topPart.SetOrigin(upperOrigin);
             bottomPart.SetOrigin(upperOrigin.MirrorVertical());
 
-            mSprite = new CompositeSprite(mLaneRectangle.X * KachelPixelSize, mLaneRectangle.Y * KachelPixelSize)
+            mSprite = new CompositeSprite(mLaneRectangle.X * KachelSize, mLaneRectangle.Y * KachelSize)
             {
                 Children = {mainPart, bottomPart, topPart}
             };
