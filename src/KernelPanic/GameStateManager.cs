@@ -24,11 +24,9 @@ namespace KernelPanic
         public Game1 Game { get; }
         private readonly Stack<AGameState> mGameStates = new Stack<AGameState>();
 
-        public GameStateManager(Game1 game, ContentManager contentManager, GraphicsDevice graphicsDevice)
+        public GameStateManager(Game1 game, SpriteManager sprites)
         {
-            Sprite = SpriteManager.Default;
-            Sprite.ContentManager = contentManager;
-            Sprite.GraphicsDevice = graphicsDevice;
+            Sprite = sprites;
             Game = game;
         }
         

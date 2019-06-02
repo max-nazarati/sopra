@@ -80,8 +80,7 @@ namespace KernelPanic
 
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(GraphicsDevice);
-
-            mGameStateManager = new GameStateManager(this, Content, GraphicsDevice);
+            mGameStateManager = new GameStateManager(this, new SpriteManager(Content, GraphicsDevice));
             mGameStateManager.Push(new InGameState(mGameStateManager));
 
             // TODO: use this.Content to load your game content here
