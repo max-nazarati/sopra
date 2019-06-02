@@ -156,6 +156,9 @@
     <Compile Include="..\KernelPanic\PurchaseButton.cs">
       <Link>PurchaseButton.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\RelativePosition.cs">
+      <Link>RelativePosition.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\SinglePurchasableAction.cs">
       <Link>SinglePurchasableAction.cs</Link>
     </Compile>

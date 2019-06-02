@@ -76,6 +76,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PurchaseButton.cs" />
+    <Compile Include="RelativePosition.cs" />
     <Compile Include="SinglePurchasableAction.cs" />
     <Compile Include="SoundManager.cs" />
     <Compile Include="Grid.cs" />
