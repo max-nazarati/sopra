@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Xna.Framework;
@@ -31,6 +32,9 @@ namespace KernelPanic
         private const int TilesPerSprite = 1; // per Dimension
         private const int SingleTileSizePixel = KachelSize / TilesPerSprite;
         private const int LaneWidthInTiles = 10;
+        private const int LaneWidthInPixel = LaneWidthInTiles * KachelSize;
+        
+        private static int TileCountPixelSize(int tiles) => tiles * KachelSize;
 
         private readonly Sprite mSprite;
 
@@ -252,6 +256,56 @@ namespace KernelPanic
                     CreateCoordinateSystemRight();
                     break;
             }
+        }
+
+        /// <summary>
+        /// Tests if the given point lies on this lane and if successful returns information about the hit tile.
+        /// </summary>
+        /// <param name="point">The point to test for.</param>
+        /// <param name="subTileCount">The number of sub-tiles to segment </param>
+        /// <param name="origin">If a tile is hit return its position according to this.</param>
+        /// <returns>
+        /// <c>null</c> if <paramref name="point"/> does not lie on this lane, otherwise the position of the hit
+        /// tile and the tiles size.
+        /// </returns>
+        internal (Vector2 Position, float Size)? GridPointFromWorldPoint(
+            Vector2 point,
+            int subTileCount = 1,
+            RelativePosition origin = RelativePosition.Center)
+        {
+            // TODO: We just convert to float to int and Vector2 to Point,
+            //       does this make a discernible difference to doing the exact calculations?
+            var full = new Rectangle(mSprite.Position.ToPoint(), mSprite.Size.ToPoint());
+            var cutout = new Rectangle(
+                (int) mSprite.X + (mLaneSide == LaneSide.Left ? TileCountPixelSize(LaneWidthInPixel) : 0),
+                TileCountPixelSize(LaneWidthInPixel),
+                TileCountPixelSize(mLaneRectangle.Width - LaneWidthInTiles),
+                TileCountPixelSize(mLaneRectangle.Height - 2 * LaneWidthInTiles));
+
+            if (!full.Contains(point.ToPoint()) || cutout.Contains(point.ToPoint()))
+                return null;
+
+            var subTileSize = (float) KachelSize / subTileCount;
+            void Calculate(ref float val)
+            {
+                var fullDiv = (int) (val / KachelSize);
+                var fullRem = val % KachelSize;
+
+                var subTileDiv = (int) (fullRem / subTileSize);
+                
+                // If there is no remainder to be put into the next sub-tile, use one less full sub-tile.
+                if (Math.Abs(subTileDiv * subTileSize - fullRem) < 0.0001)
+                    --subTileDiv;
+                
+                val = fullDiv * KachelSize + subTileDiv * subTileSize;
+            }
+
+            point -= mSprite.Position;
+            Calculate(ref point.X);
+            Calculate(ref point.Y);
+            point += mSprite.Position + origin.RectangleOrigin(new Vector2(subTileSize));
+
+            return (point, (float) KachelSize / subTileCount);
         }
 
         /// <summary>
