@@ -21,11 +21,12 @@ namespace KernelPanic
             mGrid = new Grid(sprites, laneSide);
         }
 
-        public void Update()
+        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
+            EntityGraph.Update(gameTime, invertedViewMatrix);
         }
 
-        public void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);

@@ -68,9 +68,14 @@ namespace KernelPanic
                     mGameStateManager.Sprite.GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
      
             }
-            mEntityGraph.Update(Camera.GetViewMatrix());
+
+            var viewMatrix = Camera.GetViewMatrix();
+            var invertedViewMatrix = Matrix.Invert(viewMatrix);
+
+            mEntityGraph.Update(gameTime, viewMatrix);
             mCollisionManager.Update();
             mTestSprite.Update(gameTime);
+            mBoard.Update(gameTime, invertedViewMatrix);
             Camera.Update();
         }
 
@@ -78,7 +83,7 @@ namespace KernelPanic
         {
             var viewMatrix = Camera.GetViewMatrix();
             spriteBatch.Begin(transformMatrix: viewMatrix);
-            mBoard.Draw(spriteBatch, viewMatrix, gameTime);
+            mBoard.Draw(spriteBatch, gameTime);
             mEntityGraph.Draw(spriteBatch, gameTime);
             mTestSprite.Draw(spriteBatch, gameTime);
             spriteBatch.End();
