@@ -15,9 +15,9 @@ namespace KernelPanic
             mActiveUnit = null;
         }
 
-        public void Add(Unit unit)
+        public void Add(Entity entity)
         {
-            mEntities.Add(unit);
+            mEntities.Add(entity);
         }
 
         public void Update(Matrix viewMatrix)
