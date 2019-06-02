@@ -13,7 +13,8 @@ namespace KernelPanic
         public int RemainingLife { get; set; }
         public int Speed { get; set; }
 
-        public Unit(int price) : base(price)
+        // TODO: Pass a real sprite to the base constructor. 
+        public Unit(int price) : base(price, new CompositeSprite(0, 0))
         {
 
         }
@@ -69,11 +70,11 @@ namespace KernelPanic
         }
 
 
-        internal override void Update(Matrix viewMatrix)
+        internal override void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
-            base.Update(viewMatrix);
+            base.Update(gameTime, invertedViewMatrix);
             var input = InputManager.Default;
-            Vector2 vector = Vector2.Transform(input.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
+            Vector2 vector = Vector2.Transform(input.MousePosition.ToVector2(), Matrix.Invert(invertedViewMatrix));
             Point position = new Point((int)vector.X, (int)vector.Y);
             if (!Selected)
             {

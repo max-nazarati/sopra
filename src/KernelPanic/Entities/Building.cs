@@ -2,7 +2,7 @@
 {
     internal abstract class Building :Entity
     {
-        protected Building(int price) : base(price)
+        protected Building(int price, Sprite sprite) : base(price, sprite)
         {
             BitcoinWorth = price;
         }

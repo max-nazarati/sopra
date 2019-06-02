@@ -126,7 +126,7 @@ namespace KernelPanic
         }
 
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile), 0, 0);
-        internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower), 0, 0) {Scale = 0.8f};
+        internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower), 0, 0);
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile), 0, 0);
     }
 }
