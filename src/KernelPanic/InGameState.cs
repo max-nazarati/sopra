@@ -26,12 +26,9 @@ namespace KernelPanic
         private Unit mUnit1;
         private Unit mUnit2;
         private CooldownComponent mCoolDown;
-<<<<<<< HEAD
-=======
+
         private InGameOverlay mHud;
         private Sprites.AnimatedSprite mTestSprite;
->>>>>>> 94f495667e95c052ec9402917fb6795668612fac
-
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
             Camera = new Camera2D(gameStateManager.Sprite.GraphicsDevice.Viewport);

@@ -25,7 +25,7 @@ namespace KernelPanic
                 new Rectangle(32, 0, 16, 42));
             EntityGraph = entityGraph;
             mBase = new Base();
-            InitAStar(content);
+            InitAStar(Sprite.ContentManager);
         }
 
         public void Update()
@@ -47,7 +47,6 @@ namespace KernelPanic
         
         */
 
-        // ------------------------------------------------------------------------------------------------------------
         private AStar mAStar;
         private Texture2D mTile;
 
@@ -95,8 +94,6 @@ namespace KernelPanic
             var pos = Grid.ScreenPositionFromCoordinate(point);
             spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
         }
-        
-
-        // ------------------------------------------------------------------------------------------------------------
+     
     }
 }
