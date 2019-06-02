@@ -26,7 +26,9 @@ namespace KernelPanic
 
         public GameStateManager(Game1 game, ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
-            Sprite = new SpriteManager(contentManager, graphicsDevice);
+            Sprite = SpriteManager.Default;
+            Sprite.ContentManager = contentManager;
+            Sprite.GraphicsDevice = graphicsDevice;
             Game = game;
         }
         

@@ -180,6 +180,8 @@
     <Compile Include="..\KernelPanic\StorageManager.cs">
       <Link>StorageManager.cs</Link>
     </Compile>
+    <Compile Include="InGameOverlay.cs" />
+    <Compile Include="PlayTime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\KernelPanic\CollisionManager.cs">
       <Link>CollisionManager.cs</Link>
@@ -187,6 +189,7 @@
     <Compile Include="..\KernelPanic\CooldownComponent.cs">
       <Link>CooldownComponent.cs</Link>
     </Compile>
+    <Compile Include="ScoreOverlay.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

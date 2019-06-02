@@ -18,6 +18,8 @@ namespace KernelPanic
             Right
         }
 
+        public SpriteManager Sprite { get; }
+
         private readonly ContentManager mContent;
         private int mRelativeX, mRelativeY;
 
@@ -40,17 +42,18 @@ namespace KernelPanic
 
         // static readonly List<Rectangle> sExistingGrids = new List<Rectangle>();
 
-        public Grid(ContentManager content, LaneSide laneSide, Rectangle laneRectangle, int laneWidthInTiles = 10)
+        public Grid(SpriteManager spriteManager, LaneSide laneSide, Rectangle laneRectangle, int laneWidthInTiles = 10)
         {
             // TODO add assertions so the lane cant be created with weird numbers. 
-            mContent = content;
+            Sprite = spriteManager;
+            //mContent = content;
             mLaneSide = laneSide;
             mLaneRectangle = laneRectangle;
             mLaneWidthInTiles = laneWidthInTiles;
             CreateCoordinateSystem();
             // sExistingGrids.Add(laneRectangle);
 
-            var tile = content.Load<Texture2D>("LaneTile");
+            var tile = Sprite.LoadImage("LaneTile");
             var kachelSprite = new ImageSprite(tile, 0, 0) {Scale = (float) KachelPixelSize / tile.Width};
             var mainPart = new PatternSprite(kachelSprite, 0, 0, laneRectangle.Height, laneWidthInTiles);
             var topPart = new PatternSprite(kachelSprite,

@@ -68,6 +68,13 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/GameBackground.png;GameBackground.png
 
+#begin ../../KernelPanic/Content/HUDFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:../../KernelPanic/Content/HUDFont.spritefont;HUDFont.spritefont
+
 #begin ../../KernelPanic/Content/Kachel.png
 /importer:TextureImporter
 /processor:TextureProcessor

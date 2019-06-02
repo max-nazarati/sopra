@@ -68,6 +68,13 @@
 /processorParam:TextureFormat=Color
 /build:GameBackground.png
 
+#begin HUDFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:HUDFont.spritefont;ScoreOverlayFont.spritefont
+
 #begin Kachel.png
 /importer:TextureImporter
 /processor:TextureProcessor
