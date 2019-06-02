@@ -35,10 +35,12 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(0, 0, mPowerIndicatorWidth, mPowerIndicatorHeight)
             };
+            
+            
             var text1 = new TextSprite(font, "BaseA: " + mPlayerA.Base.Power, background1.Width / 2, background1.Height / 2);
             text1.Origin = new Vector2(text1.Width / 2, text1.Height / 2);
-            text1.Color = Color.Black;
-            background1.Color = Color.LightBlue;
+            text1.TextColor = Color.Black;
+            background1.TintColor = Color.LightBlue;
             mASide = new CompositeSprite(mScreenSize.X/2 - (mPowerIndicatorWidth / 2 + mClockWidth), 0);
             mASide.Children.Add(background1);
             mASide.Children.Add(text1);
@@ -50,7 +52,7 @@ namespace KernelPanic
             background2.Color = Color.LightSalmon;
             var text2 = new TextSprite(font, "BaseB: " + mPlayerB.Base.Power, background2.Width / 2, background2.Height / 2);
             text2.Origin = new Vector2(text2.Width / 2, text2.Height / 2);
-            text2.Color = Color.Black;
+            text2.TextColor = Color.Black;
             mBSide = new CompositeSprite(mScreenSize.X/2 + mClockWidth/2, 0);
             mBSide.Children.Add(background2);
             mBSide.Children.Add(text2);
@@ -61,7 +63,7 @@ namespace KernelPanic
             };
             var time = new TextSprite(font, mPlayTime.Time, clockBackground.Width / 2, clockBackground.Height / 2);
             time.Origin = new Vector2(time.Width / 2, time.Height / 2);
-            time.Color = Color.Black;
+            time.TextColor = Color.Black;
             mClock = new CompositeSprite(mScreenSize.X/2 - mClockWidth / 2, 0);
             mClock.Children.Add(clockBackground);
             mClock.Children.Add(time);
