@@ -29,7 +29,7 @@ namespace KernelPanic
             mPlayerB = player2;
             mPlayTime = new PlayTime();
             var texture = SpriteManager.Default.LoadImage("Papier");
-            var font = SpriteManager.Default.LoadFont("ScoreOverlayFont");
+            var font = SpriteManager.Default.LoadFont("HUDFont");
 
             var background1 = new ImageSprite(texture, 0, 0)
             {

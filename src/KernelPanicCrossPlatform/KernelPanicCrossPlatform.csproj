@@ -117,6 +117,12 @@
     <Compile Include="..\KernelPanic\IDrawable.cs">
       <Link>IDrawable.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\IEntitySelection.cs">
+      <Link>IEntitySelection.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\InGameOverlay.cs">
+      <Link>InGameOverlay.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\InGameState.cs">
       <Link>InGameState.cs</Link>
     </Compile>
@@ -147,11 +153,17 @@
     <Compile Include="..\KernelPanic\Player.cs">
       <Link>Player.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\PlayTime.cs">
+      <Link>PlayTime.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\PurchasableAction.cs">
       <Link>PurchasableAction.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\ScoreOverlay.cs">
+      <Link>ScoreOverlay.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\SinglePurchasableAction.cs">
       <Link>SinglePurchasableAction.cs</Link>
