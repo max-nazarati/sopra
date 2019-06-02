@@ -23,7 +23,7 @@ namespace KernelPanic
                 new Rectangle(32, 0, 16, 42));
             EntityGraph = entityGraph;
             mBase = new Base();
-            InitAStar();
+            InitAStar(content);
         }
 
         public void Update()
@@ -47,12 +47,13 @@ namespace KernelPanic
 
         // ------------------------------------------------------------------------------------------------------------
         private AStar mAStar;
-        private Texture2D mKacheln;
-        
+        private Texture2D mTile;
 
-        private void InitAStar()
+        private void InitAStar(ContentManager content)
         {
-            mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem[0], mGrid.CoordSystem[mGrid.CoordSystem.Count]);
+            mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem[0], mGrid.CoordSystem[mGrid.CoordSystem.Count - 1]);
+            var tile = content.Load<Texture2D>("LaneTile");
+            var mTile = new ImageSprite(tile, 0, 0) {Scale = (float) 100};
         }
 
         private void NewStart(Point start)
@@ -67,6 +68,7 @@ namespace KernelPanic
         
         private void DrawPath(SpriteBatch spriteBatch)
         {
+            /*
             // var path = mAStar.FindPath();
             var path = new List<Point>();
             path.Add(new Point(0, 0));
@@ -83,10 +85,13 @@ namespace KernelPanic
             {
                 DrawTile(spriteBatch, point);
             }
+            */
+            
         }
-        private void DrawTile(SpriteBatch spriteBatch, Point point){
+        private void DrawTile(SpriteBatch spriteBatch, Point point)
+        {
             var pos = Grid.ScreenPositionFromCoordinate(point);
-            spriteBatch.Draw(mKacheln, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
+            spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
         }
         
 
