@@ -40,51 +40,45 @@ namespace KernelPanic
 
         internal Grid(SpriteManager sprites, LaneSide laneSide, int laneWidthInTiles = 10)
         {
+            mLaneRectangle = new Rectangle(0, 0, 16, 42);
             mLaneSide = laneSide;
 
+            var tile = sprites.CreateLaneTile();
+            tile.ScaleToWidth(KachelPixelSize);
+            var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, laneWidthInTiles);
+            
+            float xOffset;
+            RelativePosition upperOrigin;
             switch (laneSide)
             {
                 case LaneSide.Left:
-                    mLaneRectangle = new Rectangle(0, 0, 16, 42);
+                    xOffset = mainPart.Width;
+                    upperOrigin = RelativePosition.TopLeft;
                     break;
 
                 case LaneSide.Right:
-                    mLaneRectangle = new Rectangle(32, 0, 16, 42);
+                    mLaneRectangle.X = 32;
+                    xOffset = 0;
+                    upperOrigin = RelativePosition.TopRight;
                     break;
 
                 default:
                     throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(LaneSide));
-            }
-
-            var tile = sprites.CreateLaneTile();
-            tile.Scale = KachelPixelSize / tile.Width;
-
-            var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, laneWidthInTiles);
+            }   
+            
             var topPart = new PatternSprite(tile,
-                0,
+                xOffset,
                 0,
                 laneWidthInTiles,
                 mLaneRectangle.Width - LaneWidthInTiles);
             var bottomPart = new PatternSprite(tile,
-                0,
-                0,
+                xOffset,
+                mainPart.Height,
                 laneWidthInTiles,
                 mLaneRectangle.Width - LaneWidthInTiles);
-
-            switch (laneSide)
-            {
-                case LaneSide.Right:
-                    topPart.X = -topPart.Width;
-                    bottomPart.X = -bottomPart.Width;
-                    bottomPart.Y = mainPart.Height - bottomPart.Height;
-                    break;
-
-                case LaneSide.Left:
-                    topPart.X = mainPart.Width;
-                    bottomPart.X = mainPart.Width;
-                    bottomPart.Y = mainPart.Height - bottomPart.Height;
-                    break;
-            }
+            
+            topPart.SetOrigin(upperOrigin);
+            bottomPart.SetOrigin(upperOrigin.MirrorVertical());
 
             mSprite = new CompositeSprite(mLaneRectangle.X * KachelPixelSize, mLaneRectangle.Y * KachelPixelSize)
             {

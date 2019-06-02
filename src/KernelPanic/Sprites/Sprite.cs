@@ -5,17 +5,41 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    enum RelativePosition
+    internal enum RelativePosition
     {
         TopLeft,
         TopRight,
         BottomLeft,
         BottomRight,
-        Center,
         CenterLeft,
         CenterRight,
         CenterTop,
-        CenterBottom
+        CenterBottom,
+        Center
+    }
+
+    internal static class RelativePositionImpl
+    {
+        internal static RelativePosition MirrorVertical(this RelativePosition position)
+        {
+            switch (position)
+            {
+                case RelativePosition.TopLeft:
+                    return RelativePosition.BottomLeft;
+                case RelativePosition.TopRight:
+                    return RelativePosition.BottomRight;
+                case RelativePosition.BottomLeft:
+                    return RelativePosition.TopLeft;
+                case RelativePosition.BottomRight:
+                    return RelativePosition.TopRight;
+                case RelativePosition.CenterTop:
+                    return RelativePosition.CenterBottom;
+                case RelativePosition.CenterBottom:
+                    return RelativePosition.CenterTop;
+                default:
+                    return position;
+            }
+        }
     }
     
     public abstract class Sprite
