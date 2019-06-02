@@ -110,7 +110,7 @@ namespace KernelPanic
         
         internal virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            Draw(spriteBatch, gameTime, Vector2.Zero, Rotation, Scale);   
+            Draw(spriteBatch, gameTime, -Origin, Rotation, Scale);   
         }
 
         internal abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime, Vector2 offset, float rotation, float scale);
