@@ -18,7 +18,11 @@ namespace KernelPanic
         public static MenuState CreateMainMenu(Action exitAction, Point screenSize, GameStateManager stateManager)
         {
             var playButton = CreateButton(screenSize, stateManager.Sprite, "SPIELEN", 200);
+<<<<<<< HEAD
             playButton.Clicked += _ => stateManager.Push(CreatePlayMenu(screenSize, stateManager));
+=======
+            playButton.Clicked += _ => stateManager.Pop(); //stateManager.Push(new InGameState(stateManager));  // TODONE: Push `InGameState` when it exists.
+>>>>>>> 5e82d76d7d5446789eac2dec38197c428fcbb9cd
 
             var optionsButton = CreateButton(screenSize, stateManager.Sprite, "OPTIONEN", 325);
             optionsButton.Clicked += _ => stateManager.Push(CreateOptionsMenu(screenSize, stateManager));

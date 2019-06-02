@@ -7,11 +7,11 @@ namespace KernelPanic
 {
     public class Base
     {
-        private int mPower;
+        public int Power { get; private set; }
 
         public Base()
         {
-            mPower = 50;
+            Power = 50;
         }
     }
 }

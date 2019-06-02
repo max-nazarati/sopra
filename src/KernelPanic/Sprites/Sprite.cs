@@ -5,6 +5,18 @@ namespace KernelPanic
 {
     public abstract class Sprite
     {
+        private Color mColor = Color.White;
+        public Color Color
+        {
+            get
+            {
+                return mColor;
+            }
+            set
+            {
+                mColor = value;
+            }
+        }
         public float Rotation { get; set; } = 0.0f;
         public float Scale { get; set; } = 1.0f;
         public Vector2 Origin { get; set; } = Vector2.Zero;

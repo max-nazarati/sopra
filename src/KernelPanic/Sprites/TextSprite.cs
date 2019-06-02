@@ -8,7 +8,6 @@ namespace KernelPanic
     {
         private string mText;
         private SpriteFont mFont;
-
         private SpriteFont Font
         {
             get => mFont;
@@ -55,7 +54,7 @@ namespace KernelPanic
             spriteBatch.DrawString(Font,
                 Text,
                 Position + offset,
-                Color.White,
+                Color,
                 rotation,
                 Origin,
                 scale,

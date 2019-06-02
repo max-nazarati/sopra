@@ -6,6 +6,7 @@ namespace KernelPanic
     internal sealed class ImageSprite : Sprite
     {
         private Texture2D Texture { get; }
+        
         public Rectangle? SourceRectangle { get; set; }
         public Rectangle? DestinationRectangle { get; set; }
 
@@ -31,7 +32,7 @@ namespace KernelPanic
                 spriteBatch.Draw(Texture,
                     destinationRectangle,
                     SourceRectangle,
-                    Color.White,
+                    Color,
                     rotation,
                     Origin,
                     SpriteEffects.None,
@@ -42,7 +43,7 @@ namespace KernelPanic
                 spriteBatch.Draw(Texture,
                     Position + offset,
                     SourceRectangle,
-                    Color.White,
+                    Color,
                     Rotation,
                     Origin,
                     Scale,

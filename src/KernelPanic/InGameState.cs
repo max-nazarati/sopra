@@ -27,26 +27,33 @@ namespace KernelPanic
         private Unit mUnit2;
         private CooldownComponent mCoolDown;
 
+        private InGameOverlay mHud;
+        private Sprites.AnimatedSprite mTestSprite;
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
             Camera = new Camera2D(gameStateManager.Sprite.GraphicsDevice.Viewport);
-            mBoard = new Board(gameStateManager.Sprite.ContentManager);
+            mBoard = new Board(gameStateManager.Sprite);
             mGameStateManager = gameStateManager;
+            mPlayerA = new Player();
+            mPlayerB = new Player();
+            mHud = new InGameOverlay(mPlayerA, mPlayerB);
 
             // testing movable objects and collision
             // TODO: move to Lane class
             mEntityGraph = new EntityGraph();
             mCollisionManager = new CollisionManager();
-            Texture2D texture = new Texture2D(gameStateManager.Sprite.GraphicsDevice, 1, 1);
+            Texture2D texture = new Texture2D(SpriteManager.Default.GraphicsDevice, 1, 1);
             texture.SetData(new[] { Color.Green });
             mUnit1 = new Unit(0, 0, 100, 100, texture);
-            Texture2D texture2 = new Texture2D(gameStateManager.Sprite.GraphicsDevice, 1, 1);
+            Texture2D texture2 = new Texture2D(SpriteManager.Default.GraphicsDevice, 1, 1);
             texture2.SetData(new[] { Color.Red });
             mUnit2 = new Unit(200, 200, 100, 100, texture2);
             mEntityGraph.Add(mUnit1);
             mEntityGraph.Add(mUnit2);
             mCollisionManager.CreatedObject(mUnit1);
             mCollisionManager.CreatedObject(mUnit2);
+
+            mTestSprite = new Sprites.AnimatedSprite(gameStateManager.Sprite.ContentManager.Load<Texture2D>("trojan"), 400, 400, 100, 100);
 
             // testing cooldown component
             // TODO: see where it fits into the Architecture and move it there
@@ -58,22 +65,33 @@ namespace KernelPanic
         {
             if (InputManager.Default.KeyPressed(Keys.Escape))
             {
-                mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager.Game.Exit, 
-                    mGameStateManager.Sprite.GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
+                mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager.Game.Exit,
+                    SpriteManager.Default.GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
      
             }
             mEntityGraph.Update(Camera.GetViewMatrix());
             mCollisionManager.Update();
+            mTestSprite.Update(gameTime);
             Camera.Update();
+            mHud.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
         {
             var viewMatrix = Camera.GetViewMatrix();
-            spriteBatch.Begin(transformMatrix: viewMatrix);
+            //spriteBatch.Begin(transformMatrix: viewMatrix);
+            spriteBatch.Begin(SpriteSortMode.Immediate,
+                    BlendState.AlphaBlend,
+                    SamplerState.PointClamp,
+                    null,
+                    null,
+                    null,
+                    viewMatrix);
             mBoard.DrawLane(spriteBatch, viewMatrix, gameTime);
             mEntityGraph.Draw(spriteBatch);
+            mTestSprite.Draw(spriteBatch, gameTime);
             spriteBatch.End();
+            mHud.Draw(spriteBatch, gameTime);
         }
     }
 }

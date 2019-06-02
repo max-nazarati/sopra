@@ -7,11 +7,13 @@ namespace KernelPanic
     public class Board
     {
         private readonly Lane mLeftLane, mRightLane;
+        public SpriteManager Sprite { get; }
 
-        public Board(ContentManager content)
+        public Board(SpriteManager spriteManager)
         {
-            mLeftLane = new Lane(Grid.LaneSide.Left, new EntityGraph(), content);
-            mRightLane = new Lane(Grid.LaneSide.Right, new EntityGraph(), content);
+            Sprite = spriteManager;
+            mLeftLane = new Lane(Grid.LaneSide.Left, new EntityGraph(), Sprite);
+            mRightLane = new Lane(Grid.LaneSide.Right, new EntityGraph(), Sprite);
         }
 
         public void DrawLane(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
