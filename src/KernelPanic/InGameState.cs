@@ -26,7 +26,11 @@ namespace KernelPanic
         private Unit mUnit1;
         private Unit mUnit2;
         private CooldownComponent mCoolDown;
+<<<<<<< HEAD
+=======
         private InGameOverlay mHud;
+        private Sprites.AnimatedSprite mTestSprite;
+>>>>>>> 94f495667e95c052ec9402917fb6795668612fac
 
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
@@ -52,6 +56,8 @@ namespace KernelPanic
             mCollisionManager.CreatedObject(mUnit1);
             mCollisionManager.CreatedObject(mUnit2);
 
+            mTestSprite = new Sprites.AnimatedSprite(gameStateManager.Sprite.ContentManager.Load<Texture2D>("trojan"), 400, 400, 100, 100);
+
             // testing cooldown component
             // TODO: see where it fits into the Architecture and move it there
             mCoolDown = new CooldownComponent(new TimeSpan(0, 0, 5));
@@ -68,6 +74,7 @@ namespace KernelPanic
             }
             mEntityGraph.Update(Camera.GetViewMatrix());
             mCollisionManager.Update();
+            mTestSprite.Update(gameTime);
             Camera.Update();
             mHud.Update(gameTime);
         }
@@ -75,9 +82,17 @@ namespace KernelPanic
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
         {
             var viewMatrix = Camera.GetViewMatrix();
-            spriteBatch.Begin(transformMatrix: viewMatrix);
+            //spriteBatch.Begin(transformMatrix: viewMatrix);
+            spriteBatch.Begin(SpriteSortMode.Immediate,
+                    BlendState.AlphaBlend,
+                    SamplerState.PointClamp,
+                    null,
+                    null,
+                    null,
+                    viewMatrix);
             mBoard.DrawLane(spriteBatch, viewMatrix, gameTime);
             mEntityGraph.Draw(spriteBatch);
+            mTestSprite.Draw(spriteBatch, gameTime);
             spriteBatch.End();
             mHud.Draw(spriteBatch, gameTime);
         }

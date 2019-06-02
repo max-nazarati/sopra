@@ -94,6 +94,7 @@
     <Compile Include="EntityGraph.cs" />
     <Compile Include="CollisionManager.cs" />
     <Compile Include="CooldownComponent.cs" />
+    <Compile Include="Sprites\AnimatedSprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

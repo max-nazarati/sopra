@@ -27,7 +27,8 @@ namespace KernelPanic
         private readonly Rectangle mLaneRectangle;
         private readonly int mLaneWidthInTiles;
 
-        private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly 
+        private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly
+        public List<Point> CoordSystem => mCoordinateSystem;
 
         private const int KachelPixelSize = 100; // TODO
         private const int TilesPerSprite = 1; // per Dimension
@@ -135,7 +136,7 @@ namespace KernelPanic
         /// </summary>
         /// <param name="upperLeft"></param>
         /// <returns></returns>
-        private static Point ScreenPositionFromCoordinate(Point upperLeft)
+        public static Point ScreenPositionFromCoordinate(Point upperLeft)
         {
             var xPositionGlobal = upperLeft.X; // this is now saved in the grid + mLaneRectangle.X;
             var yPositionGlobal = upperLeft.Y; // this is now saved in the grid + mLaneRectangle.Y;
@@ -309,6 +310,7 @@ namespace KernelPanic
         internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
         {
             mSprite.Draw(spriteBatch, gameTime);
+            // DrawPath(spriteBatch); // debug AStar
             /*
             mKacheln = mContent.Load<Texture2D>("LaneTile");
             mBorder = mContent.Load<Texture2D>("Border");
