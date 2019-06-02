@@ -24,6 +24,8 @@ namespace KernelPanic
             get => mFont;
             set
             {
+                if (mFont == value)
+                    return;
                 mFont = value ?? throw new ArgumentNullException();
                 ResetLazySize();
             }
@@ -34,6 +36,8 @@ namespace KernelPanic
             get => mText;
             set
             {
+                if (mText == value)
+                    return;
                 mText = value ?? throw new ArgumentNullException();
                 ResetLazySize();
             }

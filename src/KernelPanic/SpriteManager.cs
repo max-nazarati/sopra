@@ -25,7 +25,8 @@ namespace KernelPanic
 
         private enum Font
         {
-            Button
+            Button,
+            HUD
         }
 
         private SpriteManager()
@@ -55,7 +56,8 @@ namespace KernelPanic
 
             mFonts = new[]
             {
-                SpriteFont(Font.Button, "buttonFont")
+                SpriteFont(Font.Button, "buttonFont"),
+                SpriteFont(Font.HUD, "HUDFont")
             };
             Array.Sort(mFonts);
         }
@@ -112,18 +114,12 @@ namespace KernelPanic
 
         internal (Sprite, TextSprite) CreateButton()
         {
-            var texture = Lookup(Image.ButtonBackground);
-            var background = new ImageSprite(texture, 0, 0)
+            var background = new ImageSprite(Lookup(Image.ButtonBackground), 0, 0)
             {
                 DestinationRectangle = new Rectangle(0, 0, 250, 70)
             };
 
-            var titleSprite = new TextSprite(
-                Lookup(Font.Button),
-                "",
-                background.Width / 2,
-                background.Height / 2);
-            titleSprite.SizeChanged += sprite => sprite.Origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
+            var titleSprite = AutoCenteredTextSprite(Lookup(Font.Button), background);
 
             return (
                 new CompositeSprite(0, 0)
@@ -137,5 +133,68 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile), 0, 0);
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower), 0, 0);
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile), 0, 0);
+
+        internal (Sprite Main, TextSprite Left, TextSprite Right, TextSprite Clock) CreateScoreDisplay(Point screenSize, Point powerIndicatorSize, Point clockSize)
+        {
+            var texture = Lookup(Image.ButtonBackground);
+            var font = Lookup(Font.HUD);
+
+            var leftBackground = new ImageSprite(texture, 0, 0)
+            {
+                DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
+                TintColor = Color.LightBlue
+            };
+            var rightBackground = new ImageSprite(texture, 0, 0)
+            {
+                DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
+                TintColor = Color.Black
+            };
+            var clockBackground = new ImageSprite(texture, 0, 0)
+            {
+                DestinationRectangle = new Rectangle(Point.Zero, clockSize)
+            };
+
+            var leftText = AutoCenteredTextSprite(font, leftBackground);
+            var rightText = AutoCenteredTextSprite(font, rightBackground);
+            var clockText = AutoCenteredTextSprite(font, clockBackground);
+
+            var left = new CompositeSprite((screenSize.X - powerIndicatorSize.X) / 2.0f - clockSize.X, 0)
+            {
+                Children = {leftBackground, leftText}
+            };
+            var right = new CompositeSprite((screenSize.X - clockSize.X) / 2.0f, 0)
+            {
+                Children = {rightBackground, rightText}
+            };
+            var clock = new CompositeSprite((screenSize.X - clockSize.X) / 2.0f, 0)
+            {
+                Children = {clockBackground, clockText}
+            };
+
+            var sprite = new CompositeSprite(0, 0)
+            {
+                Children = {left, right, clock}
+            };
+            return (sprite, leftText, rightText, clockText);
+        }
+
+        /// <summary>
+        /// <para>
+        /// Creates a <see cref="TextSprite"/> which automatically re-centers itself in <paramref name="container"/>
+        /// when its text or font change.
+        /// </para>
+        /// <para>
+        /// When <paramref name="container"/> changes its size this construct moves out of sync.
+        /// </para>
+        /// </summary>
+        /// <param name="font">The font to use for the text sprite.</param>
+        /// <param name="container">The container in which to center the new sprite.</param>
+        /// <returns>A new <see cref="TextSprite"/></returns>
+        private static TextSprite AutoCenteredTextSprite(SpriteFont font, Sprite container)
+        {
+            var text = new TextSprite(font, "", container.Width / 2, container.Height / 2);
+            text.SizeChanged += s => s.Origin = new Vector2(s.Width / 2, s.Height / 2);
+            return text;
+        }
     }
 }
