@@ -58,7 +58,7 @@ namespace KernelPanic
         public static MenuState CreatePlayMenu(Point screenSize, GameStateManager stateManager)
         {
             var newGameButton = CreateButton(screenSize, stateManager.Sprite, "Neues Spiel",450);
-            playButton.Clicked += _ => stateManager.Pop(); //stateManager.Push(new InGameState(stateManager));  // TODONE: Push `InGameState` when it exists.
+            newGameButton.Clicked += _ => stateManager.Push(new InGameState(stateManager));
 
             var loadGameButton = CreateButton(screenSize, stateManager.Sprite, "Spiel laden", 525);
             // TODO: Load XML Files from here.
