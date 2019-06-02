@@ -18,6 +18,11 @@ namespace KernelPanic
         public override float UnscaledWidth => DestinationRectangle?.Width ?? SourceRectangle?.Width ?? Texture.Width;
         public override float UnscaledHeight => DestinationRectangle?.Height ?? SourceRectangle?.Height ?? Texture.Height;
 
+        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            Draw(spriteBatch, gameTime, Vector2.Zero, 0, 0);
+        }
+
         internal override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
             Vector2 offset,
