@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -18,7 +16,6 @@ namespace KernelPanic
             Right
         }
 
-        private readonly ContentManager mContent;
         private int mRelativeX, mRelativeY;
 
         private readonly LaneSide mLaneSide;
@@ -31,21 +28,16 @@ namespace KernelPanic
         private const int SingleTileSizePixel = KachelPixelSize / TilesPerSprite;
         private const int LaneWidthInTiles = 10;
 
-        private readonly List<Tower> mTowerList = new List<Tower>();
-        private readonly List<Vector2> mUsedGrids = new List<Vector2>();
-
-        private Color mBorderColor = Color.Red;
-
         private readonly Sprite mSprite;
 
-        internal Grid(SpriteManager sprites, LaneSide laneSide, int laneWidthInTiles = 10)
+        internal Grid(SpriteManager sprites, LaneSide laneSide)
         {
             mLaneRectangle = new Rectangle(0, 0, 16, 42);
             mLaneSide = laneSide;
 
             var tile = sprites.CreateLaneTile();
             tile.ScaleToWidth(KachelPixelSize);
-            var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, laneWidthInTiles);
+            var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, LaneWidthInTiles);
             
             float xOffset;
             RelativePosition upperOrigin;
@@ -64,17 +56,17 @@ namespace KernelPanic
 
                 default:
                     throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(LaneSide));
-            }   
+            }
             
             var topPart = new PatternSprite(tile,
                 xOffset,
                 0,
-                laneWidthInTiles,
+                LaneWidthInTiles,
                 mLaneRectangle.Width - LaneWidthInTiles);
             var bottomPart = new PatternSprite(tile,
                 xOffset,
                 mainPart.Height,
-                laneWidthInTiles,
+                LaneWidthInTiles,
                 mLaneRectangle.Width - LaneWidthInTiles);
             
             topPart.SetOrigin(upperOrigin);
@@ -84,7 +76,7 @@ namespace KernelPanic
             {
                 Children = {mainPart, bottomPart, topPart}
             };
-        
+
             CreateCoordinateSystem();
         }
 
@@ -258,44 +250,12 @@ namespace KernelPanic
             }
         }
 
-
-        /// <summary>
-        /// change the color of the selected square on doubleClick mainly for testing purpose
-        /// </summary>
-        private void UpdateColor()
-        {
-            if (!InputManager.Default.DoubleClick)
-                return;
-            
-            mBorderColor = mBorderColor == Color.White ? Color.Red : Color.White;
-        }
-
-        
-        private void DrawTower(SpriteBatch spriteBatch, GameTime gameTime, Matrix viewMatrix)
-        {
-            if (InputManager.Default.KeyDown(Keys.T) && !mUsedGrids.Contains(new Vector2((mRelativeX / 50) * 50, (mRelativeY / 50) * 50)))
-            {
-                mTowerList.Add(new Tower(mContent, (mRelativeX / 50) * 50, (mRelativeY / 50) * 50));
-                mUsedGrids.Add(new Vector2((mRelativeX / 50) * 50, (mRelativeY / 50) * 50));
-                SoundManager.Instance.PlaySound("placement");
-            }
-
-
-            foreach (var tower in mTowerList)
-            {
-                tower.Update(gameTime, viewMatrix);
-                tower.Draw(spriteBatch);
-            }
-        }
-
-
         /// <summary>
         /// calling the different draw function
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="viewMatrix"></param>
         /// <param name="gameTime"></param>
-        internal void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mSprite.Draw(spriteBatch, gameTime);
         }
