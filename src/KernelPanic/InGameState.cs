@@ -49,10 +49,7 @@ namespace KernelPanic
             mCollisionManager.CreatedObject(mUnit1);
             mCollisionManager.CreatedObject(mUnit2);
 
-            List<Texture2D> Textures = new List<Texture2D>();
-            Textures.Add(texture);
-            Textures.Add(texture2);
-            mTestSprite = new Sprites.AnimatedSprite(Textures, 400, 400, 100, 100);
+            mTestSprite = new Sprites.AnimatedSprite(gameStateManager.Sprite.ContentManager.Load<Texture2D>("trojan"), 400, 400, 100, 100);
 
             // testing cooldown component
             // TODO: see where it fits into the Architecture and move it there
@@ -77,7 +74,14 @@ namespace KernelPanic
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
         {
             var viewMatrix = Camera.GetViewMatrix();
-            spriteBatch.Begin(transformMatrix: viewMatrix);
+            //spriteBatch.Begin(transformMatrix: viewMatrix);
+            spriteBatch.Begin(SpriteSortMode.Immediate,
+                    BlendState.AlphaBlend,
+                    SamplerState.PointClamp,
+                    null,
+                    null,
+                    null,
+                    viewMatrix);
             mBoard.DrawLane(spriteBatch, viewMatrix, gameTime);
             mEntityGraph.Draw(spriteBatch);
             mTestSprite.Draw(spriteBatch, gameTime);
