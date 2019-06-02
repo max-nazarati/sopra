@@ -16,11 +16,11 @@ namespace KernelPanic
         [DataMember]
         private readonly Vector2 mOrigin;
 
-        internal Camera2D(Viewport viewport)
+        internal Camera2D(Point viewportSize)
         {
             // mRotation = 0;
             mZoom = 1;
-            mOrigin = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
+            mOrigin = new Vector2(viewportSize.X / 2f, viewportSize.Y / 2f);
             mPosition.X = 290;
             mPosition.Y = 1150;
         }

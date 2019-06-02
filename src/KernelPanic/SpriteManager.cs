@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,11 +9,7 @@ namespace KernelPanic
 {
     internal sealed class SpriteManager
     {
-        private static SpriteManager sSprites;
-        public ContentManager ContentManager { get; set; }
-        public GraphicsDevice GraphicsDevice { get; set; }
-
-        internal static SpriteManager Default => sSprites ?? (sSprites = new SpriteManager());
+        private GraphicsDevice GraphicsDevice { get; }
 
         private enum Image
         {
@@ -20,7 +17,8 @@ namespace KernelPanic
             ButtonBackground,
             LaneTile,
             Tower,
-            Projectile
+            Projectile,
+            Trojan
         }
 
         private enum Font
@@ -29,16 +27,11 @@ namespace KernelPanic
             Hud
         }
 
-        private SpriteManager()
-        {
-        }
-
         private readonly (Image image, Texture2D texture)[] mTextures;
         private readonly (Font font, SpriteFont spriteFont)[] mFonts;
 
         internal SpriteManager(ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
-            ContentManager = contentManager;
             GraphicsDevice = graphicsDevice;
 
             (Image, Texture2D) Texture(Image image, string name) => (image, contentManager.Load<Texture2D>(name));
@@ -50,7 +43,8 @@ namespace KernelPanic
                 Texture(Image.ButtonBackground, "Papier"),
                 Texture(Image.LaneTile, "LaneTile"),
                 Texture(Image.Tower, "tower"),
-                Texture(Image.Projectile, "Projectile")
+                Texture(Image.Projectile, "Projectile"),
+                Texture(Image.Trojan, "trojan")
             };
             Array.Sort(mTextures);
 
@@ -178,7 +172,17 @@ namespace KernelPanic
             return (sprite, leftText, rightText, clockText);
         }
 
-        private Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
+        internal AnimatedSprite CreateTrojan() =>
+            new AnimatedSprite(Lookup(Image.Trojan), 400, 400);
+
+        internal (ImageSprite Sprite, Texture2D Texture) CreateColoredSquare(Color color)
+        {
+            var texture = new Texture2D(GraphicsDevice, 1, 1);
+            texture.SetData(new[] {color});
+            return (new ImageSprite(texture, 0, 0), texture);
+        }
+
+        internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
 
         /// <summary>
         /// <para>

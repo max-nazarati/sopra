@@ -8,6 +8,11 @@ namespace KernelPanic
     {
         public float Rotation { get; set; } = 0.0f;
         public float Scale { get; set; } = 1.0f;
+        
+        /// <summary>
+        /// The origin of a sprite is used as the center for rotation and as a offset for <see cref="Position"/>.
+        /// Due to the way MonoGame drawing works, it has to be calculated with respect to the <see cref="UnscaledSize"/>.
+        /// </summary>
         public Vector2 Origin { get; set; } = Vector2.Zero;
 
         public abstract float UnscaledWidth { get; }
@@ -63,11 +68,47 @@ namespace KernelPanic
             Origin = origin.RectangleOrigin(UnscaledSize);
         }
         
-        internal virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            Draw(spriteBatch, gameTime, -Origin, Rotation, Scale);   
+            DrawChild(this, spriteBatch, gameTime, Vector2.Zero, 0f, 1f);
         }
 
-        internal abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime, Vector2 offset, float rotation, float scale);
+        /// <summary>
+        /// <para>
+        /// This function handles the actual drawing. The passed parameters are the <paramref name="position"/>,
+        /// <paramref name="rotation"/> and <paramref name="scale"/> to be used for the drawing including this sprites
+        /// values.
+        /// </para>
+        /// <para>
+        /// The handling of <see cref="Origin"/> is at the implementers discretion. For example for
+        /// <see cref="PatternSprite"/> it is a negative offset and <see cref="ImageSprite"/> uses it directly in its
+        /// drawing call.
+        /// </para>
+        /// </summary>
+        /// <param name="spriteBatch">The sprite batch into which is drawn.</param>
+        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
+        /// <param name="position">The position at which to draw.</param>
+        /// <param name="rotation"></param>
+        /// <param name="scale"></param>
+        protected abstract void Draw(SpriteBatch spriteBatch,
+            GameTime gameTime,
+            Vector2 position,
+            float rotation,
+            float scale);
+
+        protected static void DrawChild(
+            Sprite sprite,
+            SpriteBatch spriteBatch,
+            GameTime gameTime,
+            Vector2 position,
+            float rotation,
+            float scale)
+        {
+            sprite.Draw(spriteBatch,
+                gameTime,
+                position + sprite.Position,
+                rotation + sprite.Rotation,
+                scale * sprite.Scale);
+        }
     }
 }

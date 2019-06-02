@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,14 +10,15 @@ namespace KernelPanic
     {
         
         private readonly Grid mGrid;
-        public SpriteManager Sprite { get; }
-
         internal EntityGraph EntityGraph { get; }
         private Base mTarget;
         private SpriteManager mSpriteManager;
 
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
+        
+        private readonly AStar mAStar;
+        private readonly ImageSprite mTile;
 
         public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
         {
@@ -24,7 +26,8 @@ namespace KernelPanic
             mTarget = new Base();
             mGrid = new Grid(sprites, laneSide);
             mSpriteManager = sprites;
-            InitAStar(Sprite.ContentManager);
+            mTile = Grid.CreateTile(sprites);
+            mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem.First(), mGrid.CoordSystem.Last());
         }
 
         public void Update(GameTime gameTime, Matrix invertedViewMatrix)
@@ -50,7 +53,7 @@ namespace KernelPanic
         {
             mGrid.Draw(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
-            DrawPath(spriteBatch);
+            DrawPath(spriteBatch, gameTime);
         }
         
 /*
@@ -60,16 +63,6 @@ namespace KernelPanic
         }
         
         */
-
-        private AStar mAStar;
-        private Texture2D mTile;
-
-        private void InitAStar(ContentManager content)
-        {
-            mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem[0], mGrid.CoordSystem[mGrid.CoordSystem.Count - 1]);
-            var tile = content.Load<Texture2D>("LaneTile");
-            var mTile = new ImageSprite(tile, 0, 0) {Scale = (float) 100};
-        }
 
         private void NewStart(Point start)
         {
@@ -81,7 +74,7 @@ namespace KernelPanic
             mAStar.SetTarget(target);
         }
         
-        private void DrawPath(SpriteBatch spriteBatch)
+        private void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
             /*
             // var path = mAStar.FindPath();
@@ -98,16 +91,15 @@ namespace KernelPanic
 
             foreach (var point in path)
             {
-                DrawTile(spriteBatch, point);
+                DrawTile(spriteBatch, point, gameTime);
             }
             */
-            
         }
-        private void DrawTile(SpriteBatch spriteBatch, Point point)
+
+        private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime)
         {
-            var pos = Grid.ScreenPositionFromCoordinate(point);
-            spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
+            mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
+            mTile.Draw(spriteBatch, gameTime);
         }
-     
     }
 }

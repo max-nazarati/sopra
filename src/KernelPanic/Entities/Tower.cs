@@ -67,8 +67,6 @@ namespace KernelPanic
 
         internal override void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
-            base.Update(gameTime, invertedViewMatrix);
-            
             // Turn window coordinates into world coordinates.
             var relativeMouseVector =
                 Vector2.Transform(InputManager.Default.MousePosition.ToVector2(), invertedViewMatrix);

@@ -44,8 +44,7 @@ namespace KernelPanic
             mLaneRectangle = new Rectangle(0, 0, 16, 42);
             mLaneSide = laneSide;
 
-            var tile = sprites.CreateLaneTile();
-            tile.ScaleToWidth(KachelSize);
+            var tile = CreateTile(sprites);
             var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, LaneWidthInTiles);
 
             float xOffset;
@@ -87,6 +86,13 @@ namespace KernelPanic
             };
 
             CreateCoordinateSystem();
+        }
+
+        internal static ImageSprite CreateTile(SpriteManager spriteManager)
+        {
+            var tile = spriteManager.CreateLaneTile();
+            tile.ScaleToWidth(KachelSize);
+            return tile;
         }
 
         /* TODO implement when needed

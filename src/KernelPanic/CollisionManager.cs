@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace KernelPanic
 {
@@ -18,18 +19,7 @@ namespace KernelPanic
 
         public void Update()
         {
-            // check for collisions between objects
-            foreach (Entity movedObject in mObjectList)
-            {
-                foreach (Entity collidingObject in mObjectList)
-                {
-                    if (movedObject == collidingObject) continue;
-                    if (movedObject.IsColliding(collidingObject))
-                    {
-                        movedObject.CollisionDetected();
-                    }
-                }
-            }
+            // throw new NotImplementedException();
         }
     }
 }

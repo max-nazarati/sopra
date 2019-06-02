@@ -51,7 +51,7 @@ namespace KernelPanic
         {
             // TODO: Add your initialization logic here
             IsMouseVisible = true;
-            mCamera = new Camera2D(GraphicsDevice.Viewport);
+            mCamera = new Camera2D(GraphicsDevice.Viewport.Bounds.Size);
             base.Initialize();
         }
 

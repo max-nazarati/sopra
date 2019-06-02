@@ -63,20 +63,15 @@ namespace KernelPanic
             SizeChanged?.Invoke(this);
         }
 
-        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            Draw(spriteBatch, gameTime, Vector2.Zero, 0, 0);
-        }
-
-        internal override void Draw(SpriteBatch spriteBatch,
+        protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
-            Vector2 offset,
+            Vector2 position,
             float rotation,
             float scale)
         {
             spriteBatch.DrawString(Font,
                 Text,
-                Position + offset,
+                position,
                 TextColor,
                 rotation,
                 Origin,
