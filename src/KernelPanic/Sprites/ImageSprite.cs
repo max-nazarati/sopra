@@ -6,9 +6,9 @@ namespace KernelPanic
     internal sealed class ImageSprite : Sprite
     {
         private Texture2D Texture { get; }
-        
         public Rectangle? SourceRectangle { get; set; }
         public Rectangle? DestinationRectangle { get; set; }
+        public Color TintColor { get; set; } = Color.White;
 
         public ImageSprite(Texture2D texture, float x, float y) : base(x, y)
         {
@@ -17,6 +17,11 @@ namespace KernelPanic
 
         public override float UnscaledWidth => DestinationRectangle?.Width ?? SourceRectangle?.Width ?? Texture.Width;
         public override float UnscaledHeight => DestinationRectangle?.Height ?? SourceRectangle?.Height ?? Texture.Height;
+
+        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            Draw(spriteBatch, gameTime, Vector2.Zero, 0, 0);
+        }
 
         internal override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
@@ -32,7 +37,7 @@ namespace KernelPanic
                 spriteBatch.Draw(Texture,
                     destinationRectangle,
                     SourceRectangle,
-                    Color,
+                    TintColor,
                     rotation,
                     Origin,
                     SpriteEffects.None,
@@ -43,7 +48,7 @@ namespace KernelPanic
                 spriteBatch.Draw(Texture,
                     Position + offset,
                     SourceRectangle,
-                    Color,
+                    TintColor,
                     Rotation,
                     Origin,
                     Scale,

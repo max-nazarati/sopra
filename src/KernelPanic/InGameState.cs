@@ -69,9 +69,14 @@ namespace KernelPanic
                     SpriteManager.Default.GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
      
             }
-            mEntityGraph.Update(Camera.GetViewMatrix());
+
+            var viewMatrix = Camera.GetViewMatrix();
+            var invertedViewMatrix = Matrix.Invert(viewMatrix);
+
+            mEntityGraph.Update(gameTime, viewMatrix);
             mCollisionManager.Update();
             mTestSprite.Update(gameTime);
+            mBoard.Update(gameTime, invertedViewMatrix);
             Camera.Update();
             mHud.Update(gameTime);
         }
@@ -79,16 +84,11 @@ namespace KernelPanic
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
         {
             var viewMatrix = Camera.GetViewMatrix();
-            //spriteBatch.Begin(transformMatrix: viewMatrix);
             spriteBatch.Begin(SpriteSortMode.Immediate,
-                    BlendState.AlphaBlend,
-                    SamplerState.PointClamp,
-                    null,
-                    null,
-                    null,
-                    viewMatrix);
-            mBoard.DrawLane(spriteBatch, viewMatrix, gameTime);
-            mEntityGraph.Draw(spriteBatch);
+                transformMatrix: viewMatrix,
+                samplerState: SamplerState.PointClamp);
+            mBoard.Draw(spriteBatch, gameTime);
+            mEntityGraph.Draw(spriteBatch, gameTime);
             mTestSprite.Draw(spriteBatch, gameTime);
             spriteBatch.End();
             mHud.Draw(spriteBatch, gameTime);

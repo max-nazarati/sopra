@@ -193,7 +193,7 @@ namespace KernelPanic
                 // mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
                 // mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
                 
-                mBoard.DrawLane(mSpriteBatch, viewMatrix, gameTime);
+                mBoard.Draw(mSpriteBatch, viewMatrix, gameTime);
                 
                 mEntityGraph.Draw(mSpriteBatch);
 

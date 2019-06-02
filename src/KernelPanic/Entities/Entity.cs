@@ -1,34 +1,32 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal abstract class Entity
+    internal abstract class Entity : IPriced
     {
         protected Rectangle mContainerRectangle;
         private Rectangle mOldContainerRectangle;
         //private GraphicsDeviceManager mGraphics;
-        private readonly Texture2D mTexture;
 
-        // ReSharper disable once UnusedParameter.Local
-        protected Entity(int param)
+        internal Sprite Sprite { get; }
+
+        protected Entity(int price, Sprite sprite)
         {
-
+            Price = price;
+            Sprite = sprite;
         }
-
-        // ReSharper disable once UnusedMember.Global
-        // ReSharper disable once UnusedParameter.Local
-        protected Entity(TimeSpan timeSpan)
-        {
-
-        }
+        
         protected Entity(int x, int y, int width, int height, Texture2D texture)
+            : this(x, y, width, height, new ImageSprite(texture, x, y))
+        {
+        }
+
+        protected Entity(int x, int y, int width, int height, Sprite sprite)
         {
             mContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
             mOldContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
-            mTexture = texture;
-            //mGraphics = graphics;
+            Sprite = sprite;
         }
 
         /// <summary>
@@ -56,18 +54,21 @@ namespace KernelPanic
 
         public void CooledDownDelegate(CooldownComponent source)
         {
-            mTexture.SetData(new[] { Color.Blue });
+            // TODO: mTexture.SetData(new[] { Color.Blue });
         }
 
-        internal virtual void Update(Matrix viewMatrix)
+        internal virtual void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
             // store last position
             mOldContainerRectangle = mContainerRectangle;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Draw(mTexture, mContainerRectangle, Color.White);
+            Sprite.Draw(spriteBatch, gameTime);
         }
+
+        public int Price { get; }
+        public Currency Currency => Currency.Bitcoin;
     }
 }

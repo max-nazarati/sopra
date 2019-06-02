@@ -27,7 +27,7 @@ namespace KernelPanic
             float rotation,
             float scale)
         {
-            offset += Position;
+            offset += Position - Origin;
             rotation += Rotation;
             scale *= Scale;
             foreach (var child in Children)

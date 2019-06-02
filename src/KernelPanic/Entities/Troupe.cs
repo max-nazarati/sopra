@@ -3,7 +3,7 @@ namespace KernelPanic
 {
     class Troupe : Unit
     {
-        public Troupe(int param) : base(param)
+        public Troupe(int price) : base(price)
         {
 
         }

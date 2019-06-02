@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -11,31 +11,45 @@ namespace KernelPanic
         private readonly Grid mGrid;
         public SpriteManager Sprite { get; }
 
-        public EntityGraph EntityGraph { get; private set; }
-        // private BuildingSpawner mBuildingSpawner;
-        // private EntityGraph mEntityGraph;
-        private Base mBase;
-        // private UnitSpawner mUnitSpawner;
+        internal EntityGraph EntityGraph { get; }
+        private Base mTarget;
+        private SpriteManager mSpriteManager;
 
-        public Lane(Grid.LaneSide laneSide, EntityGraph entityGraph, SpriteManager spriteManager)
+        // private UnitSpawner mUnitSpawner;
+        // private BuildingSpawner mBuildingSpawner;
+
+        public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
         {
-            Sprite = spriteManager;
-            mGrid = laneSide == Grid.LaneSide.Left ? new Grid(Sprite, laneSide, 
-                new Rectangle(0, 0, 16, 42)) : new Grid(Sprite, laneSide, 
-                new Rectangle(32, 0, 16, 42));
-            EntityGraph = entityGraph;
-            mBase = new Base();
+            EntityGraph = new EntityGraph();
+            mTarget = new Base();
+            mGrid = new Grid(sprites, laneSide);
+            mSpriteManager = sprites;
             InitAStar(Sprite.ContentManager);
         }
 
-        public void Update()
+        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
+            var input = InputManager.Default;
+            var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
+            if (input.KeyPressed(Keys.T))
+            {
+                // It seems can't use pattern matching here because of compiler-limitations.
+                var gridPoint = mGrid.GridPointFromWorldPoint(mouse, 2);
+                if (gridPoint != null)
+                {
+                    var (position, size) = gridPoint.Value;
+                    if (!EntityGraph.HasEntityAt(position))
+                        EntityGraph.Add(Tower.Create(position, size, mSpriteManager));
+                }
+            }
+
+            EntityGraph.Update(gameTime, invertedViewMatrix);
         }
 
-        public void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            mGrid.Draw(spriteBatch, viewMatrix, gameTime);
-            
+            mGrid.Draw(spriteBatch, gameTime);
+            EntityGraph.Draw(spriteBatch, gameTime);
             DrawPath(spriteBatch);
         }
         

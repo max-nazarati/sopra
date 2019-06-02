@@ -1,44 +1,38 @@
-using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
     internal sealed class Projectile
     {
-        private readonly Vector2 mDirection, mStartpoint;
-        private float mX, mY;
-        private int mRadius;
-        private readonly Texture2D mProjectile;
-        public Projectile(ContentManager content, Vector2 direction, Vector2 startPoint, int radius)
+        private readonly Vector2 mDirection, mStartPoint;
+        private readonly ImageSprite mSprite;
+        private readonly float mRadius;
+        
+        public Projectile(Vector2 direction, Vector2 startPoint, float radius, SpriteManager sprites)
         {
-            mStartpoint = startPoint;
+            mStartPoint = startPoint;
             mDirection = direction;
-            mX = (int)startPoint.X+25;
-            mY = (int)startPoint.Y+25;
-            mProjectile = content.Load<Texture2D>("Projectile");
             mRadius = radius;
+            
+            mSprite = sprites.CreateProjectile();
+            mSprite.Position = startPoint;
+            mSprite.TintColor = Color.Red;
+            mSprite.ScaleToWidth(8);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (Distance() < mRadius)
+            if (Vector2.Distance(mStartPoint, mSprite.Position) < mRadius)
             {
-                spriteBatch.Draw(mProjectile, new Rectangle((int)mX, (int)mY, 8, 8), null, Color.Red);
+                mSprite.Draw(spriteBatch, gameTime);
             }
         }
 
         public void Update()
         {
-            mX += mDirection.X * 7;
-            mY += mDirection.Y * 7;
-        }
-
-        private int Distance()
-        {
-            return (int) Math.Sqrt((int) Math.Pow(mX - mStartpoint.X, 2) +
-                                   (int) Math.Pow(mY - mStartpoint.Y, 2));
+            mSprite.X += mDirection.X * 7;
+            mSprite.Y += mDirection.Y * 7;
         }
     }
 }

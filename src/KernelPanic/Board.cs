@@ -1,25 +1,28 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    public class Board
+    internal sealed class Board
     {
         private readonly Lane mLeftLane, mRightLane;
-        public SpriteManager Sprite { get; }
 
-        public Board(SpriteManager spriteManager)
+        internal Board(SpriteManager content)
         {
-            Sprite = spriteManager;
-            mLeftLane = new Lane(Grid.LaneSide.Left, new EntityGraph(), Sprite);
-            mRightLane = new Lane(Grid.LaneSide.Right, new EntityGraph(), Sprite);
+            mLeftLane = new Lane(Grid.LaneSide.Left, content);
+            mRightLane = new Lane(Grid.LaneSide.Right, content);
         }
 
-        public void DrawLane(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
+        internal void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
-            mLeftLane.Draw(spriteBatch, viewMatrix, gameTime);
-            mRightLane.Draw(spriteBatch, viewMatrix, gameTime);
+            mLeftLane.Update(gameTime, invertedViewMatrix);
+            mRightLane.Update(gameTime, invertedViewMatrix);
+        }
+
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            mLeftLane.Draw(spriteBatch, gameTime);
+            mRightLane.Draw(spriteBatch, gameTime);
         }
         
     /*    

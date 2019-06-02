@@ -15,17 +15,23 @@ namespace KernelPanic
             mActiveUnit = null;
         }
 
-        public void Add(Unit unit)
+        public void Add(Entity entity)
         {
-            mEntities.Add(unit);
+            mEntities.Add(entity);
         }
 
-        public void Update(Matrix viewMatrix)
+        public bool HasEntityAt(Vector2 point)
+        {
+            // TODO: Implement this.
+            return false;
+        }
+
+        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
             var i = 0;
             foreach (var Object in mEntities)
             {
-                Object.Update(viewMatrix);
+                Object.Update(gameTime, invertedViewMatrix);
                 // check if a new unit has been selected
                 if (Object.Selected)
                 {
@@ -43,11 +49,11 @@ namespace KernelPanic
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             foreach (var Object in mEntities)
             {
-                Object.Draw(spriteBatch);
+                Object.Draw(spriteBatch, gameTime);
             }
         }
     }

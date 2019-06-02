@@ -1,89 +1,87 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
     internal class Tower : Building
     {
-        private readonly ContentManager mContent;
-        private readonly Texture2D mTower;
-        private readonly int mPosX, mPosY;
-        private float mRotation;
-        private float mTimer = 3f;
-        private const float Timer = 3f;
-        private int mRadius;
-        
-        // stores the projectiles
-        private readonly List<Projectile> mProjektilListe = new List<Projectile>();
+        private readonly float mRadius;
+        private readonly CooldownComponent mFireTimer;
+        private readonly List<Projectile> mProjectiles = new List<Projectile>();
+        private bool mInRange;
 
-        internal Tower(TimeSpan timeSpan) : base(timeSpan)
+        internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites) : base(price, sprite)
         {
-        }
-        
-        internal Tower(ContentManager content, int x, int y) : base(TimeSpan.Zero)
-        {
-            mPosX = x;
-            mPosY = y;
-            mRadius = 300;
-            mContent = content;
-            mTower = mContent.Load<Texture2D>("tower");
-        }
+            mFireTimer = new CooldownComponent(cooldown);
+            mRadius = radius;
 
-        internal void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(mTower, new Vector2(mPosX + 25, mPosY + 25), null, Color.White, mRotation,
-                new Vector2(mTower.Width / 2f, mTower.Height / 2f), 0.08f, SpriteEffects.None, 0);
-            foreach (var projectile in mProjektilListe)
+            mFireTimer.CooledDown += timer =>
             {
-                projectile.Draw(spriteBatch);
-            }
-        }
-
-        internal void Update(GameTime gameTime, Matrix viewMatrix)
-        {
-            // Mouse coordinates in World coordinates
-            var relativeMouseVector = Vector2.Transform(InputManager.Default.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
-            
-            // distance between tower and mouse cursor
-            var distance = (int) Math.Sqrt((int) Math.Pow(relativeMouseVector.X - mPosX, 2) +
-                                           (int) Math.Pow(relativeMouseVector.Y - mPosY, 2));
-            
-
-            // elapsed gameTime since the last shoot
-            var elapsed = (float) gameTime.ElapsedGameTime.TotalSeconds;
-            mTimer -= elapsed;
-            
-            // only shoots, if cursor is less then 300 pixel away
-            if (distance < mRadius)
-            {
-                // calculates the Rotation, so that the tower attacks the mouse Cursor
-                mRotation =
-                    (float)Math.Atan2(mPosY + 25 - relativeMouseVector.Y,
-                        mPosX + 25 - relativeMouseVector.X) - (float)Math.PI / 2;
-                if (mTimer < 0)
+                if (!mInRange)
                 {
-                    mProjektilListe.Add(new Projectile(mContent, new Vector2(
-                        (float)Math.Sin(mRotation % (3.14159265f * 2)),
-                        -(float)Math.Cos(mRotation % (3.14159265f * 2))), new Vector2(mPosX, mPosY), mRadius));
-                    SoundManager.Instance.PlaySound("shoot");
-                    if (mProjektilListe.Count > 5)
-                    {
-                        mProjektilListe.RemoveAt(0);
-                    }
-
-                    mTimer = Timer;
+                    // If the cursor isn't in the range do nothing for now but keep the timer enabled.
+                    // If it is enabled it keeps calling this callback.
+                    timer.Enabled = true;
+                    return;
                 }
-            }
-            else
-            {
-                // Rotate animation, if no enemy is in range
-                mRotation = ((float)Math.Sin((gameTime.TotalGameTime.TotalSeconds*10) % (2*Math.PI)) / 2);
-            }
 
-            foreach (var projectile in mProjektilListe)
+                var direction = new Vector2(
+                    (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
+                    -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
+                mProjectiles.Add(new Projectile(direction, Sprite.Position, mRadius, sprites));
+
+                SoundManager.Instance.PlaySound("shoot");
+
+                if (mProjectiles.Count > 5)
+                {
+                    mProjectiles.RemoveAt(0);
+                }
+
+                timer.Reset();
+            };
+        }
+
+        internal static Tower Create(Vector2 position, float size, SpriteManager sprites)
+        {
+            var sprite = sprites.CreateTower();
+            sprite.Position = position;
+            sprite.ScaleToHeight(size);
+            sprite.SetOrigin(RelativePosition.Center);
+            return new Tower(0, 300, new TimeSpan(0, 0, 3), sprite, sprites);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            base.Draw(spriteBatch, gameTime);
+
+            //var s = (ImageSprite) Sprite;
+            //spriteBatch.Draw(s.Texture, s.Position, null, Color.White, s.Rotation, new Vector2(s.Width / 2), 0.08f, SpriteEffects.None, 1.0f);
+            
+            foreach (var projectile in mProjectiles)
+            {
+                projectile.Draw(spriteBatch, gameTime);
+            }
+        }
+
+        internal override void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        {
+            base.Update(gameTime, invertedViewMatrix);
+            
+            // Turn window coordinates into world coordinates.
+            var relativeMouseVector =
+                Vector2.Transform(InputManager.Default.MousePosition.ToVector2(), invertedViewMatrix);
+            var distance = Vector2.Distance(relativeMouseVector, Sprite.Position);
+            mInRange = distance <= mRadius;
+
+            // If the cursor is in range we rotate the tower in its direction, otherwise we let the tower rotate continuously. 
+            Sprite.Rotation = mInRange
+                ? (float) (Math.Atan2(Sprite.Y - relativeMouseVector.Y, Sprite.X - relativeMouseVector.X) - Math.PI / 2)
+                : (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
+
+            mFireTimer.Update(gameTime);
+            foreach (var projectile in mProjectiles)
             {
                 projectile.Update();
             }
