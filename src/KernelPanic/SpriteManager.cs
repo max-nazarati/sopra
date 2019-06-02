@@ -26,7 +26,7 @@ namespace KernelPanic
         private enum Font
         {
             Button,
-            HUD
+            Hud
         }
 
         private SpriteManager()
@@ -57,7 +57,7 @@ namespace KernelPanic
             mFonts = new[]
             {
                 SpriteFont(Font.Button, "buttonFont"),
-                SpriteFont(Font.HUD, "HUDFont")
+                SpriteFont(Font.Hud, "HUDFont")
             };
             Array.Sort(mFonts);
         }
@@ -137,7 +137,7 @@ namespace KernelPanic
         internal (Sprite Main, TextSprite Left, TextSprite Right, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
         {
             var texture = Lookup(Image.ButtonBackground);
-            var font = Lookup(Font.HUD);
+            var font = Lookup(Font.Hud);
 
             var leftBackground = new ImageSprite(texture, 0, 0)
             {
