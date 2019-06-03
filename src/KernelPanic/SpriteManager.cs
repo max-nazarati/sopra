@@ -18,7 +18,8 @@ namespace KernelPanic
             LaneTile,
             Tower,
             Projectile,
-            Trojan
+            Trojan,
+            SelectionBorder
         }
 
         private enum Font
@@ -44,7 +45,8 @@ namespace KernelPanic
                 Texture(Image.LaneTile, "LaneTile"),
                 Texture(Image.Tower, "tower"),
                 Texture(Image.Projectile, "Projectile"),
-                Texture(Image.Trojan, "trojan")
+                Texture(Image.Trojan, "trojan"),
+                (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
 
@@ -185,6 +187,50 @@ namespace KernelPanic
             var texture = new Texture2D(GraphicsDevice, 1, 1);
             texture.SetData(new[] {color});
             return new ImageSprite(texture, 0, 0);
+        }
+
+        private const int SelectionBorderThickness = 12;
+        private Texture2D CreateSelectionBorderTexture(Color color)
+        {
+            const int line = Grid.KachelSize + 2 * SelectionBorderThickness; 
+            var texture = new Texture2D(GraphicsDevice, line, line);
+
+            var lineIdx = 0;
+            var data = new Color[texture.Width * texture.Height];
+
+            for (var i = 0; i < data.Length; ++i)
+                data[i] = Color.White;
+
+            for (var i = 0; i < SelectionBorderThickness; ++i, ++lineIdx)
+            {
+                for (var j = 0; j < line; ++j)
+                {
+                    data[lineIdx * line + j] = color;
+                    data[lineIdx * line + j + Grid.KachelSize + SelectionBorderThickness] = color;
+                }
+            }
+
+            for (var i = 0; i < Grid.KachelSize; ++i, ++lineIdx)
+            {
+                for (var j = 0; j < SelectionBorderThickness; ++j)
+                {
+                    data[lineIdx * line + j] = color;
+                    data[lineIdx * line + j + Grid.KachelSize + SelectionBorderThickness] = color;
+                }
+
+                for (var j = 0; j < Grid.KachelSize; ++j)
+                    data[lineIdx * line + SelectionBorderThickness + j] = Color.White;
+            }
+
+            return texture;
+        }
+        
+        internal ImageSprite CreateSelectionBorder()
+        {
+            return new ImageSprite(Lookup(Image.SelectionBorder), 0, 0)
+            {
+                Origin = new Vector2(SelectionBorderThickness)
+            };
         }
 
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;

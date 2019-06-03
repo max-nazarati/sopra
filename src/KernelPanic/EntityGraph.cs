@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
     internal sealed class EntityGraph
     {
-        private Quadtree mQuadtree;
+        private readonly Quadtree mQuadtree;
+        private readonly ImageSprite mSelectionBorder;
 
-        public EntityGraph()
+        public EntityGraph(SpriteManager spriteManager)
         {
             mQuadtree = new Quadtree(1, new Rectangle(0, 0, 1000, 1000));
+            mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
         public void Add(Entity entity)
@@ -36,9 +37,14 @@ namespace KernelPanic
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var Object in mQuadtree)
+            foreach (var entity in mQuadtree)
             {
-                Object.Draw(spriteBatch, gameTime);
+                if (entity.Selected)
+                {
+                    mSelectionBorder.Position = entity.Sprite.Position;
+                    mSelectionBorder.Draw(spriteBatch, gameTime);
+                }
+                entity.Draw(spriteBatch, gameTime);
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
- using Microsoft.Xna.Framework;
- using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
@@ -31,7 +31,7 @@ namespace KernelPanic
             // mTile = content.Load<Texture2D>("LaneTile");
             
             */
-            EntityGraph = new EntityGraph();
+            EntityGraph = new EntityGraph(sprites);
             mTarget = new Base();
             mGrid = new Grid(sprites, laneSide);
             mSpriteManager = sprites;
@@ -39,7 +39,6 @@ namespace KernelPanic
 
             // mTile = Grid.CreateTile(sprites);
             // mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem.First(), mGrid.CoordSystem.Last());
-
         }
 
         public void Update(GameTime gameTime, Matrix invertedViewMatrix)
