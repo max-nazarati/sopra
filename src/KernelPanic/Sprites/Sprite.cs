@@ -42,6 +42,8 @@ namespace KernelPanic
             Y = y;
         }
 
+        #region Smart Property Modification
+
         /// <summary>
         /// Modifies <see cref="Scale"/> so that <see cref="Width"/> equals <paramref name="wantedWidth"/>.
         /// </summary>
@@ -67,7 +69,25 @@ namespace KernelPanic
         {
             Origin = origin.RectangleOrigin(UnscaledSize);
         }
-        
+
+        #endregion
+
+        #region Querying
+
+        /// <summary>
+        /// Checks if a given point lies where this sprite is drawn.
+        /// </summary>
+        /// <param name="point">The point to check for</param>
+        /// <returns><c>true</c> if the point is in the drawn area, <c>false</c> otherwise.</returns>
+        internal bool Contains(Vector2 point)
+        {
+            return X <= point.X && point.X <= X + Width && Y <= point.Y && point.Y <= Y + Height;
+        }
+
+        #endregion
+
+        #region Drawing
+
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawChild(this, spriteBatch, gameTime, Vector2.Zero, 0f, 1f);
@@ -110,5 +130,7 @@ namespace KernelPanic
                 rotation + sprite.Rotation,
                 scale * sprite.Scale);
         }
+
+        #endregion
     }
 }
