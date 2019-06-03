@@ -46,38 +46,29 @@ namespace KernelPanic
             var tile = CreateTile(sprites);
             var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, LaneWidthInTiles);
 
-            float xOffset;
-            RelativePosition upperOrigin;
+            var topPart = new PatternSprite(tile, 0, 0,
+                LaneWidthInTiles,
+                mLaneRectangle.Width - LaneWidthInTiles);
+            var bottomPart = new PatternSprite(tile, 0, 0,
+                LaneWidthInTiles,
+                mLaneRectangle.Width - LaneWidthInTiles);
+            bottomPart.Y = mainPart.Height - bottomPart.Height;
+
             switch (laneSide)
             {
                 case LaneSide.Left:
-                    xOffset = mainPart.Width;
-                    upperOrigin = RelativePosition.TopLeft;
+                    topPart.X = mainPart.Width;
+                    bottomPart.X = mainPart.Width;
                     break;
 
                 case LaneSide.Right:
+                    mainPart.X = topPart.Width;
                     mLaneRectangle.X = 32;
-                    xOffset = 0;
-                    upperOrigin = RelativePosition.TopRight;
                     break;
 
                 default:
                     throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(LaneSide));
             }
-
-            var topPart = new PatternSprite(tile,
-                xOffset,
-                0,
-                LaneWidthInTiles,
-                mLaneRectangle.Width - LaneWidthInTiles);
-            var bottomPart = new PatternSprite(tile,
-                xOffset,
-                mainPart.Height,
-                LaneWidthInTiles,
-                mLaneRectangle.Width - LaneWidthInTiles);
-            
-            topPart.SetOrigin(upperOrigin);
-            bottomPart.SetOrigin(upperOrigin.MirrorVertical());
 
             mSprite = new CompositeSprite(TileCountPixelSize(mLaneRectangle.X), TileCountPixelSize(mLaneRectangle.Y))
             {
