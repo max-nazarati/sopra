@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -24,23 +23,17 @@ namespace KernelPanic
         // private HashSet<Wave> mActiveWaves;
         // private SelectionManager mSelectionManager;
 
-
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
             mGameStateManager = gameStateManager;
             
             Camera = new Camera2D(gameStateManager.Sprite.ScreenSize);
             mBoard = new Board(gameStateManager.Sprite);
-            mPlayerA = new Player();
-            mPlayerB = new Player();
+            mPlayerA = new Player(mBoard.RightLane, mBoard.LeftLane);
+            mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);
             mHud = new InGameOverlay(mPlayerA, mPlayerB, gameStateManager.Sprite);
 
-            // testing movable objects and collision
-            // TODO: move to Lane clas
-
             var eg = mBoard.LeftLane.EntityGraph;
-            eg.Add(Troupe.CreateSquare(new Point(0), Color.Green, gameStateManager.Sprite));
-            eg.Add(Troupe.CreateSquare(new Point(200), Color.Red, gameStateManager.Sprite));
             eg.Add(Troupe.CreateTrojan(new Point(400), gameStateManager.Sprite));
             eg.Add(Troupe.CreateFirefox(new Point(300), gameStateManager.Sprite));
         }

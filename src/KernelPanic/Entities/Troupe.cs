@@ -22,9 +22,6 @@ namespace KernelPanic
             return new Troupe(1, 1, 1, 1, sprite);
         }
 
-        internal static Troupe CreateSquare(Point position, Color color, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateColoredSquare(color));
-
         internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateTrojan());
 

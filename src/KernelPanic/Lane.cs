@@ -1,17 +1,15 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
     internal sealed class Lane
     {
-        
-        private readonly Grid mGrid;
         internal EntityGraph EntityGraph { get; }
-        private readonly Base mTarget;
+        internal Base Target { get; }
+
+        private readonly Grid mGrid;
         private readonly SpriteManager mSpriteManager;
 
         // private UnitSpawner mUnitSpawner;
@@ -21,20 +19,9 @@ namespace KernelPanic
 
         public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
         {
-            /*
-            mGrid = laneSide == Grid.LaneSide.Left ? new Grid(content, laneSide, 
-                new Rectangle(0, 0, 16, 42)) : new Grid(content, laneSide, 
-                new Rectangle(32, 0, 16, 42));
-            EntityGraph = entityGraph;
-            mBase = new Base();
-
-            // mTile and Init AStar is for debugging and showing the Pathfinding
-            // mTile = content.Load<Texture2D>("LaneTile");
-            
-            */
             EntityGraph = new EntityGraph(sprites);
-            mTarget = new Base();
             mGrid = new Grid(sprites, laneSide);
+            Target = new Base();
             mSpriteManager = sprites;
             InitAStar(sprites);
 
