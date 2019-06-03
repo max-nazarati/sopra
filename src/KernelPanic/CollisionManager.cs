@@ -18,7 +18,6 @@ namespace KernelPanic
 
         public void Update()
         {
-            // throw new NotImplementedException();
         }
     }
 }
