@@ -149,14 +149,6 @@ namespace KernelPanic
             throw new Exception("cant Remove from an empty Priority Queue");
         }
 
-        /*
-        public Node GetMin()
-        {
-            if (mItems.Count > 0) return mItems[0];
-            throw new Exception("test");
-        }
-        */
-
         /// <summary>
         /// swap the array position of two elements in the Q
         /// </summary>
@@ -168,23 +160,6 @@ namespace KernelPanic
             mItems[pos2] = mItems[pos1];
             mItems[pos1] = temp;
         }
-
-        /*
-        /// <summary>
-        /// decreasing the key value is increasing its priority
-        /// </summary>
-        /// <param name="queueIndex"></param>
-        /// <param name="newKey"></param>
-        private void DecreaseKey(int queueIndex, double newKey)
-        {
-            mItems[queueIndex].Key = newKey;
-            // heapify
-            while (queueIndex > 0 && mItems[queueIndex].Key < mItems[Parent(queueIndex)].Key)
-            {
-                Swap(queueIndex, Parent(queueIndex));
-                queueIndex = Parent(queueIndex);
-            }
-        } */
 
         // parent of 'i' is at '(i-1)/2'
         private static int Parent(int currentIndex)
@@ -213,9 +188,13 @@ namespace KernelPanic
         private Point mTarget;
         private Point mStart;
 
+        // mainly debugging reasons for now
+        private List<Point> mBlocked;
+        private List<Point> mWalkable;
+        
         // debugging the path visually
         private List<Point> mPath;
-        private readonly ImageSprite mTile;
+        private ImageSprite mTile;
 
 
 
@@ -229,178 +208,52 @@ namespace KernelPanic
             // debug visually (only reason for imcludijng contentmanager)
             // mTile = content.Load<Texture2D>("LaneTile");
             mTile = Grid.CreateTile(sprite);
-        }
-
-        private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
-        
-        // private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
-
-        public void SetStart(Point start)
-        {
-            if (mCoordinateList.Contains(start))
-            {
-                mStart = start;
-            }
+            mWalkable = new List<Point>();// = coordinateList;
+            mBlocked = new List<Point>();
         }
         
-        public void SetTarget(Point target)
+        public void Update()
         {
-            if (mCoordinateList.Contains(target))
-            {
-                mTarget = target;
-            }
-        }
-
-        public bool IsStartPosition(Point position) => position == mStart;
-
-        public bool IsTargetPosition(Point position) => position == mTarget;
-
-        public List<Node> CreateNeighbours(Node node)
-        {
-            var neighbours = new List<Node>();
-            var x = node.Position.X;
-            var y = node.Position.Y;
-            Point up = new Point(x, y - 1);
-            Point left = new Point(x - 1, y);
-            Point down = new Point(x, y + 1);
-            Point right = new Point(x + 1, y);
-            double estimatedCost;
-            double cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
-            bool isStartNode = false;
-            bool isTargetNode = false;
-
-            if (mCoordinateList.Contains(up))
-            {
-                estimatedCost = EuclidHeuristic(up);
-                isStartNode = IsStartPosition(up);
-                isTargetNode = IsTargetPosition(up);
-                Node nodeUp = new Node(up, node, cost, estimatedCost, isStartNode, isTargetNode);
-                neighbours.Add(nodeUp);
-            }
-
-            if (mCoordinateList.Contains(down))
-            {
-                estimatedCost = EuclidHeuristic(down);
-                isStartNode = IsStartPosition(down);
-                isTargetNode = IsTargetPosition(down);
-                Node nodeDown = new Node(down, node, cost, estimatedCost, isStartNode, isTargetNode);
-                neighbours.Add(nodeDown);
-            }
-
-            if (mCoordinateList.Contains(left))
-            {
-                estimatedCost = EuclidHeuristic(left);
-                isStartNode = IsStartPosition(left);
-                isTargetNode = IsTargetPosition(left);
-                Node nodeLeft = new Node(left, node, cost, estimatedCost, isStartNode, isTargetNode);
-                neighbours.Add(nodeLeft);
-            }
-
-            if (mCoordinateList.Contains(right))
-            {
-                estimatedCost = EuclidHeuristic(right);
-                isStartNode = IsStartPosition(right);
-                isTargetNode = IsTargetPosition(right);
-                Node nodeRight = new Node(right, node, cost, estimatedCost, isStartNode, isTargetNode);
-                neighbours.Add(nodeRight);
-            }
-
-            return neighbours;
+            UpdateObstacles();
+            UpdateStartAndTarget();
+            CalculatePath();
         }
         
-        public void ExpandNode(Node node)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (mExploredNodes.Contains(node.Position)) return;
-            List<Node> neighbours = CreateNeighbours(node);
-            foreach (var neighbour in neighbours)
-            {
-                if (!mExploredNodes.Contains(neighbour.Position)) mHeap.Insert(neighbour);
-                // Console.WriteLine(neighbour.Position.ToString());
-            }
-            mExploredNodes.Add(node.Position);
-            // Console.WriteLine(mExploredNodes.Count);
-            // Console.WriteLine(mHeap.Count);
-            // Console.WriteLine(node.Position.ToString());
-            // Console.WriteLine(node.Position.ToString());
-        }
-        public Node FindTarget()
-        {
-
-            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true, false);
-            // double heuristicValue = startNode.Key;
-            mHeap.Insert(startNode);
+            DrawObstacles(spriteBatch, gameTime);
+            DrawExplored(spriteBatch, gameTime);
+            DrawPath(spriteBatch, gameTime);
+            DrawStartAndTarget(spriteBatch, gameTime);
             
-            while (!mHeap.IsEmpty())
-            {
-                var heapNode = mHeap.RemoveMin();
-                if (IsTargetPosition(heapNode.Position)) return heapNode;
-                ExpandNode(heapNode);
-                Console.Write("I am currently expanding: ");
-                Console.WriteLine(heapNode.Position);
-            }
-
-            Console.WriteLine("Couldn't find a path");
-            return null;
         }
-
-        public List<Point> FindPath()
+        
+        public void UpdateObstacles()
         {
-            // Reset();
-            List<Point> path = new List<Point>();
-            Node goalNode = FindTarget();
-            if (goalNode == null)
+            if (InputManager.Default.KeyPressed(Keys.D1, Keys.D2, Keys.D3, Keys.D0))
             {
-                Console.Write("Goal Node was null: ");
-                Console.WriteLine("why tho");
-                return path;
-            }
-            path.Add(goalNode.Position);
-            Node currenNode = goalNode;
-            Point currentPosition = goalNode.Position;
-            int count = 0;
-            while (!IsStartPosition(currentPosition) && count < 1000)
-            {
-                count++;
-                currenNode = currenNode.Parent;
-                currentPosition = currenNode.Position;
-                path.Add(currentPosition);
-            }
+                // mBlocked.Clear();
+                if (InputManager.Default.KeyPressed(Keys.D1))
+                {
+                    ChangeObstacleEnvironment(1);
+                }
 
-            return path;
+                else if (InputManager.Default.KeyPressed(Keys.D2))
+                {
+                    ChangeObstacleEnvironment(2);
+                }
+
+                else if (InputManager.Default.KeyPressed(Keys.D3))
+                {
+                    ChangeObstacleEnvironment(3);
+                }
+                else
+                {
+                    ChangeObstacleEnvironment(0);
+                }
+            }
         }
-
-        public void CalculatePath()
-        {
-            // Reset();
-            List<Point> path = new List<Point>();
-            Node goalNode = FindTarget();
-            if (goalNode == null)
-            {
-                Console.Write("Goal Node was null: ");
-                Console.WriteLine("why tho");
-                return;
-            }
-            path.Add(goalNode.Position);
-            Node currenNode = goalNode;
-            Point currentPosition = goalNode.Position;
-            int count = 0;
-            while (!IsStartPosition(currentPosition) && count < 1000)
-            {
-                count++;
-                currenNode = currenNode.Parent;
-                currentPosition = currenNode.Position;
-                path.Add(currentPosition);
-            }
-            path.Reverse();
-            mPath = path;
-        }
-
-        public void Reset()
-        {
-            mExploredNodes.Clear();
-            mHeap = new PriorityQueue();
-        }
-
+        
         public void UpdateStartAndTarget()
         {
             if (InputManager.Default.KeyPressed(Keys.Up, Keys.Left, Keys.Down, Keys.Right))
@@ -451,9 +304,180 @@ namespace KernelPanic
                         SetTarget(new Point(mTarget.X + 1, mTarget.Y));
                     }
                 }
-                Reset();
                 CalculatePath();
             }
+        }
+
+        private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
+        
+        // private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
+
+        public void SetStart(Point start)
+        {
+            if (mWalkable.Contains(start))
+            {
+                mStart = start;
+            }
+        }
+        
+        public void SetTarget(Point target)
+        {
+            if (mWalkable.Contains(target))
+            {
+                mTarget = target;
+            }
+        }
+
+        public bool IsStartPosition(Point position) => position == mStart;
+
+        public bool IsTargetPosition(Point position) => position == mTarget;
+
+        public List<Node> CreateNeighbours(Node node)
+        {
+            var neighbours = new List<Node>();
+            var x = node.Position.X;
+            var y = node.Position.Y;
+            var up = new Point(x, y - 1);
+            var left = new Point(x - 1, y);
+            var down = new Point(x, y + 1);
+            var right = new Point(x + 1, y);
+            double estimatedCost;
+            var cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
+            var isStartNode = false;
+            bool isTargetNode = false;
+
+            if (mWalkable.Contains(up))
+            {
+                estimatedCost = EuclidHeuristic(up);
+                isStartNode = IsStartPosition(up);
+                isTargetNode = IsTargetPosition(up);
+                Node nodeUp = new Node(up, node, cost, estimatedCost, isStartNode, isTargetNode);
+                neighbours.Add(nodeUp);
+            }
+
+            if (mWalkable.Contains(down))
+            {
+                estimatedCost = EuclidHeuristic(down);
+                isStartNode = IsStartPosition(down);
+                isTargetNode = IsTargetPosition(down);
+                Node nodeDown = new Node(down, node, cost, estimatedCost, isStartNode, isTargetNode);
+                neighbours.Add(nodeDown);
+            }
+
+            if (mWalkable.Contains(left))
+            {
+                estimatedCost = EuclidHeuristic(left);
+                isStartNode = IsStartPosition(left);
+                isTargetNode = IsTargetPosition(left);
+                Node nodeLeft = new Node(left, node, cost, estimatedCost, isStartNode, isTargetNode);
+                neighbours.Add(nodeLeft);
+            }
+
+            if (mWalkable.Contains(right))
+            {
+                estimatedCost = EuclidHeuristic(right);
+                isStartNode = IsStartPosition(right);
+                isTargetNode = IsTargetPosition(right);
+                Node nodeRight = new Node(right, node, cost, estimatedCost, isStartNode, isTargetNode);
+                neighbours.Add(nodeRight);
+            }
+
+            return neighbours;
+        }
+        
+        public void ExpandNode(Node node)
+        {
+            if (mExploredNodes.Contains(node.Position)) return;
+            List<Node> neighbours = CreateNeighbours(node);
+            foreach (var neighbour in neighbours)
+            {
+                if (!mExploredNodes.Contains(neighbour.Position)) mHeap.Insert(neighbour);
+                // Console.WriteLine(neighbour.Position.ToString());
+            }
+            mExploredNodes.Add(node.Position);
+            // Console.WriteLine(mExploredNodes.Count);
+            // Console.WriteLine(mHeap.Count);
+            // Console.WriteLine(node.Position.ToString());
+            // Console.WriteLine(node.Position.ToString());
+        }
+        
+        public Node FindTarget()
+        {
+            Reset();
+            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true, false);
+            // double heuristicValue = startNode.Key;
+            mHeap.Insert(startNode);
+            
+            while (!mHeap.IsEmpty())
+            {
+                var heapNode = mHeap.RemoveMin();
+                if (IsTargetPosition(heapNode.Position)) return heapNode;
+                ExpandNode(heapNode);
+                Console.Write("I am currently expanding: ");
+                Console.WriteLine(heapNode.Position);
+            }
+
+            Console.WriteLine("Couldn't find a path");
+            return null;
+        }
+
+        public List<Point> FindPath()
+        {
+            List<Point> path = new List<Point>();
+            Node goalNode = FindTarget();
+            if (goalNode == null)
+            {
+                Console.Write("Goal Node was null: ");
+                Console.WriteLine("why tho");
+                return path;
+            }
+            path.Add(goalNode.Position);
+            Node currenNode = goalNode;
+            Point currentPosition = goalNode.Position;
+            int count = 0;
+            while (!IsStartPosition(currentPosition) && count < 1000)
+            {
+                count++;
+                currenNode = currenNode.Parent;
+                currentPosition = currenNode.Position;
+                path.Add(currentPosition);
+            }
+
+            return path;
+        }
+
+        public void CalculatePath()
+        {
+            // Reset();
+            var path = new List<Point>();
+            var goalNode = FindTarget();
+            if (goalNode == null)
+            {
+                Console.Write("Goal Node was null: ");
+                Console.WriteLine("why tho");
+                return;
+            }
+            path.Add(goalNode.Position);
+            var currentNode = goalNode;
+            var currentPosition = goalNode.Position;
+            var count = 0;
+            while (!IsStartPosition(currentPosition) && count < 1000)
+            {
+                count++;
+                currentNode = currentNode.Parent;
+                currentPosition = currentNode.Position;
+                path.Add(currentPosition);
+            }
+            path.Reverse();
+            mPath = path;
+        }
+        
+        public void Reset()
+        {
+            // mExploredNodes.Clear();
+            mExploredNodes = new List<Point>();
+            mHeap = new PriorityQueue();
+            mPath = new List<Point>();
         }
 
         /*
@@ -484,12 +508,77 @@ namespace KernelPanic
             queue.Insert(node9);
         }*/
 
+        public List<Point> CreateObstacleEnvironment(int testEnvironment = 1)
+        {
+            // create a list with obstacles
+            List<Point> blocked = new List<Point>();
+            if (testEnvironment == 1) // debug test a local minimum
+            {
+                blocked.Add(new Point(0, 5));
+                blocked.Add(new Point(1, 5));
+                blocked.Add(new Point(2, 5));
+                blocked.Add(new Point(3, 5));
+                blocked.Add(new Point(4, 5));
+                blocked.Add(new Point(5, 5));
+                blocked.Add(new Point(5, 4));
+                blocked.Add(new Point(5, 3));
+                blocked.Add(new Point(5, 2));
+            }
+            
+            else if (testEnvironment == 2) // debug test a way deeper local minimum
+            {
+                blocked.Add(new Point(0, 13));
+                blocked.Add(new Point(1, 13));
+                blocked.Add(new Point(2, 13));
+                blocked.Add(new Point(3, 13));
+                blocked.Add(new Point(4, 13));
+                blocked.Add(new Point(5, 13));
+                blocked.Add(new Point(5, 12));
+                blocked.Add(new Point(5, 11));
+                blocked.Add(new Point(5, 10));
+                blocked.Add(new Point(5, 9));
+                blocked.Add(new Point(5, 8));
+                blocked.Add(new Point(5, 7));
+                blocked.Add(new Point(5, 6));
+                blocked.Add(new Point(5, 5));
+                blocked.Add(new Point(5, 4));
+                blocked.Add(new Point(5, 3));
+                blocked.Add(new Point(5, 2));
+            }
+            
+            else if (testEnvironment == 3) // debug test a impossible field
+            {
+                blocked.Add(new Point(0, 11));
+                blocked.Add(new Point(1, 11));
+                blocked.Add(new Point(2, 11));
+                blocked.Add(new Point(3, 11));
+                blocked.Add(new Point(4, 11));
+                blocked.Add(new Point(5, 11));
+                blocked.Add(new Point(6, 11));
+                blocked.Add(new Point(7, 11));
+                blocked.Add(new Point(8, 11));
+                blocked.Add(new Point(9, 11));
+            }
+
+            return blocked;
+        }
+
+        public void ChangeObstacleEnvironment(int environment)
+        {
+            mWalkable = new List<Point>();
+            mBlocked = CreateObstacleEnvironment(environment);
+            foreach (var point in mCoordinateList)
+            {
+                if (!mBlocked.Contains(point)) { mWalkable.Add(point); }
+            }
+        }
+        
         public void DrawStartAndTarget(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawTile(spriteBatch, mStart, gameTime, Color.Firebrick);
             DrawTile(spriteBatch, mTarget, gameTime, Color.Firebrick);
-            
         }
+        
         public void DrawExplored(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if (mExploredNodes == null) { return; }
@@ -499,29 +588,33 @@ namespace KernelPanic
                 DrawTile(spriteBatch, point, gameTime, Color.Pink);
             }
         }
+        
         public void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
             // Console.WriteLine("drawing the path");
-            if (mPath == null)
-            {
-                mPath = FindPath();
-            }
+            if (mPath == null) { return; }
+            
             foreach (var point in mPath)
             {
-                {
-                    DrawTile(spriteBatch, point, gameTime, Color.Red);
-                }
+                DrawTile(spriteBatch, point, gameTime, Color.Red); 
             }
-
         }
+
+        public void DrawObstacles(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (mBlocked == null) { return; }
+
+            foreach (var point in mBlocked)
+            {
+                DrawTile(spriteBatch, point, gameTime, Color.DarkSlateGray);
+            }
+        }
+        
         private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime, Color  color)
         {
-            // var pos = Grid.ScreenPositionFromCoordinate(point);
-            // spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
             mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
             mTile.TintColor = color;
             mTile.Draw(spriteBatch, gameTime);
         }
     }
- 
 }

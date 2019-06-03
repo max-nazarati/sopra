@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
@@ -43,8 +44,6 @@ namespace KernelPanic
 
         public void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
-            mAStar.UpdateStartAndTarget();
-
             var input = InputManager.Default;
             var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
             if (input.KeyPressed(Keys.T))
@@ -61,16 +60,15 @@ namespace KernelPanic
 
             var positionProvider = new PositionProvider(mGrid, EntityGraph);
             EntityGraph.Update(positionProvider, gameTime, invertedViewMatrix);
+            
+            mAStar.Update();
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
-            mAStar.DrawExplored(spriteBatch, gameTime);
-            
-            mAStar.DrawPath(spriteBatch, gameTime);
-            mAStar.DrawStartAndTarget(spriteBatch, gameTime);
+            mAStar.Draw(spriteBatch, gameTime);
         }
         
         /*
@@ -81,81 +79,16 @@ namespace KernelPanic
 
         
         // -------------------------- A STAR DEBUG ----------------------------------------------------------------------
-        // private void InitAStar(SpriteManager content)
-        private void InitAStar(SpriteManager sprite)
+        private void InitAStar(SpriteManager sprite, int obstacleEnv=2)
         {
             // set start and target
             Point start = new Point(0, 0);
             Point target = new Point(0, 15);
-
-            // simple test: points in blocked are not allowed for the A* to be used
-            List<Point> blocked = new List<Point>();
-
-            // choosing a field for testing
-            int testEnvironment = 1;
             
-            if (testEnvironment == 1) // debug test a local minimum
-            {
-                blocked.Add(new Point(0, 5));
-                blocked.Add(new Point(1, 5));
-                blocked.Add(new Point(2, 5));
-                blocked.Add(new Point(3, 5));
-                blocked.Add(new Point(4, 5));
-                blocked.Add(new Point(5, 5));
-                blocked.Add(new Point(5, 4));
-                blocked.Add(new Point(5, 3));
-                blocked.Add(new Point(5, 2));
-            }
-            
-            if (testEnvironment == 2) // debug test a way deeper local minimum
-            {
-                blocked.Add(new Point(0, 13));
-                blocked.Add(new Point(1, 13));
-                blocked.Add(new Point(2, 13));
-                blocked.Add(new Point(3, 13));
-                blocked.Add(new Point(4, 13));
-                blocked.Add(new Point(5, 13));
-                blocked.Add(new Point(5, 12));
-                blocked.Add(new Point(5, 11));
-                blocked.Add(new Point(5, 10));
-                blocked.Add(new Point(5, 9));
-                blocked.Add(new Point(5, 8));
-                blocked.Add(new Point(5, 7));
-                blocked.Add(new Point(5, 6));
-                blocked.Add(new Point(5, 5));
-                blocked.Add(new Point(5, 4));
-                blocked.Add(new Point(5, 3));
-                blocked.Add(new Point(5, 2));
-            }
-            
-            if (testEnvironment == 3) // debug test a impossible field
-            {
-                blocked.Add(new Point(0, 11));
-                blocked.Add(new Point(1, 11));
-                blocked.Add(new Point(2, 11));
-                blocked.Add(new Point(3, 11));
-                blocked.Add(new Point(4, 11));
-                blocked.Add(new Point(5, 11));
-                blocked.Add(new Point(6, 11));
-                blocked.Add(new Point(7, 11));
-                blocked.Add(new Point(8, 11));
-                blocked.Add(new Point(9, 11));
-            }
-            
-
-            List<Point> walkable = new List<Point>();
-            // only add the point if field is not blocked
-            foreach (var point in mGrid.CoordSystem)
-            {
-                if (!blocked.Contains(point)) { walkable.Add(point); }
-            }
-
-            mAStar = new AStar(walkable, start, target, sprite);
+            mAStar = new AStar(mGrid.CoordSystem, start, target, sprite);
+            mAStar.ChangeObstacleEnvironment(obstacleEnv);
+       
             mAStar.CalculatePath();
-            // mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem[0], mGrid.CoordSystem[mGrid.CoordSystem.Count - 1]);
-            // mAStar.SetStart(new Point(0, 0));
-            // mAStar.SetTarget(new Point(10, 20));
-            // mPath = mAStar.FindPath();
         }
         // ------------------------------------------------------------------------------------------------------------
 }
