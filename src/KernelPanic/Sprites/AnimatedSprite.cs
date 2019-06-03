@@ -13,18 +13,18 @@ namespace KernelPanic.Sprites
         /// <summary>
         /// The duration for which each frame is displayed.
         /// </summary>
-        internal TimeSpan FrameDuration { get; set; } =
-            new TimeSpan(0, 0, 0, 0, 500);
+        private readonly TimeSpan FrameDuration;
 
         internal Color TintColor { get; set; } = Color.White;
 
         public override float UnscaledWidth => DefaultFrameSize;
         public override float UnscaledHeight => DefaultFrameSize;
 
-        public AnimatedSprite(Texture2D texture, int x, int y) : base(x, y)
+        public AnimatedSprite(Texture2D texture, int x, int y, TimeSpan frameDuration) : base(x, y)
         {
             mTexture = texture;
             mFrameCount = texture.Width / DefaultFrameSize;
+            FrameDuration = frameDuration;
         }
 
         protected override void Draw(SpriteBatch spriteBatch,
