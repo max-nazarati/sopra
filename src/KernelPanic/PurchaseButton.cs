@@ -61,12 +61,9 @@ namespace KernelPanic
         internal bool PossiblyEnabled { get; set; } = true;
         
         /// <inheritdoc />
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
-            if (Button == null)
-                return;
-            
-            Button.Update(gameTime);
+            Button.Update(gameTime, invertedViewMatrix);
             Button.Enabled = PossiblyEnabled && Action.Available(Player);
         }
 
