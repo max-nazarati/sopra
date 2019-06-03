@@ -21,17 +21,6 @@ namespace KernelPanic
 
         public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
         {
-            /*
-            mGrid = laneSide == Grid.LaneSide.Left ? new Grid(content, laneSide, 
-                new Rectangle(0, 0, 16, 42)) : new Grid(content, laneSide, 
-                new Rectangle(32, 0, 16, 42));
-            EntityGraph = entityGraph;
-            mBase = new Base();
-
-            // mTile and Init AStar is for debugging and showing the Pathfinding
-            // mTile = content.Load<Texture2D>("LaneTile");
-            
-            */
             EntityGraph = new EntityGraph(sprites);
             mTarget = new Base();
             mGrid = new Grid(sprites, laneSide);
