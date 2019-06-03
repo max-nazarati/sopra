@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
@@ -67,6 +67,7 @@ namespace KernelPanic
         {
             mGrid.Draw(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
+            mAStar.DrawExplored(spriteBatch, gameTime);
             mAStar.DrawPath(spriteBatch, gameTime);
         }
         
@@ -88,13 +89,41 @@ namespace KernelPanic
             Point start = new Point(0, 0);
             Point target = new Point(0, 10);
 
-            // write every coordinate in the grid on the console
+            // simple test: points in blocked are not allowed for the A* to be used
+            List<Point> blocked = new List<Point>();
+            
+            /* // debug test a global minimum
+            blocked.Add(new Point(0, 5));
+            blocked.Add(new Point(1, 5));
+            blocked.Add(new Point(2, 5));
+            blocked.Add(new Point(3, 5));
+            blocked.Add(new Point(4, 5));
+            blocked.Add(new Point(5, 5));
+            blocked.Add(new Point(5, 4));
+            blocked.Add(new Point(5, 3));
+            blocked.Add(new Point(5, 2));
+            */
+            
+            /* // debug test a blocked field
+            blocked.Add(new Point(0, 4));
+            blocked.Add(new Point(1, 4));
+            blocked.Add(new Point(2, 4));
+            blocked.Add(new Point(3, 4));
+            blocked.Add(new Point(4, 4));
+            blocked.Add(new Point(5, 3));
+            blocked.Add(new Point(6, 2));
+            blocked.Add(new Point(7, 1));
+            blocked.Add(new Point(8, 0));
+            */
+
+            List<Point> walkable = new List<Point>();
+            // only add the point if field is not blocked
             foreach (var point in mGrid.CoordSystem)
             {
-                Console.WriteLine(point);
+                if (!blocked.Contains(point)) { walkable.Add(point); }
             }
-            
-            mAStar = new AStar(mGrid.CoordSystem, start, target, sprite);
+
+            mAStar = new AStar(walkable, start, target, sprite);
             mAStar.CalculatePath();
             // mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem[0], mGrid.CoordSystem[mGrid.CoordSystem.Count - 1]);
             // mAStar.SetStart(new Point(0, 0));

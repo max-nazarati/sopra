@@ -483,6 +483,16 @@ namespace KernelPanic
             queue.Insert(node8);
             queue.Insert(node9);
         }*/
+
+        public void DrawExplored(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (mExploredNodes == null) { return; }
+
+            foreach (var point in mExploredNodes)
+            {
+                DrawTile(spriteBatch, point, gameTime, Color.Pink);
+            }
+        }
         public void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
             // Console.WriteLine("drawing the path");
@@ -492,16 +502,23 @@ namespace KernelPanic
             }
             foreach (var point in mPath)
             {
-                DrawTile(spriteBatch, point, gameTime);
+                if (point == mTarget)
+                {
+                    DrawTile(spriteBatch, point, gameTime, Color.ForestGreen);
+                }
+                else
+                {
+                    DrawTile(spriteBatch, point, gameTime, Color.Red);
+                }
             }
 
         }
-        private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime)
+        private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime, Color  color)
         {
             // var pos = Grid.ScreenPositionFromCoordinate(point);
             // spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
             mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
-            mTile.TintColor = Color.Red;
+            mTile.TintColor = color;
             mTile.Draw(spriteBatch, gameTime);
         }
     }
