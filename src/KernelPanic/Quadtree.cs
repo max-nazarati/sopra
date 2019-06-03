@@ -151,7 +151,7 @@ namespace KernelPanic
                 }
                 
                 // insert all elements from mObjects to the newly added Childs
-                foreach (var @object in mObjects)
+                foreach (var @object in new List<Entity>(mObjects))
                 {
                     var index = CalculatePosition(@object);
                     if (index != -1)
