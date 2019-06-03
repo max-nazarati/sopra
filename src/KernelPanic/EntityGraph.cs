@@ -24,11 +24,11 @@ namespace KernelPanic
             return false;
         }
 
-        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        public void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
         {
             foreach (var entity in mQuadtree)
             {
-                entity.Update(gameTime, invertedViewMatrix);
+                entity.Update(positionProvider, gameTime, invertedViewMatrix);
             }
 
             mQuadtree.Rebuild();

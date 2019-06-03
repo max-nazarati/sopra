@@ -15,7 +15,7 @@ namespace KernelPanic
 
         public bool Selected { get; set; }
 
-        internal virtual void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
         {
             var input = InputManager.Default;
             if (input.MousePressed(InputManager.MouseButton.Left))

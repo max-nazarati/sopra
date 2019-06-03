@@ -68,6 +68,7 @@
     <Compile Include="Lane.cs" />
     <Compile Include="PlayTime.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PositionProvider.cs" />
     <Compile Include="PurchasableAction.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameStateManager.cs" />

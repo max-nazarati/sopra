@@ -60,7 +60,8 @@ namespace KernelPanic
                 }
             }
 
-            EntityGraph.Update(gameTime, invertedViewMatrix);
+            var positionProvider = new PositionProvider(mGrid, EntityGraph);
+            EntityGraph.Update(positionProvider, gameTime, invertedViewMatrix);
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)

@@ -27,10 +27,5 @@ namespace KernelPanic
 
         internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateTrojan());
-
-        internal override void Update(GameTime gameTime, Matrix invertedViewMatrix)
-        {
-            // throw new System.NotImplementedException();
-        }
     }
 }
