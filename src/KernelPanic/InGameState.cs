@@ -24,7 +24,6 @@ namespace KernelPanic
         // private HashSet<Wave> mActiveWaves;
         // private SelectionManager mSelectionManager;
 
-
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
             mGameStateManager = gameStateManager;
@@ -35,12 +34,7 @@ namespace KernelPanic
             mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);
             mHud = new InGameOverlay(mPlayerA, mPlayerB, gameStateManager.Sprite);
 
-            // testing movable objects and collision
-            // TODO: move to Lane clas
-
             var eg = mBoard.LeftLane.EntityGraph;
-            eg.Add(Troupe.CreateSquare(new Point(0), Color.Green, gameStateManager.Sprite));
-            eg.Add(Troupe.CreateSquare(new Point(200), Color.Red, gameStateManager.Sprite));
             eg.Add(Troupe.CreateTrojan(new Point(400), gameStateManager.Sprite));
             eg.Add(Troupe.CreateFirefox(new Point(300), gameStateManager.Sprite));
         }
