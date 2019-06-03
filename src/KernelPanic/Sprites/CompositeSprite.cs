@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,8 +13,26 @@ namespace KernelPanic
         {
         }
 
-        public override float UnscaledWidth => Children.Max(sprite => new float?(sprite.X - sprite.Origin.X + sprite.UnscaledWidth)) ?? 0.0f;
-        public override float UnscaledHeight => Children.Max(sprite => new float?(sprite.Y - sprite.Origin.Y + sprite.UnscaledHeight)) ?? 0.0f;
+        public override float UnscaledWidth => UnscaledSize.X;
+        public override float UnscaledHeight => UnscaledSize.Y;
+
+        public override Vector2 UnscaledSize
+        {
+            get
+            {
+                float minX = 0, minY = 0, maxX = 0, maxY = 0;
+
+                foreach (var child in Children)
+                {
+                    minX = Math.Min(minX, child.X - child.Origin.X);
+                    minY = Math.Min(minY, child.Y - child.Origin.Y);
+                    maxX = Math.Max(maxX, child.X - child.Origin.X + child.Width);
+                    maxY = Math.Max(maxY, child.Y - child.Origin.Y + child.Height);
+                }
+                
+                return new Vector2(maxX - minX, maxY - minY);
+            }
+        }
 
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
