@@ -57,7 +57,7 @@ namespace KernelPanic
         {
             if (InputManager.Default.KeyPressed(Keys.Escape))
             {
-                mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager.Game.Exit, mGameStateManager));
+                mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager));
             }
 
             var viewMatrix = Camera.GetViewMatrix();

@@ -12,7 +12,6 @@ namespace KernelPanic
     internal sealed class Game1 : Game
     {
         private SpriteBatch mSpriteBatch;
-        private Camera2D mCamera;
         private Board mBoard;
 
         private readonly GraphicsDeviceManager mGraphics;
@@ -51,7 +50,6 @@ namespace KernelPanic
         {
             // TODO: Add your initialization logic here
             IsMouseVisible = true;
-            mCamera = new Camera2D(GraphicsDevice.Viewport.Bounds.Size);
             base.Initialize();
         }
 
@@ -80,7 +78,7 @@ namespace KernelPanic
 
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(GraphicsDevice);
-            mGameStateManager = new GameStateManager(this, new SpriteManager(Content, GraphicsDevice));
+            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice));
             mGameStateManager.Push(new InGameState(mGameStateManager));
 
             // TODO: use this.Content to load your game content here

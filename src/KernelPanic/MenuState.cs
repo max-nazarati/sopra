@@ -14,7 +14,7 @@ namespace KernelPanic
         {
         }
 
-        public static MenuState CreateMainMenu(Action exitAction, GameStateManager stateManager)
+        public static MenuState CreateMainMenu(GameStateManager stateManager)
         {
             var playButton = CreateButton(stateManager.Sprite, "SPIELEN", 200);
             playButton.Clicked += _ => stateManager.Push(CreatePlayMenu(stateManager));
@@ -35,7 +35,7 @@ namespace KernelPanic
             creditsButton.Clicked += _ => stateManager.Push(CreateCreditsMenu(stateManager));
             
             var quitButton = CreateButton(stateManager.Sprite, "BEENDEN", 950);
-            quitButton.Clicked += _ => exitAction();
+            quitButton.Clicked += _ => stateManager.ExitAction();
             
             return new MenuState(stateManager)
             {
