@@ -4,28 +4,30 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    public class Board
+    internal sealed class Board
     {
-        private readonly Lane mLeftLane, mRightLane;
+        internal Lane LeftLane { get; }
+        internal Lane RightLane { get; }
 
-        public Board(ContentManager content)
+        internal Board(SpriteManager content)
         {
-            mLeftLane = new Lane(Grid.LaneSide.Left, new EntityGraph(), content);
-            mRightLane = new Lane(Grid.LaneSide.Right, new EntityGraph(), content);
+            LeftLane = new Lane(Grid.LaneSide.Left, content);
+            RightLane = new Lane(Grid.LaneSide.Right, content);
         }
 
-        public void DrawLane(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
+        internal void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
-            mLeftLane.Draw(spriteBatch, viewMatrix, gameTime);
-            mRightLane.Draw(spriteBatch, viewMatrix, gameTime);
+            LeftLane.Update(gameTime, invertedViewMatrix);
+            RightLane.Update(gameTime, invertedViewMatrix);
         }
 
-        public void Update(GameTime gameTime)
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            mLeftLane.Update();
-            mRightLane.Update();
+            LeftLane.Draw(spriteBatch, gameTime);
+            RightLane.Draw(spriteBatch, gameTime);
         }
-    /*    
+
+        /*    
         public DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
         {
             

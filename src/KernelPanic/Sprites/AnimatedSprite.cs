@@ -1,48 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Sprites
 {
-    internal class AnimatedSprite : Sprite
+    internal sealed class AnimatedSprite : Sprite
     {
-        private List<Texture2D> mTextures;
-        private int mTextureIndex = 0;
-        private Rectangle mRectangle;
-        private CooldownComponent mTimer;
+        private const int DefaultFrameSize = 64;
+        private readonly Texture2D mTexture;
+        private readonly int mFrameCount;
 
-        public override float UnscaledWidth => throw new NotImplementedException();
+        /// <summary>
+        /// The duration for which each frame is displayed.
+        /// </summary>
+        private readonly TimeSpan FrameDuration;
 
-        public override float UnscaledHeight => throw new NotImplementedException();
+        internal Color TintColor { get; set; } = Color.White;
 
-        public AnimatedSprite(List<Texture2D> textures, int x, int y, int width, int height) : base(x, y)
+        public override float UnscaledWidth => DefaultFrameSize;
+        public override float UnscaledHeight => DefaultFrameSize;
+
+        public AnimatedSprite(Texture2D texture, int x, int y, TimeSpan frameDuration) : base(x, y)
         {
-            mTextures = textures;
-            mTimer = new CooldownComponent(new TimeSpan(0, 0, 0, 0, 250));
-            mTimer.CooledDown += CooledDownDelegate;
-            mRectangle = new Rectangle(x, y, width, height);
+            mTexture = texture;
+            mFrameCount = texture.Width / DefaultFrameSize;
+            FrameDuration = frameDuration;
         }
 
-        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        protected override void Draw(SpriteBatch spriteBatch,
+            GameTime gameTime,
+            Vector2 position,
+            float rotation,
+            float scale)
         {
-            spriteBatch.Draw(mTextures[mTextureIndex], mRectangle, Color.White);
-        }
+            var textureIndex = gameTime.TotalGameTime.Ticks / FrameDuration.Ticks % mFrameCount;
+            var sourceRect =
+                new Rectangle((int)textureIndex * DefaultFrameSize, 0, DefaultFrameSize, DefaultFrameSize);
 
-        public void CooledDownDelegate(CooldownComponent source)
-        {
-            mTextureIndex = (mTextureIndex + 1) % mTextures.Count;
-            source.Reset();
-        }
-
-        public void Update(GameTime time)
-        {
-            mTimer.Update(time);
-        }
-
-        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime, Vector2 offset, float rotation, float scale)
-        {
-            throw new NotImplementedException();
+            spriteBatch.Draw(mTexture,
+                position,
+                sourceRect,
+                TintColor,
+                rotation,
+                Origin,
+                scale,
+                SpriteEffects.None,
+                1f);
         }
     }
 }

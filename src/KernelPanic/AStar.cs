@@ -215,11 +215,11 @@ namespace KernelPanic
 
         // debugging the path visually
         private List<Point> mPath;
-        private readonly Texture2D mTile;
+        private readonly ImageSprite mTile;
 
 
 
-        public AStar(List<Point> coordinateList, Point start, Point target, ContentManager content)
+        internal AStar(List<Point> coordinateList, Point start, Point target, SpriteManager sprite)
         {
             mCoordinateList = coordinateList;
             mExploredNodes = new List<Point>();
@@ -227,7 +227,8 @@ namespace KernelPanic
             mStart = start;
 
             // debug visually (only reason for imcludijng contentmanager)
-            mTile = content.Load<Texture2D>("LaneTile");
+            // mTile = content.Load<Texture2D>("LaneTile");
+            mTile = Grid.CreateTile(sprite);
         }
 
         private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
@@ -482,22 +483,25 @@ namespace KernelPanic
             queue.Insert(node8);
             queue.Insert(node9);
         }*/
-        public void DrawPath(SpriteBatch spriteBatch)
+        public void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            // Console.WriteLine("drawing the path");
             if (mPath == null)
             {
                 mPath = FindPath();
             }
             foreach (var point in mPath)
             {
-                DrawTile(spriteBatch, point);
+                DrawTile(spriteBatch, point, gameTime);
             }
 
         }
-        private void DrawTile(SpriteBatch spriteBatch, Point point)
+        private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime)
         {
-            var pos = Grid.ScreenPositionFromCoordinate(point);
-            spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
+            // var pos = Grid.ScreenPositionFromCoordinate(point);
+            // spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
+            mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
+            mTile.Draw(spriteBatch, gameTime);
         }
     }
  

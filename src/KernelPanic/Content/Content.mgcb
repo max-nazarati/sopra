@@ -68,6 +68,13 @@
 /processorParam:TextureFormat=Color
 /build:GameBackground.png
 
+#begin HUDFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:HUDFont.spritefont
+
 #begin Kachel.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -115,6 +122,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:LaneTile.png
+
+#begin loading.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:loading.png
 
 #begin Mauer.png
 /importer:TextureImporter
@@ -188,6 +207,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tower.png
+
+#begin trojan.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:trojan.png
 
 #begin Unilogo.png
 /importer:TextureImporter
