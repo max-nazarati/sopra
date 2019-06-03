@@ -9,10 +9,13 @@ namespace KernelPanic
         private readonly List<Entity> mEntities;
         private int? mActiveUnit;
 
+        private Quadtree mQuadtree;
+
         public EntityGraph()
         {
             mEntities = new List<Entity>();
             mActiveUnit = null;
+            mQuadtree = new Quadtree(1, new Rectangle(0, 0, 1000, 1000));
         }
 
         public void Add(Entity entity)

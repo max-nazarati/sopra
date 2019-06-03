@@ -5,20 +5,20 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    public class Quadtree
+    internal sealed class Quadtree
     {
         // max number of objects in each Node
         private static readonly int mMaxObjects = 10;
-        
+
         // max depth of the Quadtree
         private static readonly int mMaximumDepth = 15;
 
         private readonly int mLevel;
-        
+
         // size and position of the current node
         private readonly Rectangle mBounds;
 
-        private readonly List<Texture2D> mObjects;
+        private readonly List<Entity> mObjects;
 
         private readonly Quadtree[] mChilds;
 
@@ -27,7 +27,7 @@ namespace KernelPanic
             mChilds = new Quadtree[4];
             mLevel = level;
             mBounds = size;
-            mObjects = new List<Texture2D>();
+            mObjects = new List<Entity>();
         }
 
         /// <summary>
@@ -39,19 +39,19 @@ namespace KernelPanic
             {
                 child.Delete();
             }
+
             mObjects.Clear();
         }
 
         /// <summary>
         /// Calculates in which of the 4 nodes a certain sprite fits
         /// </summary>
-        private int CalculatePosition(Texture2D texture)
+        private int CalculatePosition(Entity entity)
         {
-            var textureRectangle = texture.Bounds;
-            var height = textureRectangle.Height;
-            var width = textureRectangle.Width;
-            var posX = textureRectangle.X;
-            var posY = textureRectangle.Y;
+            var height = entity.Sprite.Height;
+            var width = entity.Sprite.Width;
+            var posX = entity.Sprite.X;
+            var posY = entity.Sprite.Y;
 
             bool boolLeft, boolRight, boolTop, boolBottom;
             boolLeft = boolRight = boolTop = boolBottom = false;
@@ -114,20 +114,20 @@ namespace KernelPanic
             mChilds[3] = new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y+halfHeight, halfWidth, halfHeight));
         }
 
-        public void AddSprite(Texture2D texture)
+        public void AddSprite(Entity entity)
         {
             if (mChilds[0] != null)
             {
-                var index = CalculatePosition(texture);
+                var index = CalculatePosition(entity);
                 if (index != -1)
                 {
-                    mChilds[index].AddSprite(texture);
+                    mChilds[index].AddSprite(entity);
 
                     return;
                 }
             }
             
-            mObjects.Add(texture);
+            mObjects.Add(entity);
             
             if (mLevel < mMaximumDepth && mObjects.Count > mMaxObjects)
             {
@@ -137,28 +137,34 @@ namespace KernelPanic
                 }
                 
                 // insert all elements from mObjects to the newly added Childs
-                foreach (var Object in mObjects)
+                foreach (var @object in mObjects)
                 {
-                    var index = CalculatePosition(Object);
+                    var index = CalculatePosition(@object);
                     if (index != -1)
                     {
-                        mChilds[index].AddSprite(Object);
-                        mObjects.Remove(Object);
+                        mChilds[index].AddSprite(@object);
+                        mObjects.Remove(@object);
                     }
                 }
             }
         }
 
-        public List<Texture2D> NearObjects(Texture2D texture, List<Texture2D> returnList)
+        internal List<Entity> NearObjects(Entity entity)
         {
-            var index = CalculatePosition(texture);
+            var entities = new List<Entity>();
+            NearObjects(entity, entities);
+            return entities;
+        }
+
+        private void NearObjects(Entity entity, List<Entity> returnList)
+        {
+            var index = CalculatePosition(entity);
             if (index != -1 && mChilds[0] != null)
             {
-                NearObjects(texture, returnList);
+                NearObjects(entity, returnList);
             }
             
             returnList.AddRange(mObjects);
-            return returnList;
         }
     }
 }
