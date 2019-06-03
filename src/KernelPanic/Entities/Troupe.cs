@@ -27,5 +27,8 @@ namespace KernelPanic
 
         internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateTrojan());
+
+        internal static Troupe CreateFirefox(Point position, SpriteManager spriteManager) =>
+            Create(position, spriteManager.CreateFirefox());
     }
 }

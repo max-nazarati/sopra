@@ -42,6 +42,7 @@ namespace KernelPanic
             eg.Add(Troupe.CreateSquare(new Point(0), Color.Green, gameStateManager.Sprite));
             eg.Add(Troupe.CreateSquare(new Point(200), Color.Red, gameStateManager.Sprite));
             eg.Add(Troupe.CreateTrojan(new Point(400), gameStateManager.Sprite));
+            eg.Add(Troupe.CreateFirefox(new Point(300), gameStateManager.Sprite));
         }
 
         public override void Update(GameTime gameTime, bool isOverlay)

@@ -56,6 +56,18 @@
 /processorParam:TextureFormat=Compressed
 /build:../../KernelPanic/Content/ButtonFont.spritefont;ButtonFont.spritefont
 
+#begin ../../KernelPanic/Content/firefox_left.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/firefox_left.png;firefox_left.png
+
 #begin ../../KernelPanic/Content/GameBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor

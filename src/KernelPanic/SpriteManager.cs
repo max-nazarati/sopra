@@ -19,7 +19,8 @@ namespace KernelPanic
             Tower,
             Projectile,
             Trojan,
-            SelectionBorder
+            SelectionBorder,
+            FoxLeft
         }
 
         private enum Font
@@ -46,6 +47,7 @@ namespace KernelPanic
                 Texture(Image.Tower, "tower"),
                 Texture(Image.Projectile, "Projectile"),
                 Texture(Image.Trojan, "trojan"),
+                Texture(Image.FoxLeft, "firefox_left"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -181,6 +183,9 @@ namespace KernelPanic
 
         internal AnimatedSprite CreateTrojan() =>
             new AnimatedSprite(Lookup(Image.Trojan), 0, 0, new TimeSpan(0, 0, 0, 0, 300));
+
+        internal AnimatedSprite CreateFirefox() =>
+            new AnimatedSprite(Lookup(Image.FoxLeft), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
 
         internal ImageSprite CreateColoredSquare(Color color)
         {
