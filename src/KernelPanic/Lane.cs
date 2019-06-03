@@ -68,53 +68,80 @@ namespace KernelPanic
             mGrid.Draw(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
             mAStar.DrawExplored(spriteBatch, gameTime);
-            mAStar.DrawPath(spriteBatch, gameTime);
-        }
-        
-/*
-        public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
-        {
             
+            mAStar.DrawPath(spriteBatch, gameTime);
+            mAStar.DrawStartAndTarget(spriteBatch, gameTime);
         }
         
+        /*
+        public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
+        {    
+        }
         */
 
-        // -------------------------- A STAR DEBUG ----------------------------------------------------------------------
-
         
+        // -------------------------- A STAR DEBUG ----------------------------------------------------------------------
         // private void InitAStar(SpriteManager content)
         private void InitAStar(SpriteManager sprite)
         {
             // set start and target
             Point start = new Point(0, 0);
-            Point target = new Point(0, 10);
+            Point target = new Point(0, 15);
 
             // simple test: points in blocked are not allowed for the A* to be used
             List<Point> blocked = new List<Point>();
+
+            // choosing a field for testing
+            int testEnvironment = 1;
             
-            /* // debug test a global minimum
-            blocked.Add(new Point(0, 5));
-            blocked.Add(new Point(1, 5));
-            blocked.Add(new Point(2, 5));
-            blocked.Add(new Point(3, 5));
-            blocked.Add(new Point(4, 5));
-            blocked.Add(new Point(5, 5));
-            blocked.Add(new Point(5, 4));
-            blocked.Add(new Point(5, 3));
-            blocked.Add(new Point(5, 2));
-            */
+            if (testEnvironment == 1) // debug test a local minimum
+            {
+                blocked.Add(new Point(0, 5));
+                blocked.Add(new Point(1, 5));
+                blocked.Add(new Point(2, 5));
+                blocked.Add(new Point(3, 5));
+                blocked.Add(new Point(4, 5));
+                blocked.Add(new Point(5, 5));
+                blocked.Add(new Point(5, 4));
+                blocked.Add(new Point(5, 3));
+                blocked.Add(new Point(5, 2));
+            }
             
-            /* // debug test a blocked field
-            blocked.Add(new Point(0, 4));
-            blocked.Add(new Point(1, 4));
-            blocked.Add(new Point(2, 4));
-            blocked.Add(new Point(3, 4));
-            blocked.Add(new Point(4, 4));
-            blocked.Add(new Point(5, 3));
-            blocked.Add(new Point(6, 2));
-            blocked.Add(new Point(7, 1));
-            blocked.Add(new Point(8, 0));
-            */
+            if (testEnvironment == 2) // debug test a way deeper local minimum
+            {
+                blocked.Add(new Point(0, 13));
+                blocked.Add(new Point(1, 13));
+                blocked.Add(new Point(2, 13));
+                blocked.Add(new Point(3, 13));
+                blocked.Add(new Point(4, 13));
+                blocked.Add(new Point(5, 13));
+                blocked.Add(new Point(5, 12));
+                blocked.Add(new Point(5, 11));
+                blocked.Add(new Point(5, 10));
+                blocked.Add(new Point(5, 9));
+                blocked.Add(new Point(5, 8));
+                blocked.Add(new Point(5, 7));
+                blocked.Add(new Point(5, 6));
+                blocked.Add(new Point(5, 5));
+                blocked.Add(new Point(5, 4));
+                blocked.Add(new Point(5, 3));
+                blocked.Add(new Point(5, 2));
+            }
+            
+            if (testEnvironment == 3) // debug test a impossible field
+            {
+                blocked.Add(new Point(0, 11));
+                blocked.Add(new Point(1, 11));
+                blocked.Add(new Point(2, 11));
+                blocked.Add(new Point(3, 11));
+                blocked.Add(new Point(4, 11));
+                blocked.Add(new Point(5, 11));
+                blocked.Add(new Point(6, 11));
+                blocked.Add(new Point(7, 11));
+                blocked.Add(new Point(8, 11));
+                blocked.Add(new Point(9, 11));
+            }
+            
 
             List<Point> walkable = new List<Point>();
             // only add the point if field is not blocked

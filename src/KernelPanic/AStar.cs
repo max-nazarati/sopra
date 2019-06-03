@@ -265,7 +265,7 @@ namespace KernelPanic
             Point down = new Point(x, y + 1);
             Point right = new Point(x + 1, y);
             double estimatedCost;
-            double cost = node.Cost + 1;
+            double cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
             bool isStartNode = false;
             bool isTargetNode = false;
 
@@ -484,6 +484,12 @@ namespace KernelPanic
             queue.Insert(node9);
         }*/
 
+        public void DrawStartAndTarget(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            DrawTile(spriteBatch, mStart, gameTime, Color.Firebrick);
+            DrawTile(spriteBatch, mTarget, gameTime, Color.Firebrick);
+            
+        }
         public void DrawExplored(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if (mExploredNodes == null) { return; }
@@ -502,11 +508,6 @@ namespace KernelPanic
             }
             foreach (var point in mPath)
             {
-                if (point == mTarget)
-                {
-                    DrawTile(spriteBatch, point, gameTime, Color.ForestGreen);
-                }
-                else
                 {
                     DrawTile(spriteBatch, point, gameTime, Color.Red);
                 }
