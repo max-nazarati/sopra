@@ -5,24 +5,25 @@ namespace KernelPanic
 {
     internal sealed class Board
     {
-        private readonly Lane mLeftLane, mRightLane;
+        internal Lane LeftLane { get; }
+        internal Lane RightLane { get; }
 
         internal Board(SpriteManager content)
         {
-            mLeftLane = new Lane(Grid.LaneSide.Left, content);
-            mRightLane = new Lane(Grid.LaneSide.Right, content);
+            LeftLane = new Lane(Grid.LaneSide.Left, content);
+            RightLane = new Lane(Grid.LaneSide.Right, content);
         }
 
         internal void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
-            mLeftLane.Update(gameTime, invertedViewMatrix);
-            mRightLane.Update(gameTime, invertedViewMatrix);
+            LeftLane.Update(gameTime, invertedViewMatrix);
+            RightLane.Update(gameTime, invertedViewMatrix);
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            mLeftLane.Draw(spriteBatch, gameTime);
-            mRightLane.Draw(spriteBatch, gameTime);
+            LeftLane.Draw(spriteBatch, gameTime);
+            RightLane.Draw(spriteBatch, gameTime);
         }
         
     /*    

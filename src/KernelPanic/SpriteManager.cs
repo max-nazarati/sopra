@@ -178,13 +178,13 @@ namespace KernelPanic
         }
 
         internal AnimatedSprite CreateTrojan() =>
-            new AnimatedSprite(Lookup(Image.Trojan), 400, 400);
+            new AnimatedSprite(Lookup(Image.Trojan), 0, 0);
 
-        internal (ImageSprite Sprite, Texture2D Texture) CreateColoredSquare(Color color)
+        internal ImageSprite CreateColoredSquare(Color color)
         {
             var texture = new Texture2D(GraphicsDevice, 1, 1);
             texture.SetData(new[] {color});
-            return (new ImageSprite(texture, 0, 0), texture);
+            return new ImageSprite(texture, 0, 0);
         }
 
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;

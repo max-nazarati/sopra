@@ -1,19 +1,33 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Diagnostics;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
     internal class Troupe : Unit
     {
-        private Troupe(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, speed, life, attackStrength, sprite)
+        private Troupe(int price, int speed, int life, int attackStrength, Sprite sprite)
+            : base(price, speed, life, attackStrength, sprite)
         {
         }
 
-        internal static Troupe Create(Point position, Color color, SpriteManager spriteManager)
+        /// <summary>
+        /// Convenience function for creating a Troupe. The sprite is automatically scaled to the size of one tile.
+        /// </summary>
+        /// <param name="position">The point where to position this troupe.</param>
+        /// <param name="sprite">The sprite to display.</param>
+        /// <returns>A new Troupe</returns>
+        private static Troupe Create(Point position, Sprite sprite)
         {
-            var sprite = spriteManager.CreateColoredSquare(color).Sprite;
-            sprite.DestinationRectangle = new Rectangle(position, new Point(Grid.KachelSize));
+            sprite.Position = position.ToVector2();
+            sprite.ScaleToWidth(Grid.KachelSize);
             return new Troupe(1, 1, 1, 1, sprite);
         }
+
+        internal static Troupe CreateSquare(Point position, Color color, SpriteManager spriteManager) =>
+            Create(position, spriteManager.CreateColoredSquare(color));
+
+        internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
+            Create(position, spriteManager.CreateTrojan());
 
         internal override void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {

@@ -10,47 +10,39 @@ namespace KernelPanic
     [DataContract]
     internal sealed class InGameState : AGameState
     {
+        private readonly GameStateManager mGameStateManager;
+        
         [DataMember]
         public new Camera2D Camera { get; set; }
-        //private Camera2D mCamera;
-        public int SaveSlot { get; set; }
+
+        private readonly InGameOverlay mHud;
+        private readonly Board mBoard;
+        private readonly Player mPlayerA;
+        private readonly Player mPlayerB;
+
+        //public int SaveSlot { get; set; }
         //public SaveGame CurrentSaveGame { get; private set; } no such class yet
         //private HashSet<Wave> mActiveWaves;
         //private SelectionManager mSelectionManager;
-        private Board mBoard;
-        private Player mPlayerA;
-        private Player mPlayerB;
-        private GameStateManager mGameStateManager;
-        private EntityGraph mEntityGraph;
-        private CollisionManager mCollisionManager;
-        private Unit mUnit1;
-        private Unit mUnit2;
-        private CooldownComponent mCoolDown;
 
-        private InGameOverlay mHud;
-        private Sprites.AnimatedSprite mTestSprite;
+
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
+            mGameStateManager = gameStateManager;
+            
             Camera = new Camera2D(gameStateManager.Sprite.ScreenSize);
             mBoard = new Board(gameStateManager.Sprite);
-            mGameStateManager = gameStateManager;
             mPlayerA = new Player();
             mPlayerB = new Player();
             mHud = new InGameOverlay(mPlayerA, mPlayerB, gameStateManager.Sprite);
 
             // testing movable objects and collision
             // TODO: move to Lane class
-            mEntityGraph = new EntityGraph();
-            mCollisionManager = new CollisionManager();
-            mUnit1 = Troupe.Create(new Point(0), Color.Green, gameStateManager.Sprite);
-            mUnit2 = Troupe.Create(new Point(200), Color.Red, gameStateManager.Sprite);
-            mEntityGraph.Add(mUnit1);
-            mEntityGraph.Add(mUnit2);
-            mCollisionManager.CreatedObject(mUnit1);
-            mCollisionManager.CreatedObject(mUnit2);
 
-            mTestSprite = gameStateManager.Sprite.CreateTrojan();
-            mTestSprite.ScaleToWidth(Grid.KachelSize);
+            var eg = mBoard.LeftLane.EntityGraph;
+            eg.Add(Troupe.CreateSquare(new Point(0), Color.Green, gameStateManager.Sprite));
+            eg.Add(Troupe.CreateSquare(new Point(200), Color.Red, gameStateManager.Sprite));
+            eg.Add(Troupe.CreateTrojan(new Point(400), gameStateManager.Sprite));
         }
 
         public override void Update(GameTime gameTime, bool isOverlay)
@@ -63,8 +55,6 @@ namespace KernelPanic
             var viewMatrix = Camera.GetViewMatrix();
             var invertedViewMatrix = Matrix.Invert(viewMatrix);
 
-            mEntityGraph.Update(gameTime, viewMatrix);
-            mCollisionManager.Update();
             mBoard.Update(gameTime, invertedViewMatrix);
             Camera.Update();
             mHud.Update(gameTime);
@@ -77,8 +67,6 @@ namespace KernelPanic
                 transformMatrix: viewMatrix,
                 samplerState: SamplerState.PointClamp);
             mBoard.Draw(spriteBatch, gameTime);
-            mEntityGraph.Draw(spriteBatch, gameTime);
-            mTestSprite.Draw(spriteBatch, gameTime);
             spriteBatch.End();
             mHud.Draw(spriteBatch, gameTime);
         }
