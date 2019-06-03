@@ -16,9 +16,9 @@ namespace KernelPanic.Sprites
 
         public override float UnscaledHeight => throw new NotImplementedException();
 
-        public AnimatedSprite(List<Texture2D> Textures, int x, int y, int width, int height) : base(x, y)
+        public AnimatedSprite(List<Texture2D> textures, int x, int y, int width, int height) : base(x, y)
         {
-            mTextures = Textures;
+            mTextures = textures;
             mTimer = new CooldownComponent(new TimeSpan(0, 0, 0, 0, 250));
             mTimer.CooledDown += CooledDownDelegate;
             mRectangle = new Rectangle(x, y, width, height);

@@ -19,7 +19,12 @@ namespace KernelPanic
             mLeftLane.Draw(spriteBatch, viewMatrix, gameTime);
             mRightLane.Draw(spriteBatch, viewMatrix, gameTime);
         }
-        
+
+        public void Update(GameTime gameTime)
+        {
+            mLeftLane.Update();
+            mRightLane.Update();
+        }
     /*    
         public DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
         {

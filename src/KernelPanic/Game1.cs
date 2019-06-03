@@ -61,6 +61,7 @@ namespace KernelPanic
         /// </summary>
         protected override void LoadContent()
         {
+            /*
             List<Point> map = new List<Point>();
             for (int i = 0; i < 500; i++)
             {
@@ -77,6 +78,7 @@ namespace KernelPanic
             {
                 Console.WriteLine(path[i].ToString());
             }
+            */
 
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(GraphicsDevice);

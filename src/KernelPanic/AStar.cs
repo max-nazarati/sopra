@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -19,7 +21,7 @@ namespace KernelPanic
         private Point mPosition;
         private Node mParent;
         private double mCost;
-        private double mEstimatedCost;
+
         // private List<Point> mNeighbours;
         private bool mIsStart;
         private bool mIsGoal;
@@ -28,7 +30,8 @@ namespace KernelPanic
         public Point Position { get => mPosition; set => mPosition = value; }
         public Node Parent { get => mParent; set => mParent = value; }
         public double Cost { get => mCost; set => mCost = value; }
-        public double EstimatedCost { get => mEstimatedCost; set => mEstimatedCost = value; }
+        public double EstimatedCost { get; set; }
+
         public double Key => mKey;
 
         public Node(Point coordinate, Node parent, double cost, double estimatedCost,
@@ -37,7 +40,7 @@ namespace KernelPanic
             mPosition = coordinate;
             mParent = parent;
             mCost = cost;
-            mEstimatedCost = estimatedCost;
+            EstimatedCost = estimatedCost;
             mKey = cost + estimatedCost;
             mIsStart = start;
             mIsGoal = goal;
@@ -46,7 +49,7 @@ namespace KernelPanic
 
     }
 
-    class PriorityQueue
+    sealed class PriorityQueue
     {
         private List<Node> mItems;
         private int mCount;
@@ -146,11 +149,13 @@ namespace KernelPanic
             throw new Exception("cant Remove from an empty Priority Queue");
         }
 
+        /*
         public Node GetMin()
         {
             if (mItems.Count > 0) return mItems[0];
             throw new Exception("test");
         }
+        */
 
         /// <summary>
         /// swap the array position of two elements in the Q
@@ -198,7 +203,6 @@ namespace KernelPanic
         }
 
         public bool IsEmpty() => mCount == 0;
-        public int Count { get => mCount; }
 
     }
     public class AStar
@@ -209,41 +213,41 @@ namespace KernelPanic
         private Point mTarget;
         private Point mStart;
 
-        public AStar(List<Point> coordinateList, Point start, Point target)
+        // debugging the path visually
+        private List<Point> mPath;
+        private readonly Texture2D mTile;
+
+
+
+        public AStar(List<Point> coordinateList, Point start, Point target, ContentManager content)
         {
             mCoordinateList = coordinateList;
             mExploredNodes = new List<Point>();
             mTarget = target;
             mStart = start;
+
+            // debug visually (only reason for imcludijng contentmanager)
+            mTile = content.Load<Texture2D>("LaneTile");
         }
 
         private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
         
         // private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
 
-        /*
-        void LoadListIntoQueue(List<Point> coordinateList, Point start)
-        {
-            foreach (var point in coordinateList)
-            {
-                var newItem = new Node(point, 100);
-                if (point == start)
-                {
-                    newItem.Key = 1;
-                    createNeighbours();
-                }
-                mHeap.Insert(newItem, newItem.Key);
-            }
-        } */
-
         public void SetStart(Point start)
         {
-            mStart = start;
+            if (mCoordinateList.Contains(start))
+            {
+                mStart = start;
+            }
         }
         
         public void SetTarget(Point target)
         {
-            mTarget = target;
+            if (mCoordinateList.Contains(target))
+            {
+                mTarget = target;
+            }
         }
 
         public bool IsStartPosition(Point position) => position == mStart;
@@ -252,7 +256,7 @@ namespace KernelPanic
 
         public List<Node> CreateNeighbours(Node node)
         {
-            List<Node> neighbours = new List<Node>();
+            var neighbours = new List<Node>();
             var x = node.Position.X;
             var y = node.Position.Y;
             Point up = new Point(x, y - 1);
@@ -320,8 +324,9 @@ namespace KernelPanic
         }
         public Node FindTarget()
         {
+
             var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true, false);
-            double heuristicValue = startNode.Key;
+            // double heuristicValue = startNode.Key;
             mHeap.Insert(startNode);
             
             while (!mHeap.IsEmpty())
@@ -329,15 +334,25 @@ namespace KernelPanic
                 var heapNode = mHeap.RemoveMin();
                 if (IsTargetPosition(heapNode.Position)) return heapNode;
                 ExpandNode(heapNode);
+                Console.Write("I am currently expanding: ");
+                Console.WriteLine(heapNode.Position);
             }
 
+            Console.WriteLine("Couldn't find a path");
             return null;
         }
 
         public List<Point> FindPath()
         {
+            // Reset();
             List<Point> path = new List<Point>();
             Node goalNode = FindTarget();
+            if (goalNode == null)
+            {
+                Console.Write("Goal Node was null: ");
+                Console.WriteLine("why tho");
+                return path;
+            }
             path.Add(goalNode.Position);
             Node currenNode = goalNode;
             Point currentPosition = goalNode.Position;
@@ -352,6 +367,94 @@ namespace KernelPanic
 
             return path;
         }
+
+        public void CalculatePath()
+        {
+            // Reset();
+            List<Point> path = new List<Point>();
+            Node goalNode = FindTarget();
+            if (goalNode == null)
+            {
+                Console.Write("Goal Node was null: ");
+                Console.WriteLine("why tho");
+                return;
+            }
+            path.Add(goalNode.Position);
+            Node currenNode = goalNode;
+            Point currentPosition = goalNode.Position;
+            int count = 0;
+            while (!IsStartPosition(currentPosition) && count < 1000)
+            {
+                count++;
+                currenNode = currenNode.Parent;
+                currentPosition = currenNode.Position;
+                path.Add(currentPosition);
+            }
+            path.Reverse();
+            mPath = path;
+        }
+
+        public void Reset()
+        {
+            mExploredNodes.Clear();
+            mHeap = new PriorityQueue();
+        }
+
+        public void UpdateStartAndTarget()
+        {
+            if (InputManager.Default.KeyPressed(Keys.Up, Keys.Left, Keys.Down, Keys.Right))
+            {
+                if (InputManager.Default.KeyPressed(Keys.Up))
+                {
+                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    {
+                        SetStart(new Point(mStart.X, mStart.Y - 1));
+                    }
+                    else
+                    {
+                        SetTarget(new Point(mTarget.X, mTarget.Y - 1));
+                    }
+                    
+                }
+                if (InputManager.Default.KeyPressed(Keys.Left))
+                {
+                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    {
+                        SetStart(new Point(mStart.X - 1, mStart.Y));
+                    }
+                    else
+                    {
+                        SetTarget(new Point(mTarget.X - 1, mTarget.Y));
+                    }
+
+                }
+                if (InputManager.Default.KeyPressed(Keys.Down))
+                {
+                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    {
+                        SetStart(new Point(mStart.X, mStart.Y + 1));
+                    }
+                    else
+                    {
+                        SetTarget(new Point(mTarget.X, mTarget.Y + 1));
+                    }
+                }
+                if (InputManager.Default.KeyPressed(Keys.Right))
+                {
+                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    {
+                        SetStart(new Point(mStart.X + 1, mStart.Y));
+                    }
+                    else
+                    {
+                        SetTarget(new Point(mTarget.X + 1, mTarget.Y));
+                    }
+                }
+                Reset();
+                CalculatePath();
+            }
+        }
+
         /*
         public void test1()
         {
@@ -379,6 +482,23 @@ namespace KernelPanic
             queue.Insert(node8);
             queue.Insert(node9);
         }*/
+        public void DrawPath(SpriteBatch spriteBatch)
+        {
+            if (mPath == null)
+            {
+                mPath = FindPath();
+            }
+            foreach (var point in mPath)
+            {
+                DrawTile(spriteBatch, point);
+            }
+
+        }
+        private void DrawTile(SpriteBatch spriteBatch, Point point)
+        {
+            var pos = Grid.ScreenPositionFromCoordinate(point);
+            spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
+        }
     }
  
 }

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -23,18 +25,25 @@ namespace KernelPanic
                 new Rectangle(32, 0, 16, 42));
             EntityGraph = entityGraph;
             mBase = new Base();
+
+            // mTile and Init AStar is for debugging and showing the Pathfinding
+            // mTile = content.Load<Texture2D>("LaneTile");
             InitAStar(content);
         }
 
         public void Update()
         {
+            mAStar.UpdateStartAndTarget();
+            // mPath = mAStar.FindPath();
         }
 
         public void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, viewMatrix, gameTime);
-            
-            DrawPath(spriteBatch);
+            // mPath = mAStar.FindPath();
+            // DrawPath(spriteBatch);
+            mAStar.DrawPath(spriteBatch);
+
         }
         
 /*
@@ -47,54 +56,46 @@ namespace KernelPanic
 
         // ------------------------------------------------------------------------------------------------------------
         private AStar mAStar;
-        private Texture2D mTile;
+        /*
+        private readonly Texture2D mTile;
+        private List<Point> mPath;
+        */
 
         private void InitAStar(ContentManager content)
         {
-            mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem[0], mGrid.CoordSystem[mGrid.CoordSystem.Count - 1]);
-            var tile = content.Load<Texture2D>("LaneTile");
-            var mTile = new ImageSprite(tile, 0, 0) {Scale = (float) 100};
+            // set start and target
+            Point start = new Point(0, 0);
+            Point target = new Point(1, 10);
+
+            // write every coordinate in the grid on the console
+            foreach (var point in mGrid.CoordSystem)
+            {
+                Console.WriteLine(point);
+            }
+            
+            mAStar = new AStar(mGrid.CoordSystem, start, target, content);
+            mAStar.CalculatePath();
+            // mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem[0], mGrid.CoordSystem[mGrid.CoordSystem.Count - 1]);
+            // mAStar.SetStart(new Point(0, 0));
+            // mAStar.SetTarget(new Point(10, 20));
+            // mPath = mAStar.FindPath();
         }
 
-        private void NewStart(Point start)
-        {
-            mAStar.SetStart(start);
-        }
-
-        private void NewTarget(Point target)
-        {
-            mAStar.SetTarget(target);
-        }
-        
+        /*
         private void DrawPath(SpriteBatch spriteBatch)
         {
-            /*
-            // var path = mAStar.FindPath();
-            var path = new List<Point>();
-            path.Add(new Point(0, 0));
-            path.Add(new Point(0, 1));
-            path.Add(new Point(1, 1));
-            path.Add(new Point(1, 2));
-            path.Add(new Point(2, 2));
-            path.Add(new Point(2, 3));
-            path.Add(new Point(3, 3));
-            path.Add(new Point(3, 4));
-            path.Add(new Point(4, 4));
-
-            foreach (var point in path)
+            foreach (var point in mPath)
             {
                 DrawTile(spriteBatch, point);
             }
-            */
-            
+
         }
         private void DrawTile(SpriteBatch spriteBatch, Point point)
         {
             var pos = Grid.ScreenPositionFromCoordinate(point);
             spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
         }
-        
-
+        */
         // ------------------------------------------------------------------------------------------------------------
     }
 }
