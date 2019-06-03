@@ -33,14 +33,25 @@ namespace KernelPanic
         /// <summary>
         /// Deletes recursively all nodes of the QuadTree
         /// </summary>
-        public void Delete()
+        private void Clear(List<Entity> entityList)
         {
             foreach (var child in mChilds)
             {
-                child.Delete();
+                child.Clear(entityList);
             }
 
+            entityList.AddRange(mObjects);
             mObjects.Clear();
+        }
+
+        internal void Rebuild()
+        {
+            var entityList = new List<Entity>();
+            Clear(entityList);
+            foreach (var entity in entityList)
+            {
+                Add(entity);
+            }
         }
 
         /// <summary>
@@ -114,14 +125,14 @@ namespace KernelPanic
             mChilds[3] = new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y+halfHeight, halfWidth, halfHeight));
         }
 
-        public void AddSprite(Entity entity)
+        public void Add(Entity entity)
         {
             if (mChilds[0] != null)
             {
                 var index = CalculatePosition(entity);
                 if (index != -1)
                 {
-                    mChilds[index].AddSprite(entity);
+                    mChilds[index].Add(entity);
 
                     return;
                 }
@@ -142,7 +153,7 @@ namespace KernelPanic
                     var index = CalculatePosition(@object);
                     if (index != -1)
                     {
-                        mChilds[index].AddSprite(@object);
+                        mChilds[index].Add(@object);
                         mObjects.Remove(@object);
                     }
                 }

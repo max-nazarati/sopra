@@ -35,6 +35,8 @@ namespace KernelPanic
             foreach (var Object in mEntities)
             {
                 Object.Update(gameTime, invertedViewMatrix);
+                mQuadtree.Rebuild();
+                
                 // check if a new unit has been selected
                 if (Object.Selected)
                 {
