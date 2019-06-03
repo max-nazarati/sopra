@@ -50,7 +50,7 @@ namespace KernelPanic
 
             mFonts = new[]
             {
-                SpriteFont(Font.Button, "buttonFont"),
+                SpriteFont(Font.Button, "ButtonFont"),
                 SpriteFont(Font.Hud, "HUDFont")
             };
             Array.Sort(mFonts);
