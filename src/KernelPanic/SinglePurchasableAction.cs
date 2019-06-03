@@ -2,7 +2,7 @@
 {
     internal class SinglePurchasableAction<TResource> : PurchasableAction<TResource> where TResource : IPriced
     {
-        internal bool IsPurchased { get; set; }
+        private bool IsPurchased { get; set; }
 
         internal SinglePurchasableAction(TResource resource, bool isPurchased = false) : base(resource)
         {

@@ -15,7 +15,7 @@
         {
         }
 
-        internal Player(int bitcoins, Lane defendingLane, Lane attackingLane)
+        private Player(int bitcoins, Lane defendingLane, Lane attackingLane)
         {
             Bitcoins = bitcoins;
             mAttackingLane = attackingLane;

@@ -6,12 +6,12 @@ namespace KernelPanic
 {
     internal abstract class Unit : Entity
     {
-        public Vector2? MoveTarget { get; set; }
+        private Vector2? MoveTarget { get; set; }
 
-        public int Speed { get; set; }
-        public int AttackStrength { get; set; }
-        public int MaximumLife { get; set; }
-        public int RemainingLife { get; set; }
+        private int Speed { get; set; }
+        private int AttackStrength { get; set; }
+        private int MaximumLife { get; set; }
+        private int RemainingLife { get; set; }
 
         private Vector2? MoveVector
         {
