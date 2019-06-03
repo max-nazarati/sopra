@@ -1,6 +1,5 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,8 +10,8 @@ namespace KernelPanic
         
         private readonly Grid mGrid;
         internal EntityGraph EntityGraph { get; }
-        private Base mTarget;
-        private SpriteManager mSpriteManager;
+        private readonly Base mTarget;
+        private readonly SpriteManager mSpriteManager;
 
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
