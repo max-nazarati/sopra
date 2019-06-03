@@ -1,6 +1,7 @@
 ﻿namespace KernelPanic
 {
-    internal class SinglePurchasableAction<TResource> : PurchasableAction<TResource> where TResource : IPriced
+    internal sealed class SinglePurchasableAction<TResource> : PurchasableAction<TResource>
+        where TResource : class, IPriced
     {
         private bool IsPurchased { get; set; }
 

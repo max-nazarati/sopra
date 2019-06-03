@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal sealed class PurchaseButton<TResource, TAction>: IDrawable, IUpdatable
-        where TResource: IPriced
+    internal sealed class PurchaseButton<TResource, TAction>: IDrawable
+        where TResource: class, IPriced
         where TAction: PurchasableAction<TResource>
     {
         /// <summary>
