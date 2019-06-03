@@ -141,7 +141,7 @@ namespace KernelPanic
             var rightBackground = new ImageSprite(texture, 0, 0)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
-                TintColor = Color.Black
+                TintColor = Color.LightSalmon
             };
             var clockBackground = new ImageSprite(texture, 0, 0)
             {
@@ -152,18 +152,23 @@ namespace KernelPanic
             var rightText = AutoCenteredTextSprite(font, rightBackground);
             var clockText = AutoCenteredTextSprite(font, clockBackground);
 
-            var left = new CompositeSprite((ScreenSize.X - powerIndicatorSize.X) / 2.0f - clockSize.X, 0)
+            var left = new CompositeSprite((ScreenSize.X - clockSize.X) / 2f, 0)
             {
                 Children = {leftBackground, leftText}
             };
-            var right = new CompositeSprite((ScreenSize.X - clockSize.X) / 2.0f, 0)
+            left.SetOrigin(RelativePosition.TopRight);
+            
+            var right = new CompositeSprite((ScreenSize.X + clockSize.X) / 2.0f, 0)
             {
                 Children = {rightBackground, rightText}
             };
-            var clock = new CompositeSprite((ScreenSize.X - clockSize.X) / 2.0f, 0)
+            right.SetOrigin(RelativePosition.TopLeft);
+            
+            var clock = new CompositeSprite(ScreenSize.X / 2.0f, 0)
             {
                 Children = {clockBackground, clockText}
             };
+            clock.SetOrigin(RelativePosition.CenterTop);
 
             var sprite = new CompositeSprite(0, 0)
             {
