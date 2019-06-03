@@ -501,6 +501,7 @@ namespace KernelPanic
             // var pos = Grid.ScreenPositionFromCoordinate(point);
             // spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
             mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
+            mTile.TintColor = Color.Red;
             mTile.Draw(spriteBatch, gameTime);
         }
     }
