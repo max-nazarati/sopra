@@ -1,11 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal sealed class Quadtree
+    internal sealed class Quadtree: IEnumerable<Entity>
     {
         // max number of objects in each Node
         private static readonly int mMaxObjects = 10;
@@ -20,14 +22,14 @@ namespace KernelPanic
 
         private readonly List<Entity> mObjects;
 
-        private readonly Quadtree[] mChilds;
+        private readonly List<Quadtree> mChilds;
 
         public Quadtree(int level, Rectangle size)
         {
-            mChilds = new Quadtree[4];
             mLevel = level;
             mBounds = size;
             mObjects = new List<Entity>();
+            mChilds = new List<Quadtree>();
         }
 
         /// <summary>
@@ -46,9 +48,10 @@ namespace KernelPanic
 
         internal void Rebuild()
         {
-            var entityList = new List<Entity>();
-            Clear(entityList);
-            foreach (var entity in entityList)
+            var allEntities = new List<Entity>(this);
+            mObjects.Clear();
+            mChilds.Clear();
+            foreach (var entity in allEntities)
             {
                 Add(entity);
             }
@@ -119,15 +122,15 @@ namespace KernelPanic
             var halfWidth = mBounds.Width / 2;
             var halfHeight = mBounds.Height / 2;
             
-            mChilds[0] = new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y, halfWidth, halfHeight));
-            mChilds[1] = new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y, halfWidth, halfHeight));
-            mChilds[2] = new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y+halfHeight, halfWidth, halfHeight));
-            mChilds[3] = new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y+halfHeight, halfWidth, halfHeight));
+            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y, halfWidth, halfHeight)));
+            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y, halfWidth, halfHeight)));
+            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y+halfHeight, halfWidth, halfHeight)));
+            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y+halfHeight, halfWidth, halfHeight)));
         }
 
         public void Add(Entity entity)
         {
-            if (mChilds[0] != null)
+            if (mChilds.Count > 0)
             {
                 var index = CalculatePosition(entity);
                 if (index != -1)
@@ -142,7 +145,7 @@ namespace KernelPanic
             
             if (mLevel < mMaximumDepth && mObjects.Count > mMaxObjects)
             {
-                if (mChilds[0] == null)
+                if (mChilds.Count == 0)
                 {
                     Split();
                 }
@@ -176,6 +179,16 @@ namespace KernelPanic
             }
             
             returnList.AddRange(mObjects);
+        }
+
+        public IEnumerator<Entity> GetEnumerator()
+        {
+            return mObjects.Concat(mChilds.SelectMany(c => c)).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
