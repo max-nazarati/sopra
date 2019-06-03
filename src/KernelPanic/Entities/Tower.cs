@@ -49,7 +49,7 @@ namespace KernelPanic
             sprite.Position = position;
             sprite.ScaleToHeight(size);
             sprite.SetOrigin(RelativePosition.Center);
-            return new Tower(0, 300, new TimeSpan(0, 0, 3), sprite, sprites);
+            return new Tower(15, 300, new TimeSpan(0, 0, 3), sprite, sprites);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

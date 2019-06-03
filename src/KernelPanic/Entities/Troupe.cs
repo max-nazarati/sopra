@@ -19,7 +19,7 @@ namespace KernelPanic
         {
             sprite.Position = position.ToVector2();
             sprite.ScaleToWidth(Grid.KachelSize);
-            return new Troupe(1, 1, 1, 1, sprite);
+            return new Troupe(10, 1, 1, 1, sprite);
         }
 
         internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
