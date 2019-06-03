@@ -11,6 +11,7 @@ namespace KernelPanic
         {
             Price = price;
             Sprite = sprite;
+            Sprite.SetOrigin(RelativePosition.Center);
         }
 
         public bool Selected { get; set; }

@@ -34,8 +34,8 @@ namespace KernelPanic
             mHud = new InGameOverlay(mPlayerA, mPlayerB, gameStateManager.Sprite);
 
             var eg = mBoard.LeftLane.EntityGraph;
-            eg.Add(Troupe.CreateTrojan(new Point(400), gameStateManager.Sprite));
-            eg.Add(Troupe.CreateFirefox(new Point(300), gameStateManager.Sprite));
+            eg.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
+            eg.Add(Troupe.CreateFirefox(new Point(350), gameStateManager.Sprite));
         }
 
         public override void Update(GameTime gameTime, bool isOverlay)

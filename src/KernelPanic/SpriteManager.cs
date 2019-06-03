@@ -236,10 +236,9 @@ namespace KernelPanic
         
         internal ImageSprite CreateSelectionBorder()
         {
-            return new ImageSprite(Lookup(Image.SelectionBorder), 0, 0)
-            {
-                Origin = new Vector2(SelectionBorderThickness)
-            };
+            var sprite = new ImageSprite(Lookup(Image.SelectionBorder), 0, 0);
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
         }
 
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
