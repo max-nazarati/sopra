@@ -67,8 +67,8 @@ namespace KernelPanic
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
-            EntityGraph.Draw(spriteBatch, gameTime);
             mAStar.Draw(spriteBatch, gameTime);
+            EntityGraph.Draw(spriteBatch, gameTime);
         }
         
         /*
