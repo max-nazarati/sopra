@@ -178,7 +178,7 @@ namespace KernelPanic
         }
 
         internal AnimatedSprite CreateTrojan() =>
-            new AnimatedSprite(Lookup(Image.Trojan), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
+            new AnimatedSprite(Lookup(Image.Trojan), 0, 0, new TimeSpan(0, 0, 0, 0, 300));
 
         internal ImageSprite CreateColoredSquare(Color color)
         {
