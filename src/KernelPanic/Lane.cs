@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -9,34 +9,50 @@ namespace KernelPanic
     {
         
         private readonly Grid mGrid;
-        public SpriteManager Sprite { get; }
+        internal EntityGraph EntityGraph { get; }
+        private readonly Base mTarget;
+        private readonly SpriteManager mSpriteManager;
 
-        public EntityGraph EntityGraph { get; private set; }
-        // private BuildingSpawner mBuildingSpawner;
-        // private EntityGraph mEntityGraph;
-        private Base mBase;
         // private UnitSpawner mUnitSpawner;
+        // private BuildingSpawner mBuildingSpawner;
+        
+        private readonly AStar mAStar;
+        private readonly ImageSprite mTile;
 
-        public Lane(Grid.LaneSide laneSide, EntityGraph entityGraph, SpriteManager spriteManager)
+        public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
         {
-            Sprite = spriteManager;
-            mGrid = laneSide == Grid.LaneSide.Left ? new Grid(Sprite, laneSide, 
-                new Rectangle(0, 0, 16, 42)) : new Grid(Sprite, laneSide, 
-                new Rectangle(32, 0, 16, 42));
-            EntityGraph = entityGraph;
-            mBase = new Base();
-            InitAStar(Sprite.ContentManager);
+            EntityGraph = new EntityGraph();
+            mTarget = new Base();
+            mGrid = new Grid(sprites, laneSide);
+            mSpriteManager = sprites;
+            mTile = Grid.CreateTile(sprites);
+            mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem.First(), mGrid.CoordSystem.Last());
         }
 
-        public void Update()
+        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
+            var input = InputManager.Default;
+            var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
+            if (input.KeyPressed(Keys.T))
+            {
+                // It seems can't use pattern matching here because of compiler-limitations.
+                var gridPoint = mGrid.GridPointFromWorldPoint(mouse, 2);
+                if (gridPoint != null)
+                {
+                    var (position, size) = gridPoint.Value;
+                    if (!EntityGraph.HasEntityAt(position))
+                        EntityGraph.Add(Tower.Create(position, size, mSpriteManager));
+                }
+            }
+
+            EntityGraph.Update(gameTime, invertedViewMatrix);
         }
 
-        public void Draw(SpriteBatch spriteBatch, Matrix viewMatrix, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            mGrid.Draw(spriteBatch, viewMatrix, gameTime);
-            
-            DrawPath(spriteBatch);
+            mGrid.Draw(spriteBatch, gameTime);
+            EntityGraph.Draw(spriteBatch, gameTime);
+            DrawPath(spriteBatch, gameTime);
         }
         
 /*
@@ -46,16 +62,6 @@ namespace KernelPanic
         }
         
         */
-
-        private AStar mAStar;
-        private Texture2D mTile;
-
-        private void InitAStar(ContentManager content)
-        {
-            mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem[0], mGrid.CoordSystem[mGrid.CoordSystem.Count - 1]);
-            var tile = content.Load<Texture2D>("LaneTile");
-            var mTile = new ImageSprite(tile, 0, 0) {Scale = (float) 100};
-        }
 
         private void NewStart(Point start)
         {
@@ -67,7 +73,7 @@ namespace KernelPanic
             mAStar.SetTarget(target);
         }
         
-        private void DrawPath(SpriteBatch spriteBatch)
+        private void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
             /*
             // var path = mAStar.FindPath();
@@ -84,16 +90,15 @@ namespace KernelPanic
 
             foreach (var point in path)
             {
-                DrawTile(spriteBatch, point);
+                DrawTile(spriteBatch, point, gameTime);
             }
             */
-            
         }
-        private void DrawTile(SpriteBatch spriteBatch, Point point)
+
+        private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime)
         {
-            var pos = Grid.ScreenPositionFromCoordinate(point);
-            spriteBatch.Draw(mTile, new Rectangle(pos.X, pos.Y, (100), (100)), Color.Red);
+            mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
+            mTile.Draw(spriteBatch, gameTime);
         }
-     
     }
 }

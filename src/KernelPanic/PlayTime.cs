@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
-    class PlayTime
+    internal sealed class PlayTime
     {
-        public TimeSpan Overall { get; private set; }
-        public string Time { get; private set; }
-        
-        public PlayTime()
-        {
-            Time = "";
-        }
+        public TimeSpan Overall { get; private set; } = TimeSpan.Zero;
+        public string Time { get; private set; } = "";
+
         public void Update(GameTime gameTime)
         {
             Overall = Overall.Add(gameTime.ElapsedGameTime);
-            Console.WriteLine(Time);
-            Time = Overall.ToString("h':'m':'s");
+            Time = Overall.ToString("hh':'mm':'ss");
         }
     }
 }

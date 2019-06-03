@@ -6,48 +6,39 @@ namespace KernelPanic
 {
     internal sealed class EntityGraph
     {
-        private readonly List<Entity> mEntities;
-        private int? mActiveUnit;
+        private Quadtree mQuadtree;
 
         public EntityGraph()
         {
-            mEntities = new List<Entity>();
-            mActiveUnit = null;
+            mQuadtree = new Quadtree(1, new Rectangle(0, 0, 1000, 1000));
         }
 
-        public void Add(Unit unit)
+        public void Add(Entity entity)
         {
-            mEntities.Add(unit);
+            mQuadtree.Add(entity);
         }
 
-        public void Update(Matrix viewMatrix)
+        public bool HasEntityAt(Vector2 point)
         {
-            var i = 0;
-            foreach (var Object in mEntities)
+            // TODO: Implement this.
+            return false;
+        }
+
+        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        {
+            foreach (var entity in mQuadtree)
             {
-                Object.Update(viewMatrix);
-                // check if a new unit has been selected
-                if (Object.Selected)
-                {
-                    if (mActiveUnit is int active)
-                    {
-                        if (i != active)
-                        {
-                            mEntities[active].Selected = false;
-                        }
-                    }
-                    mActiveUnit = i;
-                    //break;
-                }
-                i++;
+                entity.Update(gameTime, invertedViewMatrix);
             }
+
+            mQuadtree.Rebuild();
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var Object in mEntities)
+            foreach (var Object in mQuadtree)
             {
-                Object.Draw(spriteBatch);
+                Object.Draw(spriteBatch, gameTime);
             }
         }
     }

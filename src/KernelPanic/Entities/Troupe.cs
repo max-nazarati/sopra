@@ -1,14 +1,36 @@
-﻿
+﻿using Microsoft.Xna.Framework;
+
 namespace KernelPanic
 {
-    class Troupe : Unit
+    internal class Troupe : Unit
     {
-        public Troupe(int param) : base(param)
+        private Troupe(int price, int speed, int life, int attackStrength, Sprite sprite)
+            : base(price, speed, life, attackStrength, sprite)
         {
-
         }
-        public new void Kill()
+
+        /// <summary>
+        /// Convenience function for creating a Troupe. The sprite is automatically scaled to the size of one tile.
+        /// </summary>
+        /// <param name="position">The point where to position this troupe.</param>
+        /// <param name="sprite">The sprite to display.</param>
+        /// <returns>A new Troupe</returns>
+        private static Troupe Create(Point position, Sprite sprite)
         {
+            sprite.Position = position.ToVector2();
+            sprite.ScaleToWidth(Grid.KachelSize);
+            return new Troupe(1, 1, 1, 1, sprite);
+        }
+
+        internal static Troupe CreateSquare(Point position, Color color, SpriteManager spriteManager) =>
+            Create(position, spriteManager.CreateColoredSquare(color));
+
+        internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
+            Create(position, spriteManager.CreateTrojan());
+
+        internal override void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        {
+            // throw new System.NotImplementedException();
         }
     }
 }
