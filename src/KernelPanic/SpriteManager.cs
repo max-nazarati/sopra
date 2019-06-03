@@ -203,30 +203,34 @@ namespace KernelPanic
             var lineIdx = 0;
             var data = new Color[texture.Width * texture.Height];
 
-            for (var i = 0; i < data.Length; ++i)
-                data[i] = Color.White;
-
+            // Fill top and bottom border.
             for (var i = 0; i < SelectionBorderThickness; ++i, ++lineIdx)
             {
                 for (var j = 0; j < line; ++j)
                 {
-                    data[lineIdx * line + j] = color;
-                    data[lineIdx * line + j + Grid.KachelSize + SelectionBorderThickness] = color;
+                    // Multiply lineIdx with this because we skip over multiple lines.
+                    data[j + line * (lineIdx + Grid.KachelSize + SelectionBorderThickness)] = color;
+                    data[j + line * lineIdx] = color;
                 }
             }
 
+            // Fill rows in between.
             for (var i = 0; i < Grid.KachelSize; ++i, ++lineIdx)
             {
+                // Fill the left and right border.
                 for (var j = 0; j < SelectionBorderThickness; ++j)
                 {
-                    data[lineIdx * line + j] = color;
-                    data[lineIdx * line + j + Grid.KachelSize + SelectionBorderThickness] = color;
+                    // Multiply only lineIdx with line, because we move inside on line.
+                    data[j + line * lineIdx + Grid.KachelSize + SelectionBorderThickness] = color;
+                    data[j + line * lineIdx] = color;
                 }
 
+                // Fill in between.
                 for (var j = 0; j < Grid.KachelSize; ++j)
-                    data[lineIdx * line + SelectionBorderThickness + j] = Color.White;
+                    data[lineIdx * line + SelectionBorderThickness + j] = Color.Transparent;
             }
 
+            texture.SetData(data);
             return texture;
         }
         
