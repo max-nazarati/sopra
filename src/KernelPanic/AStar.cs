@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -15,33 +12,30 @@ namespace KernelPanic
     /// The left child of i is 2i+1 and the right one 2i+2.
     /// The parent of i is (i-1)//2
     /// </summary>
-    public class Node
+    public sealed class Node
     {
-        public double mKey;
-        private Point mPosition;
-        private Node mParent;
-        private double mCost;
-
         // private List<Point> mNeighbours;
         private bool mIsStart;
         private bool mIsGoal;
 
 
-        public Point Position { get => mPosition; set => mPosition = value; }
-        public Node Parent { get => mParent; set => mParent = value; }
-        public double Cost { get => mCost; set => mCost = value; }
-        public double EstimatedCost { get; set; }
+        internal Point Position { get; } // set; }
 
-        public double Key => mKey;
+        internal Node Parent { get; } // set => mParent = value; }
+        internal double Cost { get; } // set; }
 
-        public Node(Point coordinate, Node parent, double cost, double estimatedCost,
+        private double EstimatedCost { get; }  //set; }
+
+        internal double Key { get; }
+
+        internal Node(Point coordinate, Node parent, double cost, double estimatedCost,
         bool start=false, bool goal=false)
         {
-            mPosition = coordinate;
-            mParent = parent;
-            mCost = cost;
+            Position = coordinate;
+            Parent = parent;
+            Cost = cost;
             EstimatedCost = estimatedCost;
-            mKey = cost + estimatedCost;
+            Key = cost + estimatedCost;
             mIsStart = start;
             mIsGoal = goal;
             // mNeighbours = neighbours;
@@ -57,12 +51,11 @@ namespace KernelPanic
         {
             mItems = new List<Node>();
         }
-        
+
         /// <summary>
         /// Insert a new Element into the Queue
         /// </summary>
         /// <param name="item"></param>
-        /// <param name="newKey"></param>
         public void Insert(Node item)
         {
             var queueIndex = mItems.Count;
@@ -227,8 +220,8 @@ namespace KernelPanic
             DrawStartAndTarget(spriteBatch, gameTime);
             
         }
-        
-        public void UpdateObstacles()
+
+        private void UpdateObstacles()
         {
             if (InputManager.Default.KeyPressed(Keys.D1, Keys.D2, Keys.D3, Keys.D0))
             {
@@ -253,8 +246,8 @@ namespace KernelPanic
                 }
             }
         }
-        
-        public void UpdateStartAndTarget()
+
+        private void UpdateStartAndTarget()
         {
             if (InputManager.Default.KeyPressed(Keys.Up, Keys.Left, Keys.Down, Keys.Right))
             {
@@ -312,15 +305,15 @@ namespace KernelPanic
         
         // private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
 
-        public void SetStart(Point start)
+        private void SetStart(Point start)
         {
             if (mWalkable.Contains(start))
             {
                 mStart = start;
             }
         }
-        
-        public void SetTarget(Point target)
+
+        private void SetTarget(Point target)
         {
             if (mWalkable.Contains(target))
             {
@@ -328,11 +321,11 @@ namespace KernelPanic
             }
         }
 
-        public bool IsStartPosition(Point position) => position == mStart;
+        private bool IsStartPosition(Point position) => position == mStart;
 
-        public bool IsTargetPosition(Point position) => position == mTarget;
+        private bool IsTargetPosition(Point position) => position == mTarget;
 
-        public List<Node> CreateNeighbours(Node node)
+        private List<Node> CreateNeighbours(Node node)
         {
             var neighbours = new List<Node>();
             var x = node.Position.X;
@@ -343,8 +336,8 @@ namespace KernelPanic
             var right = new Point(x + 1, y);
             double estimatedCost;
             var cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
-            var isStartNode = false;
-            bool isTargetNode = false;
+            bool isStartNode; // = false;
+            bool isTargetNode; // = false;
 
             if (mWalkable.Contains(up))
             {
@@ -384,8 +377,8 @@ namespace KernelPanic
 
             return neighbours;
         }
-        
-        public void ExpandNode(Node node)
+
+        private void ExpandNode(Node node)
         {
             if (mExploredNodes.Contains(node.Position)) return;
             List<Node> neighbours = CreateNeighbours(node);
@@ -400,11 +393,11 @@ namespace KernelPanic
             // Console.WriteLine(node.Position.ToString());
             // Console.WriteLine(node.Position.ToString());
         }
-        
-        public Node FindTarget()
+
+        private Node FindTarget()
         {
             Reset();
-            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true, false);
+            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true);
             // double heuristicValue = startNode.Key;
             mHeap.Insert(startNode);
             
@@ -421,32 +414,7 @@ namespace KernelPanic
             return null;
         }
 
-        public List<Point> FindPath()
-        {
-            List<Point> path = new List<Point>();
-            Node goalNode = FindTarget();
-            if (goalNode == null)
-            {
-                Console.Write("Goal Node was null: ");
-                Console.WriteLine("why tho");
-                return path;
-            }
-            path.Add(goalNode.Position);
-            Node currenNode = goalNode;
-            Point currentPosition = goalNode.Position;
-            int count = 0;
-            while (!IsStartPosition(currentPosition) && count < 1000)
-            {
-                count++;
-                currenNode = currenNode.Parent;
-                currentPosition = currenNode.Position;
-                path.Add(currentPosition);
-            }
-
-            return path;
-        }
-
-        public void CalculatePath()
+        internal void CalculatePath()
         {
             // Reset();
             var path = new List<Point>();
@@ -471,8 +439,8 @@ namespace KernelPanic
             path.Reverse();
             mPath = path;
         }
-        
-        public void Reset()
+
+        private void Reset()
         {
             // mExploredNodes.Clear();
             mExploredNodes = new List<Point>();
@@ -508,7 +476,7 @@ namespace KernelPanic
             queue.Insert(node9);
         }*/
 
-        public List<Point> CreateObstacleEnvironment(int testEnvironment = 1)
+        private List<Point> CreateObstacleEnvironment(int testEnvironment = 1)
         {
             // create a list with obstacles
             List<Point> blocked = new List<Point>();
@@ -563,7 +531,7 @@ namespace KernelPanic
             return blocked;
         }
 
-        public void ChangeObstacleEnvironment(int environment)
+        internal void ChangeObstacleEnvironment(int environment)
         {
             mWalkable = new List<Point>();
             mBlocked = CreateObstacleEnvironment(environment);
@@ -572,14 +540,14 @@ namespace KernelPanic
                 if (!mBlocked.Contains(point)) { mWalkable.Add(point); }
             }
         }
-        
-        public void DrawStartAndTarget(SpriteBatch spriteBatch, GameTime gameTime)
+
+        private void DrawStartAndTarget(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawTile(spriteBatch, mStart, gameTime, Color.Firebrick);
             DrawTile(spriteBatch, mTarget, gameTime, Color.Firebrick);
         }
-        
-        public void DrawExplored(SpriteBatch spriteBatch, GameTime gameTime)
+
+        private void DrawExplored(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if (mExploredNodes == null) { return; }
 
@@ -588,8 +556,8 @@ namespace KernelPanic
                 DrawTile(spriteBatch, point, gameTime, Color.Pink);
             }
         }
-        
-        public void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
+
+        private void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
             // Console.WriteLine("drawing the path");
             if (mPath == null) { return; }
@@ -600,7 +568,7 @@ namespace KernelPanic
             }
         }
 
-        public void DrawObstacles(SpriteBatch spriteBatch, GameTime gameTime)
+        private void DrawObstacles(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if (mBlocked == null) { return; }
 
