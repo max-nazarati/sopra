@@ -33,7 +33,6 @@ namespace KernelPanic
         private const int TilesPerSprite = 1; // per Dimension
         private const int SingleTileSizePixel = KachelSize / TilesPerSprite;
         private const int LaneWidthInTiles = 10;
-        private const int LaneWidthInPixel = LaneWidthInTiles * KachelSize;
 
         private static int TileCountPixelSize(int tiles) => tiles * KachelSize;
 
@@ -80,7 +79,7 @@ namespace KernelPanic
             topPart.SetOrigin(upperOrigin);
             bottomPart.SetOrigin(upperOrigin.MirrorVertical());
 
-            mSprite = new CompositeSprite(mLaneRectangle.X * KachelSize, mLaneRectangle.Y * KachelSize)
+            mSprite = new CompositeSprite(TileCountPixelSize(mLaneRectangle.X), TileCountPixelSize(mLaneRectangle.Y))
             {
                 Children = {mainPart, bottomPart, topPart}
             };
@@ -280,12 +279,12 @@ namespace KernelPanic
             int subTileCount = 1,
             RelativePosition origin = RelativePosition.Center)
         {
-            // TODO: We just convert to float to int and Vector2 to Point,
+            // TODO: We just convert float to int and Vector2 to Point,
             //       does this make a discernible difference to doing the exact calculations?
             var full = new Rectangle(mSprite.Position.ToPoint(), mSprite.Size.ToPoint());
             var cutout = new Rectangle(
-                (int) mSprite.X + (mLaneSide == LaneSide.Left ? TileCountPixelSize(LaneWidthInPixel) : 0),
-                TileCountPixelSize(LaneWidthInPixel),
+                (int) mSprite.X + (mLaneSide == LaneSide.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
+                TileCountPixelSize(LaneWidthInTiles),
                 TileCountPixelSize(mLaneRectangle.Width - LaneWidthInTiles),
                 TileCountPixelSize(mLaneRectangle.Height - 2 * LaneWidthInTiles));
 

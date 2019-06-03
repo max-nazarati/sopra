@@ -1,57 +1,71 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    public class Quadtree
+    internal sealed class Quadtree: IEnumerable<Entity>
     {
         // max number of objects in each Node
         private static readonly int mMaxObjects = 10;
-        
+
         // max depth of the Quadtree
         private static readonly int mMaximumDepth = 15;
 
         private readonly int mLevel;
-        
+
         // size and position of the current node
         private readonly Rectangle mBounds;
 
-        private readonly List<Texture2D> mObjects;
+        private readonly List<Entity> mObjects;
 
-        private readonly Quadtree[] mChilds;
+        private readonly List<Quadtree> mChilds;
 
         public Quadtree(int level, Rectangle size)
         {
-            mChilds = new Quadtree[4];
             mLevel = level;
             mBounds = size;
-            mObjects = new List<Texture2D>();
+            mObjects = new List<Entity>();
+            mChilds = new List<Quadtree>();
         }
 
         /// <summary>
         /// Deletes recursively all nodes of the QuadTree
         /// </summary>
-        public void Delete()
+        private void Clear(List<Entity> entityList)
         {
             foreach (var child in mChilds)
             {
-                child.Delete();
+                child.Clear(entityList);
             }
+
+            entityList.AddRange(mObjects);
             mObjects.Clear();
+        }
+
+        internal void Rebuild()
+        {
+            var allEntities = new List<Entity>(this);
+            mObjects.Clear();
+            mChilds.Clear();
+            foreach (var entity in allEntities)
+            {
+                Add(entity);
+            }
         }
 
         /// <summary>
         /// Calculates in which of the 4 nodes a certain sprite fits
         /// </summary>
-        private int CalculatePosition(Texture2D texture)
+        private int CalculatePosition(Entity entity)
         {
-            var textureRectangle = texture.Bounds;
-            var height = textureRectangle.Height;
-            var width = textureRectangle.Width;
-            var posX = textureRectangle.X;
-            var posY = textureRectangle.Y;
+            var height = entity.Sprite.Height;
+            var width = entity.Sprite.Width;
+            var posX = entity.Sprite.X;
+            var posY = entity.Sprite.Y;
 
             bool boolLeft, boolRight, boolTop, boolBottom;
             boolLeft = boolRight = boolTop = boolBottom = false;
@@ -108,57 +122,73 @@ namespace KernelPanic
             var halfWidth = mBounds.Width / 2;
             var halfHeight = mBounds.Height / 2;
             
-            mChilds[0] = new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y, halfWidth, halfHeight));
-            mChilds[1] = new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y, halfWidth, halfHeight));
-            mChilds[2] = new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y+halfHeight, halfWidth, halfHeight));
-            mChilds[3] = new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y+halfHeight, halfWidth, halfHeight));
+            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y, halfWidth, halfHeight)));
+            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y, halfWidth, halfHeight)));
+            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y+halfHeight, halfWidth, halfHeight)));
+            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y+halfHeight, halfWidth, halfHeight)));
         }
 
-        public void AddSprite(Texture2D texture)
+        public void Add(Entity entity)
         {
-            if (mChilds[0] != null)
+            if (mChilds.Count > 0)
             {
-                var index = CalculatePosition(texture);
+                var index = CalculatePosition(entity);
                 if (index != -1)
                 {
-                    mChilds[index].AddSprite(texture);
+                    mChilds[index].Add(entity);
 
                     return;
                 }
             }
             
-            mObjects.Add(texture);
+            mObjects.Add(entity);
             
             if (mLevel < mMaximumDepth && mObjects.Count > mMaxObjects)
             {
-                if (mChilds[0] == null)
+                if (mChilds.Count == 0)
                 {
                     Split();
                 }
                 
                 // insert all elements from mObjects to the newly added Childs
-                foreach (var Object in mObjects)
+                foreach (var @object in new List<Entity>(mObjects))
                 {
-                    var index = CalculatePosition(Object);
+                    var index = CalculatePosition(@object);
                     if (index != -1)
                     {
-                        mChilds[index].AddSprite(Object);
-                        mObjects.Remove(Object);
+                        mChilds[index].Add(@object);
+                        mObjects.Remove(@object);
                     }
                 }
             }
         }
 
-        public List<Texture2D> NearObjects(Texture2D texture, List<Texture2D> returnList)
+        internal List<Entity> NearObjects(Entity entity)
         {
-            var index = CalculatePosition(texture);
+            var entities = new List<Entity>();
+            NearObjects(entity, entities);
+            return entities;
+        }
+
+        private void NearObjects(Entity entity, List<Entity> returnList)
+        {
+            var index = CalculatePosition(entity);
             if (index != -1 && mChilds[0] != null)
             {
-                NearObjects(texture, returnList);
+                NearObjects(entity, returnList);
             }
             
             returnList.AddRange(mObjects);
-            return returnList;
+        }
+
+        public IEnumerator<Entity> GetEnumerator()
+        {
+            return mObjects.Concat(mChilds.SelectMany(c => c)).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
