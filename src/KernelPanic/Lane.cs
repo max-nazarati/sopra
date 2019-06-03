@@ -8,10 +8,10 @@ namespace KernelPanic
 {
     internal sealed class Lane
     {
-        
-        private readonly Grid mGrid;
         internal EntityGraph EntityGraph { get; }
-        private readonly Base mTarget;
+        internal Base Target { get; }
+
+        private readonly Grid mGrid;
         private readonly SpriteManager mSpriteManager;
 
         // private UnitSpawner mUnitSpawner;
@@ -22,8 +22,8 @@ namespace KernelPanic
         public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
         {
             EntityGraph = new EntityGraph(sprites);
-            mTarget = new Base();
             mGrid = new Grid(sprites, laneSide);
+            Target = new Base();
             mSpriteManager = sprites;
             InitAStar(sprites);
 

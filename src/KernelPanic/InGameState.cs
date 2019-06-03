@@ -31,8 +31,8 @@ namespace KernelPanic
             
             Camera = new Camera2D(gameStateManager.Sprite.ScreenSize);
             mBoard = new Board(gameStateManager.Sprite);
-            mPlayerA = new Player();
-            mPlayerB = new Player();
+            mPlayerA = new Player(mBoard.RightLane, mBoard.LeftLane);
+            mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);
             mHud = new InGameOverlay(mPlayerA, mPlayerB, gameStateManager.Sprite);
 
             // testing movable objects and collision
