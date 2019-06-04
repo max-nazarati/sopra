@@ -56,9 +56,6 @@ namespace KernelPanic
         {
             base.Draw(spriteBatch, gameTime);
 
-            //var s = (ImageSprite) Sprite;
-            //spriteBatch.Draw(s.Texture, s.Position, null, Color.White, s.Rotation, new Vector2(s.Width / 2), 0.08f, SpriteEffects.None, 1.0f);
-            
             foreach (var projectile in mProjectiles)
             {
                 projectile.Draw(spriteBatch, gameTime);
