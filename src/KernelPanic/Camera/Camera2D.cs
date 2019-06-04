@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 namespace KernelPanic
 {
     [DataContract]
-    internal sealed class Camera2D
+    internal sealed class Camera2D : ICamera
     {
         [DataMember]
         private Vector2 mPosition;
