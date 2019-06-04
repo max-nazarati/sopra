@@ -1,5 +1,4 @@
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -7,26 +6,27 @@ namespace KernelPanic
 {
     internal sealed class Lane
     {
-        
-        private readonly Grid mGrid;
         internal EntityGraph EntityGraph { get; }
-        private readonly Base mTarget;
+        internal Base Target { get; }
+
+        private readonly Grid mGrid;
         private readonly SpriteManager mSpriteManager;
 
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
-        
-        private readonly AStar mAStar;
-        private readonly ImageSprite mTile;
+
+        private AStar mAStar;
 
         public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
         {
-            EntityGraph = new EntityGraph();
-            mTarget = new Base();
+            EntityGraph = new EntityGraph(sprites);
             mGrid = new Grid(sprites, laneSide);
+            Target = new Base();
             mSpriteManager = sprites;
-            mTile = Grid.CreateTile(sprites);
-            mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem.First(), mGrid.CoordSystem.Last());
+            InitAStar(sprites);
+
+            // mTile = Grid.CreateTile(sprites);
+            // mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem.First(), mGrid.CoordSystem.Last());
         }
 
         public void Update(GameTime gameTime, Matrix invertedViewMatrix)
@@ -45,60 +45,38 @@ namespace KernelPanic
                 }
             }
 
-            EntityGraph.Update(gameTime, invertedViewMatrix);
+            var positionProvider = new PositionProvider(mGrid, EntityGraph);
+            EntityGraph.Update(positionProvider, gameTime, invertedViewMatrix);
+            
+            mAStar.Update();
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
+            mAStar.Draw(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
-            DrawPath(spriteBatch, gameTime);
         }
         
-/*
+        /*
         public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
-        {
-            
+        {    
         }
-        
         */
 
-        private void NewStart(Point start)
-        {
-            mAStar.SetStart(start);
-        }
-
-        private void NewTarget(Point target)
-        {
-            mAStar.SetTarget(target);
-        }
         
-        private void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
+        // -------------------------- A STAR DEBUG ----------------------------------------------------------------------
+        private void InitAStar(SpriteManager sprite, int obstacleEnv=2)
         {
-            /*
-            // var path = mAStar.FindPath();
-            var path = new List<Point>();
-            path.Add(new Point(0, 0));
-            path.Add(new Point(0, 1));
-            path.Add(new Point(1, 1));
-            path.Add(new Point(1, 2));
-            path.Add(new Point(2, 2));
-            path.Add(new Point(2, 3));
-            path.Add(new Point(3, 3));
-            path.Add(new Point(3, 4));
-            path.Add(new Point(4, 4));
-
-            foreach (var point in path)
-            {
-                DrawTile(spriteBatch, point, gameTime);
-            }
-            */
+            // set start and target
+            Point start = new Point(0, 0);
+            Point target = new Point(0, 15);
+            
+            mAStar = new AStar(mGrid.CoordSystem, start, target, sprite);
+            mAStar.ChangeObstacleEnvironment(obstacleEnv);
+       
+            mAStar.CalculatePath();
         }
-
-        private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime)
-        {
-            mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
-            mTile.Draw(spriteBatch, gameTime);
-        }
-    }
+        // ------------------------------------------------------------------------------------------------------------
+}
 }

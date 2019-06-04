@@ -13,7 +13,7 @@ namespace KernelPanic.Sprites
         /// <summary>
         /// The duration for which each frame is displayed.
         /// </summary>
-        private readonly TimeSpan FrameDuration;
+        private readonly TimeSpan mFrameDuration;
 
         internal Color TintColor { get; set; } = Color.White;
 
@@ -24,7 +24,7 @@ namespace KernelPanic.Sprites
         {
             mTexture = texture;
             mFrameCount = texture.Width / DefaultFrameSize;
-            FrameDuration = frameDuration;
+            mFrameDuration = frameDuration;
         }
 
         protected override void Draw(SpriteBatch spriteBatch,
@@ -33,9 +33,9 @@ namespace KernelPanic.Sprites
             float rotation,
             float scale)
         {
-            var textureIndex = gameTime.TotalGameTime.Ticks / FrameDuration.Ticks % mFrameCount;
+            var textureIndex = gameTime.TotalGameTime.Ticks / mFrameDuration.Ticks % mFrameCount;
             var sourceRect =
-                new Rectangle((int) textureIndex * DefaultFrameSize, 0, DefaultFrameSize, DefaultFrameSize);
+                new Rectangle((int)textureIndex * DefaultFrameSize, 0, DefaultFrameSize, DefaultFrameSize);
 
             spriteBatch.Draw(mTexture,
                 position,

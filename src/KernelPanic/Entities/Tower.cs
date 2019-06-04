@@ -49,7 +49,7 @@ namespace KernelPanic
             sprite.Position = position;
             sprite.ScaleToHeight(size);
             sprite.SetOrigin(RelativePosition.Center);
-            return new Tower(0, 300, new TimeSpan(0, 0, 3), sprite, sprites);
+            return new Tower(15, 300, new TimeSpan(0, 0, 3), sprite, sprites);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -65,7 +65,7 @@ namespace KernelPanic
             }
         }
 
-        internal override void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
         {
             // Turn window coordinates into world coordinates.
             var relativeMouseVector =

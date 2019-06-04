@@ -6,12 +6,23 @@ namespace KernelPanic
 {
     internal abstract class Unit : Entity
     {
-        public Point? MoveTarget { get; set; }
+        private Vector2? MoveTarget { get; set; }
 
-        public int Speed { get; set; }
-        public int AttackStrength { get; set; }
-        public int MaximumLife { get; set; }
-        public int RemainingLife { get; set; }
+        private int Speed { get; set; }
+        private int AttackStrength { get; set; }
+        private int MaximumLife { get; set; }
+        private int RemainingLife { get; set; }
+
+        private Vector2? MoveVector
+        {
+            get
+            {
+                if (!(MoveTarget is Vector2 target))
+                    return null;
+
+                return Vector2.Normalize(target - Sprite.Position) * Speed;
+            }
+        }
 
         protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, sprite)
         {
@@ -52,6 +63,27 @@ namespace KernelPanic
         /// <param name="spawnAction">To be used to spawn further units for this wave later on.</param>
         public virtual void WillSpawn(Action<Unit> spawnAction)
         {
+        }
+
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        {
+            base.Update(positionProvider, gameTime, invertedViewMatrix);
+
+            if (Selected)
+            {
+                var input = InputManager.Default;
+                if (input.MousePressed(InputManager.MouseButton.Right))
+                {
+                    var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
+                    if (positionProvider.GridCoordinate(mouse) != null)
+                        MoveTarget = mouse;
+                }
+            }
+
+            if (MoveVector is Vector2 movement)
+            {
+                Sprite.Position += movement;
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace KernelPanic
 {
-    public class Base
+    internal sealed class Base
     {
         public int Power { get; private set; }
 

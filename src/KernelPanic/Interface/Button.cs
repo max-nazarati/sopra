@@ -22,9 +22,9 @@ namespace KernelPanic
             set => mTitleSprite.Text = value;
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
-            if (Enabled && ContainsMouse() && InputManager.Default.MousePressed(InputManager.MouseButton.Left))
+            if (Enabled && InputManager.Default.MousePressed(InputManager.MouseButton.Left) && ContainsMouse(invertedViewMatrix))
                 Clicked?.Invoke(this);
         }
     }

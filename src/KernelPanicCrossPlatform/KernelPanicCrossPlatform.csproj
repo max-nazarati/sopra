@@ -156,6 +156,9 @@
     <Compile Include="..\KernelPanic\PlayTime.cs">
       <Link>PlayTime.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\PositionProvider.cs">
+      <Link>PositionProvider.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>

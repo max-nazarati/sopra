@@ -2,26 +2,35 @@
 
 namespace KernelPanic
 {
-    internal class PurchasableAction<TResource> where TResource : IPriced
+    internal class PurchasableAction<TResource> where TResource : class, IPriced
     {
         public delegate void Delegate(Player buyer, TResource resource);
 
         public event Delegate Purchased;
-        
-        private TResource Resource { get; }
+        private TResource mResource;
 
-        protected PurchasableAction(TResource resource)
+        internal PurchasableAction(TResource resource = null)
         {
-            Resource = resource;
+            mResource = resource;
         }
-        
+
+        /// <summary>
+        /// Overwrites <see cref="Resource"/> with a new value.
+        /// </summary>
+        /// <param name="newResource">The new resource which will be purchased.</param>
+        internal void ResetResource(TResource newResource = null)
+        {
+            mResource = newResource;
+        }
+
         /// <summary>
         /// Checks if the given player can afford this action with his resources.
         /// </summary>
         /// Resources are either bitcoins or experience points.
         /// <param name="buyer">The potential buyer.</param>
         /// <returns>True if <paramref name="buyer"/> can afford the resource.</returns>
-        internal virtual bool Available(Player buyer) => PlayerResourcesLens(buyer).get() >= Resource.Price;
+        internal virtual bool Available(Player buyer) =>
+            mResource != null && PlayerResourcesLens(buyer).get() >= mResource.Price;
 
         /// <summary>
         /// Purchases the action if the given Player can afford it.
@@ -43,8 +52,8 @@ namespace KernelPanic
         protected virtual void Purchase(Player buyer)
         {
             var resources = PlayerResourcesLens(buyer);
-            resources.set(resources.get() - Resource.Price);
-            Purchased?.Invoke(buyer, Resource);
+            resources.set(resources.get() - mResource.Price);
+            Purchased?.Invoke(buyer, mResource);
         }
 
         /// <summary>
@@ -56,7 +65,7 @@ namespace KernelPanic
         /// <exception cref="InvalidOperationException">throws if <code>Resource.Currency</code> is an unlisted value.</exception>
         private (Func<int> get, Action<int> set) PlayerResourcesLens(Player buyer)
         {
-            switch (Resource.Currency)
+            switch (mResource.Currency)
             {
                 case Currency.Bitcoin:
                     return (() => buyer.Bitcoins, i => buyer.Bitcoins = i);

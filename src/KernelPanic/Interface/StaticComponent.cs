@@ -11,7 +11,7 @@ namespace KernelPanic
             Sprite = sprite;
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, Matrix invertedViewMatrix)
         {
             // Nothing to update.
         }

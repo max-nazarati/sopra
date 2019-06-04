@@ -19,18 +19,13 @@ namespace KernelPanic
         {
             sprite.Position = position.ToVector2();
             sprite.ScaleToWidth(Grid.KachelSize);
-            return new Troupe(1, 1, 1, 1, sprite);
+            return new Troupe(10, 1, 1, 1, sprite);
         }
-
-        internal static Troupe CreateSquare(Point position, Color color, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateColoredSquare(color));
 
         internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateTrojan());
 
-        internal override void Update(GameTime gameTime, Matrix invertedViewMatrix)
-        {
-            // throw new System.NotImplementedException();
-        }
+        internal static Troupe CreateFirefox(Point position, SpriteManager spriteManager) =>
+            Create(position, spriteManager.CreateFirefox());
     }
 }

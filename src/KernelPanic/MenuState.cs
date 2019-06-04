@@ -271,7 +271,7 @@ namespace KernelPanic
         {
             foreach(var component in mComponents)
             {
-                component.Update(gameTime);
+                component.Update(gameTime, Matrix.Identity);
             }
         }
         

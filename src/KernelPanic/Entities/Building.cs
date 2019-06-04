@@ -7,7 +7,7 @@
             BitcoinWorth = price;
         }
 
-        internal int BitcoinWorth { get; set; }
+        private int BitcoinWorth { get; set; }
 
         internal State StateProperty { get; set; }
         

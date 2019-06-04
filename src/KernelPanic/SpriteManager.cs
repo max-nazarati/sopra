@@ -18,7 +18,9 @@ namespace KernelPanic
             LaneTile,
             Tower,
             Projectile,
-            Trojan
+            Trojan,
+            SelectionBorder,
+            FoxLeft
         }
 
         private enum Font
@@ -44,13 +46,15 @@ namespace KernelPanic
                 Texture(Image.LaneTile, "LaneTile"),
                 Texture(Image.Tower, "tower"),
                 Texture(Image.Projectile, "Projectile"),
-                Texture(Image.Trojan, "trojan")
+                Texture(Image.Trojan, "trojan"),
+                Texture(Image.FoxLeft, "firefox_left"),
+                (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
 
             mFonts = new[]
             {
-                SpriteFont(Font.Button, "buttonFont"),
+                SpriteFont(Font.Button, "ButtonFont"),
                 SpriteFont(Font.Hud, "HUDFont")
             };
             Array.Sort(mFonts);
@@ -178,13 +182,63 @@ namespace KernelPanic
         }
 
         internal AnimatedSprite CreateTrojan() =>
-            new AnimatedSprite(Lookup(Image.Trojan), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
+            new AnimatedSprite(Lookup(Image.Trojan), 0, 0, new TimeSpan(0, 0, 0, 0, 300));
+
+        internal AnimatedSprite CreateFirefox() =>
+            new AnimatedSprite(Lookup(Image.FoxLeft), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
 
         internal ImageSprite CreateColoredSquare(Color color)
         {
             var texture = new Texture2D(GraphicsDevice, 1, 1);
             texture.SetData(new[] {color});
             return new ImageSprite(texture, 0, 0);
+        }
+
+        private const int SelectionBorderThickness = 12;
+        private Texture2D CreateSelectionBorderTexture(Color color)
+        {
+            const int line = Grid.KachelSize + 2 * SelectionBorderThickness; 
+            var texture = new Texture2D(GraphicsDevice, line, line);
+
+            var lineIdx = 0;
+            var data = new Color[texture.Width * texture.Height];
+
+            // Fill top and bottom border.
+            for (var i = 0; i < SelectionBorderThickness; ++i, ++lineIdx)
+            {
+                for (var j = 0; j < line; ++j)
+                {
+                    // Multiply lineIdx with this because we skip over multiple lines.
+                    data[j + line * (lineIdx + Grid.KachelSize + SelectionBorderThickness)] = color;
+                    data[j + line * lineIdx] = color;
+                }
+            }
+
+            // Fill rows in between.
+            for (var i = 0; i < Grid.KachelSize; ++i, ++lineIdx)
+            {
+                // Fill the left and right border.
+                for (var j = 0; j < SelectionBorderThickness; ++j)
+                {
+                    // Multiply only lineIdx with line, because we move inside on line.
+                    data[j + line * lineIdx + Grid.KachelSize + SelectionBorderThickness] = color;
+                    data[j + line * lineIdx] = color;
+                }
+
+                // Fill in between.
+                for (var j = 0; j < Grid.KachelSize; ++j)
+                    data[lineIdx * line + SelectionBorderThickness + j] = Color.Transparent;
+            }
+
+            texture.SetData(data);
+            return texture;
+        }
+        
+        internal ImageSprite CreateSelectionBorder()
+        {
+            var sprite = new ImageSprite(Lookup(Image.SelectionBorder), 0, 0);
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
         }
 
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
