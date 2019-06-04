@@ -104,7 +104,7 @@ namespace KernelPanic
         {
             if (InputManager.Default.KeyPressed(Keys.Escape))
             {
-                mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager));
+                mGameStateManager.Push(MenuState.CreatePauseMenu(mGameStateManager, this));
                 return;
             }
 

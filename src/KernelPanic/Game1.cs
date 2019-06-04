@@ -82,7 +82,7 @@ namespace KernelPanic
 
             // TODO: use this.Content to load your game content here
             SoundManager.Instance.Init(Content);
-            SoundManager.Instance.PlayBackgroundMusic();
+            // SoundManager.Instance.PlayBackgroundMusic();
 
             // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 20, 50));
             // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 16, 42));
@@ -108,11 +108,12 @@ namespace KernelPanic
             mCoolDown = new CooldownComponent(new TimeSpan(0, 0, 5));
             mCoolDown.CooledDown += mUnit1.CooledDownDelegate;
             */
+            
             // Testing Storage Manager
-            StorageManager storageManager = new StorageManager();
-            InGameState testSaveState = new InGameState(mGameStateManager);
-            storageManager.SaveGame("testSave.xml", testSaveState);
-            var testLoadState = storageManager.LoadGame("testSave.xml");
+            // StorageManager storageManager = new StorageManager();
+            // InGameState testSaveState = new InGameState(mGameStateManager);
+            // storageManager.SaveGame("testSave.xml", testSaveState);
+            // var testLoadState = storageManager.LoadGame("testSave.xml");
             
         }
 
