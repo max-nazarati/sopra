@@ -66,7 +66,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/firefox_jumping.png
+/build:../../KernelPanic/Content/firefox_jumping.png;firefox_jumping.png
 
 #begin ../../KernelPanic/Content/firefox_left.png
 /importer:TextureImporter
@@ -78,7 +78,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/firefox_left.png
+/build:../../KernelPanic/Content/firefox_left.png;firefox_left.png
 
 #begin ../../KernelPanic/Content/GameBackground.png
 /importer:TextureImporter
@@ -157,7 +157,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/loading.png
+/build:../../KernelPanic/Content/loading.png;loading.png
 
 #begin ../../KernelPanic/Content/Mauer.png
 /importer:TextureImporter
