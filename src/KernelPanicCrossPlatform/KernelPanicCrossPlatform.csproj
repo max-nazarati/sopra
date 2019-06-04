@@ -69,8 +69,8 @@
     <Compile Include="..\KernelPanic\Board.cs">
       <Link>Board.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Camera2d.cs">
-      <Link>Camera2d.cs</Link>
+    <Compile Include="..\KernelPanic\Camera\Camera2D.cs">
+      <Link>Camera\Camera2D.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Building.cs">
       <Link>Entities\Building.cs</Link>

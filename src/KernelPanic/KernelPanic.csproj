@@ -48,7 +48,7 @@
     <Compile Include="AStar.cs" />
     <Compile Include="Base.cs" />
     <Compile Include="Board.cs" />
-    <Compile Include="Camera2d.cs" />
+    <Compile Include="Camera\Camera2D.cs" />
     <Compile Include="Entities\Building.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Hero.cs" />
