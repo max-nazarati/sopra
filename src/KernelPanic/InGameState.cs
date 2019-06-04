@@ -40,6 +40,7 @@ namespace KernelPanic
             var entityGraph = mBoard.LeftLane.EntityGraph;
             entityGraph.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
             entityGraph.Add(Troupe.CreateFirefox(new Point(350), gameStateManager.Sprite));
+            entityGraph.Add(Troupe.CreateFirefoxJump(new Point(250), gameStateManager.Sprite));
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite);
         }
 
