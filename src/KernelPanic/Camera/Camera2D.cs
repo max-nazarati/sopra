@@ -24,6 +24,17 @@ namespace KernelPanic
             mPosition.Y = 1150;
         }
 
+        /// <inheritdoc />
+        public Matrix Transformation => GetViewMatrix();
+
+        /// <inheritdoc />
+        public void Apply(sbyte xMovement, sbyte yMovement, sbyte scaling)
+        {
+            PosX += xMovement * 10 / mZoom;
+            PosY += yMovement * 10 / mZoom;
+            Zoom += scaling * 0.1f / mZoom;
+        }
+
         /// <summary>
         /// Asks if the camera should be moved and reacts accordingly
         /// </summary>
