@@ -244,15 +244,3 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/trojan.png;trojan.png
 
-#begin ../../KernelPanic/Content/Unilogo.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/Unilogo.png;Unilogo.png
-
