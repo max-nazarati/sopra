@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -22,17 +23,32 @@ namespace KernelPanic
             mOrigin = new Vector2(viewportSize.X / 2f, viewportSize.Y / 2f);
             mPosition.X = 290;
             mPosition.Y = 1150;
+
+            ResetInverseTransformation();
         }
 
         /// <inheritdoc />
         public Matrix Transformation => GetViewMatrix();
+        
+        /// <inheritdoc />
+        public Matrix InverseTransformation => mInverseTransformation.Value;
+        private Lazy<Matrix> mInverseTransformation;
 
         /// <inheritdoc />
         public void Apply(sbyte xMovement, sbyte yMovement, sbyte scaling)
         {
+            if (xMovement == 0 && yMovement == 0 && scaling == 0)
+                return;
+
             PosX += xMovement * 10 / mZoom;
             PosY += yMovement * 10 / mZoom;
             Zoom += scaling * 0.1f / mZoom;
+            ResetInverseTransformation();
+        }
+
+        private void ResetInverseTransformation()
+        {
+            mInverseTransformation = new Lazy<Matrix>();
         }
 
         /// <summary>

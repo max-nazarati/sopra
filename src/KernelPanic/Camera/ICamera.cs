@@ -8,6 +8,11 @@ namespace KernelPanic
         /// The camera's current transformation for turning window-coordinates into world-coordinates.
         /// </summary>
         Matrix Transformation { get; }
+        
+        /// <summary>
+        /// The camera's current inverse transformation for turning world-coordinates into window-coordinates.
+        /// </summary>
+        Matrix InverseTransformation { get; }
 
         /// <summary>
         /// Updates the camera's <see cref="Transformation"/>. Implementations may choose to ignore parts of the
