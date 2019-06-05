@@ -123,6 +123,9 @@ namespace KernelPanic
 
         internal Point MousePosition => mCurrentMouseState.Position;
 
+        internal Vector2 TranslatedMousePosition =>
+            Vector2.Transform(MousePosition.ToVector2(), mCamera.Transformation);
+
         /// <summary>
         /// checks if any of the Keyboard Buttons has been pressed (at this exact moment)
         /// </summary>
