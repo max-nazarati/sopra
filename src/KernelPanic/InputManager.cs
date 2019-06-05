@@ -18,6 +18,9 @@ namespace KernelPanic
         private readonly Tuple<int, int> mScreenSizeTuple = new Tuple<int, int> (1920, 1080);
         private const int ScreenBorderDistance = 100;
 
+        private readonly Viewport mViewport;
+        private readonly ICamera mCamera;
+
         /// <summary>
         /// Left, Middle and Right MouseButton
         /// </summary>
@@ -27,6 +30,17 @@ namespace KernelPanic
         }
 
         internal static InputManager Default => sInstance ?? (sInstance = new InputManager());
+
+        // FIXME: This overload only exists to allow compiling whilst transitioning to the new InputManager model.
+        private InputManager() : this(new Viewport(0, 0, 0, 0), null)
+        {
+        }
+
+        internal InputManager(Viewport viewport, ICamera camera)
+        {
+            mViewport = viewport;
+            mCamera = camera;
+        }
 
         /// <summary>
         /// updates the Input states, should be called in the main update function.
