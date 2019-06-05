@@ -30,12 +30,10 @@ namespace KernelPanic
             Sprite = sprites;
             ExitAction = exitAction;
         }
-        
-        internal AGameState Active => mGameStates.Peek();
 
         public void Pop()
         {
-            if (mGameStates.Count() > 0)
+            if (mGameStates.Count > 0)
             {
                 mGameStates.Pop();
             }
@@ -46,20 +44,27 @@ namespace KernelPanic
         }
         public void Update(GameTime gameTime)
         {
-            mGameStates.Peek().Update(gameTime);
-        }
-        public bool Empty()
-        {
-            return mGameStates.Count() < 1;
+            foreach (var state in ActiveStates())
+            {
+                state.Update(gameTime);
+            }
         }
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (!Empty())
+            foreach (var state in ActiveStates().Reverse())
             {
-                AGameState x = mGameStates.Peek();
-                x.Draw(spriteBatch, gameTime);
+                state.Draw(spriteBatch, gameTime);
             }
+        }
 
+        private IEnumerable<AGameState> ActiveStates()
+        {
+            foreach (var state in mGameStates)
+            {
+                yield return state;
+                if (!state.IsOverlay)
+                    break;
+            }
         }
     }
 }
