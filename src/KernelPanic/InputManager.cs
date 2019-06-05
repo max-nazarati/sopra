@@ -6,12 +6,29 @@ using Microsoft.Xna.Framework.Input;
 namespace KernelPanic
 {
     /// <summary>
+    /// Keeps track of the current and previous mouse and keyboard state.
+    /// </summary>
+    internal sealed class RawInputState
+    {
+        internal MouseState CurrentMouse { get; private set; }
+        internal MouseState PreviousMouse { get; private set; }
+        internal KeyboardState CurrentKeyboard { get; private set; }
+        internal KeyboardState PreviousKeyboard { get; private set; }
+
+        internal void Update()
+        {
+            PreviousMouse = CurrentMouse;
+            CurrentMouse = Mouse.GetState();
+            PreviousKeyboard = CurrentKeyboard;
+            CurrentKeyboard = Keyboard.GetState();
+        }
+    }
+    
+    /// <summary>
     /// singleton class to handle the Input for the whole game
     /// </summary>
     internal sealed class InputManager
     {
-        private KeyboardState mCurrentKeyboardState, mPreviousKeyboardState;
-        private MouseState mCurrentMouseState, mPreviousMouseState;
         private static InputManager sInstance;
         private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
         private double mTimeLastClick = MaximumDoubleClickDelay; // Left MouseButton (init is for 'reset')
@@ -19,6 +36,7 @@ namespace KernelPanic
         private readonly Tuple<int, int> mScreenSizeTuple = new Tuple<int, int> (1920, 1080);
         private const int ScreenBorderDistance = 100;
 
+        private readonly RawInputState mInputState;
         private readonly Viewport mViewport;
         private readonly ICamera mCamera;
 
@@ -33,66 +51,16 @@ namespace KernelPanic
         internal static InputManager Default => sInstance ?? (sInstance = new InputManager());
 
         // FIXME: This overload only exists to allow compiling whilst transitioning to the new InputManager model.
-        private InputManager() : this(new Viewport(0, 0, 0, 0), null)
+        private InputManager() : this(new Viewport(0, 0, 0, 0), null, null)
         {
         }
 
-        internal InputManager(Viewport viewport, ICamera camera)
+        internal InputManager(Viewport viewport, ICamera camera, RawInputState inputState)
         {
             mViewport = viewport;
             mCamera = camera;
+            mInputState = inputState;
         }
-
-        /// <summary>
-        /// updates the Input states, should be called in the main update function.
-        /// </summary>
-        internal void Update(GameTime gameTime)
-        {
-            // updating the keyboard
-            mPreviousKeyboardState = mCurrentKeyboardState;
-            mCurrentKeyboardState = Keyboard.GetState();
-
-            // updating the mouse
-            mPreviousMouseState = mCurrentMouseState;
-            mCurrentMouseState = Mouse.GetState();
-
-            DoubleClickUpdate(gameTime);
-            
-            // Uncomment when used.
-            // UpdateMouseClickPosition();
-        }
-
-        /// <summary>
-        /// Updates the mRecentDoubleClicked Variable
-        /// </summary>
-        private void DoubleClickUpdate(GameTime gameTime)
-        {
-            // time has past :)
-            mTimeLastClick += gameTime.ElapsedGameTime.Milliseconds;
-
-            // check for Input to reset timer or mark recent double click as success
-            if (MousePressed(MouseButton.Left))
-            {
-                if (mTimeLastClick < MaximumDoubleClickDelay)
-                {
-                    mTimeLastClick = MaximumDoubleClickDelay; // 'resetting' the double click
-                    DoubleClick = true;
-                    return;
-                }
-                DoubleClick = false;
-                mTimeLastClick = 0;
-            }
-            else
-            {
-                DoubleClick = false;
-            }
-        }
-
-        /// <summary>
-        /// TODO make as get function
-        /// </summary>
-        /// <returns></returns>
-        internal bool DoubleClick { get; private set; }
 
 #if false // Uncomment when used.
         public Point LatestMouseLeftClickPosition { get; private set; }
@@ -106,22 +74,22 @@ namespace KernelPanic
         {
             if (MousePressed(MouseButton.Left))
             {
-                LatestMouseLeftClickPosition = new Point(mCurrentMouseState.X, mCurrentMouseState.Y);
+                LatestMouseLeftClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
             }
             
             if (MousePressed(MouseButton.Middle))
             {
-                LatestMouseMiddleClickPosition = new Point(mCurrentMouseState.X, mCurrentMouseState.Y);
+                LatestMouseMiddleClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
             }
             
             if (MousePressed(MouseButton.Right))
             {
-                LatestMouseRightClickPosition = new Point(mCurrentMouseState.X, mCurrentMouseState.Y);
+                LatestMouseRightClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
             }
         }
 #endif
 
-        internal Point MousePosition => mCurrentMouseState.Position;
+        internal Point MousePosition => mInputState.CurrentMouse.Position;
 
         internal Vector2 TranslatedMousePosition =>
             Vector2.Transform(MousePosition.ToVector2(), mCamera.Transformation);
@@ -135,7 +103,7 @@ namespace KernelPanic
         {
             foreach (Keys key in keys)
             {
-                if (mCurrentKeyboardState.IsKeyDown(key) && mPreviousKeyboardState.IsKeyUp(key))
+                if (mInputState.CurrentKeyboard.IsKeyDown(key) && mInputState.PreviousKeyboard.IsKeyUp(key))
                 {
                     return true;
                 }
@@ -155,7 +123,7 @@ namespace KernelPanic
         {
             foreach (Keys key in keys)
             {
-                if (mCurrentKeyboardState.IsKeyUp(key) && mPreviousKeyboardState.IsKeyDown(key))
+                if (mInputState.CurrentKeyboard.IsKeyUp(key) && mInputState.PreviousKeyboard.IsKeyDown(key))
                 {
                     return true;
                 }
@@ -174,7 +142,7 @@ namespace KernelPanic
         {
             foreach (var key in keys)
             {
-                if (mCurrentKeyboardState.IsKeyDown(key))
+                if (mInputState.CurrentKeyboard.IsKeyDown(key))
                 {
                     return true;
                 }
@@ -194,7 +162,7 @@ namespace KernelPanic
         {
             foreach (Keys key in keys)
             {
-                if (mCurrentKeyboardState.IsKeyUp(key))
+                if (mInputState.CurrentKeyboard.IsKeyUp(key))
                 {
                     return true;
                 }
@@ -209,7 +177,7 @@ namespace KernelPanic
         /// </summary>
         /// <returns>Tuple with X and Y distance</returns>
         internal Point MouseMovement =>
-            new Point(mCurrentMouseState.X - mPreviousMouseState.X, mCurrentMouseState.Y - mPreviousMouseState.Y);
+            new Point(mInputState.CurrentMouse.X - mInputState.PreviousMouse.X, mInputState.CurrentMouse.Y - mInputState.PreviousMouse.Y);
 
         /// <summary>
         /// checks if any of the MouseButtons has been pressed (at this exact moment => de-bounced)
@@ -224,16 +192,16 @@ namespace KernelPanic
                 switch (mouseButton)
                 {
                     case MouseButton.Left:
-                        pressed |= mCurrentMouseState.LeftButton == ButtonState.Pressed &&
-                                   mPreviousMouseState.LeftButton != ButtonState.Pressed;
+                        pressed |= mInputState.CurrentMouse.LeftButton == ButtonState.Pressed &&
+                                   mInputState.PreviousMouse.LeftButton != ButtonState.Pressed;
                         break;
                     case MouseButton.Middle:
-                        pressed |= mCurrentMouseState.MiddleButton == ButtonState.Pressed &&
-                                   mPreviousMouseState.MiddleButton != ButtonState.Pressed;
+                        pressed |= mInputState.CurrentMouse.MiddleButton == ButtonState.Pressed &&
+                                   mInputState.PreviousMouse.MiddleButton != ButtonState.Pressed;
                         break;
                     case MouseButton.Right:
-                        pressed |= mCurrentMouseState.RightButton == ButtonState.Pressed &&
-                                   mPreviousMouseState.RightButton != ButtonState.Pressed;
+                        pressed |= mInputState.CurrentMouse.RightButton == ButtonState.Pressed &&
+                                   mInputState.PreviousMouse.RightButton != ButtonState.Pressed;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(mouseButtons));
@@ -257,16 +225,16 @@ namespace KernelPanic
                 switch (mouseButton)
                 {
                     case MouseButton.Left:
-                        released |= mCurrentMouseState.LeftButton != ButtonState.Pressed &&
-                                    mPreviousMouseState.LeftButton == ButtonState.Pressed;
+                        released |= mInputState.CurrentMouse.LeftButton != ButtonState.Pressed &&
+                                    mInputState.PreviousMouse.LeftButton == ButtonState.Pressed;
                         break;
                     case MouseButton.Middle:
-                        released |= mCurrentMouseState.MiddleButton != ButtonState.Pressed &&
-                                    mPreviousMouseState.MiddleButton == ButtonState.Pressed;
+                        released |= mInputState.CurrentMouse.MiddleButton != ButtonState.Pressed &&
+                                    mInputState.PreviousMouse.MiddleButton == ButtonState.Pressed;
                         break;
                     case MouseButton.Right:
-                        released |= mCurrentMouseState.RightButton != ButtonState.Pressed &&
-                                    mPreviousMouseState.RightButton == ButtonState.Pressed;
+                        released |= mInputState.CurrentMouse.RightButton != ButtonState.Pressed &&
+                                    mInputState.PreviousMouse.RightButton == ButtonState.Pressed;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(mouseButtons));
@@ -290,13 +258,13 @@ namespace KernelPanic
                 switch (mouseButton)
                 {
                     case MouseButton.Left:
-                        down |= mCurrentMouseState.LeftButton == ButtonState.Pressed;
+                        down |= mInputState.CurrentMouse.LeftButton == ButtonState.Pressed;
                         break;
                     case MouseButton.Middle:
-                        down |= mCurrentMouseState.MiddleButton == ButtonState.Pressed;
+                        down |= mInputState.CurrentMouse.MiddleButton == ButtonState.Pressed;
                         break;
                     case MouseButton.Right:
-                        down |= mCurrentMouseState.RightButton == ButtonState.Pressed;
+                        down |= mInputState.CurrentMouse.RightButton == ButtonState.Pressed;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(mouseButtons));
@@ -312,8 +280,8 @@ namespace KernelPanic
         /// <returns></returns>
         internal bool MouseAtLeftScreenBorder()
         {
-            return mCurrentMouseState.X < ScreenBorderDistance
-                   && mCurrentMouseState.X > 0;
+            return mInputState.CurrentMouse.X < ScreenBorderDistance
+                   && mInputState.CurrentMouse.X > 0;
         }
 
         /// <summary>
@@ -322,8 +290,8 @@ namespace KernelPanic
         /// <returns></returns>
         internal bool MouseAtTopScreenBorder()
         {
-            return mCurrentMouseState.Y < ScreenBorderDistance
-                   && mCurrentMouseState.Y > 0;
+            return mInputState.CurrentMouse.Y < ScreenBorderDistance
+                   && mInputState.CurrentMouse.Y > 0;
         }
 
         /// <summary>
@@ -332,8 +300,8 @@ namespace KernelPanic
         /// <returns></returns>
         internal bool MouseAtRightScreenBorder()
         {
-            return mCurrentMouseState.X > mScreenSizeTuple.Item1 - ScreenBorderDistance
-                   && mCurrentMouseState.X < mScreenSizeTuple.Item1;
+            return mInputState.CurrentMouse.X > mScreenSizeTuple.Item1 - ScreenBorderDistance
+                   && mInputState.CurrentMouse.X < mScreenSizeTuple.Item1;
         }
 
         /// <summary>
@@ -342,8 +310,8 @@ namespace KernelPanic
         /// <returns></returns>
         internal bool MouseAtBottomScreenBorder()
         {
-            return mCurrentMouseState.Y > mScreenSizeTuple.Item2 - ScreenBorderDistance
-                   && mCurrentMouseState.Y < mScreenSizeTuple.Item2;
+            return mInputState.CurrentMouse.Y > mScreenSizeTuple.Item2 - ScreenBorderDistance
+                   && mInputState.CurrentMouse.Y < mScreenSizeTuple.Item2;
         }
 
         /// <summary>
@@ -352,7 +320,7 @@ namespace KernelPanic
         /// <returns>negative value for zooming out</returns>
         private int ScrollWheelMovement()
         {
-            return mCurrentMouseState.ScrollWheelValue - mPreviousMouseState.ScrollWheelValue;
+            return mInputState.CurrentMouse.ScrollWheelValue - mInputState.PreviousMouse.ScrollWheelValue;
         }
 
         /// <summary>
@@ -380,8 +348,8 @@ namespace KernelPanic
         /// <returns></returns>
         public Tuple<bool, Tuple<int, int>, Tuple<int, int>> MouseDragged(MouseButton mouseButton) // TODO implement this iff we need a rectangular selection
         {
-            var startPointXy = new Tuple<int, int> (mCurrentMouseState.X, mCurrentMouseState.Y);
-            var endPointXy = new Tuple<int, int>(mCurrentMouseState.X, mCurrentMouseState.Y);
+            var startPointXy = new Tuple<int, int> (mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
+            var endPointXy = new Tuple<int, int>(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
 
             var result = new Tuple<bool, Tuple<int, int>, Tuple<int, int>>(false, startPointXy, endPointXy);
             return result;

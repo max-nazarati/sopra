@@ -11,6 +11,7 @@ namespace KernelPanic
         private readonly GraphicsDeviceManager mGraphics;
         private SpriteBatch mSpriteBatch;
         private GameStateManager mGameStateManager;
+        private readonly RawInputState mInputState;
 
         public Game1()
         {
@@ -24,6 +25,8 @@ namespace KernelPanic
 
             // No mGraphics.ApplyChanges() required as explained here:
             // https://stackoverflow.com/a/11287316/1592765
+
+            mInputState = new RawInputState();
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            InputManager.Default.Update(gameTime);
+            mInputState.Update();
             mGameStateManager.Update(gameTime);
             base.Update(gameTime);
         }
