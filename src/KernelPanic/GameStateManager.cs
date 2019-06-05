@@ -44,10 +44,9 @@ namespace KernelPanic
         {
             mGameStates.Push(newGameState);
         }
-        public void Update(GameTime gameTime, bool isOverlay)
+        public void Update(GameTime gameTime)
         {
-            mGameStates.Peek().Update(gameTime, mGameStates.Peek().IsOverlay);
-
+            mGameStates.Peek().Update(gameTime);
         }
         public bool Empty()
         {
@@ -58,7 +57,7 @@ namespace KernelPanic
             if (!Empty())
             {
                 AGameState x = mGameStates.Peek();
-                x.Draw(spriteBatch, gameTime, mGameStates.Peek().IsOverlay);
+                x.Draw(spriteBatch, gameTime);
             }
 
         }

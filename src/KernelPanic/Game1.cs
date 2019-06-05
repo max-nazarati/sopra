@@ -71,7 +71,7 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             InputManager.Default.Update(gameTime);
-            mGameStateManager.Update(gameTime, false);
+            mGameStateManager.Update(gameTime);
             base.Update(gameTime);
         }
 

@@ -18,7 +18,7 @@ namespace KernelPanic
             GameStateGameStateManager = gameStateManager;
         }
         
-        public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay);
-        public abstract void Update(GameTime gameTime, bool isOverlay);
+        public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
+        public abstract void Update(GameTime gameTime);
     }
 }

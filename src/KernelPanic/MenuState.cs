@@ -283,7 +283,7 @@ namespace KernelPanic
             return button;
         }
 
-        public override void Update(GameTime gameTime, bool isOverlay)
+        public override void Update(GameTime gameTime)
         {
             foreach(var component in mComponents)
             {
@@ -291,7 +291,7 @@ namespace KernelPanic
             }
         }
         
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin();
             foreach (var component in mComponents)

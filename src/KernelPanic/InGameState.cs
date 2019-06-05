@@ -101,7 +101,7 @@ namespace KernelPanic
             sprite3.Position = sprite2.Position + new Vector2(sprite2.Width, 0);
         }
 
-        public override void Update(GameTime gameTime, bool isOverlay)
+        public override void Update(GameTime gameTime)
         {
             if (InputManager.Default.KeyPressed(Keys.Escape))
             {
@@ -120,7 +120,7 @@ namespace KernelPanic
             mPurchaseDemoReset.Update(gameTime, invertedViewMatrix);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Immediate,
                 transformMatrix: Camera.GetViewMatrix(),
