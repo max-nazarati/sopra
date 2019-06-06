@@ -73,7 +73,7 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            mInputState.Update();
+            mInputState.Update(GraphicsDevice.Viewport);
             mGameStateManager.Update(gameTime);
             base.Update(gameTime);
         }

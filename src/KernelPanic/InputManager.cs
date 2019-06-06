@@ -10,13 +10,15 @@ namespace KernelPanic
     /// </summary>
     internal sealed class RawInputState
     {
+        internal Viewport Viewport { get; private set; }
         internal MouseState CurrentMouse { get; private set; }
         internal MouseState PreviousMouse { get; private set; }
         internal KeyboardState CurrentKeyboard { get; private set; }
         internal KeyboardState PreviousKeyboard { get; private set; }
 
-        internal void Update()
+        internal void Update(Viewport viewport)
         {
+            Viewport = viewport;
             PreviousMouse = CurrentMouse;
             CurrentMouse = Mouse.GetState();
             PreviousKeyboard = CurrentKeyboard;
@@ -37,7 +39,6 @@ namespace KernelPanic
         private const int ScreenBorderDistance = 100;
 
         private readonly RawInputState mInputState;
-        private readonly Viewport mViewport;
         private readonly ICamera mCamera;
 
         /// <summary>
@@ -51,13 +52,12 @@ namespace KernelPanic
         internal static InputManager Default => sInstance ?? (sInstance = new InputManager());
 
         // FIXME: This overload only exists to allow compiling whilst transitioning to the new InputManager model.
-        private InputManager() : this(new Viewport(0, 0, 0, 0), null, null)
+        private InputManager() : this(null, null)
         {
         }
 
-        internal InputManager(Viewport viewport, ICamera camera, RawInputState inputState)
+        internal InputManager(ICamera camera, RawInputState inputState)
         {
-            mViewport = viewport;
             mCamera = camera;
             mInputState = inputState;
         }
@@ -368,9 +368,9 @@ namespace KernelPanic
             var yDown = KeyDown(Keys.S);
 
             var mouseXLeft = MousePosition.X <= borderSize;
-            var mouseXRight = mViewport.Width - borderSize <= MousePosition.X;
+            var mouseXRight = mInputState.Viewport.Width - borderSize <= MousePosition.X;
             var mouseYUp = MousePosition.Y <= borderSize;
-            var mouseYDown = mViewport.Height - borderSize <= MousePosition.Y;
+            var mouseYDown = mInputState.Viewport.Height - borderSize <= MousePosition.Y;
 
             var zoomOut = ScrolledDown();
             var zoomIn = ScrolledUp();
