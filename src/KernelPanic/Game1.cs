@@ -74,7 +74,7 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             mInputState.Update(GraphicsDevice.Viewport);
-            mGameStateManager.Update(gameTime);
+            mGameStateManager.Update(mInputState, gameTime);
             base.Update(gameTime);
         }
 

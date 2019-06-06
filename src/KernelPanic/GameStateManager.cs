@@ -42,11 +42,12 @@ namespace KernelPanic
         {
             mGameStates.Push(newGameState);
         }
-        public void Update(GameTime gameTime)
+        public void Update(RawInputState rawInput, GameTime gameTime)
         {
             foreach (var state in ActiveStates())
             {
-                state.Update(gameTime);
+                var input = new InputManager(state.Camera, rawInput);
+                state.Update(input, gameTime);
             }
         }
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)

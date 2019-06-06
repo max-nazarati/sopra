@@ -283,7 +283,7 @@ namespace KernelPanic
             return button;
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(InputManager input, GameTime gameTime)
         {
             foreach(var component in mComponents)
             {

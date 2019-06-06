@@ -101,7 +101,7 @@ namespace KernelPanic
             sprite3.Position = sprite2.Position + new Vector2(sprite2.Width, 0);
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(InputManager input, GameTime gameTime)
         {
             if (InputManager.Default.KeyPressed(Keys.Escape))
             {
