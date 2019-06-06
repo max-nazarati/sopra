@@ -33,14 +33,14 @@ namespace KernelPanic
         public Matrix InverseTransformation => mInverseTransformation;
 
         /// <inheritdoc />
-        public void Apply(sbyte xMovement, sbyte yMovement, sbyte scaling)
+        public void Apply(Change x, Change y, Change scrollVertical)
         {
-            if (xMovement == 0 && yMovement == 0 && scaling == 0)
+            if (x.Direction == 0 && y.Direction == 0 && scrollVertical.Direction == 0)
                 return;
 
-            PosX += xMovement * 10 / mZoom;
-            PosY += yMovement * 10 / mZoom;
-            Zoom += scaling * 0.1f / mZoom;
+            PosX += x.Direction * 10 / mZoom;
+            PosY += y.Direction * 10 / mZoom;
+            Zoom += scrollVertical.Direction * 0.1f / mZoom;
             RecalculateTransformations();
         }
 

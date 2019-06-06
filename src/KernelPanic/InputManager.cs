@@ -324,28 +324,25 @@ namespace KernelPanic
             var mouseYUp = MousePosition.Y <= ScreenBorderDistance;
             var mouseYDown = mInputState.Viewport.Height - ScreenBorderDistance <= MousePosition.Y;
 
-            var zoomOut = ScrolledDown();
-            var zoomIn = ScrolledUp();
-
             // This function returns the value to be used for the apply call. If any of the first two arguments is true,
             // the arguments mouseDir1 and mouseDir2 aren't looked at, because keyboard input has preference over mouse
             // input.
-            sbyte ChooseDirection(bool dir1, bool dir2, bool? mouseDir1 = null, bool? mouseDir2 = null)
+            Change ChooseDirection(bool isKeyboard, bool dir1, bool dir2, bool? altDir1 = null, bool? altDir2 = null)
             {
                 if (dir1 && !dir2)
-                    return -1;
+                    return new Change(-1, isKeyboard, !isKeyboard);
                 if (!dir1 && dir2)
-                    return 1;
-                if (!dir1 && !dir2 && mouseDir1 is bool b1T && mouseDir2 is bool b2T)
-                    return ChooseDirection(b1T, b2T);
+                    return new Change(1, isKeyboard, !isKeyboard);
+                if (!dir1 && !dir2 && altDir1 is bool b1T && altDir2 is bool b2T)
+                    return ChooseDirection(false, b1T, b2T);
 
-                return 0;
+                return Change.None;
             }
 
             mCamera.Apply(
-                ChooseDirection(xLeft, xRight, mouseXLeft, mouseXRight),
-                ChooseDirection(yUp, yDown, mouseYUp, mouseYDown),
-                ChooseDirection(zoomOut, zoomIn)
+                ChooseDirection(true, xLeft, xRight, mouseXLeft, mouseXRight),
+                ChooseDirection(true, yUp, yDown, mouseYUp, mouseYDown),
+                ChooseDirection(false, ScrolledUp(), ScrolledDown())
             );
         }
     }
