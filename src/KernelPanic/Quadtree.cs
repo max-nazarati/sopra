@@ -226,13 +226,10 @@ namespace KernelPanic
         /// <returns></returns>
         internal bool HasEntityAt(Vector2 point)
         {
-            Console.WriteLine(point);
             foreach (var @object in mObjects)
             {
-                Console.WriteLine("objekte : "+ @object.Bounds);
                 if (@object.Bounds.Contains(point))
                 {
-                    Console.WriteLine("Kollisiond");
                     return true;
                 }
             }
@@ -240,7 +237,6 @@ namespace KernelPanic
             if (mChilds.Count != 0)
             {
                 var index = CalculatePosition(point);
-                Console.Write("Index : " + index +", Level : "+mLevel+", point : "+point);
                 if (index != -1)
                 {
                     return mChilds[index].HasEntityAt(point);
