@@ -16,6 +16,9 @@ namespace KernelPanic
         [DataMember]
         private readonly Vector2 mOrigin;
 
+        private Matrix mTransformation;
+        private Matrix mInverseTransformation;
+
         internal Camera2D(Point viewportSize)
         {
             // mRotation = 0;
@@ -23,16 +26,14 @@ namespace KernelPanic
             mOrigin = new Vector2(viewportSize.X / 2f, viewportSize.Y / 2f);
             mPosition.X = 290;
             mPosition.Y = 1150;
-
-            ResetInverseTransformation();
+            RecalculateTransformations();
         }
 
         /// <inheritdoc />
-        public Matrix Transformation => GetViewMatrix();
-        
+        public Matrix Transformation => mTransformation;
+
         /// <inheritdoc />
-        public Matrix InverseTransformation => mInverseTransformation.Value;
-        private Lazy<Matrix> mInverseTransformation;
+        public Matrix InverseTransformation => mInverseTransformation;
 
         /// <inheritdoc />
         public void Apply(sbyte xMovement, sbyte yMovement, sbyte scaling)
@@ -43,12 +44,21 @@ namespace KernelPanic
             PosX += xMovement * 10 / mZoom;
             PosY += yMovement * 10 / mZoom;
             Zoom += scaling * 0.1f / mZoom;
-            ResetInverseTransformation();
+            RecalculateTransformations();
         }
 
-        private void ResetInverseTransformation()
+        private void RecalculateTransformations()
         {
-            mInverseTransformation = new Lazy<Matrix>();
+            // We recalculate the transformation and its inverse after each update, since the update occurs only once
+            // during an update-cycle and in each update-cycle both will be used.
+
+            mTransformation =
+                Matrix.CreateTranslation(new Vector3(-mPosition, 0.0f)) *
+                Matrix.CreateTranslation(new Vector3(-mOrigin, 0.0f)) *
+                Matrix.CreateScale(mZoom, mZoom, 1) *
+                Matrix.CreateTranslation(new Vector3(mOrigin, 0.0f));
+
+            Matrix.Invert(ref mTransformation, out mInverseTransformation);
         }
 
         /// <summary>
