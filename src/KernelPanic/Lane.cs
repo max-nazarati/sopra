@@ -35,7 +35,7 @@ namespace KernelPanic
             var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
             if (input.KeyPressed(Keys.T))
             {
-                // It seems can't use pattern matching here because of compiler-limitations.
+                // It seems we can't use pattern matching here because of compiler-limitations.
                 var gridPoint = mGrid.GridPointFromWorldPoint(mouse, 2);
                 if (gridPoint != null)
                 {
