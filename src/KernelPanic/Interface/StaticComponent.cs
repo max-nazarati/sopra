@@ -4,14 +4,14 @@ namespace KernelPanic
 {
     internal sealed class StaticComponent : InterfaceComponent
     {
-        public override Sprite Sprite { get; }
+        internal override Sprite Sprite { get; }
         
         public StaticComponent(Sprite sprite)
         {
             Sprite = sprite;
         }
 
-        public override void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        internal override void Update(GameTime gameTime, InputManager inputManager)
         {
             // Nothing to update.
         }

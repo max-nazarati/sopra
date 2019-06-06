@@ -47,9 +47,9 @@ namespace KernelPanic
         }
         
         /// <inheritdoc />
-        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        public void Update(GameTime gameTime, InputManager inputManager)
         {
-            Button.Update(gameTime, invertedViewMatrix);
+            Button.Update(gameTime, inputManager);
             Button.Enabled = PossiblyEnabled && Action.Available(Player);
         }
 

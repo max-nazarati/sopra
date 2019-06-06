@@ -29,7 +29,7 @@ namespace KernelPanic
     /// <summary>
     /// singleton class to handle the Input for the whole game
     /// </summary>
-    internal sealed class InputManager
+    public sealed class InputManager
     {
         private static InputManager sInstance;
         private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
@@ -189,7 +189,7 @@ namespace KernelPanic
         /// </summary>
         /// <param name="mouseButtons">enum object: Left, Middle, Right</param>
         /// <returns>true if any of the buttons is freshly pressed</returns>
-        public bool MousePressed(params MouseButton[] mouseButtons)
+        internal bool MousePressed(params MouseButton[] mouseButtons)
         {
             var pressed = false;
             foreach (var mouseButton in mouseButtons)

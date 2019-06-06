@@ -4,12 +4,13 @@ namespace KernelPanic
 {
     public sealed class Button : InterfaceComponent
     {
-        public delegate void Delegate(Button sender);
-        public event Delegate Clicked;
+        internal delegate void Delegate(Button sender);
+
+        internal event Delegate Clicked;
 
         private readonly TextSprite mTitleSprite;
 
-        public override Sprite Sprite { get; }
+        internal override Sprite Sprite { get; }
 
         internal Button(SpriteManager sprites)
         {
@@ -22,9 +23,9 @@ namespace KernelPanic
             set => mTitleSprite.Text = value;
         }
 
-        public override void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        internal override void Update(GameTime gameTime, InputManager inputManager)
         {
-            if (Enabled && InputManager.Default.MousePressed(InputManager.MouseButton.Left) && ContainsMouse(invertedViewMatrix))
+            if (Enabled && inputManager.MousePressed(InputManager.MouseButton.Left) && ContainsMouse(inputManager))
                 Clicked?.Invoke(this);
         }
     }

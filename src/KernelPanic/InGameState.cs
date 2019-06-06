@@ -112,9 +112,9 @@ namespace KernelPanic
             mBoard.Update(gameTime, Camera.InverseTransformation);
             mHud.Update(gameTime);
 
-            mPurchaseDemoButton1.Update(gameTime, Camera.InverseTransformation);
-            mPurchaseDemoButton2.Update(gameTime, Camera.InverseTransformation);
-            mPurchaseDemoReset.Update(gameTime, Camera.InverseTransformation);
+            mPurchaseDemoButton1.Update(gameTime, input);
+            mPurchaseDemoButton2.Update(gameTime, input);
+            mPurchaseDemoReset.Update(gameTime, input);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
