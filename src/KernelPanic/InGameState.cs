@@ -109,15 +109,12 @@ namespace KernelPanic
                 return;
             }
 
-            var invertedViewMatrix = Matrix.Invert(Camera.GetViewMatrix());
-
-            mBoard.Update(gameTime, invertedViewMatrix);
-            Camera.Update();
+            mBoard.Update(gameTime, Camera.InverseTransformation);
             mHud.Update(gameTime);
 
-            mPurchaseDemoButton1.Update(gameTime, invertedViewMatrix);
-            mPurchaseDemoButton2.Update(gameTime, invertedViewMatrix);
-            mPurchaseDemoReset.Update(gameTime, invertedViewMatrix);
+            mPurchaseDemoButton1.Update(gameTime, Camera.InverseTransformation);
+            mPurchaseDemoButton2.Update(gameTime, Camera.InverseTransformation);
+            mPurchaseDemoReset.Update(gameTime, Camera.InverseTransformation);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
