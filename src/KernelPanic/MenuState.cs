@@ -283,11 +283,11 @@ namespace KernelPanic
             return button;
         }
 
-        public override void Update(InputManager input, GameTime gameTime)
+        public override void Update(InputManager inputManager, GameTime gameTime)
         {
             foreach(var component in mComponents)
             {
-                component.Update(gameTime, input);
+                component.Update(gameTime, inputManager);
             }
         }
         

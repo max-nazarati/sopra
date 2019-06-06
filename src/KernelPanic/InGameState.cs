@@ -101,20 +101,20 @@ namespace KernelPanic
             sprite3.Position = sprite2.Position + new Vector2(sprite2.Width, 0);
         }
 
-        public override void Update(InputManager input, GameTime gameTime)
+        public override void Update(InputManager inputManager, GameTime gameTime)
         {
-            if (InputManager.Default.KeyPressed(Keys.Escape))
+            if (inputManager.KeyPressed(Keys.Escape))
             {
                 mGameStateManager.Push(MenuState.CreatePauseMenu(mGameStateManager, this));
                 return;
             }
 
-            mBoard.Update(gameTime, input);
+            mBoard.Update(gameTime, inputManager);
             mHud.Update(gameTime);
 
-            mPurchaseDemoButton1.Update(gameTime, input);
-            mPurchaseDemoButton2.Update(gameTime, input);
-            mPurchaseDemoReset.Update(gameTime, input);
+            mPurchaseDemoButton1.Update(gameTime, inputManager);
+            mPurchaseDemoButton2.Update(gameTime, inputManager);
+            mPurchaseDemoReset.Update(gameTime, inputManager);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

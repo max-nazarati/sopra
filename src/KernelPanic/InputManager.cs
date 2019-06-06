@@ -27,22 +27,17 @@ namespace KernelPanic
     }
     
     /// <summary>
-    /// singleton class to handle the Input for the whole game
+    /// Handles all input coming from the mouse and the keyboard including de-bouncing.
     /// </summary>
     public sealed class InputManager
     {
-        private static InputManager sInstance;
-        private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
-        private double mTimeLastClick = MaximumDoubleClickDelay; // Left MouseButton (init is for 'reset')
+        // private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
+        // private double mTimeLastClick = MaximumDoubleClickDelay; // Left MouseButton (init is for 'reset')
         // private int mDoubleClickFrameCount; 
-        private readonly Tuple<int, int> mScreenSizeTuple = new Tuple<int, int> (1920, 1080);
         private const int ScreenBorderDistance = 100;
 
         private readonly RawInputState mInputState;
         private readonly ICamera mCamera;
-
-        // FIXME: We probably don't want to make the camera accessible.
-        internal ICamera Camera => mCamera;
 
         /// <summary>
         /// Left, Middle and Right MouseButton
@@ -52,19 +47,12 @@ namespace KernelPanic
             Left, Middle, Right
         }
 
-        internal static InputManager Default => sInstance ?? (sInstance = new InputManager());
-
-        // FIXME: This overload only exists to allow compiling whilst transitioning to the new InputManager model.
-        private InputManager() : this(null, null)
-        {
-        }
-
         internal InputManager(ICamera camera, RawInputState inputState)
         {
             mCamera = camera;
             mInputState = inputState;
 
-            UpdateCamera(10);
+            UpdateCamera();
         }
 
 #if false // Uncomment when used.
@@ -94,7 +82,7 @@ namespace KernelPanic
         }
 #endif
 
-        internal Point MousePosition => mInputState.CurrentMouse.Position;
+        private Point MousePosition => mInputState.CurrentMouse.Position;
 
         internal Vector2 TranslatedMousePosition =>
             Vector2.Transform(MousePosition.ToVector2(), mCamera.Transformation);
@@ -280,46 +268,6 @@ namespace KernelPanic
         }
 
         /// <summary>
-        /// TODO WIP should this even be here or in camera?
-        /// </summary>
-        /// <returns></returns>
-        internal bool MouseAtLeftScreenBorder()
-        {
-            return mInputState.CurrentMouse.X < ScreenBorderDistance
-                   && mInputState.CurrentMouse.X > 0;
-        }
-
-        /// <summary>
-        /// TODO WIP should this even be here or in camera?
-        /// </summary>
-        /// <returns></returns>
-        internal bool MouseAtTopScreenBorder()
-        {
-            return mInputState.CurrentMouse.Y < ScreenBorderDistance
-                   && mInputState.CurrentMouse.Y > 0;
-        }
-
-        /// <summary>
-        /// TODO WIP should this even be here or in camera?
-        /// </summary>
-        /// <returns></returns>
-        internal bool MouseAtRightScreenBorder()
-        {
-            return mInputState.CurrentMouse.X > mScreenSizeTuple.Item1 - ScreenBorderDistance
-                   && mInputState.CurrentMouse.X < mScreenSizeTuple.Item1;
-        }
-
-        /// <summary>
-        /// TODO WIP should this even be here or in camera?
-        /// </summary>
-        /// <returns></returns>
-        internal bool MouseAtBottomScreenBorder()
-        {
-            return mInputState.CurrentMouse.Y > mScreenSizeTuple.Item2 - ScreenBorderDistance
-                   && mInputState.CurrentMouse.Y < mScreenSizeTuple.Item2;
-        }
-
-        /// <summary>
         /// calculate how far the scroll wheel got turned
         /// </summary>
         /// <returns>negative value for zooming out</returns>
@@ -332,7 +280,7 @@ namespace KernelPanic
         /// Checking for 'Zoom Out' since last Update
         /// </summary>
         /// <returns></returns>
-        internal bool ScrolledDown()
+        private bool ScrolledDown()
         {
             return ScrollWheelMovement() < -5;
         }
@@ -341,7 +289,7 @@ namespace KernelPanic
         /// Checking for 'Zoom In' since last Update
         /// </summary>
         /// <returns></returns>
-        internal bool ScrolledUp()
+        private bool ScrolledUp()
         {
             return ScrollWheelMovement() > 5;
         }
@@ -364,18 +312,17 @@ namespace KernelPanic
         /// <summary>
         /// Updates the camera's translation based on the current mouse/keyboard state. 
         /// </summary>
-        /// <param name="borderSize">The width/height of the move area.</param>
-        private void UpdateCamera(int borderSize)
+        private void UpdateCamera()
         {
             var xLeft = KeyDown(Keys.A);
             var xRight = KeyDown(Keys.D);
             var yUp = KeyDown(Keys.W);
             var yDown = KeyDown(Keys.S);
 
-            var mouseXLeft = MousePosition.X <= borderSize;
-            var mouseXRight = mInputState.Viewport.Width - borderSize <= MousePosition.X;
-            var mouseYUp = MousePosition.Y <= borderSize;
-            var mouseYDown = mInputState.Viewport.Height - borderSize <= MousePosition.Y;
+            var mouseXLeft = MousePosition.X <= ScreenBorderDistance;
+            var mouseXRight = mInputState.Viewport.Width - ScreenBorderDistance <= MousePosition.X;
+            var mouseYUp = MousePosition.Y <= ScreenBorderDistance;
+            var mouseYDown = mInputState.Viewport.Height - ScreenBorderDistance <= MousePosition.Y;
 
             var zoomOut = ScrolledDown();
             var zoomIn = ScrolledUp();
