@@ -406,11 +406,11 @@ namespace KernelPanic
                 var heapNode = mHeap.RemoveMin();
                 if (IsTargetPosition(heapNode.Position)) return heapNode;
                 ExpandNode(heapNode);
-                Console.Write("I am currently expanding: ");
-                Console.WriteLine(heapNode.Position);
+                // Console.Write("I am currently expanding: ");
+                // Console.WriteLine(heapNode.Position);
             }
 
-            Console.WriteLine("Couldn't find a path");
+            // Console.WriteLine("Couldn't find a path");
             return null;
         }
 
@@ -421,8 +421,8 @@ namespace KernelPanic
             var goalNode = FindTarget();
             if (goalNode == null)
             {
-                Console.Write("Goal Node was null: ");
-                Console.WriteLine("why tho");
+                // Console.Write("Goal Node was null: ");
+                // Console.WriteLine("why tho");
                 return;
             }
             path.Add(goalNode.Position);

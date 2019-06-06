@@ -16,6 +16,9 @@ namespace KernelPanic
 
         public bool Selected { get; set; }
 
+        internal Rectangle Bounds => new Rectangle((int)Sprite.X-25, 
+            (int)Sprite.Y-25, (int)Sprite.Width-4, (int)Sprite.Height);
+
         internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
         {
             var input = InputManager.Default;

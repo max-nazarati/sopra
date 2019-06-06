@@ -23,7 +23,7 @@ namespace KernelPanic
         private readonly List<Entity> mObjects;
 
         private readonly List<Quadtree> mChilds;
-
+        
         public Quadtree(int level, Rectangle size)
         {
             mLevel = level;
@@ -31,7 +31,7 @@ namespace KernelPanic
             mObjects = new List<Entity>();
             mChilds = new List<Quadtree>();
         }
-
+/*
         /// <summary>
         /// Deletes recursively all nodes of the QuadTree
         /// </summary>
@@ -45,7 +45,7 @@ namespace KernelPanic
             entityList.AddRange(mObjects);
             mObjects.Clear();
         }
-
+*/
         internal void Rebuild()
         {
             var allEntities = new List<Entity>(this);
@@ -92,6 +92,62 @@ namespace KernelPanic
             }
             
             if (posY > (mBounds.Y + (mBounds.Height / 2)) && (posY + height) < (mBounds.Y + mBounds.Height))
+            {
+                boolBottom = true;
+            }
+
+            if (boolLeft)
+            {
+                if (boolTop) return 0;
+
+                if (boolBottom) return 3;
+            }
+            
+            if (boolRight)
+            {
+                if (boolTop) return 1;
+
+                if (boolBottom) return 2;
+            }
+
+            return -1;
+        }
+        
+        /// <summary>
+        /// Calculates in which of the 4 squares a point is
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        private int CalculatePosition(Vector2 point)
+        {
+            var posX = point.X;
+            var posY = point.Y;
+
+            bool boolLeft, boolRight, boolTop, boolBottom;
+            boolLeft = boolRight = boolTop = boolBottom = false;
+            
+            
+            // 0 for topLeft, 1 for topRight, 2 for bottomRight, 3 for bottomLeft
+            var index = 0;
+            
+            // left or right part
+            if (posX > mBounds.X && posX < (mBounds.X + (mBounds.Width / 2)))
+            {
+                // texture fits in left part of node Bounds
+                boolLeft = true;
+            }
+            if (posX > (mBounds.X + (mBounds.Width / 2)) && posX < (mBounds.X + mBounds.Width))
+            {
+                // texture fits in right part of node Bounds
+                boolRight = true;
+            }
+
+            if (posY > mBounds.Y && posY < (mBounds.Y + (mBounds.Height / 2)))
+            {
+                boolTop = true;
+            }
+            
+            if (posY > (mBounds.Y + (mBounds.Height / 2)) && posY < (mBounds.Y + mBounds.Height))
             {
                 boolBottom = true;
             }
@@ -163,6 +219,42 @@ namespace KernelPanic
             }
         }
 
+        /// <summary>
+        /// Checks, whether an entity exists at a given point
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        internal bool HasEntityAt(Vector2 point)
+        {
+            Console.WriteLine(point);
+            foreach (var @object in mObjects)
+            {
+                Console.WriteLine("objekte : "+ @object.Bounds);
+                if (@object.Bounds.Contains(point))
+                {
+                    Console.WriteLine("Kollisiond");
+                    return true;
+                }
+            }
+
+            if (mChilds.Count != 0)
+            {
+                var index = CalculatePosition(point);
+                Console.Write("Index : " + index +", Level : "+mLevel+", point : "+point);
+                if (index != -1)
+                {
+                    return mChilds[index].HasEntityAt(point);
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// returns list of all entitys near to an entity
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         internal List<Entity> NearObjects(Entity entity)
         {
             var entities = new List<Entity>();

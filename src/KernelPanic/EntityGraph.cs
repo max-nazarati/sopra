@@ -10,7 +10,7 @@ namespace KernelPanic
 
         public EntityGraph(SpriteManager spriteManager)
         {
-            mQuadtree = new Quadtree(1, new Rectangle(0, 0, 1000, 1000));
+            mQuadtree = new Quadtree(1, new Rectangle(0, 0, 2000, 2000));
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
@@ -21,8 +21,7 @@ namespace KernelPanic
 
         public bool HasEntityAt(Vector2 point)
         {
-            // TODO: Implement this.
-            return false;
+            return mQuadtree.HasEntityAt(point);
         }
 
         public void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
