@@ -47,7 +47,7 @@ namespace KernelPanic
             var positionProvider = new PositionProvider(mGrid, EntityGraph);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
             
-            mAStar.Update();
+            mAStar.Update(inputManager);
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)

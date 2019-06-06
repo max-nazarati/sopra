@@ -205,10 +205,10 @@ namespace KernelPanic
             mBlocked = new List<Point>();
         }
         
-        public void Update()
+        public void Update(InputManager inputManager)
         {
-            UpdateObstacles();
-            UpdateStartAndTarget();
+            UpdateObstacles(inputManager);
+            UpdateStartAndTarget(inputManager);
             CalculatePath();
         }
         
@@ -221,22 +221,22 @@ namespace KernelPanic
             
         }
 
-        private void UpdateObstacles()
+        private void UpdateObstacles(InputManager inputManager)
         {
-            if (InputManager.Default.KeyPressed(Keys.D1, Keys.D2, Keys.D3, Keys.D0))
+            if (inputManager.KeyPressed(Keys.D1, Keys.D2, Keys.D3, Keys.D0))
             {
                 // mBlocked.Clear();
-                if (InputManager.Default.KeyPressed(Keys.D1))
+                if (inputManager.KeyPressed(Keys.D1))
                 {
                     ChangeObstacleEnvironment(1);
                 }
 
-                else if (InputManager.Default.KeyPressed(Keys.D2))
+                else if (inputManager.KeyPressed(Keys.D2))
                 {
                     ChangeObstacleEnvironment(2);
                 }
 
-                else if (InputManager.Default.KeyPressed(Keys.D3))
+                else if (inputManager.KeyPressed(Keys.D3))
                 {
                     ChangeObstacleEnvironment(3);
                 }
@@ -247,13 +247,13 @@ namespace KernelPanic
             }
         }
 
-        private void UpdateStartAndTarget()
+        private void UpdateStartAndTarget(InputManager inputManager)
         {
-            if (InputManager.Default.KeyPressed(Keys.Up, Keys.Left, Keys.Down, Keys.Right))
+            if (inputManager.KeyPressed(Keys.Up, Keys.Left, Keys.Down, Keys.Right))
             {
-                if (InputManager.Default.KeyPressed(Keys.Up))
+                if (inputManager.KeyPressed(Keys.Up))
                 {
-                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
                     {
                         SetStart(new Point(mStart.X, mStart.Y - 1));
                     }
@@ -263,9 +263,9 @@ namespace KernelPanic
                     }
                     
                 }
-                if (InputManager.Default.KeyPressed(Keys.Left))
+                if (inputManager.KeyPressed(Keys.Left))
                 {
-                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
                     {
                         SetStart(new Point(mStart.X - 1, mStart.Y));
                     }
@@ -275,9 +275,9 @@ namespace KernelPanic
                     }
 
                 }
-                if (InputManager.Default.KeyPressed(Keys.Down))
+                if (inputManager.KeyPressed(Keys.Down))
                 {
-                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
                     {
                         SetStart(new Point(mStart.X, mStart.Y + 1));
                     }
@@ -286,9 +286,9 @@ namespace KernelPanic
                         SetTarget(new Point(mTarget.X, mTarget.Y + 1));
                     }
                 }
-                if (InputManager.Default.KeyPressed(Keys.Right))
+                if (inputManager.KeyPressed(Keys.Right))
                 {
-                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
                     {
                         SetStart(new Point(mStart.X + 1, mStart.Y));
                     }
