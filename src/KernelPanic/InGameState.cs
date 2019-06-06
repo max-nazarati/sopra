@@ -120,7 +120,7 @@ namespace KernelPanic
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Immediate,
-                transformMatrix: Camera.GetViewMatrix(),
+                transformMatrix: Camera.Transformation,
                 samplerState: SamplerState.PointClamp);
 
             mBoard.Draw(spriteBatch, gameTime);
