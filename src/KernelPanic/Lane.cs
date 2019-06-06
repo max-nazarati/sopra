@@ -29,11 +29,10 @@ namespace KernelPanic
             // mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem.First(), mGrid.CoordSystem.Last());
         }
 
-        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
+        public void Update(GameTime gameTime, InputManager inputManager)
         {
-            var input = InputManager.Default;
-            var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
-            if (input.KeyPressed(Keys.T))
+            var mouse = inputManager.TranslatedMousePosition;
+            if (inputManager.KeyPressed(Keys.T))
             {
                 // It seems we can't use pattern matching here because of compiler-limitations.
                 var gridPoint = mGrid.GridPointFromWorldPoint(mouse, 2);
@@ -46,7 +45,7 @@ namespace KernelPanic
             }
 
             var positionProvider = new PositionProvider(mGrid, EntityGraph);
-            EntityGraph.Update(positionProvider, gameTime, invertedViewMatrix);
+            EntityGraph.Update(positionProvider, gameTime, inputManager);
             
             mAStar.Update();
         }

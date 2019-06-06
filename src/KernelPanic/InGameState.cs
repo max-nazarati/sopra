@@ -109,7 +109,7 @@ namespace KernelPanic
                 return;
             }
 
-            mBoard.Update(gameTime, Camera.InverseTransformation);
+            mBoard.Update(gameTime, input);
             mHud.Update(gameTime);
 
             mPurchaseDemoButton1.Update(gameTime, input);

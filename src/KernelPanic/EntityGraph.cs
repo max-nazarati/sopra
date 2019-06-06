@@ -25,11 +25,11 @@ namespace KernelPanic
             return mQuadtree.HasEntityAt(point);
         }
 
-        public void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        public void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             foreach (var entity in mQuadtree)
             {
-                entity.Update(positionProvider, gameTime, invertedViewMatrix);
+                entity.Update(positionProvider, gameTime, inputManager.Camera.InverseTransformation);
             }
 
             // Checks whether collision works
