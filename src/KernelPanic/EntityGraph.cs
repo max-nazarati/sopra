@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
@@ -10,7 +11,7 @@ namespace KernelPanic
 
         public EntityGraph(SpriteManager spriteManager)
         {
-            mQuadtree = new Quadtree(1, new Rectangle(0, 0, 2000, 2000));
+            mQuadtree = new Quadtree(1, new Rectangle(0, 0, 5000, 5000));
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
@@ -31,6 +32,17 @@ namespace KernelPanic
                 entity.Update(positionProvider, gameTime, invertedViewMatrix);
             }
 
+            // Checks whether collision works
+            foreach (var entity in mQuadtree)
+            {
+                foreach (var nearEntity in mQuadtree.NearObjects(entity))
+                {
+                    if (entity != nearEntity && entity.Bounds.Intersects(nearEntity.Bounds))
+                    {
+                        Console.WriteLine("Kollision");
+                    }
+                }
+            }
             mQuadtree.Rebuild();
         }
 

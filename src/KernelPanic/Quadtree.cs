@@ -10,7 +10,7 @@ namespace KernelPanic
     internal sealed class Quadtree: IEnumerable<Entity>
     {
         // max number of objects in each Node
-        private static readonly int mMaxObjects = 10;
+        private static readonly int mMaxObjects = 5;
 
         // max depth of the Quadtree
         private static readonly int mMaximumDepth = 15;
@@ -234,16 +234,9 @@ namespace KernelPanic
                 }
             }
 
-            if (mChilds.Count != 0)
-            {
-                var index = CalculatePosition(point);
-                if (index != -1)
-                {
-                    return mChilds[index].HasEntityAt(point);
-                }
-            }
-
-            return false;
+            if (mChilds.Count == 0) return false;
+            var index = CalculatePosition(point);
+            return index != -1 && mChilds[index].HasEntityAt(point);
         }
 
         /// <summary>
@@ -258,15 +251,15 @@ namespace KernelPanic
             return entities;
         }
 
-        private void NearObjects(Entity entity, List<Entity> returnList)
+        private void NearObjects(Entity entity, List<Entity> nearEntities)
         {
             var index = CalculatePosition(entity);
-            if (index != -1 && mChilds[0] != null)
+            if (index != -1 && mChilds.Count != 0)
             {
-                NearObjects(entity, returnList);
+                mChilds[index].NearObjects(entity, nearEntities);
             }
             
-            returnList.AddRange(mObjects);
+            nearEntities.AddRange(mObjects);
         }
 
         public IEnumerator<Entity> GetEnumerator()
