@@ -287,7 +287,7 @@ namespace KernelPanic
         {
             foreach(var component in mComponents)
             {
-                component.Update(gameTime, Matrix.Identity);
+                component.Update(gameTime, input.Camera.InverseTransformation);
             }
         }
         

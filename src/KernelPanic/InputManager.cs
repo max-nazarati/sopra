@@ -41,6 +41,9 @@ namespace KernelPanic
         private readonly RawInputState mInputState;
         private readonly ICamera mCamera;
 
+        // FIXME: We probably don't want to make the camera accessible.
+        internal ICamera Camera => mCamera;
+
         /// <summary>
         /// Left, Middle and Right MouseButton
         /// </summary>
