@@ -60,6 +60,8 @@ namespace KernelPanic
         {
             mCamera = camera;
             mInputState = inputState;
+
+            UpdateCamera(10);
         }
 
 #if false // Uncomment when used.
