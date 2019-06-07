@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -10,21 +8,9 @@ namespace KernelPanic
     /// </summary>
     internal sealed class Game1 : Game
     {
-        private SpriteBatch mSpriteBatch;
-        private Camera2D mCamera;
-        private Board mBoard;
-
         private readonly GraphicsDeviceManager mGraphics;
-
+        private SpriteBatch mSpriteBatch;
         private GameStateManager mGameStateManager;
-        //private StateManager mStateManager;
-        //private readonly List<State> mStateList = new List<State>();
-
-        private EntityGraph mEntityGraph;
-        private CollisionManager mCollisionManager;
-        private Unit mUnit1;
-        private Unit mUnit2;
-        private CooldownComponent mCoolDown;
 
         public Game1()
         {
@@ -50,7 +36,6 @@ namespace KernelPanic
         {
             // TODO: Add your initialization logic here
             IsMouseVisible = true;
-            mCamera = new Camera2D(GraphicsDevice.Viewport);
             base.Initialize();
         }
 
@@ -61,45 +46,12 @@ namespace KernelPanic
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            mSpriteBatch = new SpriteBatch(GraphicsDevice);
-
-            mGameStateManager = new GameStateManager(this, Content, GraphicsDevice);
+            mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
+            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice));
             mGameStateManager.Push(new InGameState(mGameStateManager));
 
-            // TODO: use this.Content to load your game content here
             SoundManager.Instance.Init(Content);
-            SoundManager.Instance.PlayBackgroundMusic();
-
-            // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 20, 50));
-            // mWorld2 = new Grid(Content, Grid.LaneSide.Left, new Rectangle(0, 0, 16, 42));
-            // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(30, 0, 20, 50));
-            // mWorld3 = new Grid(Content, Grid.LaneSide.Right, new Rectangle(32, 0, 16, 42));
-            
-            /*mBoard = new Board(Content);
-
-            // testing movable objects and collision
-            mEntityGraph = new EntityGraph();
-            mCollisionManager = new CollisionManager();
-            Texture2D texture = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
-            texture.SetData(new[] { Color.Green });
-            mUnit1 = new Unit(0, 0, 100, 100, texture);
-            Texture2D texture2 = new Texture2D(mGraphics.GraphicsDevice, 1, 1);
-            texture2.SetData(new[] { Color.Red });
-            mUnit2 = new Unit(200, 200, 100, 100, texture2);
-            mEntityGraph.Add(mUnit1);
-            mEntityGraph.Add(mUnit2);
-            mCollisionManager.CreatedObject(mUnit1);
-            mCollisionManager.CreatedObject(mUnit2);
-            // testing cooldown component
-            mCoolDown = new CooldownComponent(new TimeSpan(0, 0, 5));
-            mCoolDown.CooledDown += mUnit1.CooledDownDelegate;
-            */
-            // Testing Storage Manager
-            StorageManager storageManager = new StorageManager();
-            InGameState testSaveState = new InGameState(mGameStateManager);
-            storageManager.SaveGame("testSave.xml", testSaveState);
-            var testLoadState = storageManager.LoadGame("testSave.xml");
-            
+            // SoundManager.Instance.PlayBackgroundMusic();
         }
 
         /// <summary>
@@ -118,31 +70,8 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // TODO: Add your update logic here
-           /* if (mGameStateManager.Empty())
-            {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || InputManager.Default.KeyPressed(Keys.Escape))
-                    mGameStateManager.Push(MenuState.CreateMainMenu(Exit, GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
-                mCamera.Update();
-
-                Console.WriteLine("fps: " + 1 / (float) gameTime.ElapsedGameTime.TotalSeconds);
-
-                mEntityGraph.Update(mCamera.GetViewMatrix());
-                mCollisionManager.Update();
-                /* if (mStateList != null)
-                 {
-                     // Console.WriteLine(mStateList);
-                 }// puts comment end here
-            }
-            else
-            {
-                mGameStateManager.Update(gameTime, false);
-            }
-
-            mCoolDown.Update(gameTime);
-            */
             InputManager.Default.Update(gameTime);
-            mGameStateManager.Update(gameTime, false);
+            mGameStateManager.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -154,34 +83,6 @@ namespace KernelPanic
         {
             GraphicsDevice.Clear(Color.MintCream);
             mGameStateManager.Draw(mSpriteBatch, gameTime);
-            /*if (!mGameStateManager.Empty())
-            {
-                mSpriteBatch.Begin(transformMatrix: mGameStateManager.Active.Camera?.GetViewMatrix());
-                mGameStateManager.Draw(mSpriteBatch, gameTime);
-                mSpriteBatch.End();
-            }
-            else
-            {
-                GraphicsDevice.Clear(Color.MintCream);
-
-                // TODO: Add your drawing code here
-
-                var viewMatrix = mCamera.GetViewMatrix();
-
-                mSpriteBatch.Begin(transformMatrix: viewMatrix);
-
-                // mWorld.Draw(mSpriteBatch, mCamera);
-                // mWorld2.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
-                // mWorld3.Draw(mSpriteBatch, mCamera.GetViewMatrix(), gameTime);
-                
-                mBoard.DrawLane(mSpriteBatch, viewMatrix, gameTime);
-                
-                mEntityGraph.Draw(mSpriteBatch);
-
-                mSpriteBatch.End();
-
-                //mStateManager.Draw(mSpriteBatch);
-            }*/
             base.Draw(gameTime);
         }
     }

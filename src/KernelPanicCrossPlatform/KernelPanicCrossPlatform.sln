@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KernelPanicCrossPlatform", "KernelPanicCrossPlatform.csproj", "{FA91A1AD-F8C9-4F5F-A710-0117D49917A5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA91A1AD-F8C9-4F5F-A710-0117D49917A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA91A1AD-F8C9-4F5F-A710-0117D49917A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA91A1AD-F8C9-4F5F-A710-0117D49917A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA91A1AD-F8C9-4F5F-A710-0117D49917A5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,105 +1,88 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
 
 
 namespace KernelPanic
 {
-    internal class Unit : Entity
+    internal abstract class Unit : Entity
     {
-        public int AttackStrength { get; set; }
-        public Point? MoveTarget { get; set; }
-        public int RemainingLife { get; set; }
-        public int Speed { get; set; }
+        private Vector2? MoveTarget { get; set; }
 
-        public Unit(int param) : base(param)
+        private int Speed { get; set; }
+        private int AttackStrength { get; set; }
+        private int MaximumLife { get; set; }
+        private int RemainingLife { get; set; }
+
+        private Vector2? MoveVector
         {
-
-        }
-
-        public void DealDamage(int dmg)
-        {
-
-        }
-        public void Kill()
-        {
-
-        }
-        public int MaximumLife()
-        {
-            return -1;
-        }
-        public void WillSpawn(Action<Unit> unit)
-        {
-
-        }
-
-        private int mCosts;
-        private Point? mMovementGoal;
-
-        internal Unit(int x, int y, int width, int height, Texture2D texture) : base(x, y, width, height, texture)
-        {
-        }
-
-        private void MoveToClick(Point target, int speed)
-        {
-            var direction = new Vector2(target.X - mContainerRectangle.Width / 2 - mContainerRectangle.X,
-                target.Y - mContainerRectangle.Height / 2 - mContainerRectangle.Y);
-            direction.Normalize();
-            var normalizedDirection = direction;
-
-            if (normalizedDirection.Length() >= 0.99)
+            get
             {
-                mContainerRectangle.X += (int)(normalizedDirection.X * speed);
-                mContainerRectangle.Y += (int)(normalizedDirection.Y * speed);
-            }
+                if (!(MoveTarget is Vector2 target))
+                    return null;
 
-            if (Math.Abs(mContainerRectangle.X + mContainerRectangle.Width / 2 - target.X) <= 4 &&
-                Math.Abs(mContainerRectangle.Y + mContainerRectangle.Height / 2 - target.Y) <= 4)
-            {
-                mMovementGoal = null;
+                return Vector2.Normalize(target - Sprite.Position) * Speed;
             }
         }
 
-        private void JumpToClick(Point position)
+        protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, sprite)
         {
-            mContainerRectangle.Location = new Point(position.X - mContainerRectangle.Width / 2, 
-                position.Y - mContainerRectangle.Height / 2);
+            Speed = speed;
+            MaximumLife = life;
+            RemainingLife = life;
+            AttackStrength = attackStrength;
         }
 
-
-        internal override void Update(Matrix viewMatrix)
+        /// <summary>
+        /// <para>
+        /// Subtracts the damage from the remaining life and calls <see cref="DidDie"/> if the result is zero or less.
+        /// </para>
+        /// <para>
+        /// This function can be used to increase this units health by passing a negative value for
+        /// <paramref name="damage"/>. <see cref="RemainingLife"/> won't rise above <see cref="MaximumLife"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="damage">The number of life-points to subtract.</param>
+        public void DealDamage(int damage)
         {
-            base.Update(viewMatrix);
-            var input = InputManager.Default;
-            Vector2 vector = Vector2.Transform(input.MousePosition.ToVector2(), Matrix.Invert(viewMatrix));
-            Point position = new Point((int)vector.X, (int)vector.Y);
-            if (!Selected)
+            RemainingLife = Math.Min(MaximumLife, RemainingLife - damage);
+            if (RemainingLife <= 0)
+                DidDie();
+        }
+
+        /// <summary>
+        /// Can be overriden to act when this unit dies.
+        /// </summary>
+        protected virtual void DidDie()
+        {
+        }
+
+        /// <summary>
+        /// Called when this unit is spawned, the passed action can be used to spawn further units when something
+        /// special happens. The spawned units are automatically associated with the correct wave.
+        /// </summary>
+        /// <param name="spawnAction">To be used to spawn further units for this wave later on.</param>
+        public virtual void WillSpawn(Action<Unit> spawnAction)
+        {
+        }
+
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        {
+            base.Update(positionProvider, gameTime, invertedViewMatrix);
+
+            if (Selected)
             {
-                if (mContainerRectangle.Contains(position))
+                var input = InputManager.Default;
+                if (input.MousePressed(InputManager.MouseButton.Right))
                 {
-                    // select object
-                    Selected = input.MousePressed(InputManager.MouseButton.Left);
+                    var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
+                    if (positionProvider.GridCoordinate(mouse) != null)
+                        MoveTarget = mouse;
                 }
             }
-            else if (input.MousePressed(InputManager.MouseButton.Right))
+
+            if (MoveVector is Vector2 movement)
             {
-                mMovementGoal = position;
-            }
-            else if (input.MousePressed(InputManager.MouseButton.Left))
-            {
-                JumpToClick(position);
-                mMovementGoal = null;
-            }
-            else if (mMovementGoal is Point goal)
-            {
-                MoveToClick(goal, 10);
-            }
-            else if (input.KeyPressed(Keys.Space))
-            {
-                Selected = false;
-                mMovementGoal = null;
+                Sprite.Position += movement;
             }
         }
     }

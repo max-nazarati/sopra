@@ -56,6 +56,30 @@
 /processorParam:TextureFormat=Compressed
 /build:../../KernelPanic/Content/ButtonFont.spritefont;ButtonFont.spritefont
 
+#begin ../../KernelPanic/Content/firefox_jumping.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/firefox_jumping.png;firefox_jumping.png
+
+#begin ../../KernelPanic/Content/firefox_left.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/firefox_left.png;firefox_left.png
+
 #begin ../../KernelPanic/Content/GameBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -67,6 +91,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/GameBackground.png;GameBackground.png
+
+#begin ../../KernelPanic/Content/HUDFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:../../KernelPanic/Content/HUDFont.spritefont;HUDFont.spritefont
 
 #begin ../../KernelPanic/Content/Kachel.png
 /importer:TextureImporter
@@ -115,6 +146,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/LaneTile.png;LaneTile.png
+
+#begin ../../KernelPanic/Content/loading.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/loading.png;loading.png
 
 #begin ../../KernelPanic/Content/Mauer.png
 /importer:TextureImporter
@@ -189,7 +232,7 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/tower.png;tower.png
 
-#begin ../../KernelPanic/Content/Unilogo.png
+#begin ../../KernelPanic/Content/trojan.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -199,5 +242,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/Unilogo.png;Unilogo.png
+/build:../../KernelPanic/Content/trojan.png;trojan.png
 

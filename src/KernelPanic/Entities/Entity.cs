@@ -1,73 +1,39 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal abstract class Entity
+    internal abstract class Entity : IPriced
     {
-        protected Rectangle mContainerRectangle;
-        private Rectangle mOldContainerRectangle;
-        //private GraphicsDeviceManager mGraphics;
-        private readonly Texture2D mTexture;
+        internal Sprite Sprite { get; }
 
-        // ReSharper disable once UnusedParameter.Local
-        protected Entity(int param)
+        protected Entity(int price, Sprite sprite)
         {
-
+            Price = price;
+            Sprite = sprite;
+            Sprite.SetOrigin(RelativePosition.Center);
         }
-
-        // ReSharper disable once UnusedMember.Global
-        // ReSharper disable once UnusedParameter.Local
-        protected Entity(TimeSpan timeSpan)
-        {
-
-        }
-        protected Entity(int x, int y, int width, int height, Texture2D texture)
-        {
-            mContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
-            mOldContainerRectangle = new Rectangle(new Point(x, y), new Point(width, height));
-            mTexture = texture;
-            //mGraphics = graphics;
-        }
-
-        /// <summary>
-        /// Below, redundant stuff, perhaps?
-        /// </summary>
-        /// 
-        /* To select a unit, left-click on it.
-         * Further left-clicks place the unit on different positions.
-         * Right-clicks make the unit float to a different position.
-         * Use Space to unselect the unit.
-         */
 
         public bool Selected { get; set; }
 
-        public bool IsColliding(Entity Object)
+        internal Rectangle Bounds => new Rectangle((int)Sprite.X-25, 
+            (int)Sprite.Y-25, (int)Sprite.Width-4, (int)Sprite.Height);
+
+        internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
         {
-            return mContainerRectangle.Intersects(Object.mContainerRectangle);
+            var input = InputManager.Default;
+            if (input.MousePressed(InputManager.MouseButton.Left))
+            {
+                Selected = Sprite.Contains(Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix));
+            }
         }
 
-        public void CollisionDetected()
+        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            // moves the object back to the last position
-            mContainerRectangle = mOldContainerRectangle;
+            Sprite.Draw(spriteBatch, gameTime);
         }
 
-        public void CooledDownDelegate(CooldownComponent source)
-        {
-            mTexture.SetData(new[] { Color.Blue });
-        }
-
-        internal virtual void Update(Matrix viewMatrix)
-        {
-            // store last position
-            mOldContainerRectangle = mContainerRectangle;
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(mTexture, mContainerRectangle, Color.White);
-        }
+        public int Price { get; }
+        public Currency Currency => Currency.Bitcoin;
     }
 }

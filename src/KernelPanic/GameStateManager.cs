@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 
 namespace KernelPanic
 {
@@ -21,20 +21,19 @@ namespace KernelPanic
         */
         
         public SpriteManager Sprite { get; }
-        public Game1 Game { get; }
         private readonly Stack<AGameState> mGameStates = new Stack<AGameState>();
 
-        public GameStateManager(Game1 game, ContentManager contentManager, GraphicsDevice graphicsDevice)
+        internal Action ExitAction { get; }
+
+        public GameStateManager(Action exitAction, SpriteManager sprites)
         {
-            Sprite = new SpriteManager(contentManager, graphicsDevice);
-            Game = game;
+            Sprite = sprites;
+            ExitAction = exitAction;
         }
-        
-        internal AGameState Active => mGameStates.Peek();
 
         public void Pop()
         {
-            if (mGameStates.Count() > 0)
+            if (mGameStates.Count > 0)
             {
                 mGameStates.Pop();
             }
@@ -43,24 +42,29 @@ namespace KernelPanic
         {
             mGameStates.Push(newGameState);
         }
-        public void Update(GameTime gameTime, bool isOverlay)
+        public void Update(GameTime gameTime)
         {
-
-            mGameStates.Peek().Update(gameTime, mGameStates.Peek().IsOverlay);
-
-        }
-        public bool Empty()
-        {
-            return mGameStates.Count() < 1;
+            foreach (var state in ActiveStates())
+            {
+                state.Update(gameTime);
+            }
         }
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (!Empty())
+            foreach (var state in ActiveStates().Reverse())
             {
-                AGameState x = mGameStates.Peek();
-                x.Draw(spriteBatch, gameTime, mGameStates.Peek().IsOverlay);
+                state.Draw(spriteBatch, gameTime);
             }
+        }
 
+        private IEnumerable<AGameState> ActiveStates()
+        {
+            foreach (var state in mGameStates)
+            {
+                yield return state;
+                if (!state.IsOverlay)
+                    break;
+            }
         }
     }
 }

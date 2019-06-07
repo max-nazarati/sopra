@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,48 +6,56 @@ namespace KernelPanic
 {
     internal sealed class EntityGraph
     {
-        private readonly List<Entity> mEntities;
-        private int? mActiveUnit;
+        private readonly Quadtree mQuadtree;
+        private readonly ImageSprite mSelectionBorder;
 
-        public EntityGraph()
+        public EntityGraph(SpriteManager spriteManager)
         {
-            mEntities = new List<Entity>();
-            mActiveUnit = null;
+            mQuadtree = new Quadtree(1, new Rectangle(0, 0, 5000, 5000));
+            mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
-        public void Add(Unit unit)
+        public void Add(Entity entity)
         {
-            mEntities.Add(unit);
+            mQuadtree.Add(entity);
         }
 
-        public void Update(Matrix viewMatrix)
+        public bool HasEntityAt(Vector2 point)
         {
-            var i = 0;
-            foreach (var Object in mEntities)
+            return mQuadtree.HasEntityAt(point);
+        }
+
+        public void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        {
+            foreach (var entity in mQuadtree)
             {
-                Object.Update(viewMatrix);
-                // check if a new unit has been selected
-                if (Object.Selected)
-                {
-                    if (mActiveUnit is int active)
-                    {
-                        if (i != active)
-                        {
-                            mEntities[active].Selected = false;
-                        }
-                    }
-                    mActiveUnit = i;
-                    //break;
-                }
-                i++;
+                entity.Update(positionProvider, gameTime, invertedViewMatrix);
             }
+
+            // Checks whether collision works
+            foreach (var entity in mQuadtree)
+            {
+                foreach (var nearEntity in mQuadtree.NearObjects(entity))
+                {
+                    if (entity != nearEntity && entity.Bounds.Intersects(nearEntity.Bounds))
+                    {
+                        Console.WriteLine("Kollision");
+                    }
+                }
+            }
+            mQuadtree.Rebuild();
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var Object in mEntities)
+            foreach (var entity in mQuadtree)
             {
-                Object.Draw(spriteBatch);
+                if (entity.Selected)
+                {
+                    mSelectionBorder.Position = entity.Sprite.Position;
+                    mSelectionBorder.Draw(spriteBatch, gameTime);
+                }
+                entity.Draw(spriteBatch, gameTime);
             }
         }
     }

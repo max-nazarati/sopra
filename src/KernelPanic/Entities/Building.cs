@@ -1,23 +1,37 @@
-﻿using System;
-
-namespace KernelPanic
+﻿namespace KernelPanic
 {
-    internal class Building :Entity
+    internal abstract class Building :Entity
     {
-
-        public Building(int param) : base(param)
+        protected Building(int price, Sprite sprite) : base(price, sprite)
         {
-
-        }
-        public Building(TimeSpan timeSpan) : base(timeSpan)
-        {
-
+            BitcoinWorth = price;
         }
 
-        public int BitcoinWorth { get; set; }
+        private int BitcoinWorth { get; set; }
 
-        public State StateProperty { get; set; }
+        internal State StateProperty { get; set; }
         
-        public enum State { Active, Inactive, Invalid, Valid };
+        internal enum State
+        {
+            /// <summary>
+            /// The building is able to act, that means it is able to attack enemies.
+            /// </summary>
+            Active,
+            
+            /// <summary>
+            /// The building has been bought and is waiting to become active, that is when no enemies are at its position.
+            /// </summary>
+            Inactive,
+            
+            /// <summary>
+            /// Used during selection of a new place for a building when the current position is not allowed.
+            /// </summary>
+            Invalid,
+            
+            /// <summary>
+            /// Used during selection of a new place for a building when the current position is allowed.
+            /// </summary>
+            Valid
+        };
     }
 }

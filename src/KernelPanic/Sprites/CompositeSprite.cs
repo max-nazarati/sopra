@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,26 +13,37 @@ namespace KernelPanic
         {
         }
 
-        public override float UnscaledWidth => Children.Max(sprite => new float?(sprite.X - sprite.Origin.X + sprite.UnscaledWidth)) ?? 0.0f;
-        public override float UnscaledHeight => Children.Max(sprite => new float?(sprite.Y - sprite.Origin.Y + sprite.UnscaledHeight)) ?? 0.0f;
+        public override float UnscaledWidth => UnscaledSize.X;
+        public override float UnscaledHeight => UnscaledSize.Y;
 
-        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public override Vector2 UnscaledSize
         {
-            Draw(spriteBatch, gameTime, Vector2.Zero, 0.0f, 1.0f);
+            get
+            {
+                float minX = 0, minY = 0, maxX = 0, maxY = 0;
+
+                foreach (var child in Children)
+                {
+                    minX = Math.Min(minX, child.X - child.Origin.X);
+                    minY = Math.Min(minY, child.Y - child.Origin.Y);
+                    maxX = Math.Max(maxX, child.X - child.Origin.X + child.Width);
+                    maxY = Math.Max(maxY, child.Y - child.Origin.Y + child.Height);
+                }
+                
+                return new Vector2(maxX - minX, maxY - minY);
+            }
         }
 
-        internal override void Draw(SpriteBatch spriteBatch,
+        protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
-            Vector2 offset,
+            Vector2 position,
             float rotation,
             float scale)
         {
-            offset += Position;
-            rotation += Rotation;
-            scale *= Scale;
+            position -= Origin;
             foreach (var child in Children)
             {
-                child.Draw(spriteBatch, gameTime, offset, rotation, scale);
+                DrawChild(child, spriteBatch, gameTime, position, rotation, scale);
             }
         }
     }

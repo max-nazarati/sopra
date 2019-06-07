@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -12,36 +12,30 @@ namespace KernelPanic
     /// The left child of i is 2i+1 and the right one 2i+2.
     /// The parent of i is (i-1)//2
     /// </summary>
-    public class Node
+    public sealed class Node
     {
-        public double mKey;
-        private Point mPosition;
-        private Node mParent;
-        private double mCost;
-        private double mEstimatedCost;
         // private List<Point> mNeighbours;
         private bool mIsStart;
         private bool mIsGoal;
 
-        public void CalculateKey()
-        {
-            mKey = mEstimatedCost + mCost;
-        }
 
-        public Point Position { get => mPosition; set => mPosition = value; }
+        internal Point Position { get; } // set; }
 
-        public double Cost { get => mCost; set => mCost = value; }
-        public double EstimatedCost { get => mEstimatedCost; set => mEstimatedCost = value; }
-        public double Key => mKey;
+        internal Node Parent { get; } // set => mParent = value; }
+        internal double Cost { get; } // set; }
 
-        public Node(Point coordinate, Node parent, double cost, double estimatedCost,
+        private double EstimatedCost { get; }  //set; }
+
+        internal double Key { get; }
+
+        internal Node(Point coordinate, Node parent, double cost, double estimatedCost,
         bool start=false, bool goal=false)
         {
-            mPosition = coordinate;
-            mParent = parent;
-            mCost = cost;
-            mEstimatedCost = estimatedCost;
-            CalculateKey();
+            Position = coordinate;
+            Parent = parent;
+            Cost = cost;
+            EstimatedCost = estimatedCost;
+            Key = cost + estimatedCost;
             mIsStart = start;
             mIsGoal = goal;
             // mNeighbours = neighbours;
@@ -49,7 +43,7 @@ namespace KernelPanic
 
     }
 
-    class PriorityQueue
+    sealed class PriorityQueue
     {
         private List<Node> mItems;
         private int mCount;
@@ -57,18 +51,18 @@ namespace KernelPanic
         {
             mItems = new List<Node>();
         }
-        
+
         /// <summary>
         /// Insert a new Element into the Queue
         /// </summary>
         /// <param name="item"></param>
-        /// <param name="newKey"></param>
         public void Insert(Node item)
         {
             var queueIndex = mItems.Count;
             mItems.Add(item);
             // DecreaseKey(queueIndex, newKey);
             // heapify
+            
             while (queueIndex > 0 && mItems[queueIndex].Key < mItems[Parent(queueIndex)].Key)
             {
                 Swap(queueIndex, Parent(queueIndex));
@@ -81,35 +75,55 @@ namespace KernelPanic
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="removeIndex"></param>
+        /// <param name="currentIndex"></param>
         /// <returns></returns>
         private Node Remove(int currentIndex)
         {
-            mCount--;
-            var item = mItems[currentIndex];
+            // assert to check for indexError
             var lastIndex = mItems.Count - 1;
-            Swap(currentIndex, lastIndex);
-
-            while (mItems[currentIndex].Key > mItems[Left(currentIndex)].Key ||
-                   mItems[currentIndex].Key > mItems[Right(currentIndex)].Key)
+            if (currentIndex > lastIndex)
             {
-                if (Right(currentIndex) > mItems.Count &&
-                    mItems[Left(currentIndex)].Key <= mItems[Right(currentIndex)].Key)
+                return null;
+            }
+            mCount--;
+
+            // swap the item we want to last place for easier removal
+            var item = mItems[currentIndex];
+            Swap(currentIndex, lastIndex);
+            mItems.RemoveAt(lastIndex);
+            lastIndex--;
+
+            // as long as the current item has both children
+            while (Right(currentIndex) <= lastIndex)
+            {
+                // if left child is smaller, swap with left child
+                if (mItems[Left(currentIndex)].Key <= mItems[Right(currentIndex)].Key)
+                {
+                    if (mItems[currentIndex].Key > mItems[Left(currentIndex)].Key)
+                    {
+                        Swap(currentIndex, Left(currentIndex));
+                    }
+                    currentIndex = Left(currentIndex);
+
+                }
+                // if right child is smaller, swap with right child
+                else
+                {
+                    if (mItems[currentIndex].Key > mItems[Right(currentIndex)].Key)
+                    {
+                        Swap(currentIndex, Right(currentIndex));
+                    }
+                    currentIndex = Right(currentIndex);
+                }
+            }
+            // maybe there is still a left child but not a right child:
+            if (Left(currentIndex) <= lastIndex)
+            {
+                // if left child is smaller than the current, swap those
+                if (mItems[currentIndex].Key > mItems[Left(currentIndex)].Key)
                 {
                     Swap(currentIndex, Left(currentIndex));
-                    currentIndex = Right(currentIndex);
-                    continue;
                 }
-
-                if (Right(currentIndex) > mItems.Count &&
-                    mItems[Left(currentIndex)].Key >= mItems[Right(currentIndex)].Key)
-                {
-                    Swap(currentIndex, Right(currentIndex));
-                    currentIndex = Left(currentIndex);
-                    continue;
-                }
-
-                return item;
             }
 
             return item;
@@ -140,37 +154,24 @@ namespace KernelPanic
             mItems[pos1] = temp;
         }
 
-        /*
-        /// <summary>
-        /// decreasing the key value is increasing its priority
-        /// </summary>
-        /// <param name="queueIndex"></param>
-        /// <param name="newKey"></param>
-        private void DecreaseKey(int queueIndex, double newKey)
-        {
-            mItems[queueIndex].Key = newKey;
-            // heapify
-            while (queueIndex > 0 && mItems[queueIndex].Key < mItems[Parent(queueIndex)].Key)
-            {
-                Swap(queueIndex, Parent(queueIndex));
-                queueIndex = Parent(queueIndex);
-            }
-        } */
-
+        // parent of 'i' is at '(i-1)/2'
         private static int Parent(int currentIndex)
         {
-            return currentIndex / 2;
+            return (currentIndex - 1) / 2;
         }
+        // right child of 'i' is at '(2 * i) + 1'
         private static int Left(int currentIndex)
         {
-            return currentIndex * 2;
+            return (currentIndex * 2) + 1;
         }
+        // right child of 'i' is at '(2 * i) + 2' 
         private static int Right(int currentIndex)
         {
-            return currentIndex * 2 + 1;
+            return (currentIndex * 2) + 2;
         }
 
         public bool IsEmpty() => mCount == 0;
+
     }
     public class AStar
     {
@@ -180,80 +181,194 @@ namespace KernelPanic
         private Point mTarget;
         private Point mStart;
 
-        public AStar(List<Point> coordinateList, Point start, Point target)
+        // mainly debugging reasons for now
+        private List<Point> mBlocked;
+        private List<Point> mWalkable;
+        
+        // debugging the path visually
+        private List<Point> mPath;
+        private ImageSprite mTile;
+
+
+
+        internal AStar(List<Point> coordinateList, Point start, Point target, SpriteManager sprite)
         {
-            // LoadListIntoQueue(coordinateList, start);
+            mCoordinateList = coordinateList;
+            mExploredNodes = new List<Point>();
             mTarget = target;
             mStart = start;
+
+            // debug visually (only reason for imcludijng contentmanager)
+            // mTile = content.Load<Texture2D>("LaneTile");
+            mTile = Grid.CreateTile(sprite);
+            mWalkable = new List<Point>();// = coordinateList;
+            mBlocked = new List<Point>();
+        }
+        
+        public void Update()
+        {
+            UpdateObstacles();
+            UpdateStartAndTarget();
+            CalculatePath();
+        }
+        
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            DrawObstacles(spriteBatch, gameTime);
+            DrawExplored(spriteBatch, gameTime);
+            DrawPath(spriteBatch, gameTime);
+            DrawStartAndTarget(spriteBatch, gameTime);
+            
         }
 
-        // private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X, 2) + Math.Pow(point.Y, 2));
-
-        private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
-
-        /*
-        void LoadListIntoQueue(List<Point> coordinateList, Point start)
+        private void UpdateObstacles()
         {
-            foreach (var point in coordinateList)
+            if (InputManager.Default.KeyPressed(Keys.D1, Keys.D2, Keys.D3, Keys.D0))
             {
-                var newItem = new Node(point, 100);
-                if (point == start)
+                // mBlocked.Clear();
+                if (InputManager.Default.KeyPressed(Keys.D1))
                 {
-                    newItem.Key = 1;
-                    createNeighbours();
+                    ChangeObstacleEnvironment(1);
                 }
-                mHeap.Insert(newItem, newItem.Key);
+
+                else if (InputManager.Default.KeyPressed(Keys.D2))
+                {
+                    ChangeObstacleEnvironment(2);
+                }
+
+                else if (InputManager.Default.KeyPressed(Keys.D3))
+                {
+                    ChangeObstacleEnvironment(3);
+                }
+                else
+                {
+                    ChangeObstacleEnvironment(0);
+                }
             }
-        } */
+        }
 
-        public bool IsStartPosition(Point position) => position == mStart;
-
-        public bool IsTargetPosition(Point position) => position == mTarget;
-
-        public List<Node> CreateNeighbours(Node node)
+        private void UpdateStartAndTarget()
         {
-            List<Node> neighbours = new List<Node>();
+            if (InputManager.Default.KeyPressed(Keys.Up, Keys.Left, Keys.Down, Keys.Right))
+            {
+                if (InputManager.Default.KeyPressed(Keys.Up))
+                {
+                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    {
+                        SetStart(new Point(mStart.X, mStart.Y - 1));
+                    }
+                    else
+                    {
+                        SetTarget(new Point(mTarget.X, mTarget.Y - 1));
+                    }
+                    
+                }
+                if (InputManager.Default.KeyPressed(Keys.Left))
+                {
+                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    {
+                        SetStart(new Point(mStart.X - 1, mStart.Y));
+                    }
+                    else
+                    {
+                        SetTarget(new Point(mTarget.X - 1, mTarget.Y));
+                    }
+
+                }
+                if (InputManager.Default.KeyPressed(Keys.Down))
+                {
+                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    {
+                        SetStart(new Point(mStart.X, mStart.Y + 1));
+                    }
+                    else
+                    {
+                        SetTarget(new Point(mTarget.X, mTarget.Y + 1));
+                    }
+                }
+                if (InputManager.Default.KeyPressed(Keys.Right))
+                {
+                    if (InputManager.Default.KeyDown(Keys.LeftShift))
+                    {
+                        SetStart(new Point(mStart.X + 1, mStart.Y));
+                    }
+                    else
+                    {
+                        SetTarget(new Point(mTarget.X + 1, mTarget.Y));
+                    }
+                }
+                CalculatePath();
+            }
+        }
+
+        private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
+        
+        // private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
+
+        private void SetStart(Point start)
+        {
+            if (mWalkable.Contains(start))
+            {
+                mStart = start;
+            }
+        }
+
+        private void SetTarget(Point target)
+        {
+            if (mWalkable.Contains(target))
+            {
+                mTarget = target;
+            }
+        }
+
+        private bool IsStartPosition(Point position) => position == mStart;
+
+        private bool IsTargetPosition(Point position) => position == mTarget;
+
+        private List<Node> CreateNeighbours(Node node)
+        {
+            var neighbours = new List<Node>();
             var x = node.Position.X;
             var y = node.Position.Y;
-            Point up = new Point(x, y + 1);
-            Point left = new Point(x - 1, y);
-            Point down = new Point(x, y + 1);
-            Point right = new Point(x + 1, y);
+            var up = new Point(x, y - 1);
+            var left = new Point(x - 1, y);
+            var down = new Point(x, y + 1);
+            var right = new Point(x + 1, y);
             double estimatedCost;
-            double cost = node.Cost + 1;
-            bool isStartNode = false;
-            bool isTargetNode = false;
+            var cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
+            bool isStartNode; // = false;
+            bool isTargetNode; // = false;
 
-            if (mCoordinateList.Contains(up))
+            if (mWalkable.Contains(up))
             {
-                estimatedCost = ManhattenHeuristic(up);
+                estimatedCost = EuclidHeuristic(up);
                 isStartNode = IsStartPosition(up);
                 isTargetNode = IsTargetPosition(up);
                 Node nodeUp = new Node(up, node, cost, estimatedCost, isStartNode, isTargetNode);
                 neighbours.Add(nodeUp);
             }
 
-            if (mCoordinateList.Contains(down))
+            if (mWalkable.Contains(down))
             {
-                estimatedCost = ManhattenHeuristic(down);
+                estimatedCost = EuclidHeuristic(down);
                 isStartNode = IsStartPosition(down);
                 isTargetNode = IsTargetPosition(down);
                 Node nodeDown = new Node(down, node, cost, estimatedCost, isStartNode, isTargetNode);
                 neighbours.Add(nodeDown);
             }
 
-            if (mCoordinateList.Contains(left))
+            if (mWalkable.Contains(left))
             {
-                estimatedCost = ManhattenHeuristic(left);
+                estimatedCost = EuclidHeuristic(left);
                 isStartNode = IsStartPosition(left);
                 isTargetNode = IsTargetPosition(left);
                 Node nodeLeft = new Node(left, node, cost, estimatedCost, isStartNode, isTargetNode);
                 neighbours.Add(nodeLeft);
             }
 
-            if (mCoordinateList.Contains(right))
+            if (mWalkable.Contains(right))
             {
-                estimatedCost = ManhattenHeuristic(right);
+                estimatedCost = EuclidHeuristic(right);
                 isStartNode = IsStartPosition(right);
                 isTargetNode = IsTargetPosition(right);
                 Node nodeRight = new Node(right, node, cost, estimatedCost, isStartNode, isTargetNode);
@@ -262,33 +377,212 @@ namespace KernelPanic
 
             return neighbours;
         }
-        
-        public void ExpandNode(Node node)
+
+        private void ExpandNode(Node node)
         {
             if (mExploredNodes.Contains(node.Position)) return;
             List<Node> neighbours = CreateNeighbours(node);
             foreach (var neighbour in neighbours)
             {
-                mHeap.Insert(neighbour);
+                if (!mExploredNodes.Contains(neighbour.Position)) mHeap.Insert(neighbour);
+                // Console.WriteLine(neighbour.Position.ToString());
             }
             mExploredNodes.Add(node.Position);
+            // Console.WriteLine(mExploredNodes.Count);
+            // Console.WriteLine(mHeap.Count);
+            // Console.WriteLine(node.Position.ToString());
+            // Console.WriteLine(node.Position.ToString());
         }
-        public Node FindTarget()
-        {
-            var startNode = new Node(mStart, null, 0, ManhattenHeuristic(mStart), true, false);
-            double heuristicValue = startNode.Key;
-            mHeap.Insert(startNode);
 
+        private Node FindTarget()
+        {
+            Reset();
+            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true);
+            // double heuristicValue = startNode.Key;
+            mHeap.Insert(startNode);
+            
             while (!mHeap.IsEmpty())
             {
                 var heapNode = mHeap.RemoveMin();
                 if (IsTargetPosition(heapNode.Position)) return heapNode;
                 ExpandNode(heapNode);
+                // Console.Write("I am currently expanding: ");
+                // Console.WriteLine(heapNode.Position);
             }
 
+            // Console.WriteLine("Couldn't find a path");
             return null;
         }
+
+        internal void CalculatePath()
+        {
+            // Reset();
+            var path = new List<Point>();
+            var goalNode = FindTarget();
+            if (goalNode == null)
+            {
+                // Console.Write("Goal Node was null: ");
+                // Console.WriteLine("why tho");
+                return;
+            }
+            path.Add(goalNode.Position);
+            var currentNode = goalNode;
+            var currentPosition = goalNode.Position;
+            var count = 0;
+            while (!IsStartPosition(currentPosition) && count < 1000)
+            {
+                count++;
+                currentNode = currentNode.Parent;
+                currentPosition = currentNode.Position;
+                path.Add(currentPosition);
+            }
+            path.Reverse();
+            mPath = path;
+        }
+
+        private void Reset()
+        {
+            // mExploredNodes.Clear();
+            mExploredNodes = new List<Point>();
+            mHeap = new PriorityQueue();
+            mPath = new List<Point>();
+        }
+
+        /*
+        public void test1()
+        {
+            PriorityQueue queue = new PriorityQueue();
+
+            Node node1 = new Node(new Point(0, 0), null, 0, EuclidHeuristic(new Point(0, 0)));
+            Node node2 = new Node(new Point(0, 1), null, 1, EuclidHeuristic(new Point(0, 1)));
+            Node node3 = new Node(new Point(1, 0), null, 1, EuclidHeuristic(new Point(1, 0)));
+            Node node4 = new Node(new Point(1, 1), null, 2, EuclidHeuristic(new Point(1, 1)));
+            Node node5 = new Node(new Point(2, 0), null, 2, EuclidHeuristic(new Point(2, 0)));
+            Node node6 = new Node(new Point(0, 2), null, 2, EuclidHeuristic(new Point(0, 2)));
+            Node node7 = new Node(new Point(2, 1), null, 3, EuclidHeuristic(new Point(2, 1)));
+            Node node8 = new Node(new Point(1, 2), null, 3, EuclidHeuristic(new Point(1, 2)));
+            Node node9 = new Node(new Point(2, 2), null, 4, EuclidHeuristic(new Point(2, 2)));
+
+            queue.Insert(node1);
+            queue.Insert(node2);
+            queue.Insert(node3);
+            queue.RemoveMin();
+            queue.Insert(node4);
+            queue.Insert(node5);
+            queue.RemoveMin();
+            queue.Insert(node6);
+            queue.Insert(node7);
+            queue.Insert(node8);
+            queue.Insert(node9);
+        }*/
+
+        private List<Point> CreateObstacleEnvironment(int testEnvironment = 1)
+        {
+            // create a list with obstacles
+            List<Point> blocked = new List<Point>();
+            if (testEnvironment == 1) // debug test a local minimum
+            {
+                blocked.Add(new Point(0, 5));
+                blocked.Add(new Point(1, 5));
+                blocked.Add(new Point(2, 5));
+                blocked.Add(new Point(3, 5));
+                blocked.Add(new Point(4, 5));
+                blocked.Add(new Point(5, 5));
+                blocked.Add(new Point(5, 4));
+                blocked.Add(new Point(5, 3));
+                blocked.Add(new Point(5, 2));
+            }
+            
+            else if (testEnvironment == 2) // debug test a way deeper local minimum
+            {
+                blocked.Add(new Point(0, 13));
+                blocked.Add(new Point(1, 13));
+                blocked.Add(new Point(2, 13));
+                blocked.Add(new Point(3, 13));
+                blocked.Add(new Point(4, 13));
+                blocked.Add(new Point(5, 13));
+                blocked.Add(new Point(5, 12));
+                blocked.Add(new Point(5, 11));
+                blocked.Add(new Point(5, 10));
+                blocked.Add(new Point(5, 9));
+                blocked.Add(new Point(5, 8));
+                blocked.Add(new Point(5, 7));
+                blocked.Add(new Point(5, 6));
+                blocked.Add(new Point(5, 5));
+                blocked.Add(new Point(5, 4));
+                blocked.Add(new Point(5, 3));
+                blocked.Add(new Point(5, 2));
+            }
+            
+            else if (testEnvironment == 3) // debug test a impossible field
+            {
+                blocked.Add(new Point(0, 11));
+                blocked.Add(new Point(1, 11));
+                blocked.Add(new Point(2, 11));
+                blocked.Add(new Point(3, 11));
+                blocked.Add(new Point(4, 11));
+                blocked.Add(new Point(5, 11));
+                blocked.Add(new Point(6, 11));
+                blocked.Add(new Point(7, 11));
+                blocked.Add(new Point(8, 11));
+                blocked.Add(new Point(9, 11));
+            }
+
+            return blocked;
+        }
+
+        internal void ChangeObstacleEnvironment(int environment)
+        {
+            mWalkable = new List<Point>();
+            mBlocked = CreateObstacleEnvironment(environment);
+            foreach (var point in mCoordinateList)
+            {
+                if (!mBlocked.Contains(point)) { mWalkable.Add(point); }
+            }
+        }
+
+        private void DrawStartAndTarget(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            DrawTile(spriteBatch, mStart, gameTime, Color.Firebrick);
+            DrawTile(spriteBatch, mTarget, gameTime, Color.Firebrick);
+        }
+
+        private void DrawExplored(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (mExploredNodes == null) { return; }
+
+            foreach (var point in mExploredNodes)
+            {
+                DrawTile(spriteBatch, point, gameTime, Color.Pink);
+            }
+        }
+
+        private void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            // Console.WriteLine("drawing the path");
+            if (mPath == null) { return; }
+            
+            foreach (var point in mPath)
+            {
+                DrawTile(spriteBatch, point, gameTime, Color.Red); 
+            }
+        }
+
+        private void DrawObstacles(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (mBlocked == null) { return; }
+
+            foreach (var point in mBlocked)
+            {
+                DrawTile(spriteBatch, point, gameTime, Color.DarkSlateGray);
+            }
+        }
         
+        private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime, Color  color)
+        {
+            mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
+            mTile.TintColor = color;
+            mTile.Draw(spriteBatch, gameTime);
+        }
     }
- 
 }

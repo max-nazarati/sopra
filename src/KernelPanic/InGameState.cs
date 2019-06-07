@@ -1,79 +1,139 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic; // for the HashSet
 
 namespace KernelPanic
 {
     [DataContract]
     internal sealed class InGameState : AGameState
     {
+        private readonly GameStateManager mGameStateManager;
+        
         [DataMember]
         public new Camera2D Camera { get; set; }
-        //private Camera2D mCamera;
-        public int SaveSlot { get; set; }
-        //public SaveGame CurrentSaveGame { get; private set; } no such class yet
-        //private HashSet<Wave> mActiveWaves;
-        //private SelectionManager mSelectionManager;
-        private Board mBoard;
-        private Player mPlayerA;
-        private Player mPlayerB;
-        private GameStateManager mGameStateManager;
-        private EntityGraph mEntityGraph;
-        private CollisionManager mCollisionManager;
-        private Unit mUnit1;
-        private Unit mUnit2;
-        private CooldownComponent mCoolDown;
+
+        private readonly InGameOverlay mHud;
+        private readonly Board mBoard;
+        private readonly Player mPlayerA;
+        private readonly Player mPlayerB;
+
+        private PurchaseButton<Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
+        private PurchaseButton<Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
+        private Button mPurchaseDemoReset;
+
+        // public int SaveSlot { get; set; }
+        // public SaveGame CurrentSaveGame { get; private set; } no such class yet
+        // private HashSet<Wave> mActiveWaves;
+        // private SelectionManager mSelectionManager;
 
         public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
         {
-            Camera = new Camera2D(gameStateManager.Sprite.GraphicsDevice.Viewport);
-            mBoard = new Board(gameStateManager.Sprite.ContentManager);
             mGameStateManager = gameStateManager;
+            
+            Camera = new Camera2D(gameStateManager.Sprite.ScreenSize);
+            mBoard = new Board(gameStateManager.Sprite);
+            mPlayerA = new Player(mBoard.RightLane, mBoard.LeftLane);
+            mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);
+            mHud = new InGameOverlay(mPlayerA, mPlayerB, gameStateManager.Sprite);
 
-            // testing movable objects and collision
-            // TODO: move to Lane class
-            mEntityGraph = new EntityGraph();
-            mCollisionManager = new CollisionManager();
-            Texture2D texture = new Texture2D(gameStateManager.Sprite.GraphicsDevice, 1, 1);
-            texture.SetData(new[] { Color.Green });
-            mUnit1 = new Unit(0, 0, 100, 100, texture);
-            Texture2D texture2 = new Texture2D(gameStateManager.Sprite.GraphicsDevice, 1, 1);
-            texture2.SetData(new[] { Color.Red });
-            mUnit2 = new Unit(200, 200, 100, 100, texture2);
-            mEntityGraph.Add(mUnit1);
-            mEntityGraph.Add(mUnit2);
-            mCollisionManager.CreatedObject(mUnit1);
-            mCollisionManager.CreatedObject(mUnit2);
-
-            // testing cooldown component
-            // TODO: see where it fits into the Architecture and move it there
-            mCoolDown = new CooldownComponent(new TimeSpan(0, 0, 5));
-            mCoolDown.CooledDown += mUnit1.CooledDownDelegate;
+            var entityGraph = mBoard.LeftLane.EntityGraph;
+            entityGraph.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
+            entityGraph.Add(Troupe.CreateFirefox(new Point(350), gameStateManager.Sprite));
+            entityGraph.Add(Troupe.CreateFirefoxJump(new Point(250), gameStateManager.Sprite));
+            InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite);
         }
 
-        public override void Update(GameTime gameTime, bool isOverlay)
+        private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites)
+        {
+            var nextPosition = new Vector2(50, 150);
+
+            mPurchaseDemoButton1 = new PurchaseButton<Unit, PurchasableAction<Unit>>(mPlayerA,
+                new PurchasableAction<Unit>(Troupe.CreateFirefox(Point.Zero, sprites)),
+                sprites)
+            {
+                Button = {Title = "Buy Unit"}
+            };
+
+            mPurchaseDemoButton2 = new PurchaseButton<Tower, SinglePurchasableAction<Tower>>(mPlayerA,
+                new SinglePurchasableAction<Tower>(Tower.Create(Vector2.Zero, Grid.KachelSize, sprites)),
+                sprites)
+            {
+                Button = {Title = "Buy Tower"}
+            };
+
+            mPurchaseDemoReset = new Button(sprites);
+            mPurchaseDemoReset.Clicked += button =>
+            {
+                mPlayerA.Bitcoins = 50;
+                UpdateResetTitle();
+            };
+
+            void UpdateResetTitle()
+            {
+                mPurchaseDemoReset.Title = mPlayerA.Bitcoins.ToString();
+            }
+
+            void OnPurchase(Player buyer, Entity resource)
+            {
+                UpdateResetTitle();
+                resource.Sprite.Position = nextPosition;
+                entityGraph.Add(resource);
+                nextPosition.Y += 100;
+                mPurchaseDemoButton1.Action.ResetResource(Troupe.CreateFirefox(Point.Zero, sprites));
+            }
+
+            mPurchaseDemoButton1.Action.Purchased += OnPurchase;
+            mPurchaseDemoButton2.Action.Purchased += OnPurchase;
+
+            UpdateResetTitle();
+
+            var sprite1 = mPurchaseDemoButton1.Button.Sprite;
+            sprite1.SetOrigin(RelativePosition.BottomLeft);
+            sprite1.Position = Vector2.Zero;
+
+            var sprite2 = mPurchaseDemoButton2.Button.Sprite;
+            sprite2.SetOrigin(RelativePosition.BottomLeft);
+            sprite2.Position = sprite1.Position + new Vector2(sprite1.Width, 0);
+
+            var sprite3 = mPurchaseDemoReset.Sprite;
+            sprite3.SetOrigin(RelativePosition.BottomLeft);
+            sprite3.Position = sprite2.Position + new Vector2(sprite2.Width, 0);
+        }
+
+        public override void Update(GameTime gameTime)
         {
             if (InputManager.Default.KeyPressed(Keys.Escape))
             {
-                mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager.Game.Exit, 
-                    mGameStateManager.Sprite.GraphicsDevice.Viewport.Bounds.Size, mGameStateManager));
-     
+                mGameStateManager.Push(MenuState.CreatePauseMenu(mGameStateManager, this));
+                return;
             }
-            mEntityGraph.Update(Camera.GetViewMatrix());
-            mCollisionManager.Update();
+
+            var invertedViewMatrix = Matrix.Invert(Camera.GetViewMatrix());
+
+            mBoard.Update(gameTime, invertedViewMatrix);
             Camera.Update();
+            mHud.Update(gameTime);
+
+            mPurchaseDemoButton1.Update(gameTime, invertedViewMatrix);
+            mPurchaseDemoButton2.Update(gameTime, invertedViewMatrix);
+            mPurchaseDemoReset.Update(gameTime, invertedViewMatrix);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, bool isOverlay)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            var viewMatrix = Camera.GetViewMatrix();
-            spriteBatch.Begin(transformMatrix: viewMatrix);
-            mBoard.DrawLane(spriteBatch, viewMatrix, gameTime);
-            mEntityGraph.Draw(spriteBatch);
+            spriteBatch.Begin(SpriteSortMode.Immediate,
+                transformMatrix: Camera.GetViewMatrix(),
+                samplerState: SamplerState.PointClamp);
+
+            mBoard.Draw(spriteBatch, gameTime);
+            mPurchaseDemoButton1.Draw(spriteBatch, gameTime);
+            mPurchaseDemoButton2.Draw(spriteBatch, gameTime);
+            mPurchaseDemoReset.Draw(spriteBatch, gameTime);
+            
             spriteBatch.End();
+
+            mHud.Draw(spriteBatch, gameTime);
         }
     }
 }
