@@ -34,12 +34,12 @@ namespace KernelPanic
         /// <summary>
         /// <c>true</c> if this change was triggered by some mouse-event, <c>false</c> otherwise.
         /// </summary>
-        internal bool ViaMouse { get; }
+        /*internal*/ private bool ViaMouse { get; }
         
         /// <summary>
         /// <c>true</c> if this change was triggered by some key-press, <c>false</c> otherwise.
         /// </summary>
-        internal bool ViaKeyboard { get; }
+        /*internal*/ private bool ViaKeyboard { get; }
     }
 
     internal interface ICamera
