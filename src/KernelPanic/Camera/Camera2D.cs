@@ -8,18 +8,20 @@ namespace KernelPanic
     internal sealed class Camera2D : ICamera
     {
         [DataMember]
-        private Vector2 mPosition;
+        private float mX;
         [DataMember]
-        private float mZoom;
+        private float mY;
+        [DataMember]
+        private float mZoom = 1;
+        [DataMember]
+        private readonly Rectangle mMaximumRectangle;
 
         private Matrix mTransformation;
         private Matrix mInverseTransformation;
 
-        internal Camera2D(Point viewportSize)
+        internal Camera2D(Rectangle maximumRectangle, Point viewportSize)
         {
-            mZoom = 1;
-            mPosition.X = 290;
-            mPosition.Y = 1150;
+            mMaximumRectangle = maximumRectangle;
             RecalculateTransformations(viewportSize);
         }
 
@@ -35,19 +37,29 @@ namespace KernelPanic
             if (x.Direction == 0 && y.Direction == 0 && scrollVertical.Direction == 0)
                 return;
 
-            PosX += x.Direction * 10 / mZoom;
-            PosY += y.Direction * 10 / mZoom;
-            Zoom *= (float) Math.Pow(1.5, scrollVertical.Direction);
+            mX += x.Direction * 10 / mZoom;
+            mY += y.Direction * 10 / mZoom;
+            mZoom *= Clamp((float) Math.Pow(1.5, scrollVertical.Direction), 0.2f, 2.0f);
+
+            // We should not let more than the maximum rectangle become visible.
+            mX = Clamp(mX,
+                mMaximumRectangle.X,
+                (mMaximumRectangle.X + mMaximumRectangle.Width) * mZoom - viewportSize.X);
+            mY = Clamp(mY,
+                mMaximumRectangle.Y,
+                (mMaximumRectangle.Y + mMaximumRectangle.Height) * mZoom - viewportSize.Y);
+            
+            // We recalculate the transformation and its inverse after each update, since the update occurs only once
+            // during an update-cycle and in each update-cycle both will be used.
             RecalculateTransformations(viewportSize);
         }
 
         private void RecalculateTransformations(Point viewportSize)
         {
-            // We recalculate the transformation and its inverse after each update, since the update occurs only once
-            // during an update-cycle and in each update-cycle both will be used.
+            var position = new Vector3(mX, mY, 0);
             var origin = new Vector3(0.5f * viewportSize.ToVector2(), 0);
             mTransformation =
-                Matrix.CreateTranslation(new Vector3(-mPosition, 0.0f)) *
+                Matrix.CreateTranslation(-position) *
                 Matrix.CreateTranslation(-origin) *
                 Matrix.CreateScale(mZoom, mZoom, 1) *
                 Matrix.CreateTranslation(origin);
@@ -55,53 +67,17 @@ namespace KernelPanic
             Matrix.Invert(ref mTransformation, out mInverseTransformation);
         }
 
-        private float Zoom
-        {
-            get => mZoom;
-            set => mZoom = Math.Max(Math.Min(value, 2f), 0.2f);  // Zoom should stay in [0.2, 2.0].
-        }
-
-
-        private float PosX
-        {
-            get => mPosition.X;
-            set
-            {
-                if (mPosition.X >= -1050 && mPosition.X <= 1150)
-                {
-                    mPosition.X = value;
-                }
-                if (mPosition.X < -1050)
-                {
-                    mPosition.X = -1050;
-                }
-
-                if (mPosition.X > 1150)
-                {
-                    mPosition.X = 1150;
-                }
-            }
-        }
-
-        private float PosY
-        {
-            get => mPosition.Y;
-            set
-            {
-                if (mPosition.Y >= -1000 && mPosition.Y <= 1500)
-                {
-                    mPosition.Y = value;
-                }
-                if (mPosition.Y < -1000)
-                {
-                    mPosition.Y = -1000;
-                }
-
-                if (mPosition.Y > 1500)
-                {
-                    mPosition.Y = 1500;
-                }
-            }
-        }
+        /// <summary>
+        /// Clamps the given value to the provided bounds. If <paramref name="min"/> is greater than
+        /// <paramref name="max"/> the returned value is undefined.
+        /// </summary>
+        /// <param name="value">Value to clamp</param>
+        /// <param name="min">Lower bound</param>
+        /// <param name="max">Upper bound</param>
+        /// <returns>
+        /// If <paramref name="value"/> lies inside [<paramref name="min"/>, <paramref name="max"/>]
+        /// <paramref name="value"/> will be returned, otherwise the nearest bound.
+        /// </returns>
+        private static float Clamp(float value, float min, float max) => Math.Max(Math.Min(value, max), min);
     }
 }

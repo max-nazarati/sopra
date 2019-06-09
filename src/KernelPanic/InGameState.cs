@@ -25,7 +25,7 @@ namespace KernelPanic
         // private SelectionManager mSelectionManager;
 
         public InGameState(GameStateManager gameStateManager)
-            : base(new Camera2D(gameStateManager.Sprite.ScreenSize),  gameStateManager)
+            : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize),  gameStateManager)
         {
             mGameStateManager = gameStateManager;
             
