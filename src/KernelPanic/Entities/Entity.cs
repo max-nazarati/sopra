@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
@@ -16,8 +17,9 @@ namespace KernelPanic
 
         public bool Selected { get; set; }
 
-        internal Rectangle Bounds => new Rectangle((int)Sprite.X-25, 
-            (int)Sprite.Y-25, (int)Sprite.Width-4, (int)Sprite.Height);
+        internal Rectangle Bounds => new Rectangle(
+            (Sprite.Position - Sprite.Origin).ToPoint(),
+            new Point((int) Math.Ceiling(Sprite.Width), (int) Math.Ceiling(Sprite.Height)));
 
         internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
