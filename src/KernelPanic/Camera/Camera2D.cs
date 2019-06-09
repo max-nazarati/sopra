@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic
@@ -18,7 +19,6 @@ namespace KernelPanic
 
         internal Camera2D(Point viewportSize)
         {
-            // mRotation = 0;
             mZoom = 1;
             mOrigin = new Vector2(viewportSize.X / 2f, viewportSize.Y / 2f);
             mPosition.X = 290;
@@ -40,7 +40,7 @@ namespace KernelPanic
 
             PosX += x.Direction * 10 / mZoom;
             PosY += y.Direction * 10 / mZoom;
-            Zoom += scrollVertical.Direction * 0.1f / mZoom;
+            Zoom *= (float) Math.Pow(1.5, scrollVertical.Direction);
             RecalculateTransformations();
         }
 
@@ -61,13 +61,7 @@ namespace KernelPanic
         private float Zoom
         {
             get => mZoom;
-            set
-            {
-                if (value > 0.1 && value < 6)
-                {
-                    mZoom = value;
-                }
-            }
+            set => mZoom = Math.Max(Math.Min(value, 2f), 0.2f);  // Zoom should stay in [0.2, 2.0].
         }
 
 
