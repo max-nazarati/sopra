@@ -33,7 +33,7 @@ namespace KernelPanic
         public Matrix InverseTransformation => mInverseTransformation;
 
         /// <inheritdoc />
-        public void Apply(Change x, Change y, Change scrollVertical)
+        public void Update(Change x, Change y, Change scrollVertical)
         {
             if (x.Direction == 0 && y.Direction == 0 && scrollVertical.Direction == 0)
                 return;

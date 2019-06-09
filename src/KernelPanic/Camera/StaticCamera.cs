@@ -3,14 +3,14 @@ using Microsoft.Xna.Framework;
 namespace KernelPanic
 {
     /// <summary>
-    /// A static camera doesn't transform and won't change on <see cref="Apply"/>.
+    /// A static camera doesn't transform and won't change on <see cref="Update"/>.
     /// </summary>
     internal sealed class StaticCamera : ICamera
     {
         public Matrix Transformation => Matrix.Identity;
         public Matrix InverseTransformation => Matrix.Identity;
 
-        public void Apply(Change x, Change y, Change scrollVertical)
+        public void Update(Change x, Change y, Change scrollVertical)
         {
             // A static camera never changes.
         }
