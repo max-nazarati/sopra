@@ -307,12 +307,12 @@ namespace KernelPanic
             // input.
             Change ChooseDirection(bool isKeyboard, bool dir1, bool dir2, bool? altDir1 = null, bool? altDir2 = null)
             {
+                if (!dir1 && !dir2 && altDir1 is bool b1T && altDir2 is bool b2T)
+                    return ChooseDirection(false, b1T, b2T);
                 if (dir1 && !dir2)
                     return new Change(-1, isKeyboard, !isKeyboard);
                 if (!dir1 && dir2)
                     return new Change(1, isKeyboard, !isKeyboard);
-                if (!dir1 && !dir2 && altDir1 is bool b1T && altDir2 is bool b2T)
-                    return ChooseDirection(false, b1T, b2T);
 
                 return Change.None;
             }

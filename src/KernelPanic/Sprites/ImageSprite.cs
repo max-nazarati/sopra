@@ -21,7 +21,7 @@ namespace KernelPanic
             Texture = texture;
         }
 
-        public override float UnscaledWidth => DestinationRectangle?.Width ?? SourceRectangle?.Width ?? Texture.Width;
+        protected override float UnscaledWidth => DestinationRectangle?.Width ?? SourceRectangle?.Width ?? Texture.Width;
         public override float UnscaledHeight => DestinationRectangle?.Height ?? SourceRectangle?.Height ?? Texture.Height;
 
         protected override void Draw(SpriteBatch spriteBatch,

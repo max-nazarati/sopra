@@ -46,7 +46,6 @@ namespace KernelPanic
             Button.Clicked += Purchase;
         }
         
-        /// <inheritdoc />
         public void Update(GameTime gameTime, InputManager inputManager)
         {
             Button.Update(gameTime, inputManager);

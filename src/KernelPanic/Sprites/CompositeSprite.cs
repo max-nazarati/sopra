@@ -13,7 +13,7 @@ namespace KernelPanic
         {
         }
 
-        public override float UnscaledWidth => UnscaledSize.X;
+        protected override float UnscaledWidth => UnscaledSize.X;
         public override float UnscaledHeight => UnscaledSize.Y;
 
         public override Vector2 UnscaledSize

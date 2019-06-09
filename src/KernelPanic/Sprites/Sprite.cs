@@ -6,18 +6,18 @@ namespace KernelPanic
 {
     public abstract class Sprite
     {
-        public float Rotation { get; set; } = 0.0f;
-        public float Scale { get; set; } = 1.0f;
+        internal float Rotation { get; set; }
+        /* internal */ private float Scale { get; set; } = 1.0f;
         
         /// <summary>
         /// The origin of a sprite is used as the center for rotation and as a offset for <see cref="Position"/>.
         /// Due to the way MonoGame drawing works, it has to be calculated with respect to the <see cref="UnscaledSize"/>.
         /// </summary>
-        public Vector2 Origin { get; set; } = Vector2.Zero;
+        internal Vector2 Origin { get; set; } = Vector2.Zero;
 
-        public abstract float UnscaledWidth { get; }
-        public abstract float UnscaledHeight { get; }
-        public virtual Vector2 UnscaledSize => new Vector2(UnscaledWidth, UnscaledHeight);
+        /* internal */ protected abstract float UnscaledWidth { get; }
+        /* internal */ protected abstract float UnscaledHeight { get; }
+        /* internal */ protected virtual Vector2 UnscaledSize => new Vector2(UnscaledWidth, UnscaledHeight);
 
         public float Width => Scale * UnscaledWidth;
         public float Height => Scale * UnscaledHeight;
