@@ -50,6 +50,7 @@
     <Compile Include="Board.cs" />
     <Compile Include="Camera\Camera2D.cs" />
     <Compile Include="Camera\ICamera.cs" />
+    <Compile Include="Camera\StaticCamera.cs" />
     <Compile Include="Entities\Building.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Hero.cs" />
