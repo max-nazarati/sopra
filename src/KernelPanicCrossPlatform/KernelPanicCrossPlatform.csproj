@@ -177,6 +177,9 @@
     <Compile Include="..\KernelPanic\Quadtree.cs">
       <Link>Quadtree.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\RawInputState.cs">
+      <Link>RawInputState.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\RelativePosition.cs">
       <Link>RelativePosition.cs</Link>
     </Compile>
