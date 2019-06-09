@@ -60,9 +60,9 @@ namespace KernelPanic
                 }
             }
 
-            var positionProvider = new PositionProvider(mGrid, EntityGraph);
+
+            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
-            
             mAStar.Update(inputManager);
         }
 

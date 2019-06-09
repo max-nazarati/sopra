@@ -31,10 +31,10 @@ namespace KernelPanic
             mTarget = target;
             mStart = start;
 
-            // debug visually (only reason for imcludijng contentmanager)
+            // debug visually (only reason for imcludijng apritemanager)
             // mTile = content.Load<Texture2D>("LaneTile");
             mTile = Grid.CreateTile(sprite);
-            mWalkable = new List<Point>();// = coordinateList;
+            mWalkable = new List<Point>(); // = coordinateList;
             mBlocked = new List<Point>();
         }
         
@@ -51,9 +51,8 @@ namespace KernelPanic
             DrawExplored(spriteBatch, gameTime);
             DrawPath(spriteBatch, gameTime);
             DrawStartAndTarget(spriteBatch, gameTime);
-            
         }
-
+        
         private void UpdateObstacles(InputManager inputManager)
         {
             if (inputManager.KeyPressed(Keys.D1, Keys.D2, Keys.D3, Keys.D0))
@@ -133,6 +132,8 @@ namespace KernelPanic
                 CalculatePath();
             }
         }
+
+        public List<Point> Path => mPath;
 
         private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
         
