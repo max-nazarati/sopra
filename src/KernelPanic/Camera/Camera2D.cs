@@ -11,8 +11,6 @@ namespace KernelPanic
         private Vector2 mPosition;
         [DataMember]
         private float mZoom;
-        [DataMember]
-        private readonly Vector2 mOrigin;
 
         private Matrix mTransformation;
         private Matrix mInverseTransformation;
@@ -20,10 +18,9 @@ namespace KernelPanic
         internal Camera2D(Point viewportSize)
         {
             mZoom = 1;
-            mOrigin = new Vector2(viewportSize.X / 2f, viewportSize.Y / 2f);
             mPosition.X = 290;
             mPosition.Y = 1150;
-            RecalculateTransformations();
+            RecalculateTransformations(viewportSize);
         }
 
         /// <inheritdoc />
@@ -33,7 +30,7 @@ namespace KernelPanic
         public Matrix InverseTransformation => mInverseTransformation;
 
         /// <inheritdoc />
-        public void Update(Change x, Change y, Change scrollVertical)
+        public void Update(Point viewportSize, Change x, Change y, Change scrollVertical)
         {
             if (x.Direction == 0 && y.Direction == 0 && scrollVertical.Direction == 0)
                 return;
@@ -41,19 +38,19 @@ namespace KernelPanic
             PosX += x.Direction * 10 / mZoom;
             PosY += y.Direction * 10 / mZoom;
             Zoom *= (float) Math.Pow(1.5, scrollVertical.Direction);
-            RecalculateTransformations();
+            RecalculateTransformations(viewportSize);
         }
 
-        private void RecalculateTransformations()
+        private void RecalculateTransformations(Point viewportSize)
         {
             // We recalculate the transformation and its inverse after each update, since the update occurs only once
             // during an update-cycle and in each update-cycle both will be used.
-
+            var origin = new Vector3(0.5f * viewportSize.ToVector2(), 0);
             mTransformation =
                 Matrix.CreateTranslation(new Vector3(-mPosition, 0.0f)) *
-                Matrix.CreateTranslation(new Vector3(-mOrigin, 0.0f)) *
+                Matrix.CreateTranslation(-origin) *
                 Matrix.CreateScale(mZoom, mZoom, 1) *
-                Matrix.CreateTranslation(new Vector3(mOrigin, 0.0f));
+                Matrix.CreateTranslation(origin);
 
             Matrix.Invert(ref mTransformation, out mInverseTransformation);
         }

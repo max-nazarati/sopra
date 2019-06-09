@@ -58,9 +58,10 @@ namespace KernelPanic
         /// Updates the camera's <see cref="Transformation"/> and in turn <see cref="InverseTransformation"/>.
         /// Implementations may choose to ignore parts of the input to disallow changing the camera.
         /// </summary>
+        /// <param name="viewportSize"></param>
         /// <param name="x"><paramref name="x.Direction"/> is negative if moved to the left and positive if moved to the right.</param>
         /// <param name="y"><paramref name="y.Direction"/> is negative if moved to the top and positive if moved to the bottom.</param>
         /// <param name="scrollVertical"><paramref name="scrollVertical.Direction"/> is negative if scrolled up and positive if scrolled down.</param>
-        void Update(Change x, Change y, Change scrollVertical);
+        void Update(Point viewportSize, Change x, Change y, Change scrollVertical);
     }
 }

@@ -10,7 +10,7 @@ namespace KernelPanic
         public Matrix Transformation => Matrix.Identity;
         public Matrix InverseTransformation => Matrix.Identity;
 
-        public void Update(Change x, Change y, Change scrollVertical)
+        public void Update(Point viewportSize, Change x, Change y, Change scrollVertical)
         {
             // A static camera never changes.
         }

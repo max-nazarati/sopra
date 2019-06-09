@@ -317,7 +317,7 @@ namespace KernelPanic
                 return Change.None;
             }
 
-            mCamera.Update(
+            mCamera.Update(mInputState.Viewport.Bounds.Size,
                 ChooseDirection(true, xLeft, xRight, mouseXLeft, mouseXRight),
                 ChooseDirection(true, yUp, yDown, mouseYUp, mouseYDown),
                 ChooseDirection(false, ScrolledUp(), ScrolledDown())
