@@ -20,10 +20,11 @@ namespace KernelPanic
         }
         
         // Funktion mach Pfadplanung (benutzt Astar mithilfe von entit graph)
-        internal MakePathfinding()
+        internal List<Point> MakePathfinding()
         {
             // List<Point> obstacles = EntityGraph.Obstacles;
-            List<Point> obstacles = 
+            List<Point> obstacles =  new List<Point>();
+            return obstacles;
         }
     }
 }
