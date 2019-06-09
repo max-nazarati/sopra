@@ -65,16 +65,15 @@ namespace KernelPanic
         {
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            base.Update(positionProvider, gameTime, invertedViewMatrix);
+            base.Update(positionProvider, gameTime, inputManager);
 
             if (Selected)
             {
-                var input = InputManager.Default;
-                if (input.MousePressed(InputManager.MouseButton.Right))
+                if (inputManager.MousePressed(InputManager.MouseButton.Right))
                 {
-                    var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
+                    var mouse = inputManager.TranslatedMousePosition;
                     if (positionProvider.GridCoordinate(mouse) != null)
                         MoveTarget = mouse;
                 }

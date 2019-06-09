@@ -29,7 +29,7 @@ namespace KernelPanic
         {
             foreach (var entity in mQuadtree)
             {
-                entity.Update(positionProvider, gameTime, inputManager.Camera.InverseTransformation);
+                entity.Update(positionProvider, gameTime, inputManager);
             }
 
             // Checks whether collision works

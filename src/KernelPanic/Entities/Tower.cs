@@ -62,11 +62,10 @@ namespace KernelPanic
             }
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             // Turn window coordinates into world coordinates.
-            var relativeMouseVector =
-                Vector2.Transform(InputManager.Default.MousePosition.ToVector2(), invertedViewMatrix);
+            var relativeMouseVector = inputManager.TranslatedMousePosition;
             var distance = Vector2.Distance(relativeMouseVector, Sprite.Position);
             mInRange = distance <= mRadius;
 

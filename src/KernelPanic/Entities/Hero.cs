@@ -22,7 +22,7 @@ namespace KernelPanic
             throw new NotImplementedException();
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             throw new NotImplementedException();
         }
