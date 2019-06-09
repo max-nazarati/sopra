@@ -84,6 +84,9 @@
     <Compile Include="..\KernelPanic\Entities\Entity.cs">
       <Link>Entities\Entity.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Entities\Firefox.cs">
+      <Link>Entities\Firefox.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Hero.cs">
       <Link>Entities\Hero.cs</Link>
     </Compile>
@@ -164,6 +167,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\PositionProvider.cs">
       <Link>PositionProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\PriorityQueue.cs">
+      <Link>PriorityQueue.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>

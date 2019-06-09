@@ -53,6 +53,7 @@
     <Compile Include="Camera\StaticCamera.cs" />
     <Compile Include="Entities\Building.cs" />
     <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\Firefox.cs" />
     <Compile Include="Entities\Hero.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Entities\ShockField.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="PlayTime.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PositionProvider.cs" />
+    <Compile Include="PriorityQueue.cs" />
     <Compile Include="PurchasableAction.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameStateManager.cs" />
@@ -104,6 +106,9 @@
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.7.0.1708, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\usr\lib\mono\xbuild\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />

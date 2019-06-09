@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic
@@ -16,6 +17,13 @@ namespace KernelPanic
         internal Vector2? GridCoordinate(Vector2 position, int subTileCount = 1)
         {
             return mGrid.GridPointFromWorldPoint(position, subTileCount)?.Position;
+        }
+        
+        // Funktion mach Pfadplanung (benutzt Astar mithilfe von entit graph)
+        internal MakePathfinding()
+        {
+            // List<Point> obstacles = EntityGraph.Obstacles;
+            List<Point> obstacles = 
         }
     }
 }
