@@ -45,12 +45,12 @@ namespace KernelPanic
     internal interface ICamera
     {
         /// <summary>
-        /// The camera's current transformation for turning window-coordinates into world-coordinates.
+        /// The camera's current transformation for turning world-coordinates into window-coordinates.
         /// </summary>
         Matrix Transformation { get; }
         
         /// <summary>
-        /// The camera's current inverse transformation for turning world-coordinates into window-coordinates.
+        /// The camera's current inverse transformation for turning window-coordinates into world-coordinates.
         /// </summary>
         Matrix InverseTransformation { get; }
 
