@@ -9,9 +9,6 @@ namespace KernelPanic
     internal sealed class InGameState : AGameState
     {
         private readonly GameStateManager mGameStateManager;
-        
-        [DataMember]
-        public new Camera2D Camera { get; set; }
 
         private readonly InGameOverlay mHud;
         private readonly Board mBoard;
@@ -27,11 +24,11 @@ namespace KernelPanic
         // private HashSet<Wave> mActiveWaves;
         // private SelectionManager mSelectionManager;
 
-        public InGameState(GameStateManager gameStateManager) : base(gameStateManager)
+        public InGameState(GameStateManager gameStateManager)
+            : base(new Camera2D(gameStateManager.Sprite.ScreenSize),  gameStateManager)
         {
             mGameStateManager = gameStateManager;
             
-            Camera = new Camera2D(gameStateManager.Sprite.ScreenSize);
             mBoard = new Board(gameStateManager.Sprite);
             mPlayerA = new Player(mBoard.RightLane, mBoard.LeftLane);
             mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);

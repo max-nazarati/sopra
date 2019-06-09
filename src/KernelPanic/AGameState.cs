@@ -11,11 +11,12 @@ namespace KernelPanic
     {
         protected GameStateManager GameStateGameStateManager { get; }
         internal virtual bool IsOverlay => false;
-        internal virtual Camera2D Camera => null;
+        internal ICamera Camera { get; }
 
-        protected AGameState(GameStateManager gameStateManager)
+        protected AGameState(ICamera camera, GameStateManager gameStateManager)
         {
             GameStateGameStateManager = gameStateManager;
+            Camera = camera;
         }
         
         public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);

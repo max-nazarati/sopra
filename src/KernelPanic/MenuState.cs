@@ -10,7 +10,7 @@ namespace KernelPanic
     {
         private InterfaceComponent[] mComponents;
 
-        private MenuState(GameStateManager gameStateManager) : base(gameStateManager)
+        private MenuState(GameStateManager gameStateManager) : base(new StaticCamera(), gameStateManager)
         {
         }
 
