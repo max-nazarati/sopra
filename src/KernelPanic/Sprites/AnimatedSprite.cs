@@ -18,7 +18,7 @@ namespace KernelPanic.Sprites
         internal Color TintColor { get; set; } = Color.White;
 
         protected override float UnscaledWidth => DefaultFrameSize;
-        public override float UnscaledHeight => DefaultFrameSize;
+        protected override float UnscaledHeight => DefaultFrameSize;
 
         public AnimatedSprite(Texture2D texture, int x, int y, TimeSpan frameDuration) : base(x, y)
         {

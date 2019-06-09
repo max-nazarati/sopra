@@ -54,8 +54,8 @@ namespace KernelPanic
         
         private Lazy<Vector2> mLazySize;
         protected override float UnscaledWidth => Size.X;
-        public override float UnscaledHeight => Size.Y;
-        public override Vector2 UnscaledSize => mLazySize.Value;
+        protected override float UnscaledHeight => Size.Y;
+        protected override Vector2 UnscaledSize => mLazySize.Value;
 
         private void ResetLazySize()
         {

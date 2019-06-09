@@ -14,9 +14,9 @@ namespace KernelPanic
         }
 
         protected override float UnscaledWidth => UnscaledSize.X;
-        public override float UnscaledHeight => UnscaledSize.Y;
+        protected override float UnscaledHeight => UnscaledSize.Y;
 
-        public override Vector2 UnscaledSize
+        protected override Vector2 UnscaledSize
         {
             get
             {

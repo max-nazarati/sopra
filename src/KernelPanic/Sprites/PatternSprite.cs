@@ -18,7 +18,7 @@ namespace KernelPanic
         }
 
         protected override float UnscaledWidth => Sprite.Width * Columns;
-        public override float UnscaledHeight => Sprite.Height * Rows;
+        protected override float UnscaledHeight => Sprite.Height * Rows;
         
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,

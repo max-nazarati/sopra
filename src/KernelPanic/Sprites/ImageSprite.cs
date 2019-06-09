@@ -22,7 +22,7 @@ namespace KernelPanic
         }
 
         protected override float UnscaledWidth => DestinationRectangle?.Width ?? SourceRectangle?.Width ?? Texture.Width;
-        public override float UnscaledHeight => DestinationRectangle?.Height ?? SourceRectangle?.Height ?? Texture.Height;
+        protected override float UnscaledHeight => DestinationRectangle?.Height ?? SourceRectangle?.Height ?? Texture.Height;
 
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
