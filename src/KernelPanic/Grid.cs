@@ -38,9 +38,9 @@ namespace KernelPanic
 
         private readonly Sprite mSprite;
 
-        internal Grid(SpriteManager sprites, LaneSide laneSide)
+        internal Grid(Rectangle laneBounds, SpriteManager sprites, LaneSide laneSide)
         {
-            mLaneRectangle = new Rectangle(0, 0, 16, 42);
+            mLaneRectangle = laneBounds;
             mLaneSide = laneSide;
 
             var tile = CreateTile(sprites);

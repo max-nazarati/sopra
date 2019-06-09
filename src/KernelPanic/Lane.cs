@@ -17,10 +17,26 @@ namespace KernelPanic
 
         private AStar mAStar;
 
+        private static Rectangle LaneBoundsInTiles(Grid.LaneSide laneSide) =>
+            new Rectangle(laneSide == Grid.LaneSide.Left ? 0 : 32, 0, 16, 42);
+
+        private static Rectangle LaneBoundsInPixel(Grid.LaneSide laneSide)
+        {
+            var bounds = LaneBoundsInTiles(laneSide);
+            bounds.X *= Grid.KachelSize;
+            bounds.Y *= Grid.KachelSize;
+            bounds.Width *= Grid.KachelSize;
+            bounds.Height *= Grid.KachelSize;
+            return bounds;
+        }
+
+        internal static Rectangle LeftBounds => LaneBoundsInPixel(Grid.LaneSide.Left);
+        internal static Rectangle RightBounds => LaneBoundsInPixel(Grid.LaneSide.Right);
+
         public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
         {
             EntityGraph = new EntityGraph(sprites);
-            mGrid = new Grid(sprites, laneSide);
+            mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
             Target = new Base();
             mSpriteManager = sprites;
             InitAStar(sprites);

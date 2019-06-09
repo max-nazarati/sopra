@@ -8,6 +8,16 @@ namespace KernelPanic
         internal Lane LeftLane { get; }
         internal Lane RightLane { get; }
 
+        internal static Rectangle Bounds
+        {
+            get
+            {
+                var bounds = Rectangle.Union(Lane.LeftBounds, Lane.RightBounds);
+                bounds.Inflate(100, 100);
+                return bounds;
+            }
+        }
+
         internal Board(SpriteManager content)
         {
             LeftLane = new Lane(Grid.LaneSide.Left, content);
