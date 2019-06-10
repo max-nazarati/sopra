@@ -8,14 +8,16 @@ namespace KernelPanic
     /// </summary>
     internal sealed class RawInputState
     {
+        internal bool IsActive { get; private set; }
         internal Viewport Viewport { get; private set; }
         internal MouseState CurrentMouse { get; private set; }
         internal MouseState PreviousMouse { get; private set; }
         internal KeyboardState CurrentKeyboard { get; private set; }
         internal KeyboardState PreviousKeyboard { get; private set; }
 
-        internal void Update(Viewport viewport)
+        internal void Update(bool isActive, Viewport viewport)
         {
+            IsActive = isActive;
             Viewport = viewport;
             PreviousMouse = CurrentMouse;
             CurrentMouse = Mouse.GetState();

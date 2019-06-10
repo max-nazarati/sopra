@@ -33,6 +33,8 @@ namespace KernelPanic
             UpdateCamera();
         }
 
+        internal bool IsActive => mInputState.IsActive;
+
 #if false // Uncomment when used.
         public Point LatestMouseLeftClickPosition { get; private set; }
         public Point LatestMouseMiddleClickPosition { get; private set; }
