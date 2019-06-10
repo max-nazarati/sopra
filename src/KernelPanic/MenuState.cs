@@ -62,7 +62,7 @@ namespace KernelPanic
             var savedGame5 = CreateButton(stateManager.Sprite, "leer", 500);
 
             var newGameButton = CreateButton(stateManager.Sprite, "Neues Spiel",600, 150);
-            newGameButton.Clicked += _ => stateManager.Push(new InGameState(stateManager));
+            newGameButton.Clicked += _ => InGameState.PushGameStack(stateManager);
 
             var loadGameButton = CreateButton(stateManager.Sprite, "Spiel laden", 600, -150);
             loadGameButton.Clicked += _ => stateManager.Push(new StorageManager().LoadGame("testSave.xml"));

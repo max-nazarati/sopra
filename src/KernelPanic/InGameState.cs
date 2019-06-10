@@ -10,7 +10,6 @@ namespace KernelPanic
     {
         private readonly GameStateManager mGameStateManager;
 
-        private readonly InGameOverlay mHud;
         private readonly Board mBoard;
         private readonly Player mPlayerA;
         private readonly Player mPlayerB;
@@ -24,7 +23,7 @@ namespace KernelPanic
         // private HashSet<Wave> mActiveWaves;
         // private SelectionManager mSelectionManager;
 
-        public InGameState(GameStateManager gameStateManager)
+        private InGameState(GameStateManager gameStateManager)
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize),  gameStateManager)
         {
             mGameStateManager = gameStateManager;
@@ -32,13 +31,20 @@ namespace KernelPanic
             mBoard = new Board(gameStateManager.Sprite);
             mPlayerA = new Player(mBoard.RightLane, mBoard.LeftLane);
             mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);
-            mHud = new InGameOverlay(mPlayerA, mPlayerB, gameStateManager.Sprite);
 
             var entityGraph = mBoard.LeftLane.EntityGraph;
             entityGraph.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
             entityGraph.Add(Troupe.CreateFirefox(new Point(350), gameStateManager.Sprite));
             entityGraph.Add(Troupe.CreateFirefoxJump(new Point(250), gameStateManager.Sprite));
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite);
+        }
+
+        internal static void PushGameStack(GameStateManager gameStateManager)
+        {
+            var game = new InGameState(gameStateManager);
+            var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, gameStateManager);
+            gameStateManager.Push(game);
+            gameStateManager.Push(hud);
         }
 
         private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites)
@@ -107,7 +113,6 @@ namespace KernelPanic
             }
 
             mBoard.Update(gameTime, inputManager);
-            mHud.Update(gameTime);
 
             mPurchaseDemoButton1.Update(gameTime, inputManager);
             mPurchaseDemoButton2.Update(gameTime, inputManager);
@@ -126,8 +131,6 @@ namespace KernelPanic
             mPurchaseDemoReset.Draw(spriteBatch, gameTime);
             
             spriteBatch.End();
-
-            mHud.Draw(spriteBatch, gameTime);
         }
     }
 }
