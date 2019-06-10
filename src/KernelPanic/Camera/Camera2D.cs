@@ -40,7 +40,7 @@ namespace KernelPanic
         /// <inheritdoc />
         public void Update(Point viewportSize, Change x, Change y, Change scrollVertical)
         {
-            if (x.Direction == 0 && y.Direction == 0 && scrollVertical.Direction == 0)
+            if (x.IsNone && y.IsNone && scrollVertical.IsNone)
                 return;
                 
             // Turn the corners of the camera's bounds into screen coordinates.

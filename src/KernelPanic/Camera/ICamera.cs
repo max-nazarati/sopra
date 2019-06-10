@@ -40,6 +40,11 @@ namespace KernelPanic
         /// <c>true</c> if this change was triggered by some key-press, <c>false</c> otherwise.
         /// </summary>
         /*internal*/ private bool ViaKeyboard { get; }
+
+        /// <summary>
+        /// Returns <c>true</c> if no change occured.
+        /// </summary>
+        internal bool IsNone => Direction == 0;
     }
 
     internal interface ICamera
