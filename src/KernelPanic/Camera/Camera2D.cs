@@ -39,13 +39,13 @@ namespace KernelPanic
 
             mX += x.Direction * 10 / mZoom;
             mY += y.Direction * 10 / mZoom;
-            mZoom *= Clamp((float) Math.Pow(1.5, scrollVertical.Direction), 0.2f, 2.0f);
+            mZoom *= MathHelper.Clamp((float) Math.Pow(1.5, scrollVertical.Direction), 0.2f, 2.0f);
 
             // We should not let more than the maximum rectangle become visible.
-            mX = Clamp(mX,
+            mX = MathHelper.Clamp(mX,
                 mMaximumRectangle.X,
                 (mMaximumRectangle.X + mMaximumRectangle.Width) * mZoom - viewportSize.X);
-            mY = Clamp(mY,
+            mY = MathHelper.Clamp(mY,
                 mMaximumRectangle.Y,
                 (mMaximumRectangle.Y + mMaximumRectangle.Height) * mZoom - viewportSize.Y);
             
@@ -66,18 +66,5 @@ namespace KernelPanic
 
             Matrix.Invert(ref mTransformation, out mInverseTransformation);
         }
-
-        /// <summary>
-        /// Clamps the given value to the provided bounds. If <paramref name="min"/> is greater than
-        /// <paramref name="max"/> the returned value is undefined.
-        /// </summary>
-        /// <param name="value">Value to clamp</param>
-        /// <param name="min">Lower bound</param>
-        /// <param name="max">Upper bound</param>
-        /// <returns>
-        /// If <paramref name="value"/> lies inside [<paramref name="min"/>, <paramref name="max"/>]
-        /// <paramref name="value"/> will be returned, otherwise the nearest bound.
-        /// </returns>
-        private static float Clamp(float value, float min, float max) => Math.Max(Math.Min(value, max), min);
     }
 }
