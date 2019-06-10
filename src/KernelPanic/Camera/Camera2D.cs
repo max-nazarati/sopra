@@ -39,7 +39,7 @@ namespace KernelPanic
 
             mX += x.Direction * 10 / mZoom;
             mY += y.Direction * 10 / mZoom;
-            mZoom *= MathHelper.Clamp((float) Math.Pow(1.5, scrollVertical.Direction), 0.2f, 2.0f);
+            mZoom = MathHelper.Clamp((float) Math.Pow(1.5, scrollVertical.Direction) * mZoom, 0.2f, 2.0f);
 
             // We should not let more than the maximum rectangle become visible.
             mX = MathHelper.Clamp(mX,
