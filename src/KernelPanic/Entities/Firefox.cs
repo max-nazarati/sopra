@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+
 namespace KernelPanic
 {
     internal sealed class Firefox : Hero
@@ -5,5 +7,18 @@ namespace KernelPanic
         public Firefox(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, speed, life, attackStrength, sprite)
         {
         }
+
+        private static Firefox Create(Point position, Sprite sprite)
+        {
+            sprite.Position = position.ToVector2();
+            sprite.ScaleToWidth(Grid.KachelSize);
+            return new Firefox(10, 1, 1, 1, sprite);
+        }
+
+        internal static Firefox CreateFirefox(Point position, SpriteManager spriteManager) =>
+            Create(position, spriteManager.CreateFirefox());
+        
+        internal static Firefox CreateFirefoxJump(Point position, SpriteManager spriteManager) =>
+            Create(position, spriteManager.CreateFirefoxJump());
     }
 }

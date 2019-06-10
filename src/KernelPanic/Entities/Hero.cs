@@ -1,6 +1,7 @@
 ﻿
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
@@ -35,9 +36,12 @@ namespace KernelPanic
             throw new NotImplementedException();
         }
 
+
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            throw new NotImplementedException();
+            base.Update(positionProvider, gameTime, inputManager);
+            var path = positionProvider.MakePathFinding();
         }
+        
     }
 }
