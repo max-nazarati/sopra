@@ -22,5 +22,8 @@ namespace KernelPanic
             PreviousKeyboard = CurrentKeyboard;
             CurrentKeyboard = Keyboard.GetState();
         }
+
+        internal bool MouseInWindow =>
+            Viewport.Bounds.Contains(CurrentMouse.Position);
     }
 }

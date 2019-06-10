@@ -297,10 +297,16 @@ namespace KernelPanic
             var yUp = KeyDown(Keys.W);
             var yDown = KeyDown(Keys.S);
 
-            var mouseXLeft = MousePosition.X <= ScreenBorderDistance;
-            var mouseXRight = mInputState.Viewport.Width - ScreenBorderDistance <= MousePosition.X;
-            var mouseYUp = MousePosition.Y <= ScreenBorderDistance;
-            var mouseYDown = mInputState.Viewport.Height - ScreenBorderDistance <= MousePosition.Y;
+            bool mouseXLeft = false, mouseXRight = false, mouseYUp = false, mouseYDown = false;
+
+            if (mInputState.MouseInWindow)
+            {
+                // Only react to mouse-near-window-border when the mouse is actually inside the window.
+                mouseXLeft = MousePosition.X <= ScreenBorderDistance;
+                mouseXRight = mInputState.Viewport.Width - ScreenBorderDistance <= MousePosition.X;
+                mouseYUp = MousePosition.Y <= ScreenBorderDistance;
+                mouseYDown = mInputState.Viewport.Height - ScreenBorderDistance <= MousePosition.Y;
+            }
 
             // This function returns the value to be used for the apply call. If any of the first two arguments is true,
             // the arguments mouseDir1 and mouseDir2 aren't looked at, because keyboard input has preference over mouse
