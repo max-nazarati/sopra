@@ -52,9 +52,11 @@ namespace KernelPanic
                 mZoom = newZoom;
                 RecalculateTransformations(viewportSize);
             }
-
-            if (x.IsNone && y.IsNone)
+            else if (x.IsNone && y.IsNone)
+            {
+                // If no change in the zoom and the x/y position occured we have nothing to update.
                 return;
+            }
 
             // Turn the corners of the camera's bounds into screen coordinates.
             var windowUpperLeft = Vector2.Transform(Vector2.Zero, InverseTransformation);
