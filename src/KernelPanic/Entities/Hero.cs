@@ -7,8 +7,9 @@ namespace KernelPanic
 {
     internal class Hero : Unit
     {
-        //public CooldownComponent Cooldown { get; set; }
-        
+        // public CooldownComponent Cooldown { get; set; }
+        private PositionProvider mPositionProvider;
+
         /// <summary>
         /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
         /// </summary>
@@ -40,8 +41,17 @@ namespace KernelPanic
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             base.Update(positionProvider, gameTime, inputManager);
-            var path = positionProvider.MakePathFinding();
+            var startX = Sprite.Position.X;
+            var startY = Sprite.Position.Y;
+            var start = new Point((int)startX, (int)startY);
+            var path = positionProvider.MakePathFinding(start, new Point(5, 10));
+            mPositionProvider = positionProvider;
         }
         
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            base.Draw(spriteBatch, gameTime);
+            mPositionProvider.DrawAStar(spriteBatch, gameTime);
+        }
     }
 }

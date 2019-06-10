@@ -11,6 +11,7 @@ namespace KernelPanic
 
         private readonly Grid mGrid;
         private readonly SpriteManager mSpriteManager;
+        private static bool VISUAL_DEBUG;
 
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
@@ -39,10 +40,11 @@ namespace KernelPanic
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
             Target = new Base();
             mSpriteManager = sprites;
-            InitAStar(sprites);
-
-            // mTile = Grid.CreateTile(sprites);
-            // mAStar = new AStar(mGrid.CoordSystem, mGrid.CoordSystem.First(), mGrid.CoordSystem.Last());
+            
+            if (VISUAL_DEBUG)
+            {
+                InitAStar(sprites);
+            }
         }
 
         public void Update(GameTime gameTime, InputManager inputManager)
@@ -63,14 +65,21 @@ namespace KernelPanic
 
             var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
-            mAStar.Update(inputManager);
+            if (VISUAL_DEBUG)
+            {
+                mAStar.Update(inputManager);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
-            // mAStar.Draw(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
+            if (VISUAL_DEBUG)
+            {
+               mAStar.Draw(spriteBatch, gameTime); // visual demo
+            }
+               
         }
         
         /*
@@ -80,7 +89,7 @@ namespace KernelPanic
         */
 
         
-        // -------------------------- A STAR DEBUG ----------------------------------------------------------------------
+        // -------------------------- A STAR DEMO ----------------------------------------------------------------------
         private void InitAStar(SpriteManager sprite, int obstacleEnv=2)
         {
             // set start and target

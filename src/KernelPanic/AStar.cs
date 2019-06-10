@@ -19,21 +19,27 @@ namespace KernelPanic
         private List<Point> mWalkable;
         
         // debugging the path visually
+        private readonly SpriteManager mSpriteManager;
         private List<Point> mPath;
         private ImageSprite mTile;
 
 
 
-        internal AStar(List<Point> coordinateList, Point start, Point target, SpriteManager sprite)
+        internal AStar(List<Point> coordinateList, Point start, Point target, SpriteManager spriteManager)
         {
             mCoordinateList = coordinateList;
             mExploredNodes = new List<Point>();
             mTarget = target;
             mStart = start;
+            foreach (var VARIABLE in coordinateList)
+            {
+                Console.WriteLine(VARIABLE);
+            }
 
-            // debug visually (only reason for imcludijng apritemanager)
+            // debug visually (only reason for imcludijng spritemanager)
             // mTile = content.Load<Texture2D>("LaneTile");
-            mTile = Grid.CreateTile(sprite);
+            mSpriteManager = spriteManager;
+            mTile = Grid.CreateTile(spriteManager);
             mWalkable = new List<Point>(); // = coordinateList;
             mBlocked = new List<Point>();
         }
@@ -49,6 +55,7 @@ namespace KernelPanic
         {
             DrawObstacles(spriteBatch, gameTime);
             DrawExplored(spriteBatch, gameTime);
+            // Console.WriteLine("[AStar] Drawing the path");
             DrawPath(spriteBatch, gameTime);
             DrawStartAndTarget(spriteBatch, gameTime);
         }
