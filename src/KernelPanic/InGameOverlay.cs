@@ -27,11 +27,8 @@ namespace KernelPanic
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            // Should not be drawn in the same SpriteBatch as Camera2d
-            spriteBatch.Begin();
             mScoreOverlay.Draw(spriteBatch, gameTime);
             // BuildingMenu.Draw(spriteBatch, gameTime);
-            spriteBatch.End();
         }
     }
 }

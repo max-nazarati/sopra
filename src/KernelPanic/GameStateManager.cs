@@ -54,7 +54,9 @@ namespace KernelPanic
         {
             foreach (var state in ActiveStates().Reverse())
             {
+                spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: state.Camera.Transformation);
                 state.Draw(spriteBatch, gameTime);
+                spriteBatch.End();
             }
         }
 

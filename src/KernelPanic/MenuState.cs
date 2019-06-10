@@ -293,12 +293,10 @@ namespace KernelPanic
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Begin();
             foreach (var component in mComponents)
             {
                 component.Draw(spriteBatch, gameTime);
             }
-            spriteBatch.End();
         }
     }
 }
