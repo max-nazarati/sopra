@@ -12,7 +12,7 @@ namespace KernelPanic
         {
             sprite.Position = position.ToVector2();
             sprite.ScaleToWidth(Grid.KachelSize);
-            return new Firefox(10, 1, 1, 1, sprite);
+            return new Firefox(10, 2, 1, 1, sprite);
         }
 
         internal static Firefox CreateFirefox(Point position, SpriteManager spriteManager) =>

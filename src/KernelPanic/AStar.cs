@@ -24,17 +24,42 @@ namespace KernelPanic
         private ImageSprite mTile;
 
 
+        /// <summary>
+        /// start and target as Vector
+        /// </summary>
+        /// <param name="coordinateList"></param>
+        /// <param name="start"></param>
+        /// <param name="target"></param>
+        /// <param name="spriteManager"></param>
+        internal AStar(List<Point> coordinateList, Vector2 start, Vector2 target, SpriteManager spriteManager)
+        {
+            mCoordinateList = coordinateList;
+            mExploredNodes = new List<Point>();
+            
+            mStart = new Point((int) start.X, (int) start.Y);
+            mTarget = new Point((int)target.X, (int)target.Y);
 
+            // debug visually (only reason for imcludijng spritemanager)
+            // mTile = content.Load<Texture2D>("LaneTile");
+            mSpriteManager = spriteManager;
+            mTile = Grid.CreateTile(spriteManager);
+            mWalkable = new List<Point>(); // = coordinateList;
+            mBlocked = new List<Point>();
+        }
+        
+        /// <summary>
+        /// /// start and target as Point
+        /// </summary>
+        /// <param name="coordinateList"></param>
+        /// <param name="start"></param>
+        /// <param name="target"></param>
+        /// <param name="spriteManager"></param>
         internal AStar(List<Point> coordinateList, Point start, Point target, SpriteManager spriteManager)
         {
             mCoordinateList = coordinateList;
             mExploredNodes = new List<Point>();
             mTarget = target;
             mStart = start;
-            foreach (var VARIABLE in coordinateList)
-            {
-                Console.WriteLine(VARIABLE);
-            }
 
             // debug visually (only reason for imcludijng spritemanager)
             // mTile = content.Load<Texture2D>("LaneTile");

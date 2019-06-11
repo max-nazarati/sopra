@@ -25,25 +25,36 @@ namespace KernelPanic
             return mGrid.GridPointFromWorldPoint(position, subTileCount)?.Position;
         }
         
+        internal List<Point> MakePathFinding(Vector2? start, Vector2? target)
+        {
+            Point startPoint = new Point((int)start?.X , (int)start?.Y);
+            Point targetPoint = new Point((int)target?.X, (int)target?.Y);
+            return MakePathFinding(startPoint, targetPoint);
+        }
+        
         internal List<Point> MakePathFinding(Point start, Point target)
         {
             // List<Point> obstacles = mEntities.Obstacles;
-            start = new Point(0, 0); // TODO
-            target = new Point(5, 10); // TODO
+            // start = new Point(0, 0); // TODO
+            // target = new Point(6, 10); // TODO
             var obstacles =  new List<Point>();
             var aStar = new AStar(mGrid.CoordSystem, start, target, mSpriteManager);
+            aStar.ChangeObstacleEnvironment(1);
             aStar.CalculatePath();
             mAStar = aStar;
-            // Console.WriteLine("HELLO");
-            foreach (var VARIABLE in aStar.Path)
-            {
-                Console.WriteLine(VARIABLE);
-            }
-            
             return aStar.Path;
         }
 
-        internal void DrawAStar(SpriteBatch spriteBatch, GameTime gameTime)
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (mAStar != null)
+            {
+                DrawAStar(spriteBatch, gameTime);    
+            }
+            
+        }
+        
+        private void DrawAStar(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mAStar.CalculatePath();
             mAStar.Draw(spriteBatch, gameTime);
