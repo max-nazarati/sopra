@@ -9,8 +9,8 @@
     <ProjectGuid>{FA91A1AD-F8C9-4F5F-A710-0117D49917A5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KernelPanicCrossPlatform</RootNamespace>
-    <AssemblyName>KernelPanicCrossPlatform</AssemblyName>
+    <RootNamespace>KernelPanic</RootNamespace>
+    <AssemblyName>KernelPanic</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
