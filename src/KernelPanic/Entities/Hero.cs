@@ -86,14 +86,15 @@ namespace KernelPanic.Entities
             
             
             // TODO 4 get the next position of the path (should be at path[0]; indexing is ****ed up tho
-            // The way it is right now, firefox walks to the field on the upper left of the actual target (directly)
+            // The way it is right now, firefox walks to the field of the target (directly)
 
             Vector2? movement = Sprite.Position * 100;
             if (path.Count > 0)
             {
-                var x = path[path.Count-1].X;
-                var y = path[path.Count-1].Y;
-                movement = positionProvider.GridCoordinate(new Vector2(x * 100, y * 100));
+                var x = path[path.Count - 1].X;
+                var y = path[path.Count - 1].Y;
+                // + (100, 100) translates the target to the point it should be
+                movement = positionProvider.GridCoordinate(new Vector2(x * 100, y * 100) + new Vector2(100, 100));
             }
             MoveTarget = movement;
             
