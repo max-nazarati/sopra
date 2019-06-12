@@ -85,24 +85,22 @@ namespace KernelPanic.Entities
             var path = positionProvider.MakePathFinding(startPoint, target);
             
             
-            // TODO 4 get the next position of the path (should be at path[0]; indexing is ****ed up tho
-            // The way it is right now, firefox walks to the field of the target (directly)
+            // TODO 4 get the next position of the path (should be at path[0]; something is ****ed up tho...
+            // ... setting it to 0 makes the firefox disappear (thus making me cry T_T) ...
+            // ... firefox walks to neighboured field for now
 
             Vector2? movement = Sprite.Position * 100;
-            if (path.Count > 0)
+            if (path.Count > 1)
             {
-                var x = path[path.Count - 1].X;
-                var y = path[path.Count - 1].Y;
+                var x = path[1].X;
+                var y = path[1].Y;
                 // + (100, 100) translates the target to the point it should be
                 movement = positionProvider.GridCoordinate(new Vector2(x * 100, y * 100) + new Vector2(100, 100));
             }
-            MoveTarget = movement;
             
-
             // TODO 5 and finally save the found position at Movetarget
-            // MoveTarget = new Vector2(x, y); // DEBUG
-            
-            
+            // DONE!
+            MoveTarget = movement;
         }
 
         /// <summary>
