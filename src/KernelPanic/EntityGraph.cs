@@ -12,11 +12,16 @@ namespace KernelPanic
     {
         [DataMember]
         private readonly Quadtree mQuadtree;
+
+        [DataMember]
+        private readonly ObstacleMatrix mObstacles;
+
         private readonly ImageSprite mSelectionBorder;
 
-        public EntityGraph(SpriteManager spriteManager)
+        public EntityGraph(ObstacleMatrix obstacles, SpriteManager spriteManager)
         {
             mQuadtree = new Quadtree(1, new Rectangle(0, 0, 5000, 5000));
+            mObstacles = obstacles;
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
