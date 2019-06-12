@@ -59,9 +59,10 @@ namespace KernelPanic.Entities
 
 
             // TODO 1 set the start Position for the AStar (something like the current position should do great)
-            var start = new Point(0, 0); // hardcoding/debugging bc smth doesnt work
-            // var start = Sprite.Position;
-            // var startPoint = new Point((int)start.X, (int)start.Y);
+            // DONE!
+            // var start = new Point(0, 0); // hardcoding/debugging bc smth doesnt work
+            var start = Sprite.Position;
+            var startPoint = new Point((int)start.X, (int)start.Y) / new Point(100, 100);
             
             
             // var startVectorNullable = positionProvider.GridCoordinate(Sprite.Position);
@@ -74,12 +75,14 @@ namespace KernelPanic.Entities
             
             
             // TODO 2 set the target Position for the Astar (latest updated target should be saved in mTarget
+            // DONE!
             // var target = new Point(6, 9); // hardcoding/debugging bc smth doesnt work
             var target = mTarget / new Point(100, 100);
             
 
             // TODO 3 calculate the path
-            var path = positionProvider.MakePathFinding(start, target);
+            // DONE!
+            var path = positionProvider.MakePathFinding(startPoint, target);
             
             
             // TODO 4 get the next position of the path (should be at path[0]; indexing is ****ed up tho
