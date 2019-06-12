@@ -1,7 +1,7 @@
 ﻿using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Interface
 {
     public sealed class Button : InterfaceComponent
     {
