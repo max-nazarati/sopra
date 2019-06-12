@@ -37,8 +37,8 @@ namespace KernelPanic
 
             var entityGraph = mBoard.LeftLane.EntityGraph;
             entityGraph.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
-            entityGraph.Add(Troupe.CreateFirefox(new Point(350), gameStateManager.Sprite));
-            entityGraph.Add(Troupe.CreateFirefoxJump(new Point(250), gameStateManager.Sprite));
+            entityGraph.Add(Firefox.CreateFirefox(new Point(350), gameStateManager.Sprite));
+            entityGraph.Add(Firefox.CreateFirefoxJump(new Point(250), gameStateManager.Sprite));
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite);
         }
 
@@ -55,7 +55,7 @@ namespace KernelPanic
             var nextPosition = new Vector2(50, 150);
 
             mPurchaseDemoButton1 = new PurchaseButton<Unit, PurchasableAction<Unit>>(mPlayerA,
-                new PurchasableAction<Unit>(Troupe.CreateFirefox(Point.Zero, sprites)),
+                new PurchasableAction<Unit>(Firefox.CreateFirefox(Point.Zero, sprites)),
                 sprites)
             {
                 Button = {Title = "Buy Unit"}
@@ -86,7 +86,7 @@ namespace KernelPanic
                 resource.Sprite.Position = nextPosition;
                 entityGraph.Add(resource);
                 nextPosition.Y += 100;
-                mPurchaseDemoButton1.Action.ResetResource(Troupe.CreateFirefox(Point.Zero, sprites));
+                mPurchaseDemoButton1.Action.ResetResource(Firefox.CreateFirefox(Point.Zero, sprites));
             }
 
             mPurchaseDemoButton1.Action.Purchased += OnPurchase;

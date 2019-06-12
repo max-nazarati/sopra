@@ -9,7 +9,7 @@ namespace KernelPanic
     [KnownType(typeof(Troupe))]
     internal abstract class Unit : Entity
     {
-        private Vector2? MoveTarget { get; set; }
+        protected Vector2? MoveTarget { get; set; }
 
         private int Speed { get; set; }
         private int AttackStrength { get; set; }
@@ -17,7 +17,7 @@ namespace KernelPanic
         [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }
 
-        private Vector2? MoveVector
+        protected virtual Vector2? MoveVector
         {
             get
             {
@@ -69,10 +69,8 @@ namespace KernelPanic
         {
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        protected virtual void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            base.Update(positionProvider, gameTime, inputManager);
-
             if (Selected)
             {
                 if (inputManager.MousePressed(InputManager.MouseButton.Right))
@@ -82,11 +80,19 @@ namespace KernelPanic
                         MoveTarget = mouse;
                 }
             }
+        }
+
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        {
+            base.Update(positionProvider, gameTime, inputManager);
+
+            CalculateMovement(positionProvider, gameTime, inputManager);
 
             if (MoveVector is Vector2 movement)
             {
                 Sprite.Position += movement;
             }
         }
+        
     }
 }

@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
@@ -8,12 +11,13 @@ namespace KernelPanic
         private readonly SpriteManager mSpriteManager;
         private readonly Grid mGrid;
         private readonly EntityGraph mEntities;
+        private AStar mAStar;
 
-        internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager sprite)
+        internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager spriteManager)
         {
             mGrid = grid;
             mEntities = entities;
-            mSpriteManager = sprite;
+            mSpriteManager = spriteManager;
         }
 
         internal Vector2? GridCoordinate(Vector2 position, int subTileCount = 1)
@@ -21,16 +25,39 @@ namespace KernelPanic
             return mGrid.GridPointFromWorldPoint(position, subTileCount)?.Position;
         }
         
-        // Funktion mach Pfadplanung (benutzt Astar mithilfe von entity graph)
-        internal List<Point> MakePathFinding()
+        internal List<Point> MakePathFinding(Vector2? start, Vector2? target)
+        {
+            Point startPoint = new Point((int)start?.X , (int)start?.Y);
+            Point targetPoint = new Point((int)target?.X, (int)target?.Y);
+            return MakePathFinding(startPoint, targetPoint);
+        }
+        
+        internal List<Point> MakePathFinding(Point start, Point target)
         {
             // List<Point> obstacles = mEntities.Obstacles;
+            // start = new Point(0, 0); // TODO
+            // target = new Point(6, 10); // TODO
             var obstacles =  new List<Point>();
-            var currentPosition = new Point(0, 0); // TODO get this right (entitygraph?)
-            var targetPosition = new Point(5, 5); // TODO get this right
-            var aStar = new AStar(mGrid.CoordSystem, currentPosition, targetPosition, mSpriteManager);
+            var aStar = new AStar(mGrid.CoordSystem, start, target, mSpriteManager);
+            aStar.ChangeObstacleEnvironment(1);
             aStar.CalculatePath();
+            mAStar = aStar;
             return aStar.Path;
+        }
+
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (mAStar != null)
+            {
+                DrawAStar(spriteBatch, gameTime);    
+            }
+            
+        }
+        
+        private void DrawAStar(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            mAStar.CalculatePath();
+            mAStar.Draw(spriteBatch, gameTime);
         }
     }
 }
