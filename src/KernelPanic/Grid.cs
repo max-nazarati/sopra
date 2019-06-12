@@ -16,7 +16,14 @@ namespace KernelPanic
         /// </summary>
         public enum LaneSide
         {
+            /// <summary>
+            /// Describes the lane which is shaped like an opening bracket ›[‹.
+            /// </summary>
             Left,
+
+            /// <summary>
+            /// Describes the lane which is shaped like an opening bracket ›]‹.
+            /// </summary>
             Right
         }
 
