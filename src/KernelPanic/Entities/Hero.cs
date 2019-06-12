@@ -50,42 +50,17 @@ namespace KernelPanic.Entities
         {
             UpdateTarget(positionProvider, gameTime, inputManager);
             
-            // var startVectorNullable = positionProvider.GridCoordinate(Sprite.Position);
-            // var startVector = startVectorNullable ?? new Vector2(0, 0);
-            // var startVector = new Vector2(2, 2);
-            // var startX = startVector.X;
-            // var startY = startVector.Y;
-            // var start = new Point((int)startX, (int)startY);
-
-
-            // TODO 1 set the start Position for the AStar (something like the current position should do great)
-            // DONE!
-            // var start = new Point(0, 0); // hardcoding/debugging bc smth doesnt work
+            // set the start Position for the AStar (something like the current position should do great)
             var start = Sprite.Position;
             var startPoint = new Point((int)start.X, (int)start.Y) / new Point(100, 100);
             
-            
-            // var startVectorNullable = positionProvider.GridCoordinate(Sprite.Position);
-            // var startVector = startVectorNullable ?? new Vector2(0, 0);
-            // var startVector = new Vector2(2, 2);
-            // var startX = startVector.X;
-            // var startY = startVector.Y;
-            // var start = new Point((int)startX, (int)startY);
-            
-            
-            
-            // TODO 2 set the target Position for the Astar (latest updated target should be saved in mTarget
-            // DONE!
-            // var target = new Point(6, 9); // hardcoding/debugging bc smth doesnt work
+            // set the target Position for the Astar (latest updated target should be saved in mTarget
             var target = mTarget / new Point(100, 100);
             
-
-            // TODO 3 calculate the path
-            // DONE!
+            // calculate the path
             var path = positionProvider.MakePathFinding(startPoint, target);
             
-            
-            // TODO 4 get the next position of the path (should be at path[0]; something is ****ed up tho...
+            // TODO get the next position of the path (should be at path[0]; something is ****ed up tho)...
             // ... setting it to 0 makes the firefox disappear (thus making me cry T_T) ...
             // ... firefox walks to neighboured field for now
 
@@ -98,32 +73,25 @@ namespace KernelPanic.Entities
                 movement = positionProvider.GridCoordinate(new Vector2(x * 100, y * 100) + new Vector2(100, 100));
             }
             
-            // TODO 5 and finally save the found position at Movetarget
-            // DONE!
+            // MoveTarget will be used by the Update Function (of the base class 'unit') to move the object
             MoveTarget = movement;
         }
 
         /// <summary>
-        /// This method should check for a new target to walk to
-        /// TODO save the target properly in mTarget
+        /// This method should check for a new target to walk to and saves it in mTarget
         /// </summary>
         /// <param name="positionProvider"></param>
         /// <param name="gameTime"></param>
         /// <param name="inputManager"></param>
         private void UpdateTarget(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            // if target is null, set it to current position
-            // mTarget = mTarget ??  new Point((int)Sprite.Position.X, (int)Sprite.Position.Y); // TODO Grid coordinate
+            // only check for new target of selected and Right Mouse Button was pressed
             if (!Selected) return;
             if (!inputManager.MousePressed(InputManager.MouseButton.Right)) return;
 
             var mouse = inputManager.TranslatedMousePosition;
             if (positionProvider.GridCoordinate(mouse) == null) return;
-            var targetX = positionProvider.GridCoordinate(mouse);
-            // Console.WriteLine(targetX);
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
-            // Console.WriteLine(mTarget);
-            // mTarget = new Point(500, 500); // debug
         }
         
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
