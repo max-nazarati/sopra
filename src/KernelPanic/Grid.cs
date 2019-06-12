@@ -13,8 +13,9 @@ namespace KernelPanic
     {
         private int mRelativeX, mRelativeY;
 
-        private readonly Lane.Side mLaneSide;
-        private readonly Rectangle mLaneRectangle;
+        internal const int LaneWidthInTiles = 10;
+        internal Lane.Side LaneSide { get; }
+        internal Rectangle LaneRectangle { get; }
 
         private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly
         public List<Point> CoordSystem => mCoordinateSystem;
@@ -26,7 +27,6 @@ namespace KernelPanic
         
         private const int TilesPerSprite = 1; // per Dimension
         private const int SingleTileSizePixel = KachelSize / TilesPerSprite;
-        private const int LaneWidthInTiles = 10;
 
         private static int TileCountPixelSize(int tiles) => tiles * KachelSize;
 
@@ -34,18 +34,18 @@ namespace KernelPanic
 
         internal Grid(Rectangle laneBounds, SpriteManager sprites, Lane.Side laneSide)
         {
-            mLaneRectangle = laneBounds;
-            mLaneSide = laneSide;
+            LaneRectangle = laneBounds;
+            LaneSide = laneSide;
 
             var tile = CreateTile(sprites);
-            var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, LaneWidthInTiles);
+            var mainPart = new PatternSprite(tile, 0, 0, LaneRectangle.Height, LaneWidthInTiles);
 
             var topPart = new PatternSprite(tile, 0, 0,
                 LaneWidthInTiles,
-                mLaneRectangle.Width - LaneWidthInTiles);
+                LaneRectangle.Width - LaneWidthInTiles);
             var bottomPart = new PatternSprite(tile, 0, 0,
                 LaneWidthInTiles,
-                mLaneRectangle.Width - LaneWidthInTiles);
+                LaneRectangle.Width - LaneWidthInTiles);
             bottomPart.Y = mainPart.Height - bottomPart.Height;
 
             switch (laneSide)
@@ -57,14 +57,13 @@ namespace KernelPanic
 
                 case Lane.Side.Right:
                     mainPart.X = topPart.Width;
-                    mLaneRectangle.X = 32;
                     break;
 
                 default:
                     throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(Lane.Side));
             }
 
-            mSprite = new CompositeSprite(TileCountPixelSize(mLaneRectangle.X), TileCountPixelSize(mLaneRectangle.Y))
+            mSprite = new CompositeSprite(TileCountPixelSize(LaneRectangle.X), TileCountPixelSize(LaneRectangle.Y))
             {
                 Children = {mainPart, bottomPart, topPart}
             };
@@ -149,15 +148,15 @@ namespace KernelPanic
         {
             // calculate new Values depending on the Size of the sprite
             var laneWidth = LaneWidthInTiles / TilesPerSprite;
-            var rectangleWidth = mLaneRectangle.Width / TilesPerSprite;
-            var rectangleHeight = mLaneRectangle.Height / TilesPerSprite;
+            var rectangleWidth = LaneRectangle.Width / TilesPerSprite;
+            var rectangleHeight = LaneRectangle.Height / TilesPerSprite;
 
             // adding the top part
             for (var y = 0; y < laneWidth; y++)
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
 
@@ -166,7 +165,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < laneWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
 
@@ -175,7 +174,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
         }
@@ -202,15 +201,15 @@ namespace KernelPanic
         {
             // calculate new Values depending on the Size of the sprite
             var laneWidth = LaneWidthInTiles / TilesPerSprite;
-            var rectangleWidth = mLaneRectangle.Width / TilesPerSprite;
-            var rectangleHeight = mLaneRectangle.Height / TilesPerSprite;
+            var rectangleWidth = LaneRectangle.Width / TilesPerSprite;
+            var rectangleHeight = LaneRectangle.Height / TilesPerSprite;
 
             // adding the top part
             for (var y = 0; y < laneWidth; y++)
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
 
@@ -219,7 +218,7 @@ namespace KernelPanic
             {
                 for (var x = rectangleWidth - laneWidth; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
 
@@ -228,7 +227,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
         }
@@ -238,7 +237,7 @@ namespace KernelPanic
         /// </summary>
         private void CreateCoordinateSystem()
         {
-            switch (mLaneSide)
+            switch (LaneSide)
             {
                 case Lane.Side.Left:
                     CreateCoordinateSystemLeft();
@@ -268,10 +267,10 @@ namespace KernelPanic
             //       does this make a discernible difference to doing the exact calculations?
             var full = new Rectangle(mSprite.Position.ToPoint(), mSprite.Size.ToPoint());
             var cutout = new Rectangle(
-                (int) mSprite.X + (mLaneSide == Lane.Side.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
+                (int) mSprite.X + (LaneSide == Lane.Side.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
                 TileCountPixelSize(LaneWidthInTiles),
-                TileCountPixelSize(mLaneRectangle.Width - LaneWidthInTiles),
-                TileCountPixelSize(mLaneRectangle.Height - 2 * LaneWidthInTiles));
+                TileCountPixelSize(LaneRectangle.Width - LaneWidthInTiles),
+                TileCountPixelSize(LaneRectangle.Height - 2 * LaneWidthInTiles));
 
             if (!full.Contains(point.ToPoint()) || cutout.Contains(point.ToPoint()))
                 return null;

@@ -105,6 +105,7 @@
     <Compile Include="CollisionManager.cs" />
     <Compile Include="CooldownComponent.cs" />
     <Compile Include="Sprites\AnimatedSprite.cs" />
+    <Compile Include="ObstacleMatrix.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

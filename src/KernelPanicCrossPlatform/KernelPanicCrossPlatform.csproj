@@ -168,6 +168,9 @@
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\ObstacleMatrix.cs">
+      <Link>ObstacleMatrix.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Player.cs">
       <Link>Player.cs</Link>
     </Compile>
