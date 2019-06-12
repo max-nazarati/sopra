@@ -2,7 +2,7 @@
 ﻿using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Entities
 {
     [DataContract]
     internal class Troupe : Unit

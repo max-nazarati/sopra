@@ -1,5 +1,6 @@
 using System;
 ﻿using System.Runtime.Serialization;
+using KernelPanic.Entities;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

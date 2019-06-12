@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿﻿using System.Runtime.Serialization;
+﻿using KernelPanic.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

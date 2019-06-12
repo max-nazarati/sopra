@@ -2,7 +2,7 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 
-namespace KernelPanic
+namespace KernelPanic.Entities
 {
     [DataContract]
     internal sealed class Firefox : Hero

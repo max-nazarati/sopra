@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using KernelPanic.Entities;
 
 namespace KernelPanic
 {

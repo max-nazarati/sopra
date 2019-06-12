@@ -1,11 +1,11 @@
 ﻿using System.Runtime.Serialization;
 ﻿using KernelPanic.Sprites;
 
-namespace KernelPanic
+namespace KernelPanic.Entities
 {
     [DataContract]
     [KnownType(typeof(Tower))]
-    internal abstract class Building :Entity
+    internal abstract class Building : Entity
     {
         protected Building(int price, Sprite sprite) : base(price, sprite)
         {

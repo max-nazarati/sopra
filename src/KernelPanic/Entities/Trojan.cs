@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KernelPanic
+namespace KernelPanic.Entities
 {
     class Trojan
     {

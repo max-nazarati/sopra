@@ -1,4 +1,5 @@
 ﻿using System;
+using KernelPanic.Entities;
 
 namespace KernelPanic
 {
