@@ -74,8 +74,8 @@ namespace KernelPanic.Entities
             
             
             // TODO 2 set the target Position for the Astar (latest updated target should be saved in mTarget
-            var target = new Point(6, 9); // hardcoding/debugging bc smth doesnt work
-            // var target = mTarget;
+            // var target = new Point(6, 9); // hardcoding/debugging bc smth doesnt work
+            var target = mTarget / new Point(100, 100);
             
 
             // TODO 3 calculate the path
@@ -116,7 +116,9 @@ namespace KernelPanic.Entities
             var mouse = inputManager.TranslatedMousePosition;
             if (positionProvider.GridCoordinate(mouse) == null) return;
             var targetX = positionProvider.GridCoordinate(mouse);
+            // Console.WriteLine(targetX);
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
+            // Console.WriteLine(mTarget);
             // mTarget = new Point(500, 500); // debug
         }
         
