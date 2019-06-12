@@ -49,6 +49,7 @@
     <Compile Include="Base.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="Camera\Camera2D.cs" />
+    <Compile Include="Camera\Change.cs" />
     <Compile Include="Camera\ICamera.cs" />
     <Compile Include="Camera\StaticCamera.cs" />
     <Compile Include="Entities\Building.cs" />
