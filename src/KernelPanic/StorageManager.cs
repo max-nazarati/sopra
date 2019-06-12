@@ -11,21 +11,27 @@ namespace KernelPanic
 
         public void SaveGame(String fileName, AGameState gameState)
         {
-            mSerializer = new DataContractSerializer(typeof(AGameState));
-            FileStream writer = new FileStream(fileName, FileMode.Create);
+            Console.WriteLine("Serializing InGameState.");
+            mSerializer = new DataContractSerializer(typeof(InGameState));
+            var settings = new XmlWriterSettings { Indent = true };
+            var writer = XmlWriter.Create(fileName, settings);
             mSerializer.WriteObject(writer, gameState);
             writer.Close();
+            Console.WriteLine("Finished serializing.");
         }
 
-        public InGameState LoadGame(String fileName)
+        public InGameState LoadGame(String fileName, GameStateManager stateManager)
         {
             FileStream fs = new FileStream(fileName, FileMode.Open);
             XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
             mSerializer = new DataContractSerializer(typeof(InGameState));
             InGameState deserializedGameState = (InGameState)mSerializer.ReadObject(reader, true);
+            var state = new InGameState(stateManager);
+            state.mPlayerB.Bitcoins = deserializedGameState.mPlayerB.Bitcoins;
+            state.mPlayerA.Bitcoins = deserializedGameState.mPlayerA.Bitcoins;
             fs.Close();
 
-            return deserializedGameState;
+            return state;
         }
     }
 }

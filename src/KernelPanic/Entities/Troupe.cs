@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal class Troupe : Unit
     {
         private Troupe(int price, int speed, int life, int attackStrength, Sprite sprite)

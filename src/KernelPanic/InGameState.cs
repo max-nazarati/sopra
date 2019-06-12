@@ -10,9 +10,12 @@ namespace KernelPanic
     {
         private readonly GameStateManager mGameStateManager;
 
+        [DataMember(Name = "Board")]
         private readonly Board mBoard;
-        private readonly Player mPlayerA;
-        private readonly Player mPlayerB;
+        [DataMember(Name = "PlayerA")]
+        internal Player mPlayerA;
+        [DataMember(Name = "PlayerB")]
+        internal Player mPlayerB;
 
         private PurchaseButton<Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
         private PurchaseButton<Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
@@ -23,7 +26,7 @@ namespace KernelPanic
         // private HashSet<Wave> mActiveWaves;
         // private SelectionManager mSelectionManager;
 
-        private InGameState(GameStateManager gameStateManager)
+        internal InGameState(GameStateManager gameStateManager)
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize),  gameStateManager)
         {
             mGameStateManager = gameStateManager;

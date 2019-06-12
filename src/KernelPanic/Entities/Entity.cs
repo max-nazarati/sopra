@@ -1,12 +1,18 @@
-﻿using System;
+﻿using System.Runtime.Serialization;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
+    [KnownType(typeof(Unit))]
+    [KnownType(typeof(Building))]
+
     internal abstract class Entity : IPriced
     {
-        internal Sprite Sprite { get; }
+        [DataMember]
+        internal Sprite Sprite { get; private set; }
 
         protected Entity(int price, Sprite sprite)
         {

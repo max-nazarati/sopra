@@ -1,12 +1,16 @@
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal sealed class Board
     {
-        internal Lane LeftLane { get; }
-        internal Lane RightLane { get; }
+        [DataMember]
+        internal Lane LeftLane { get; private set; }
+        [DataMember]
+        internal Lane RightLane { get; private set; }
 
         internal static Rectangle Bounds
         {

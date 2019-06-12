@@ -1,9 +1,12 @@
-﻿using System;
+﻿using System.Runtime.Serialization;
+using System;
 using Microsoft.Xna.Framework;
 
 
 namespace KernelPanic
 {
+    [DataContract]
+    [KnownType(typeof(Troupe))]
     internal abstract class Unit : Entity
     {
         private Vector2? MoveTarget { get; set; }
@@ -11,6 +14,7 @@ namespace KernelPanic
         private int Speed { get; set; }
         private int AttackStrength { get; set; }
         private int MaximumLife { get; set; }
+        [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }
 
         private Vector2? MoveVector

@@ -1,5 +1,9 @@
-﻿namespace KernelPanic
+﻿using System.Runtime.Serialization;
+
+namespace KernelPanic
 {
+    [DataContract]
+    [KnownType(typeof(Tower))]
     internal abstract class Building :Entity
     {
         protected Building(int price, Sprite sprite) : base(price, sprite)

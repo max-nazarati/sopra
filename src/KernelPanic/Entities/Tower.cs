@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -5,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal class Tower : Building
     {
         private readonly float mRadius;

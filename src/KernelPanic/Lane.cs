@@ -1,14 +1,18 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal sealed class Lane
     {
-        internal EntityGraph EntityGraph { get; }
+        [DataMember]
+        internal EntityGraph EntityGraph { get; set; }
         internal Base Target { get; }
 
+        [DataMember(Name = "Grid")]
         private readonly Grid mGrid;
         private readonly SpriteManager mSpriteManager;
 

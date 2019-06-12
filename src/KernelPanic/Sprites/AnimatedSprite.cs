@@ -1,9 +1,11 @@
-﻿using System;
+﻿using System.Runtime.Serialization;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Sprites
 {
+    [DataContract]
     internal sealed class AnimatedSprite : Sprite
     {
         private const int DefaultFrameSize = 64;

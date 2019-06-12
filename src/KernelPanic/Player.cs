@@ -1,12 +1,18 @@
-﻿namespace KernelPanic
+﻿using System.Runtime.Serialization;
+
+namespace KernelPanic
 {
+    [DataContract]
     internal sealed class Player
     {
         // private List<Upgrade> Upgrades;
         private Lane mAttackingLane;
-        private Lane mDefendingLane;
+        internal Lane mDefendingLane;
 
+        [DataMember]
         public int Bitcoins { get; set; }
+
+        [DataMember(Name = "Exp")]
         public int ExperiencePoints { get; set; }
 
         internal Base Base => mDefendingLane.Target;

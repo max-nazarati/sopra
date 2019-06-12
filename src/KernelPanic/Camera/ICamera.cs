@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic
@@ -46,7 +47,6 @@ namespace KernelPanic
         /// </summary>
         internal bool IsNone => Direction == 0;
     }
-
     internal interface ICamera
     {
         /// <summary>

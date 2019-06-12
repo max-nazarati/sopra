@@ -1,9 +1,13 @@
-﻿using System.ComponentModel;
+﻿using System.Runtime.Serialization;
+using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
+    [KnownType(typeof(Sprites.AnimatedSprite))]
+    [KnownType(typeof(ImageSprite))]
     public abstract class Sprite
     {
         internal float Rotation { get; set; }

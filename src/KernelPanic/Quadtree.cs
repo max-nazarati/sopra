@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal sealed class Quadtree: IEnumerable<Entity>
     {
         // max number of objects in each Node
@@ -20,8 +22,10 @@ namespace KernelPanic
         // size and position of the current node
         private readonly Rectangle mBounds;
 
+        [DataMember(Name = "Objects")]
         private readonly List<Entity> mObjects;
 
+        [DataMember(Name = "Childs")]
         private readonly List<Quadtree> mChilds;
         
         public Quadtree(int level, Rectangle size)

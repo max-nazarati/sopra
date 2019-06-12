@@ -1,11 +1,14 @@
-﻿using System;
+﻿using System.Runtime.Serialization;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal sealed class EntityGraph
     {
+        [DataMember]
         private readonly Quadtree mQuadtree;
         private readonly ImageSprite mSelectionBorder;
 
