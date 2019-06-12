@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Sprites
 {
     [DataContract]
     internal sealed class ImageSprite : Sprite

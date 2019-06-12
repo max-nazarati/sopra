@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Sprites
 {
     public sealed class PatternSprite: Sprite
     {

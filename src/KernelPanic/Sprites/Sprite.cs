@@ -3,7 +3,7 @@ using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Sprites
 {
     [DataContract]
     [KnownType(typeof(Sprites.AnimatedSprite))]

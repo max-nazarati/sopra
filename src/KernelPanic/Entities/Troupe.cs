@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+﻿using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic
