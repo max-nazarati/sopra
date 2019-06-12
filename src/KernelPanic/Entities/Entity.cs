@@ -11,7 +11,6 @@ namespace KernelPanic
 
     internal abstract class Entity : IPriced
     {
-        [DataMember]
         internal Sprite Sprite { get; private set; }
 
         protected Entity(int price, Sprite sprite)

@@ -7,12 +7,17 @@ namespace KernelPanic
 {
     [DataContract]
     [KnownType(typeof(Troupe))]
+    [KnownType(typeof(Hero))]
     internal abstract class Unit : Entity
     {
+        [DataMember]
         protected Vector2? MoveTarget { get; set; }
 
+        [DataMember]
         private int Speed { get; set; }
+        [DataMember]
         private int AttackStrength { get; set; }
+        [DataMember]
         private int MaximumLife { get; set; }
         [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }

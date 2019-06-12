@@ -50,6 +50,13 @@ namespace KernelPanic
             gameStateManager.Push(hud);
         }
 
+        internal static void PushGameStack(GameStateManager gameStateManager, InGameState game)
+        {
+            var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, gameStateManager);
+            gameStateManager.Push(game);
+            gameStateManager.Push(hud);
+        }
+
         private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites)
         {
             var nextPosition = new Vector2(50, 150);

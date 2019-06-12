@@ -1,12 +1,15 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
+    [KnownType(typeof(Firefox))]
     internal class Hero : Unit
     {
         // public CooldownComponent Cooldown { get; set; }
