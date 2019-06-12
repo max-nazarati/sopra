@@ -1,7 +1,7 @@
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Camera
 {
     /// <summary>
     /// Describes a possible change in a camera's translation. The actual interpretation is up to the camera.

@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Camera
 {
     [DataContract]
     internal sealed class Camera2D : ICamera

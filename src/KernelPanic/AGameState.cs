@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using KernelPanic.Camera;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

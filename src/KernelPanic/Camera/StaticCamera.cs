@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Camera
 {
     /// <summary>
     /// A static camera doesn't transform and won't change on <see cref="Update"/>.
