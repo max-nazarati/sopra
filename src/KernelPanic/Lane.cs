@@ -65,7 +65,7 @@ namespace KernelPanic
         public Lane(Side laneSide, SpriteManager sprites)
         {
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
-            EntityGraph = new EntityGraph(new ObstacleMatrix(mGrid), sprites);
+            EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), new ObstacleMatrix(mGrid), sprites);
             Target = new Base();
             mSpriteManager = sprites;
             

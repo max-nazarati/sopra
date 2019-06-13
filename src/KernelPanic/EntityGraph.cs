@@ -18,9 +18,9 @@ namespace KernelPanic
 
         private readonly ImageSprite mSelectionBorder;
 
-        public EntityGraph(ObstacleMatrix obstacles, SpriteManager spriteManager)
+        public EntityGraph(Rectangle bounds, ObstacleMatrix obstacles, SpriteManager spriteManager)
         {
-            mQuadtree = new Quadtree<Entity>(new Rectangle(0, 0, 5000, 5000));
+            mQuadtree = new Quadtree<Entity>(bounds);
             mObstacles = obstacles;
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
