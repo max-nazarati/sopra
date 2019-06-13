@@ -11,7 +11,7 @@ namespace KernelPanic
     internal sealed class EntityGraph
     {
         [DataMember]
-        private readonly Quadtree mQuadtree;
+        private readonly Quadtree<Entity> mQuadtree;
 
         [DataMember]
         private readonly ObstacleMatrix mObstacles;
@@ -20,7 +20,7 @@ namespace KernelPanic
 
         public EntityGraph(ObstacleMatrix obstacles, SpriteManager spriteManager)
         {
-            mQuadtree = new Quadtree(1, new Rectangle(0, 0, 5000, 5000));
+            mQuadtree = new Quadtree<Entity>(new Rectangle(0, 0, 5000, 5000));
             mObstacles = obstacles;
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }

@@ -3,226 +3,183 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using KernelPanic.Entities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
     [DataContract]
-    internal sealed class Quadtree: IEnumerable<Entity>
+    internal sealed class Quadtree<T>: IEnumerable<T> where T: IBounded
     {
-        // max number of objects in each Node
-        private static readonly int mMaxObjects = 5;
+        #region Properties & Constants
 
-        // max depth of the Quadtree
-        private static readonly int mMaximumDepth = 15;
+        /// max number of objects in each Node
+        private const int MaxObjects = 5;
+
+        /// max depth of the Quadtree
+        private const int MaximumDepth = 15;
 
         private readonly int mLevel;
 
         // size and position of the current node
-        private readonly Rectangle mBounds;
+        private Rectangle mBounds;
 
         [DataMember(Name = "Objects")]
-        private readonly List<Entity> mObjects;
+        private readonly List<T> mObjects;
 
         [DataMember(Name = "Childs")]
-        private readonly List<Quadtree> mChilds;
-        
-        public Quadtree(int level, Rectangle size)
+        private Quadtree<T>[] mChilds;
+
+        #endregion
+
+        #region Constructor
+
+        internal Quadtree(Rectangle bounds) : this(1, bounds)
+        {
+        }
+
+        private Quadtree(int level, Rectangle bounds)
         {
             mLevel = level;
-            mBounds = size;
-            mObjects = new List<Entity>();
-            mChilds = new List<Quadtree>();
+            mBounds = bounds;
+            mObjects = new List<T>();
         }
-/*
-        /// <summary>
-        /// Deletes recursively all nodes of the QuadTree
-        /// </summary>
-        private void Clear(List<Entity> entityList)
+
+        #endregion
+
+        #region Position Calculations
+        
+        private enum SquareIndex
         {
-            foreach (var child in mChilds)
+            TopLeft, TopRight, BottomLeft, BottomRight
+        }
+
+        /// <summary>
+        /// Calculates in which of the 4 nodes a certain sprite fits
+        /// </summary>
+        private SquareIndex? CalculatePosition(T entity)
+        {
+            return CalculatePosition(entity.Bounds);
+        }
+
+        /// <summary>
+        /// Calculates in which of the 4 squares a point is
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        private SquareIndex? CalculatePosition(Vector2 point)
+        {
+            return CalculatePosition(Bounds.ContainingRectangle(point, Vector2.One));
+        }
+
+        private SquareIndex? CalculatePosition(Rectangle bounds)
+        {
+            var center = mBounds.Center;
+            var isLeft = mBounds.Left <= bounds.Left && bounds.Right < center.X;
+            var isRight = center.X < bounds.Left && bounds.Right <= mBounds.Right;
+            var isTop = mBounds.Top <= bounds.Top && bounds.Bottom < center.Y;
+            var isBottom = center.Y < bounds.Top && bounds.Bottom <= mBounds.Bottom;
+
+            if (isLeft)
             {
-                child.Clear(entityList);
+                if (isTop) return SquareIndex.TopLeft;
+
+                if (isBottom) return SquareIndex.BottomLeft;
             }
 
-            entityList.AddRange(mObjects);
-            mObjects.Clear();
+            if (isRight)
+            {
+                if (isTop) return SquareIndex.TopRight;
+
+                if (isBottom) return SquareIndex.BottomRight;
+            }
+
+            return null;
         }
-*/
+
+        #endregion
+
+        #region Adding objects
+
+        /// <summary>
+        /// Splits the current node into 4 childs
+        /// </summary>
+        private void Split()
+        {
+            if (mChilds != null)
+                throw new InvalidOperationException("Can't split an already split quad-tree.");
+
+            int halfWidth = mBounds.Width / 2, halfHeight = mBounds.Height / 2;
+            void Assign(SquareIndex square, int x, int y)
+            {
+                var bounds = new Rectangle(mBounds.X + x, mBounds.Y + y, halfWidth, halfHeight);
+                mChilds[(int) square] = new Quadtree<T>(mLevel + 1, bounds);
+            }
+
+            mChilds = new Quadtree<T>[4];
+            Assign(SquareIndex.TopLeft, 0, 0);
+            Assign(SquareIndex.TopRight, halfWidth, 0);
+            Assign(SquareIndex.BottomLeft, 0, halfHeight);
+            Assign(SquareIndex.BottomRight, halfWidth, halfHeight);
+        }
+
+        /// <summary>
+        /// Adds the given value to the quad-tree.
+        /// </summary>
+        /// <param name="entity">The value to be added.</param>
+        /// <exception cref="InvalidOperationException">If <paramref name="entity"/> is outside this <see cref="Quadtree{T}"/>'s bounds.</exception>
+        public void Add(T entity)
+        {
+            if (!mBounds.Contains(entity.Bounds))
+                throw new InvalidOperationException(
+                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}");
+
+            if (mChilds != null)
+            {
+                if (CalculatePosition(entity) is SquareIndex index)
+                {
+                    mChilds[(int) index].Add(entity);
+                    return;
+                }
+            }
+
+            mObjects.Add(entity);
+
+            if (mLevel >= MaximumDepth || mObjects.Count <= MaxObjects || mChilds != null)
+            {
+                // Don't split this level up if either
+                //    * the maximum depth is reached
+                //    * the maximum number of objects per level aren't reached
+                //    * this level is already split.
+                return;
+            }
+                
+            Split();
+            
+            // Try to move all objects one level down.
+            foreach (var value in new List<T>(mObjects))
+            {
+                if (CalculatePosition(value) is SquareIndex square)
+                {
+                    mChilds[(int) square].Add(value);
+                    mObjects.Remove(value);
+                }
+            }
+        }
+        
         internal void Rebuild()
         {
-            var allEntities = new List<Entity>(this);
+            var allEntities = new List<T>(this);
             mObjects.Clear();
-            mChilds.Clear();
+            mChilds = null;
             foreach (var entity in allEntities)
             {
                 Add(entity);
             }
         }
 
-        /// <summary>
-        /// Calculates in which of the 4 nodes a certain sprite fits
-        /// </summary>
-        private int CalculatePosition(Entity entity)
-        {
-            var height = entity.Sprite.Height;
-            var width = entity.Sprite.Width;
-            var posX = entity.Sprite.X;
-            var posY = entity.Sprite.Y;
+        #endregion
 
-            bool boolLeft, boolRight, boolTop, boolBottom;
-            boolLeft = boolRight = boolTop = boolBottom = false;
-            
-            
-            // 0 for topLeft, 1 for topRight, 2 for bottomRight, 3 for bottomLeft
-            var index = 0;
-            
-            // left or right part
-            if (posX > mBounds.X && (posX + width) < (mBounds.X + (mBounds.Width / 2)))
-            {
-                // texture fits in left part of node Bounds
-                boolLeft = true;
-            }
-            if (posX > (mBounds.X + (mBounds.Width / 2)) && (posX + width) < (mBounds.X + mBounds.Width))
-            {
-                // texture fits in right part of node Bounds
-                boolRight = true;
-            }
-
-            if (posY > mBounds.Y && (posY + height) < (mBounds.Y + (mBounds.Height / 2)))
-            {
-                boolTop = true;
-            }
-            
-            if (posY > (mBounds.Y + (mBounds.Height / 2)) && (posY + height) < (mBounds.Y + mBounds.Height))
-            {
-                boolBottom = true;
-            }
-
-            if (boolLeft)
-            {
-                if (boolTop) return 0;
-
-                if (boolBottom) return 3;
-            }
-            
-            if (boolRight)
-            {
-                if (boolTop) return 1;
-
-                if (boolBottom) return 2;
-            }
-
-            return -1;
-        }
-        
-        /// <summary>
-        /// Calculates in which of the 4 squares a point is
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        private int CalculatePosition(Vector2 point)
-        {
-            var posX = point.X;
-            var posY = point.Y;
-
-            bool boolLeft, boolRight, boolTop, boolBottom;
-            boolLeft = boolRight = boolTop = boolBottom = false;
-            
-            
-            // 0 for topLeft, 1 for topRight, 2 for bottomRight, 3 for bottomLeft
-            var index = 0;
-            
-            // left or right part
-            if (posX > mBounds.X && posX < (mBounds.X + (mBounds.Width / 2)))
-            {
-                // texture fits in left part of node Bounds
-                boolLeft = true;
-            }
-            if (posX > (mBounds.X + (mBounds.Width / 2)) && posX < (mBounds.X + mBounds.Width))
-            {
-                // texture fits in right part of node Bounds
-                boolRight = true;
-            }
-
-            if (posY > mBounds.Y && posY < (mBounds.Y + (mBounds.Height / 2)))
-            {
-                boolTop = true;
-            }
-            
-            if (posY > (mBounds.Y + (mBounds.Height / 2)) && posY < (mBounds.Y + mBounds.Height))
-            {
-                boolBottom = true;
-            }
-
-            if (boolLeft)
-            {
-                if (boolTop) return 0;
-
-                if (boolBottom) return 3;
-            }
-            
-            if (boolRight)
-            {
-                if (boolTop) return 1;
-
-                if (boolBottom) return 2;
-            }
-
-            return -1;
-        }
-
-        
-        /// <summary>
-        /// Splits the current node into 4 childs
-        /// </summary>
-        private void Split()
-        {
-            var halfWidth = mBounds.Width / 2;
-            var halfHeight = mBounds.Height / 2;
-            
-            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y, halfWidth, halfHeight)));
-            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y, halfWidth, halfHeight)));
-            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X+halfWidth, mBounds.Y+halfHeight, halfWidth, halfHeight)));
-            mChilds.Add(new Quadtree(mLevel+1, new Rectangle(mBounds.X, mBounds.Y+halfHeight, halfWidth, halfHeight)));
-        }
-
-        public void Add(Entity entity)
-        {
-            if (mChilds.Count > 0)
-            {
-                var index = CalculatePosition(entity);
-                if (index != -1)
-                {
-                    mChilds[index].Add(entity);
-
-                    return;
-                }
-            }
-            
-            mObjects.Add(entity);
-            
-            if (mLevel < mMaximumDepth && mObjects.Count > mMaxObjects)
-            {
-                if (mChilds.Count == 0)
-                {
-                    Split();
-                }
-                
-                // insert all elements from mObjects to the newly added Childs
-                foreach (var @object in new List<Entity>(mObjects))
-                {
-                    var index = CalculatePosition(@object);
-                    if (index != -1)
-                    {
-                        mChilds[index].Add(@object);
-                        mObjects.Remove(@object);
-                    }
-                }
-            }
-        }
+        #region Querying
 
         /// <summary>
         /// Checks, whether an entity exists at a given point
@@ -239,9 +196,12 @@ namespace KernelPanic
                 }
             }
 
-            if (mChilds.Count == 0) return false;
-            var index = CalculatePosition(point);
-            return index != -1 && mChilds[index].HasEntityAt(point);
+            if (mChilds != null && CalculatePosition(point) is SquareIndex square)
+            {
+                return mChilds[(int) square].HasEntityAt(point);
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -249,32 +209,38 @@ namespace KernelPanic
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        internal List<Entity> NearObjects(Entity entity)
+        internal IEnumerable<T> NearObjects(T entity)
         {
-            var entities = new List<Entity>();
+            var entities = new List<T>();
             NearObjects(entity, entities);
             return entities;
         }
 
-        private void NearObjects(Entity entity, List<Entity> nearEntities)
+        private void NearObjects(T entity, List<T> nearEntities)
         {
-            var index = CalculatePosition(entity);
-            if (index != -1 && mChilds.Count != 0)
+            if (mChilds != null && CalculatePosition(entity) is SquareIndex index)
             {
-                mChilds[index].NearObjects(entity, nearEntities);
+                mChilds[(int) index].NearObjects(entity, nearEntities);
             }
             
             nearEntities.AddRange(mObjects);
         }
 
-        public IEnumerator<Entity> GetEnumerator()
+        #endregion
+
+        #region Enumerating
+
+        public IEnumerator<T> GetEnumerator()
         {
-            return mObjects.Concat(mChilds.SelectMany(c => c)).GetEnumerator();
+            // If mChilds is null enumerate only through mObjects, otherwise go through mObjects and then continue with the children.
+            return (mChilds == null ? mObjects : mObjects.Concat(mChilds.SelectMany(c => c))).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
+
+        #endregion
     }
 }
