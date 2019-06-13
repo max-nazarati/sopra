@@ -15,15 +15,15 @@ namespace KernelPanic
         private Heatmap mMap;
         private Vectorfield mVectorfield;
         private PriorityQueue mQueue;
-        private Point mGoalPoint;
+        private List<Point> mGoalPoints;
 
-        public BreadthFirstSearch(Heatmap map, Point goalPoint)
+        public BreadthFirstSearch(Heatmap map, List<Point> goalPoints)
         {
             mMap = map;
             mExplored = new bool[map.Height, map.Width];
             mVectorfield = new Vectorfield(map.Width, map.Height);
             mQueue = new PriorityQueue();
-            mGoalPoint = goalPoint;
+            mGoalPoints = goalPoints;
         }
 
         private List<Node> CreateNeighbours(Node node)
@@ -77,9 +77,10 @@ namespace KernelPanic
 
         public void UpdateHeatMap()
         {
-            var startNode = new Node(mGoalPoint, null, 0, 0, true);
-            // double heuristicValue = startNode.Key;
-            mQueue.Insert(startNode);
+            foreach (var goalNode in mGoalPoints)
+            {
+                mQueue.Insert(new Node(goalNode, null, 0, 0, false, false));
+            }
 
             while (!mQueue.IsEmpty())
             {
@@ -96,7 +97,7 @@ namespace KernelPanic
             mVectorfield.UpdateVectorfield(mMap);
         }
 
-        public void test1()
+        public void Test1()
         {
             Heatmap emptyHeatmap = new Heatmap(8, 8);
             emptyHeatmap.mMap[2, 1] = Blocked;
@@ -110,7 +111,10 @@ namespace KernelPanic
             mMap = emptyHeatmap;
             mVectorfield = new Vectorfield(emptyHeatmap.Width, emptyHeatmap.Height);
             mQueue = new PriorityQueue();
-            mGoalPoint = new Point(2, 7);
+            mGoalPoints.Add(new Point(2, 7));
+            mGoalPoints.Add(new Point(2, 6));
+            mGoalPoints.Add(new Point(3, 7));
+            mGoalPoints.Add(new Point(3, 6));
             UpdateVectorField();
             string resultHeat = "";
             for (int i = 0; i < mMap.Height; i++)
