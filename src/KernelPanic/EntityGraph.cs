@@ -20,6 +20,8 @@ namespace KernelPanic
 
         public EntityGraph(Rectangle bounds, ObstacleMatrix obstacles, SpriteManager spriteManager)
         {
+            // Adjust for bounds which might (due to float/int conversions) be slightly bigger than the containing lane.
+            bounds.Inflate(10, 10);
             mQuadtree = new Quadtree<Entity>(bounds);
             mObstacles = obstacles;
             mSelectionBorder = spriteManager.CreateSelectionBorder();

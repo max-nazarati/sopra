@@ -13,11 +13,11 @@ namespace KernelPanic
 
     internal static class Bounds
     {
-        internal static Rectangle ContainingRectangle(Vector2 origin, Vector2 size)
+        internal static Rectangle ContainingRectangle(Vector2 position, Vector2 size)
         {
             return new Rectangle(
-                (int) origin.X,
-                (int) origin.Y,
+                (int) position.X,
+                (int) position.Y,
                 (int) Math.Ceiling(size.X),
                 (int) Math.Ceiling(size.Y));
         }
