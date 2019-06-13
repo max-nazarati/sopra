@@ -69,6 +69,9 @@
     <Compile Include="..\KernelPanic\Board.cs">
       <Link>Board.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\BreadthFirstSearch.cs">
+      <Link>BreadthFirstSearch.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Camera\Camera2D.cs">
       <Link>Camera\Camera2D.cs</Link>
     </Compile>
@@ -125,6 +128,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\Grid.cs">
       <Link>Grid.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Heatmap.cs">
+      <Link>Heatmap.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\IDrawable.cs">
       <Link>IDrawable.cs</Link>

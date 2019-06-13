@@ -48,6 +48,7 @@
     <Compile Include="AStar.cs" />
     <Compile Include="Base.cs" />
     <Compile Include="Board.cs" />
+    <Compile Include="BreadthFirstSearch.cs" />
     <Compile Include="Camera\Camera2D.cs" />
     <Compile Include="Camera\Change.cs" />
     <Compile Include="Camera\ICamera.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Entities\Trojan.cs" />
     <Compile Include="Entities\Troupe.cs" />
     <Compile Include="Entities\Unit.cs" />
+    <Compile Include="Heatmap.cs" />
     <Compile Include="IEntitySelection.cs" />
     <Compile Include="InGameOverlay.cs" />
     <Compile Include="InGameState.cs" />
