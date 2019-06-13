@@ -18,6 +18,12 @@ namespace KernelPanic
         private readonly SpriteManager mSpriteManager;
         private static bool VISUAL_DEBUG;
 
+        private Grid.LaneSide mLaneSide;
+        private int mWidth = 16;
+        private int mHeight = 42;
+        private int mLaneWidth = 10;
+        private Heatmap mCoordinateMap;
+        private Vectorfield mVectorField;
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
@@ -93,6 +99,25 @@ namespace KernelPanic
         }
         */
 
+        public void InitCoordinateMap()
+        {
+            mCoordinateMap = new Heatmap(mWidth, mHeight);
+            int xAxisReflection = 1;
+            int xAxisTranslation = 0;
+            if (mLaneSide == Grid.LaneSide.Left)
+            {
+                xAxisReflection = -1;
+                xAxisTranslation = mWidth;
+            }
+
+            for (int i = mLaneWidth; i < mHeight - mLaneWidth; i++)
+            {
+                for (int j = 0; j < mWidth - mLaneWidth; j++)
+                {
+                    mCoordinateMap.mMap[i, j * xAxisReflection + xAxisTranslation] = Heatmap.Blocked;
+                }
+            }
+        }
         
         // -------------------------- A STAR DEMO ----------------------------------------------------------------------
         private void InitAStar(SpriteManager sprite, int obstacleEnv=2)

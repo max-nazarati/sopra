@@ -97,6 +97,8 @@ namespace KernelPanic
             mVectorfield.UpdateVectorfield(mMap);
         }
 
+        public Vectorfield Vectorfield { get => mVectorfield;}
+
         public void Test1()
         {
             Heatmap emptyHeatmap = new Heatmap(8, 8);
@@ -122,7 +124,8 @@ namespace KernelPanic
                 for (int j = 0; j < mMap.Width; j++)
                 {
                     resultHeat += mMap.mMap[i, j].ToString();
-                    resultHeat += "  ";
+                    if (0 <= mMap.mMap[i, j] && mMap.mMap[i, j] < 10) resultHeat += "   ";
+                    else resultHeat += "  ";
                 }
 
                 resultHeat += "\n";
