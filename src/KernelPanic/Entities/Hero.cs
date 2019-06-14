@@ -15,7 +15,7 @@ namespace KernelPanic.Entities
         // public CooldownComponent Cooldown { get; set; }
         
         // save the position provider so the AStar can be debugged in the draw method
-        private PositionProvider mPositionProvider;
+        private AStar mAStar;
         
         private Point mTarget;
 
@@ -58,7 +58,8 @@ namespace KernelPanic.Entities
             var target = mTarget / new Point(100, 100);
             
             // calculate the path
-            var path = positionProvider.MakePathFinding(startPoint, target);
+            mAStar = positionProvider.MakePathFinding(startPoint, target);
+            var path = mAStar.Path;
             
             // TODO get the next position of the path (should be at path[0]; something is ****ed up tho)...
             // ... setting it to 0 makes the firefox disappear (thus making me cry T_T) ...
@@ -100,17 +101,21 @@ namespace KernelPanic.Entities
             UpdateTarget(positionProvider, gameTime, inputManager);
             
             base.Update(positionProvider, gameTime, inputManager);
-            mPositionProvider = positionProvider;
+            // mPositionProvider = positionProvider; // TODO change to aStar if possible
         }
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            DrawAStarPath(spriteBatch, gameTime);
             base.Draw(spriteBatch, gameTime);
+        }
+
+        private void DrawAStarPath(SpriteBatch spriteBatch, GameTime gameTime)
+        {
             if (Selected)
             {
-                mPositionProvider?.Draw(spriteBatch, gameTime);    
+                mAStar.Draw(spriteBatch, gameTime);    
             }
-            
         }
     }
 }
