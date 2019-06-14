@@ -1,3 +1,4 @@
+using System.Collections;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -15,6 +16,8 @@ namespace KernelPanic
         internal KeyboardState CurrentKeyboard { get; private set; }
         internal KeyboardState PreviousKeyboard { get; private set; }
 
+        internal Hashtable ClaimedOperations { get; } = new Hashtable();
+
         internal void Update(bool isActive, Viewport viewport)
         {
             IsActive = isActive;
@@ -23,9 +26,14 @@ namespace KernelPanic
             CurrentMouse = Mouse.GetState();
             PreviousKeyboard = CurrentKeyboard;
             CurrentKeyboard = Keyboard.GetState();
+            
+            ClaimedOperations.Clear();
         }
 
         internal bool MouseInWindow =>
             Viewport.Bounds.Contains(CurrentMouse.Position);
+
+        internal void Claim(object value) => ClaimedOperations[value] = null;
+        internal bool IsClaimed(object value) => ClaimedOperations.Contains(value);
     }
 }
