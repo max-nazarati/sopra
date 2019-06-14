@@ -37,6 +37,20 @@ namespace KernelPanic
         {
         }
 
+        /// <summary>
+        /// Creates a new <see cref="Quadtree{T}"/> which contains all elements from <paramref name="elements"/>.
+        /// The bounds are inferred by the union of all <see cref="IBounded.Bounds"/>.
+        /// </summary>
+        /// <param name="elements">The elements for the <see cref="Quadtree{T}"/></param>
+        /// <returns>A new <see cref="Quadtree{T}"/></returns>
+        internal static Quadtree<T> Create(IEnumerable<T> elements)
+        {
+            var elementsArray = elements as List<T> ?? elements.ToList();
+            var bounds =
+                elementsArray.Aggregate(Rectangle.Empty, (rect, element) => Rectangle.Union(rect, element.Bounds));
+            return new Quadtree<T>(bounds) {elementsArray};
+        }
+
         private Quadtree(int level, Rectangle bounds)
         {
             mLevel = level;
@@ -163,6 +177,14 @@ namespace KernelPanic
                     mChilds[(int) square].Add(value);
                     mObjects.Remove(value);
                 }
+            }
+        }
+
+        /*internal*/ private void Add(IEnumerable<T> elements)
+        {
+            foreach (var element in elements)
+            {
+                Add(element);
             }
         }
         
