@@ -50,6 +50,12 @@ namespace KernelPanic
                 elementsArray.Aggregate(Rectangle.Empty, (rect, element) => Rectangle.Union(rect, element.Bounds));
             return new Quadtree<T>(bounds) {elementsArray};
         }
+        
+        /// <summary>
+        /// Returns a new <see cref="Quadtree{T}"/> without any elements inside. The way this
+        /// <see cref="Quadtree{T}"/> is constructed it is not possible to add any values to it.
+        /// </summary>
+        internal static Quadtree<T> Empty => new Quadtree<T>(Rectangle.Empty);
 
         private Quadtree(int level, Rectangle bounds)
         {
