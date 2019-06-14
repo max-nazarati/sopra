@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -33,6 +34,9 @@ namespace KernelPanic.Sprites
                 return new Vector2(maxX - minX, maxY - minY);
             }
         }
+
+        public override Rectangle Bounds =>
+            Children.Aggregate(Rectangle.Empty, (bounds, sprite) => Rectangle.Union(bounds, sprite.Bounds));
 
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,

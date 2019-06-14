@@ -132,6 +132,9 @@
     <Compile Include="..\KernelPanic\Heatmap.cs">
       <Link>Heatmap.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\IBounded.cs">
+      <Link>IBounded.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\IDrawable.cs">
       <Link>IDrawable.cs</Link>
     </Compile>

@@ -8,8 +8,10 @@ namespace KernelPanic.Sprites
     [DataContract]
     [KnownType(typeof(Sprites.AnimatedSprite))]
     [KnownType(typeof(ImageSprite))]
-    public abstract class Sprite
+    public abstract class Sprite: IBounded
     {
+        #region Properties
+
         internal float Rotation { get; set; }
         /* internal */ private float Scale { get; set; } = 1.0f;
         
@@ -40,11 +42,22 @@ namespace KernelPanic.Sprites
             }
         }
 
+        /// <inheritdoc />
+        // TODO: This doesn't factor in rotation which might distort the surrounding rectangle.
+        //       But maybe we don't even want this but the current behaviour.
+        public virtual Rectangle Bounds => KernelPanic.Bounds.ContainingRectangle(Position - Origin, Size);
+
+        #endregion
+
+        #region Constructor
+
         protected Sprite(float x, float y)
         {
             X = x;
             Y = y;
         }
+        
+        #endregion
 
         #region Smart Property Modification
 

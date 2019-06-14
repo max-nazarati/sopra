@@ -65,6 +65,7 @@
     <Compile Include="Entities\Troupe.cs" />
     <Compile Include="Entities\Unit.cs" />
     <Compile Include="Heatmap.cs" />
+    <Compile Include="IBounded.cs" />
     <Compile Include="IEntitySelection.cs" />
     <Compile Include="InGameOverlay.cs" />
     <Compile Include="InGameState.cs" />

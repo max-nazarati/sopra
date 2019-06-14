@@ -10,7 +10,7 @@ namespace KernelPanic.Entities
     [KnownType(typeof(Unit))]
     [KnownType(typeof(Building))]
 
-    internal abstract class Entity : IPriced
+    internal abstract class Entity : IPriced, IBounded
     {
         internal Sprite Sprite { get; private set; }
 
@@ -23,9 +23,7 @@ namespace KernelPanic.Entities
 
         public bool Selected { get; set; }
 
-        internal Rectangle Bounds => new Rectangle(
-            (Sprite.Position - Sprite.Origin).ToPoint(),
-            new Point((int) Math.Ceiling(Sprite.Width), (int) Math.Ceiling(Sprite.Height)));
+        public Rectangle Bounds => Sprite.Bounds;
 
         internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
