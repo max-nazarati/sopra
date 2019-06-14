@@ -204,26 +204,45 @@ namespace KernelPanic
         #region Querying
 
         /// <summary>
-        /// Checks, whether an entity exists at a given point
+        /// Returns every value in the <see cref="Quadtree{T}"/> that has <see cref="IBounded.Bounds"/>
+        /// containing the given point.
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        internal bool HasEntityAt(Vector2 point)
+        /// <param name="point">The point to look at.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> with all values that match.</returns>
+        internal IEnumerable<T> EntitiesAt(Vector2 point)
         {
-            foreach (var @object in mObjects)
+            var tree = this;
+
+            while (true)
             {
-                if (@object.Bounds.Contains(point))
+                // Yield all objects in the current level.
+                foreach (var value in tree.mObjects)
                 {
-                    return true;
+                    if (value.Bounds.Contains(point))
+                        yield return value;
+                }
+
+                // Move one level down.
+                if (tree.mChilds != null && tree.CalculatePosition(point) is SquareIndex square)
+                {
+                    tree = tree.mChilds[(int) square];
+                }
+                else
+                {
+                    yield break;
                 }
             }
+        }
 
-            if (mChilds != null && CalculatePosition(point) is SquareIndex square)
-            {
-                return mChilds[(int) square].HasEntityAt(point);
-            }
-
-            return false;
+        /// <summary>
+        /// Checks whether an entity exists in the <see cref="Quadtree{T}"/> that has <see cref="IBounded.Bounds"/>
+        /// containing the given point.
+        /// </summary>
+        /// <param name="point">The point to check for.</param>
+        /// <returns><c>true</c> if such an entity is found, <c>false</c> otherwise.</returns>
+        internal bool HasEntityAt(Vector2 point)
+        {
+            return EntitiesAt(point).Any();
         }
 
         /// <summary>
