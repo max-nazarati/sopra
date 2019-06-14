@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using KernelPanic.Camera;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -73,19 +74,10 @@ namespace KernelPanic
         /// </summary>
         /// <param name="keys">Keys that should be checked</param>
         /// <returns>True if any of the keys was pressed</returns>
-        public bool KeyPressed(params Keys[] keys)
+        internal bool KeyPressed(params Keys[] keys)
         {
-            foreach (Keys key in keys)
-            {
-                if (mInputState.CurrentKeyboard.IsKeyDown(key) && mInputState.PreviousKeyboard.IsKeyUp(key))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return KeyChanged(keys, true);
         }
-
 
         /* TODO uncomment this
         /// <summary>
@@ -93,19 +85,29 @@ namespace KernelPanic
         /// </summary>
         /// <param name="keys">Keys that should be checked</param>
         /// <returns>True if any of the keys was released</returns>
-        public bool KeyReleased(params Keys[] keys)
+        internal bool KeyReleased(params Keys[] keys)
         {
-            foreach (Keys key in keys)
+            return KeyChanged(keys, true);
+        }
+        */
+
+        private bool KeyChanged(IEnumerable<Keys> keys, bool currentDown)
+        {
+            foreach (var key in keys)
             {
-                if (mInputState.CurrentKeyboard.IsKeyUp(key) && mInputState.PreviousKeyboard.IsKeyDown(key))
+                if (mInputState.IsClaimed(key) ||
+                    mInputState.PreviousKeyboard.IsKeyDown(key) == currentDown ||
+                    mInputState.CurrentKeyboard.IsKeyDown(key) != currentDown)
                 {
-                    return true;
+                    continue;
                 }
+
+                mInputState.Claim(key);
+                return true;
             }
 
             return false;
         }
-        */
 
         /// <summary>
         /// checks if any of the Keyboard Buttons is currently being pressed
@@ -160,29 +162,7 @@ namespace KernelPanic
         /// <returns>true if any of the buttons is freshly pressed</returns>
         internal bool MousePressed(params MouseButton[] mouseButtons)
         {
-            var pressed = false;
-            foreach (var mouseButton in mouseButtons)
-            {
-                switch (mouseButton)
-                {
-                    case MouseButton.Left:
-                        pressed |= mInputState.CurrentMouse.LeftButton == ButtonState.Pressed &&
-                                   mInputState.PreviousMouse.LeftButton != ButtonState.Pressed;
-                        break;
-                    case MouseButton.Middle:
-                        pressed |= mInputState.CurrentMouse.MiddleButton == ButtonState.Pressed &&
-                                   mInputState.PreviousMouse.MiddleButton != ButtonState.Pressed;
-                        break;
-                    case MouseButton.Right:
-                        pressed |= mInputState.CurrentMouse.RightButton == ButtonState.Pressed &&
-                                   mInputState.PreviousMouse.RightButton != ButtonState.Pressed;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(mouseButtons));
-                }
-            }
-
-            return pressed;
+            return MouseChanged(mouseButtons, ButtonState.Pressed);
         }
 
         /* TODO uncomment this
@@ -193,31 +173,50 @@ namespace KernelPanic
         /// <returns></returns>
         public bool MouseReleased(params MouseButton[] mouseButtons)
         {
-            bool released = false;
+            return MouseChanged(mouseButtons, ButtonState.Released);
+        }
+        */
+
+        private bool MouseChanged(IEnumerable<MouseButton> mouseButtons, ButtonState expectedCurrent)
+        {
             foreach (var mouseButton in mouseButtons)
             {
+                bool Changed(Func<MouseState, ButtonState> view)
+                {
+                    if (mInputState.IsClaimed(mouseButton) ||
+                        view(mInputState.PreviousMouse) == expectedCurrent ||
+                        view(mInputState.CurrentMouse) != expectedCurrent)
+                    {
+                        return false;
+                    }
+
+                    mInputState.Claim(mouseButton);
+                    return true;
+                }
+                
                 switch (mouseButton)
                 {
                     case MouseButton.Left:
-                        released |= mInputState.CurrentMouse.LeftButton != ButtonState.Pressed &&
-                                    mInputState.PreviousMouse.LeftButton == ButtonState.Pressed;
+                        if (Changed(state => state.LeftButton))
+                            return true;
                         break;
                     case MouseButton.Middle:
-                        released |= mInputState.CurrentMouse.MiddleButton != ButtonState.Pressed &&
-                                    mInputState.PreviousMouse.MiddleButton == ButtonState.Pressed;
+                        if (Changed(state => state.MiddleButton))
+                            return true;
                         break;
                     case MouseButton.Right:
-                        released |= mInputState.CurrentMouse.RightButton != ButtonState.Pressed &&
-                                    mInputState.PreviousMouse.RightButton == ButtonState.Pressed;
+                        if (Changed(state => state.RightButton))
+                            return true;
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(mouseButtons));
+                        throw new InvalidEnumArgumentException(nameof(mouseButtons),
+                            (int) mouseButton,
+                            typeof(MouseButton));
                 }
             }
 
-            return released;
+            return false;
         }
-        */
 
         /// <summary>
         /// checks if any of the MouseButtons is currently down
