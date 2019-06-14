@@ -53,6 +53,7 @@
     <Compile Include="Camera\Change.cs" />
     <Compile Include="Camera\ICamera.cs" />
     <Compile Include="Camera\StaticCamera.cs" />
+    <Compile Include="ClickTarget.cs" />
     <Compile Include="Entities\Building.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Firefox.cs" />

@@ -21,9 +21,24 @@ namespace KernelPanic
             mGameStates.Push(newGameState);
         }
         */
-        
+
+        /// <summary>
+        /// Stores a <see cref="AGameState"/> together with the current quad-tree of click targets.
+        /// </summary>
+        private sealed class GameStateInfo
+        {
+            internal AGameState State { get; }
+            internal Quadtree<ClickTarget> ClickTargets { get; set; }
+
+            internal GameStateInfo(AGameState state)
+            {
+                State = state;
+                ClickTargets = Quadtree<ClickTarget>.Empty;
+            }
+        }
+
         public SpriteManager Sprite { get; }
-        private readonly Stack<AGameState> mGameStates = new Stack<AGameState>();
+        private readonly Stack<GameStateInfo> mGameStates = new Stack<GameStateInfo>();
 
         internal Action ExitAction { get; }
 
@@ -40,21 +55,37 @@ namespace KernelPanic
                 mGameStates.Pop();
             }
         }
+
         public void Push(AGameState newGameState)
         {
-            mGameStates.Push(newGameState);
+            mGameStates.Push(new GameStateInfo(newGameState));
         }
+
         public void Update(RawInputState rawInput, GameTime gameTime)
         {
-            foreach (var state in ActiveStates())
+            foreach (var info in ActiveStates())
             {
-                var input = new InputManager(state.Camera, rawInput);
+                var state = info.State;
+                var newClickTargets = new List<ClickTarget>();
+                var input = new InputManager(newClickTargets, state.Camera, rawInput);
+
+                // Invoke all clicked targets.
+                foreach (var target in info.ClickTargets.EntitiesAt(input.TranslatedMousePosition))
+                {
+                    target.Action();
+                }
+
+                // Do the actual update.
                 state.Update(input, gameTime);
+
+                // The call to Update filled newClickTargets via the reference in the InputManager.
+                info.ClickTargets = Quadtree<ClickTarget>.Create(newClickTargets);
             }
         }
+
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var state in ActiveStates().Reverse())
+            foreach (var state in ActiveStates().Select(i => i.State).Reverse())
             {
                 spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: state.Camera.Transformation);
                 state.Draw(spriteBatch, gameTime);
@@ -62,12 +93,16 @@ namespace KernelPanic
             }
         }
 
-        private IEnumerable<AGameState> ActiveStates()
+        /// <summary>
+        /// Enumerates from top to bottom through all currently visible states.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{AGameState}"/>.</returns>
+        private IEnumerable<GameStateInfo> ActiveStates()
         {
-            foreach (var state in mGameStates)
+            foreach (var info in mGameStates)
             {
-                yield return state;
-                if (!state.IsOverlay)
+                yield return info;
+                if (!info.State.IsOverlay)
                     break;
             }
         }

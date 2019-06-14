@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using KernelPanic.Camera;
 using Microsoft.Xna.Framework;
@@ -18,6 +19,7 @@ namespace KernelPanic
 
         private readonly RawInputState mInputState;
         private readonly ICamera mCamera;
+        private readonly List<ClickTarget> mClickTargets;
 
         /// <summary>
         /// Left, Middle and Right MouseButton
@@ -27,10 +29,11 @@ namespace KernelPanic
             Left, Middle, Right
         }
 
-        internal InputManager(ICamera camera, RawInputState inputState)
+        internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
         {
             mCamera = camera;
             mInputState = inputState;
+            mClickTargets = clickTargets;
 
             UpdateCamera();
         }
@@ -154,6 +157,9 @@ namespace KernelPanic
         /// <returns>Tuple with X and Y distance</returns>
         internal Point MouseMovement =>
             new Point(mInputState.CurrentMouse.X - mInputState.PreviousMouse.X, mInputState.CurrentMouse.Y - mInputState.PreviousMouse.Y);
+
+        internal void RegisterClickTarget(Rectangle position, Action action) =>
+            mClickTargets.Add(new ClickTarget(position, action));
 
         /// <summary>
         /// checks if any of the MouseButtons has been pressed (at this exact moment => de-bounced)

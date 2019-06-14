@@ -84,6 +84,9 @@
     <Compile Include="..\KernelPanic\Camera\StaticCamera.cs">
       <Link>Camera\StaticCamera.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\ClickTarget.cs">
+      <Link>ClickTarget.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Building.cs">
       <Link>Entities\Building.cs</Link>
     </Compile>
