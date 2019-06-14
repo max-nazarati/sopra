@@ -26,8 +26,10 @@ namespace KernelPanic.Interface
 
         internal override void Update(GameTime gameTime, InputManager inputManager)
         {
-            if (Enabled && inputManager.MousePressed(InputManager.MouseButton.Left) && ContainsMouse(inputManager))
-                Clicked?.Invoke(this);
+            if (Enabled)
+            {
+                inputManager.RegisterClickTarget(Sprite.Bounds, () => Clicked?.Invoke(this));
+            }
         }
     }
 }
