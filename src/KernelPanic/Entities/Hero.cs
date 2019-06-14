@@ -14,10 +14,9 @@ namespace KernelPanic.Entities
     {
         // public CooldownComponent Cooldown { get; set; }
         
-        // save the position provider so the AStar can be debugged in the draw method
-        private AStar mAStar;
         
-        private Point mTarget;
+        private AStar mAStar; // save the AStar for path-drawing
+        private Point mTarget; // the target we wish to move to
 
         /// <summary>
         /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
@@ -36,6 +35,7 @@ namespace KernelPanic.Entities
         {
             // TODO set mTarget to the position itself so heroes spawn non moving
             // mTarget = Sprite.Position;
+            ShouldMove = false;
         }
 
         public bool AbilityAvailable()
@@ -46,6 +46,11 @@ namespace KernelPanic.Entities
         public void ActivateAbility()
         {
             throw new NotImplementedException();
+        }
+
+        public bool AbilityActive()
+        {
+            return false;
         }
 
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
@@ -75,6 +80,10 @@ namespace KernelPanic.Entities
                 // + (100, 100) translates the target to the point it should be
                 movement = positionProvider.GridCoordinate(new Vector2(x * 100, y * 100) + new Vector2(100, 100));
             }
+            else // stop moving if target is reached;
+            {
+                ShouldMove = false;
+            }
             
             // MoveTarget will be used by the Update Function (of the base class 'unit') to move the object
             MoveTarget = movement;
@@ -82,6 +91,7 @@ namespace KernelPanic.Entities
 
         /// <summary>
         /// This method should check for a new target to walk to and saves it in mTarget
+        /// also sets mShouldMove true
         /// </summary>
         /// <param name="positionProvider"></param>
         /// <param name="gameTime"></param>
@@ -95,15 +105,27 @@ namespace KernelPanic.Entities
             var mouse = inputManager.TranslatedMousePosition;
             if (positionProvider.GridCoordinate(mouse) == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
+            ShouldMove = true;
+        }
+
+        protected virtual void UpdateAbility()
+        {
         }
         
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             // Check if we still want to move to the same target, etc.
+            // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
-            
+
+            if (AbilityActive())
+            {
+                UpdateAbility();
+            }
+            // base.Update checks for mShouldMove
             base.Update(positionProvider, gameTime, inputManager);
-            // mPositionProvider = positionProvider; // TODO change to aStar if possible
+            
+
         }
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

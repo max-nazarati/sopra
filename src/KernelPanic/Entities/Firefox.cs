@@ -23,5 +23,9 @@ namespace KernelPanic.Entities
         
         internal static Firefox CreateFirefoxJump(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateFirefoxJump());
+        
+        protected override void UpdateAbility()
+        {
+        }
     }
 }

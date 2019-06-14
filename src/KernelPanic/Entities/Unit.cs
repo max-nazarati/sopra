@@ -22,6 +22,8 @@ namespace KernelPanic.Entities
         private int MaximumLife { get; set; }
         [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }
+        
+        protected bool ShouldMove; // should the basic movement take place this cycle? 
 
         protected virtual Vector2? MoveVector
         {
@@ -40,6 +42,7 @@ namespace KernelPanic.Entities
             MaximumLife = life;
             RemainingLife = life;
             AttackStrength = attackStrength;
+            ShouldMove = true;
         }
 
         /// <summary>
@@ -93,8 +96,9 @@ namespace KernelPanic.Entities
             base.Update(positionProvider, gameTime, inputManager);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
-
-            if (MoveVector is Vector2 movement)
+            
+            // children-classes want to know if movement is allowed (mShouldMove) 
+            if (ShouldMove && MoveVector is Vector2 movement)
             {
                 Sprite.Position += movement;
             }
