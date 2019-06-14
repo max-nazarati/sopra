@@ -112,7 +112,7 @@ namespace KernelPanic
 
         #endregion
 
-        #region Adding objects
+        #region Adding & Removing
 
         /// <summary>
         /// Splits the current node into 4 childs
@@ -191,12 +191,14 @@ namespace KernelPanic
         internal void Rebuild()
         {
             var allEntities = new List<T>(this);
+            Clear();
+            Add(allEntities);
+        }
+
+        /*internal*/ private void Clear()
+        {
             mObjects.Clear();
             mChilds = null;
-            foreach (var entity in allEntities)
-            {
-                Add(entity);
-            }
         }
 
         #endregion
