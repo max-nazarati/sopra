@@ -34,6 +34,8 @@ namespace KernelPanic.Entities
 
         public Hero(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, speed, life, attackStrength, sprite)
         {
+            // TODO set mTarget to the position itself so heroes spawn non moving
+            // mTarget = Sprite.Position;
         }
 
         public bool AbilityAvailable()

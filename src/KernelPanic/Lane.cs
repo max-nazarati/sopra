@@ -1,4 +1,5 @@
-﻿﻿using System.Runtime.Serialization;
+﻿﻿using System;
+ using System.Runtime.Serialization;
 ﻿using KernelPanic.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -93,11 +94,11 @@ namespace KernelPanic
                
         }
         
-        /*
         public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
         {    
+            throw new NotImplementedException();
         }
-        */
+        
 
         public void InitCoordinateMap()
         {

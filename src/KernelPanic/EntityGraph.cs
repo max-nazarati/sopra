@@ -44,7 +44,8 @@ namespace KernelPanic
                 {
                     if (entity != nearEntity && entity.Bounds.Intersects(nearEntity.Bounds))
                     {
-                        Console.WriteLine("Kollision");
+                        string collision = "[KOLLISION:] " + " UNIT " + entity + " AND UNIT " + nearEntity + " ARE COLLIDING! [TIME:] " + gameTime.TotalGameTime;
+                        Console.WriteLine(collision);
                     }
                 }
             }
