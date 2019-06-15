@@ -11,25 +11,9 @@ namespace KernelPanic
     [DataContract]
     internal sealed class Grid
     {
-        /// <summary>
-        /// Left and Right lane
-        /// </summary>
-        public enum LaneSide
-        {
-            /// <summary>
-            /// Describes the lane which is shaped like an opening bracket ›[‹.
-            /// </summary>
-            Left,
-
-            /// <summary>
-            /// Describes the lane which is shaped like an opening bracket ›]‹.
-            /// </summary>
-            Right
-        }
-
         private int mRelativeX, mRelativeY;
 
-        private readonly LaneSide mLaneSide;
+        private readonly Lane.Side mLaneSide;
         private readonly Rectangle mLaneRectangle;
 
         private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly
@@ -48,7 +32,7 @@ namespace KernelPanic
 
         private readonly Sprite mSprite;
 
-        internal Grid(Rectangle laneBounds, SpriteManager sprites, LaneSide laneSide)
+        internal Grid(Rectangle laneBounds, SpriteManager sprites, Lane.Side laneSide)
         {
             mLaneRectangle = laneBounds;
             mLaneSide = laneSide;
@@ -66,18 +50,18 @@ namespace KernelPanic
 
             switch (laneSide)
             {
-                case LaneSide.Left:
+                case Lane.Side.Left:
                     topPart.X = mainPart.Width;
                     bottomPart.X = mainPart.Width;
                     break;
 
-                case LaneSide.Right:
+                case Lane.Side.Right:
                     mainPart.X = topPart.Width;
                     mLaneRectangle.X = 32;
                     break;
 
                 default:
-                    throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(LaneSide));
+                    throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(Lane.Side));
             }
 
             mSprite = new CompositeSprite(TileCountPixelSize(mLaneRectangle.X), TileCountPixelSize(mLaneRectangle.Y))
@@ -256,10 +240,10 @@ namespace KernelPanic
         {
             switch (mLaneSide)
             {
-                case LaneSide.Left:
+                case Lane.Side.Left:
                     CreateCoordinateSystemLeft();
                     break;
-                case LaneSide.Right:
+                case Lane.Side.Right:
                     CreateCoordinateSystemRight();
                     break;
             }
@@ -284,7 +268,7 @@ namespace KernelPanic
             //       does this make a discernible difference to doing the exact calculations?
             var full = new Rectangle(mSprite.Position.ToPoint(), mSprite.Size.ToPoint());
             var cutout = new Rectangle(
-                (int) mSprite.X + (mLaneSide == LaneSide.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
+                (int) mSprite.X + (mLaneSide == Lane.Side.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
                 TileCountPixelSize(LaneWidthInTiles),
                 TileCountPixelSize(mLaneRectangle.Width - LaneWidthInTiles),
                 TileCountPixelSize(mLaneRectangle.Height - 2 * LaneWidthInTiles));

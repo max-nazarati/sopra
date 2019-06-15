@@ -24,8 +24,8 @@ namespace KernelPanic
 
         internal Board(SpriteManager content)
         {
-            LeftLane = new Lane(Grid.LaneSide.Left, content);
-            RightLane = new Lane(Grid.LaneSide.Right, content);
+            LeftLane = new Lane(Lane.Side.Left, content);
+            RightLane = new Lane(Lane.Side.Right, content);
         }
 
         internal void Update(GameTime gameTime, InputManager inputManager)

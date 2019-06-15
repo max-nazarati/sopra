@@ -1,6 +1,6 @@
-﻿﻿using System;
- using System.Runtime.Serialization;
-﻿using KernelPanic.Entities;
+﻿using System;
+using System.Runtime.Serialization;
+using KernelPanic.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,6 +10,22 @@ namespace KernelPanic
     [DataContract]
     internal sealed class Lane
     {
+        /// <summary>
+        /// Left and Right lane
+        /// </summary>
+        public enum Side
+        {
+            /// <summary>
+            /// Describes the lane which is shaped like an opening bracket ›[‹.
+            /// </summary>
+            Left,
+
+            /// <summary>
+            /// Describes the lane which is shaped like an opening bracket ›]‹.
+            /// </summary>
+            Right
+        }
+
         [DataMember]
         internal EntityGraph EntityGraph { get; set; }
         internal Base Target { get; }
@@ -19,7 +35,7 @@ namespace KernelPanic
         private readonly SpriteManager mSpriteManager;
         private static bool VISUAL_DEBUG;
 
-        private Grid.LaneSide mLaneSide;
+        private Side mLaneSide;
         private int mWidth = 16;
         private int mHeight = 42;
         private int mLaneWidth = 10;
@@ -30,10 +46,10 @@ namespace KernelPanic
 
         private AStar mAStar;
 
-        private static Rectangle LaneBoundsInTiles(Grid.LaneSide laneSide) =>
-            new Rectangle(laneSide == Grid.LaneSide.Left ? 0 : 32, 0, 16, 42);
+        private static Rectangle LaneBoundsInTiles(Side laneSide) =>
+            new Rectangle(laneSide == Side.Left ? 0 : 32, 0, 16, 42);
 
-        private static Rectangle LaneBoundsInPixel(Grid.LaneSide laneSide)
+        private static Rectangle LaneBoundsInPixel(Side laneSide)
         {
             var bounds = LaneBoundsInTiles(laneSide);
             bounds.X *= Grid.KachelSize;
@@ -43,10 +59,10 @@ namespace KernelPanic
             return bounds;
         }
 
-        internal static Rectangle LeftBounds => LaneBoundsInPixel(Grid.LaneSide.Left);
-        internal static Rectangle RightBounds => LaneBoundsInPixel(Grid.LaneSide.Right);
+        internal static Rectangle LeftBounds => LaneBoundsInPixel(Side.Left);
+        internal static Rectangle RightBounds => LaneBoundsInPixel(Side.Right);
 
-        public Lane(Grid.LaneSide laneSide, SpriteManager sprites)
+        public Lane(Side laneSide, SpriteManager sprites)
         {
             EntityGraph = new EntityGraph(sprites);
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
@@ -105,7 +121,7 @@ namespace KernelPanic
             mCoordinateMap = new Heatmap(mWidth, mHeight);
             int xAxisReflection = 1;
             int xAxisTranslation = 0;
-            if (mLaneSide == Grid.LaneSide.Left)
+            if (mLaneSide == Side.Left)
             {
                 xAxisReflection = -1;
                 xAxisTranslation = mWidth;
@@ -133,5 +149,5 @@ namespace KernelPanic
             mAStar.CalculatePath();
         }
         // ------------------------------------------------------------------------------------------------------------
-}
+    }
 }
