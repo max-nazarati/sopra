@@ -2,7 +2,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Entities;
 
-namespace KernelPanic
+namespace KernelPanic.Selection
 {
     [DataContract]
     internal sealed class SelectionManager
