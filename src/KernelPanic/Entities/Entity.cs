@@ -27,10 +27,7 @@ namespace KernelPanic.Entities
 
         internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            if (inputManager.MousePressed(InputManager.MouseButton.Left))
-            {
-                Selected = Bounds.Contains(inputManager.TranslatedMousePosition);
-            }
+            // TODO: Display the actions if this entity is selected.
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
