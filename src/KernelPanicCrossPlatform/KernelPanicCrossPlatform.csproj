@@ -141,9 +141,6 @@
     <Compile Include="..\KernelPanic\IDrawable.cs">
       <Link>IDrawable.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\IEntitySelection.cs">
-      <Link>IEntitySelection.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\InGameOverlay.cs">
       <Link>InGameOverlay.cs</Link>
     </Compile>
@@ -209,6 +206,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\ScoreOverlay.cs">
       <Link>ScoreOverlay.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Selection\SelectionManager.cs">
+      <Link>Selection\SelectionManager.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\SinglePurchasableAction.cs">
       <Link>SinglePurchasableAction.cs</Link>
