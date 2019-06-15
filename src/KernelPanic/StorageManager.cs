@@ -27,8 +27,9 @@ namespace KernelPanic
             mSerializer = new DataContractSerializer(typeof(InGameState));
             InGameState deserializedGameState = (InGameState)mSerializer.ReadObject(reader, true);
             var state = new InGameState(stateManager);
-            state.mPlayerB.Bitcoins = deserializedGameState.mPlayerB.Bitcoins;
-            state.mPlayerA.Bitcoins = deserializedGameState.mPlayerA.Bitcoins;
+            // TODO: Revise the deserialization process.
+            // state.mPlayerB.Bitcoins = deserializedGameState.mPlayerB.Bitcoins;
+            // state.mPlayerA.Bitcoins = deserializedGameState.mPlayerA.Bitcoins;
             fs.Close();
 
             return state;

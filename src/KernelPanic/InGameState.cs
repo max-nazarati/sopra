@@ -16,9 +16,9 @@ namespace KernelPanic
         [DataMember(Name = "Board")]
         private readonly Board mBoard;
         [DataMember(Name = "PlayerA")]
-        internal Player mPlayerA;
+        private Player mPlayerA;
         [DataMember(Name = "PlayerB")]
-        internal Player mPlayerB;
+        private Player mPlayerB;
 
         private PurchaseButton<Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
         private PurchaseButton<Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
