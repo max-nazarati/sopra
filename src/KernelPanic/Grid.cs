@@ -263,16 +263,7 @@ namespace KernelPanic
             int subTileCount = 1,
             RelativePosition origin = RelativePosition.Center)
         {
-            // TODO: We just convert float to int and Vector2 to Point,
-            //       does this make a discernible difference to doing the exact calculations?
-            var full = new Rectangle(mSprite.Position.ToPoint(), mSprite.Size.ToPoint());
-            var cutout = new Rectangle(
-                (int) mSprite.X + (LaneSide == Lane.Side.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
-                TileCountPixelSize(LaneWidthInTiles),
-                TileCountPixelSize(LaneRectangle.Width - LaneWidthInTiles),
-                TileCountPixelSize(LaneRectangle.Height - 2 * LaneWidthInTiles));
-
-            if (!full.Contains(point.ToPoint()) || cutout.Contains(point.ToPoint()))
+            if (!Contains(point))
                 return null;
 
             var subTileSize = (float) KachelSize / subTileCount;
@@ -296,6 +287,23 @@ namespace KernelPanic
             point += mSprite.Position + origin.RectangleOrigin(new Vector2(subTileSize));
 
             return (point, (float) KachelSize / subTileCount);
+        }
+
+        /// <summary>
+        /// Tests if the given <paramref name="point"/> lies in this grid.
+        /// </summary>
+        /// <param name="point">The point to test for.</param>
+        /// <returns><c>true</c> if the point is inside, <c>false</c> otherwise.</returns>
+        internal bool Contains(Vector2 point)
+        {
+            var full = mSprite.Bounds;
+            var cutout = new Rectangle(
+                (int) mSprite.X + (LaneSide == Lane.Side.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
+                TileCountPixelSize(LaneWidthInTiles),
+                TileCountPixelSize(LaneRectangle.Width - LaneWidthInTiles),
+                TileCountPixelSize(LaneRectangle.Height - 2 * LaneWidthInTiles));
+
+            return full.Contains(point) && !cutout.Contains(point);
         }
 
         /// <summary>
