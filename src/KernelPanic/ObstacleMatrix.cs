@@ -6,10 +6,8 @@ namespace KernelPanic
     /// <summary>
     /// Represents a 2-dimensional matrix which stores the existence or non-existence of obstacles on a specific tile.
     /// </summary>
-    [DataContract]
     internal sealed class ObstacleMatrix
     {
-        [DataMember]
         private readonly bool[,] mObstacles;
 
         /// <summary>

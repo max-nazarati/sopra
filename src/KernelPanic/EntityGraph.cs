@@ -13,7 +13,7 @@ namespace KernelPanic
         [DataMember]
         private readonly Quadtree<Entity> mQuadtree;
 
-        [DataMember]
+        // We don't serialize this as it can be reconstructed from mQuadtree.
         private readonly ObstacleMatrix mObstacles;
 
         private readonly ImageSprite mSelectionBorder;
