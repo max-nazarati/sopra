@@ -15,6 +15,7 @@ namespace KernelPanic.Entities
         
         public Firefox(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, speed, life, attackStrength, sprite)
         {
+            Cooldown = new CooldownComponent(new TimeSpan(0, 0, 5));
         }
 
         private static Firefox Create(Point position, Sprite sprite)
@@ -30,19 +31,19 @@ namespace KernelPanic.Entities
         internal static Firefox CreateFirefoxJump(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateFirefoxJump());
         
-        protected override void UpdateAbility(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
-        {
-            base.UpdateAbility(positionProvider, gameTime, inputManager);
-        }
 
         protected override void ActivateAbility(InputManager inputManager)
         {
             AbilityActive = true;
             ShouldMove = false;
+            Cooldown.Reset();
+            
+            // calculate the jump direction
             var mouse = inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
             direction *= 30;
+            
             for (var _ = 0; _ < 10; _++)
             {
                 mAbility.Push(direction);

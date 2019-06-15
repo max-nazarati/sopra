@@ -15,7 +15,7 @@ namespace KernelPanic.Entities
     [KnownType(typeof(Firefox))]
     internal class Hero : Unit
     {
-        // public CooldownComponent Cooldown { get; set; }
+        protected CooldownComponent Cooldown { get; set; }
         
         
         private AStar mAStar; // save the AStar for path-drawing
@@ -109,13 +109,14 @@ namespace KernelPanic.Entities
         
         protected virtual bool AbilityAvailable()
         {
-            return true;
+            return Cooldown.Enabled;
         }
 
         protected virtual void ActivateAbility(InputManager inputManager)
         {
             AbilityActive = true;
             ShouldMove = false;
+            Cooldown.Reset();
         }
 
         public bool AbilityActive { get; set; }
@@ -160,10 +161,12 @@ namespace KernelPanic.Entities
         
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
             
+            Cooldown.Update(gameTime);
             UpdateAbility(positionProvider, gameTime, inputManager);
 
             // base.Update checks for mShouldMove
