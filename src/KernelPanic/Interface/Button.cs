@@ -26,10 +26,11 @@ namespace KernelPanic.Interface
 
         internal override void Update(GameTime gameTime, InputManager inputManager)
         {
-            if (Enabled)
+            inputManager.RegisterClickTarget(Sprite.Bounds, () =>
             {
-                inputManager.RegisterClickTarget(Sprite.Bounds, () => Clicked?.Invoke(this));
-            }
+                if (Enabled)
+                    Clicked?.Invoke(this);
+            });
         }
     }
 }
