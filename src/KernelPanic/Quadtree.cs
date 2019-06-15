@@ -43,12 +43,9 @@ namespace KernelPanic
         /// </summary>
         /// <param name="elements">The elements for the <see cref="Quadtree{T}"/></param>
         /// <returns>A new <see cref="Quadtree{T}"/></returns>
-        internal static Quadtree<T> Create(IEnumerable<T> elements)
+        internal static Quadtree<T> Create(List<T> elements)
         {
-            var elementsArray = elements as List<T> ?? elements.ToList();
-            var bounds =
-                elementsArray.Aggregate(Rectangle.Empty, (rect, element) => Rectangle.Union(rect, element.Bounds));
-            return new Quadtree<T>(bounds) {elementsArray};
+            return elements.Count == 0 ? Empty : new Quadtree<T>(elements.Union()) {elements};
         }
         
         /// <summary>

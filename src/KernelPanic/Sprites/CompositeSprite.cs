@@ -36,7 +36,7 @@ namespace KernelPanic.Sprites
         }
 
         public override Rectangle Bounds =>
-            Children.Aggregate(Rectangle.Empty, (bounds, sprite) => Rectangle.Union(bounds, sprite.Bounds));
+            Children.Union(Position - Origin);
 
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
