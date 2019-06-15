@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Input;
@@ -44,5 +46,43 @@ namespace KernelPanic.Entities
 
         public int Price { get; }
         public Currency Currency => Currency.Bitcoin;
+
+        #region Actions
+        
+        protected virtual IEnumerable<IAction> Actions => Enumerable.Empty<IAction>();
+
+        protected interface IAction : IDrawable, IUpdatable
+        {
+        }
+
+        protected class BaseAction<T> : IAction where T: IDrawable, IUpdatable
+        {
+            protected T Provider { get; }
+
+            protected BaseAction(T provider)
+            {
+                Provider = provider;
+            }
+
+            public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+            {
+                Provider.Draw(spriteBatch, gameTime);
+            }
+
+            public void Update(GameTime gameTime)
+            {
+                Provider.Update(gameTime);
+            }
+        }
+
+        #endregion
+    }
+
+    internal static class EnumerableExtensions
+    {
+        internal static IEnumerable<T> Extend<T>(this IEnumerable<T> enumerable, params T[] values)
+        {
+            return enumerable.Concat(values);
+        }
     }
 }
