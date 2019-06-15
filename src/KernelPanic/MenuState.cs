@@ -61,11 +61,35 @@ namespace KernelPanic
 
         public static MenuState CreatePlayMenu(GameStateManager stateManager)
         {
-            var savedGame1 = CreateButton(stateManager.Sprite, "leer", 100);
-            var savedGame2 = CreateButton(stateManager.Sprite, "leer", 200);
-            var savedGame3 = CreateButton(stateManager.Sprite, "leer", 300);
-            var savedGame4 = CreateButton(stateManager.Sprite, "leer", 400);
-            var savedGame5 = CreateButton(stateManager.Sprite, "leer", 500);
+            string selectedFile = "";
+            Button[] btnlist = new Button[5];
+            
+            var files = System.IO.Directory.GetFiles(StorageManager.folder);
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (i < files.Length)
+                {
+                    files[i] = files[i].Replace(StorageManager.folder, "");
+                    files[i] = files[i].Remove(files[i].IndexOf("."));
+                    btnlist[i] = CreateButton(stateManager.Sprite, files[i], (i + 1) * 100);
+                }
+                else
+                {
+                    btnlist[i] = CreateButton(stateManager.Sprite, "leer", (i + 1) * 100);
+                }
+            }
+
+            foreach (var btn in btnlist)
+            {
+                if (btn.Title != "leer")
+                {
+                    btn.Clicked += _ =>
+                    {
+                        selectedFile = btn.Title;
+                    };
+                }
+            }
 
             var newGameButton = CreateButton(stateManager.Sprite, "Neues Spiel",600, 150);
             newGameButton.Clicked += _ => InGameState.PushGameStack(stateManager);
@@ -73,7 +97,7 @@ namespace KernelPanic
             var loadGameButton = CreateButton(stateManager.Sprite, "Spiel laden", 600, -150);
             loadGameButton.Clicked += _ =>
             {
-                var loadedGame = (new StorageManager().LoadGame("testSave.xml", stateManager));
+                var loadedGame = (new StorageManager().LoadGame(selectedFile + ".xml", stateManager));
                 InGameState.PushGameStack(stateManager, loadedGame);
             };
 
@@ -86,11 +110,11 @@ namespace KernelPanic
                 mComponents = new InterfaceComponent[]
                 {
                     CreateBackground(stateManager.Sprite),
-                    savedGame1,
-                    savedGame2,
-                    savedGame3,
-                    savedGame4,
-                    savedGame5,
+                    btnlist[0],
+                    btnlist[1],
+                    btnlist[2],
+                    btnlist[3],
+                    btnlist[4],
                     newGameButton,
                     loadGameButton,
                     backButton
@@ -257,8 +281,8 @@ namespace KernelPanic
            var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
            saveButton.Clicked += _ =>
            {
-               
-               new StorageManager().SaveGame("testSave.xml", inGameState);
+               var dir = System.IO.Directory.GetFiles(StorageManager.folder);
+               new StorageManager().SaveGame("save" + dir.Length % 5 + ".xml", inGameState);
                // TODO: change name on Button in CreatePlayMenu
            };
 
