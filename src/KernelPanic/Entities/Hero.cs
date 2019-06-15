@@ -5,6 +5,7 @@ using System.Diagnostics;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic.Entities
 {
@@ -34,25 +35,15 @@ namespace KernelPanic.Entities
         public Hero(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, speed, life, attackStrength, sprite)
         {
             // TODO set mTarget to the position itself so heroes spawn non moving
+            // Kind of done... Hero starts moving when the first target command is set... :)
             // mTarget = Sprite.Position;
             ShouldMove = false;
         }
 
-        public bool AbilityAvailable()
-        {
-            return false;
-        }
-
-        public void ActivateAbility()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool AbilityActive()
-        {
-            return false;
-        }
-
+        
+        // ------------------------------------------------------------------------------------------------------------
+        // BEGIN MOVEMENT
+        
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             UpdateTarget(positionProvider, gameTime, inputManager);
@@ -107,31 +98,82 @@ namespace KernelPanic.Entities
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
             ShouldMove = true;
         }
-
-        protected virtual void UpdateAbility()
+        
+        // END MOVEMENT
+        // ------------------------------------------------------------------------------------------------------------
+        
+        // ------------------------------------------------------------------------------------------------------------
+        // BEGIN ABILITY
+        
+        protected virtual bool AbilityAvailable()
         {
+            return true;
         }
+
+        protected virtual void ActivateAbility()
+        {
+            AbilityActive = true;
+            ShouldMove = false;
+        }
+
+        public bool AbilityActive { get; set; }
+        
+        protected virtual void UpdateAbility(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        {
+            // Console.WriteLine(this + " JUST UPDATED HIS ABILITY!");
+            if (AbilityActive)
+            {
+                ContinueAbility(gameTime);
+            }
+            else
+            {
+                if (CheckAbilityStart(inputManager))
+                {
+                    ActivateAbility();
+                    ContinueAbility(gameTime);
+                }
+            }
+        }
+
+        protected virtual bool CheckAbilityStart(InputManager inputManager)
+        {
+            // return false if not ready, selected or not activated by pressing 'q': 
+            return Selected && AbilityAvailable() && inputManager.KeyPressed(Keys.Q);
+        }
+        
+        protected virtual void ContinueAbility(GameTime gameTime)
+        {
+            Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
+            AbilityActive = false;
+            // ShouldMove = true;
+        }
+        
+        protected virtual void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            
+        }
+        
+        // END ABILITY
+        // ------------------------------------------------------------------------------------------------------------
         
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
+            
+            UpdateAbility(positionProvider, gameTime, inputManager);
 
-            if (AbilityActive())
-            {
-                UpdateAbility();
-            }
             // base.Update checks for mShouldMove
             base.Update(positionProvider, gameTime, inputManager);
             
-
         }
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawAStarPath(spriteBatch, gameTime);
             base.Draw(spriteBatch, gameTime);
+            DrawAbility(spriteBatch, gameTime);
         }
 
         private void DrawAStarPath(SpriteBatch spriteBatch, GameTime gameTime)
