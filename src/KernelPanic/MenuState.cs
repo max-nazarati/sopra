@@ -4,6 +4,7 @@ using KernelPanic.Camera;
 using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -11,9 +12,12 @@ namespace KernelPanic
     internal sealed class MenuState : AGameState
     {
         private InterfaceComponent[] mComponents;
+        private Action mEscapeAction;
 
-        private MenuState(GameStateManager gameStateManager) : base(new StaticCamera(), gameStateManager)
+        private MenuState(GameStateManager gameStateManager, Action escapeAction = null)
+            : base(new StaticCamera(), gameStateManager)
         {
+            mEscapeAction = escapeAction;
         }
 
         public static MenuState CreateMainMenu(GameStateManager stateManager)
@@ -39,7 +43,7 @@ namespace KernelPanic
             var quitButton = CreateButton( stateManager.Sprite, "Beenden", 700);
             quitButton.Clicked += _ => stateManager.ExitAction();
 
-            return new MenuState(stateManager)
+            return new MenuState(stateManager, stateManager.ExitAction)
             {
                 mComponents = new InterfaceComponent[]
                 {
@@ -258,8 +262,8 @@ namespace KernelPanic
                // TODO: change name on Button in CreatePlayMenu
            };
 
-               var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
-           mainMenuButton.Clicked += _ => stateManager.Push(CreateMainMenu(stateManager));
+           var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
+           mainMenuButton.Clicked += _ => stateManager.Restart(CreateMainMenu(stateManager));
            
            return new MenuState(stateManager)
            {
@@ -295,6 +299,14 @@ namespace KernelPanic
             {
                 component.Update(gameTime, inputManager);
             }
+
+            if (!inputManager.KeyPressed(Keys.Escape))
+                return;
+
+            if (mEscapeAction != null)
+                mEscapeAction();
+            else
+                GameStateManager.Pop();
         }
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

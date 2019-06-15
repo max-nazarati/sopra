@@ -61,6 +61,16 @@ namespace KernelPanic
             mGameStates.Push(new GameStateInfo(newGameState));
         }
 
+        /// <summary>
+        /// Clears the stack and pushes the given <see cref="AGameState"/>.
+        /// </summary>
+        /// <param name="newGameState">The new state.</param>
+        internal void Restart(AGameState newGameState)
+        {
+            mGameStates.Clear();
+            Push(newGameState);
+        }
+
         public void Update(RawInputState rawInput, GameTime gameTime)
         {
             foreach (var info in ActiveStates())

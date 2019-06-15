@@ -49,14 +49,14 @@ namespace KernelPanic
         {
             var game = new InGameState(gameStateManager);
             var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, gameStateManager);
-            gameStateManager.Push(game);
+            gameStateManager.Restart(game);
             gameStateManager.Push(hud);
         }
 
         internal static void PushGameStack(GameStateManager gameStateManager, InGameState game)
         {
             var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, gameStateManager);
-            gameStateManager.Push(game);
+            gameStateManager.Restart(game);
             gameStateManager.Push(hud);
         }
 
