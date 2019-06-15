@@ -1,5 +1,6 @@
 using System;
-﻿using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 using KernelPanic.Entities;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -35,6 +36,11 @@ namespace KernelPanic
         public bool HasEntityAt(Vector2 point)
         {
             return mQuadtree.HasEntityAt(point);
+        }
+
+        internal IEnumerable<Entity> EntitiesAt(Vector2 point)
+        {
+            return mQuadtree.EntitiesAt(point);
         }
 
         public void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
