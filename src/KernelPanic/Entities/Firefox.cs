@@ -33,13 +33,17 @@ namespace KernelPanic.Entities
             base.UpdateAbility(positionProvider, gameTime, inputManager);
         }
 
-        protected override void ActivateAbility()
+        protected override void ActivateAbility(InputManager inputManager)
         {
             AbilityActive = true;
             ShouldMove = false;
-            for (var _ = 0; _ < 5; _++)
+            var mouse = inputManager.TranslatedMousePosition;
+            var direction = mouse - Sprite.Position;
+            direction.Normalize();
+            direction *= 30;
+            for (var _ = 0; _ < 10; _++)
             {
-                mAbility.Push(new Vector2(100, 0));
+                mAbility.Push(direction);
             }
         }
         

@@ -110,7 +110,7 @@ namespace KernelPanic.Entities
             return true;
         }
 
-        protected virtual void ActivateAbility()
+        protected virtual void ActivateAbility(InputManager inputManager)
         {
             AbilityActive = true;
             ShouldMove = false;
@@ -129,7 +129,7 @@ namespace KernelPanic.Entities
             {
                 if (CheckAbilityStart(inputManager))
                 {
-                    ActivateAbility();
+                    ActivateAbility(inputManager);
                     ContinueAbility(gameTime);
                 }
             }
