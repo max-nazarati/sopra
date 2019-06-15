@@ -2,6 +2,7 @@
 using KernelPanic.Camera;
 using KernelPanic.Entities;
 using KernelPanic.Interface;
+using KernelPanic.Selection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,9 +17,12 @@ namespace KernelPanic
         [DataMember(Name = "Board")]
         private readonly Board mBoard;
         [DataMember(Name = "PlayerA")]
-        internal Player mPlayerA;
+        private Player mPlayerA;
         [DataMember(Name = "PlayerB")]
-        internal Player mPlayerB;
+        private Player mPlayerB;
+
+        [DataMember]
+        private SelectionManager mSelectionManager;
 
         private PurchaseButton<Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
         private PurchaseButton<Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
@@ -37,6 +41,7 @@ namespace KernelPanic
             mBoard = new Board(gameStateManager.Sprite);
             mPlayerA = new Player(mBoard.RightLane, mBoard.LeftLane);
             mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);
+            mSelectionManager = new SelectionManager(mPlayerA.AttackingLane, mPlayerA.DefendingLane);
 
             var entityGraph = mBoard.LeftLane.EntityGraph;
             entityGraph.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
@@ -48,14 +53,14 @@ namespace KernelPanic
         internal static void PushGameStack(GameStateManager gameStateManager)
         {
             var game = new InGameState(gameStateManager);
-            var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, gameStateManager);
+            var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, game.mSelectionManager, gameStateManager);
             gameStateManager.Restart(game);
             gameStateManager.Push(hud);
         }
 
         internal static void PushGameStack(GameStateManager gameStateManager, InGameState game)
         {
-            var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, gameStateManager);
+            var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, game.mSelectionManager, gameStateManager);
             gameStateManager.Restart(game);
             gameStateManager.Push(hud);
         }
@@ -125,6 +130,7 @@ namespace KernelPanic
                 return;
             }
 
+            mSelectionManager.Update(inputManager);
             mBoard.Update(gameTime, inputManager);
 
             mPurchaseDemoButton1.Update(gameTime, inputManager);

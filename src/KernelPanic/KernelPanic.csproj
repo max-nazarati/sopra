@@ -67,7 +67,6 @@
     <Compile Include="Entities\Unit.cs" />
     <Compile Include="Heatmap.cs" />
     <Compile Include="IBounded.cs" />
-    <Compile Include="IEntitySelection.cs" />
     <Compile Include="InGameOverlay.cs" />
     <Compile Include="InGameState.cs" />
     <Compile Include="Interface\Button.cs" />
@@ -93,6 +92,7 @@
     <Compile Include="RawInputState.cs" />
     <Compile Include="RelativePosition.cs" />
     <Compile Include="ScoreOverlay.cs" />
+    <Compile Include="Selection\SelectionManager.cs" />
     <Compile Include="SinglePurchasableAction.cs" />
     <Compile Include="SoundManager.cs" />
     <Compile Include="Grid.cs" />

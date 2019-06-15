@@ -40,37 +40,15 @@ namespace KernelPanic
 
         internal bool IsActive => mInputState.IsActive;
 
-#if false // Uncomment when used.
-        public Point LatestMouseLeftClickPosition { get; private set; }
-        public Point LatestMouseMiddleClickPosition { get; private set; }
-        public Point LatestMouseRightClickPosition { get; private set; }
+        #region Claiming
 
-        /// <summary>
-        /// Checking for and updating the newest mouse Click positions
-        /// </summary>
-        private void UpdateMouseClickPosition()
-        {
-            if (MousePressed(MouseButton.Left))
-            {
-                LatestMouseLeftClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-            
-            if (MousePressed(MouseButton.Middle))
-            {
-                LatestMouseMiddleClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-            
-            if (MousePressed(MouseButton.Right))
-            {
-                LatestMouseRightClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-        }
-#endif
+        internal bool IsClaimed(Keys key) => mInputState.IsClaimed(key);
 
-        private Point MousePosition => mInputState.CurrentMouse.Position;
+        internal bool IsClaimed(MouseButton mouseButton) => mInputState.IsClaimed(mouseButton);
 
-        internal Vector2 TranslatedMousePosition =>
-            Vector2.Transform(MousePosition.ToVector2(), mCamera.InverseTransformation);
+        #endregion
+
+        #region Keys
 
         /// <summary>
         /// checks if any of the Keyboard Buttons has been pressed (at this exact moment)
@@ -150,6 +128,15 @@ namespace KernelPanic
             return false;
         }
         */
+
+        #endregion
+
+        #region Mouse
+
+        private Point MousePosition => mInputState.CurrentMouse.Position;
+
+        internal Vector2 TranslatedMousePosition =>
+            Vector2.Transform(MousePosition.ToVector2(), mCamera.InverseTransformation);
 
         /// <summary>
         /// calculates the X and Y difference since the last update
@@ -253,6 +240,37 @@ namespace KernelPanic
             return down;
         }
 
+#if false // Uncomment when used.
+        public Point LatestMouseLeftClickPosition { get; private set; }
+        public Point LatestMouseMiddleClickPosition { get; private set; }
+        public Point LatestMouseRightClickPosition { get; private set; }
+
+        /// <summary>
+        /// Checking for and updating the newest mouse Click positions
+        /// </summary>
+        private void UpdateMouseClickPosition()
+        {
+            if (MousePressed(MouseButton.Left))
+            {
+                LatestMouseLeftClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
+            }
+            
+            if (MousePressed(MouseButton.Middle))
+            {
+                LatestMouseMiddleClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
+            }
+            
+            if (MousePressed(MouseButton.Right))
+            {
+                LatestMouseRightClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
+            }
+        }
+#endif
+
+        #endregion
+
+        #region Scroll Wheel
+
         /// <summary>
         /// calculate how far the scroll wheel got turned
         /// </summary>
@@ -280,6 +298,8 @@ namespace KernelPanic
             return ScrollWheelMovement() > 5;
         }
 
+        #endregion
+
         /* TODO uncomment this
         /// <summary>
         /// TODO
@@ -294,6 +314,8 @@ namespace KernelPanic
             return result;
         }
         */
+
+        #region Camera
 
         /// <summary>
         /// Updates the camera's translation based on the current mouse/keyboard state. 
@@ -337,5 +359,7 @@ namespace KernelPanic
                 ChooseDirection(false, ScrolledUp(), ScrolledDown())
             );
         }
+
+        #endregion
     }
 }

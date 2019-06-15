@@ -6,8 +6,8 @@ namespace KernelPanic
     internal sealed class Player
     {
         // private List<Upgrade> Upgrades;
-        private Lane mAttackingLane;
-        internal Lane mDefendingLane;
+        internal Lane AttackingLane { get; }
+        internal Lane DefendingLane { get; }
 
         [DataMember]
         public int Bitcoins { get; set; }
@@ -15,7 +15,7 @@ namespace KernelPanic
         [DataMember(Name = "Exp")]
         public int ExperiencePoints { get; set; }
 
-        internal Base Base => mDefendingLane.Target;
+        internal Base Base => DefendingLane.Target;
 
         internal Player(Lane defendingLane, Lane attackingLane) : this(50, defendingLane, attackingLane)
         {
@@ -24,8 +24,8 @@ namespace KernelPanic
         private Player(int bitcoins, Lane defendingLane, Lane attackingLane)
         {
             Bitcoins = bitcoins;
-            mAttackingLane = attackingLane;
-            mDefendingLane = defendingLane;
+            AttackingLane = attackingLane;
+            DefendingLane = defendingLane;
         }
     }
 }

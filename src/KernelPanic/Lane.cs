@@ -75,6 +75,8 @@ namespace KernelPanic
             }
         }
 
+        internal bool Contains(Vector2 point) => mGrid.Contains(point);
+
         public void Update(GameTime gameTime, InputManager inputManager)
         {
             var mouse = inputManager.TranslatedMousePosition;
