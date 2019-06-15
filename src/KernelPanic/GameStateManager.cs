@@ -69,10 +69,12 @@ namespace KernelPanic
                 var newClickTargets = new List<ClickTarget>();
                 var input = new InputManager(newClickTargets, state.Camera, rawInput);
 
-                // Invoke all clicked targets.
-                foreach (var target in info.ClickTargets.EntitiesAt(input.TranslatedMousePosition))
+                if (!rawInput.IsClaimed(InputManager.MouseButton.Left))
                 {
-                    target.Action();
+                    var possibleTargets = info.ClickTargets.EntitiesAt(input.TranslatedMousePosition);
+                    var maybeTarget = possibleTargets.FirstOrDefault();
+                    if (maybeTarget != null && input.MousePressed(InputManager.MouseButton.Left))
+                        maybeTarget.Action();
                 }
 
                 // Do the actual update.
