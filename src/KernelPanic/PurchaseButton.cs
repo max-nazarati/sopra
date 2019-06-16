@@ -1,4 +1,5 @@
 using System;
+using KernelPanic.Input;
 using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

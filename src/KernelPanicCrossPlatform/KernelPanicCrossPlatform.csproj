@@ -75,9 +75,6 @@
     <Compile Include="..\KernelPanic\Camera\StaticCamera.cs">
       <Link>Camera\StaticCamera.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\ClickTarget.cs">
-      <Link>ClickTarget.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Data\BreadthFirstSearch.cs">
       <Link>Data\BreadthFirstSearch.cs</Link>
     </Compile>
@@ -147,8 +144,14 @@
     <Compile Include="..\KernelPanic\InGameState.cs">
       <Link>InGameState.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\InputManager.cs">
-      <Link>InputManager.cs</Link>
+    <Compile Include="..\KernelPanic\Input\ClickTarget.cs">
+      <Link>Input\ClickTarget.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Input\InputManager.cs">
+      <Link>Input\InputManager.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Input\RawInputState.cs">
+      <Link>Input\RawInputState.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Interface\Button.cs">
       <Link>Interface\Button.cs</Link>
@@ -188,9 +191,6 @@
     </Compile>
     <Compile Include="..\KernelPanic\PurchaseButton.cs">
       <Link>PurchaseButton.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\RawInputState.cs">
-      <Link>RawInputState.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\ScoreOverlay.cs">
       <Link>ScoreOverlay.cs</Link>

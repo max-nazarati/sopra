@@ -2,6 +2,7 @@
 using KernelPanic.Camera;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Selection;
 using KernelPanic.Table;

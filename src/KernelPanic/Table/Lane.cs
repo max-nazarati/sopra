@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

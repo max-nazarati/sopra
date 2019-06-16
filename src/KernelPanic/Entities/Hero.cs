@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Diagnostics;
+using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;

@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Entities;
+using KernelPanic.Input;
 using KernelPanic.Table;
 
 namespace KernelPanic.Selection

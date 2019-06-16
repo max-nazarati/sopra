@@ -2,7 +2,7 @@ using System;
 using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Input
 {
     /// <summary>
     /// Associates a rectangle with an action which is invoked when the rectangle is clicked.

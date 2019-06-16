@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+using KernelPanic.Input;
 using KernelPanic.Table;
 
 namespace KernelPanic.Entities
