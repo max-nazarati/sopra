@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using KernelPanic.Sprites;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;

@@ -3,6 +3,7 @@ using KernelPanic.Camera;
 using KernelPanic.Entities;
 using KernelPanic.Interface;
 using KernelPanic.Selection;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

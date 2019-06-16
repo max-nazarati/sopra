@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using KernelPanic.Table;
 
 namespace KernelPanic
 {

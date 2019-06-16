@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

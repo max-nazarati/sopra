@@ -63,12 +63,6 @@
     <Compile Include="..\KernelPanic\AStar.cs">
       <Link>AStar.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Base.cs">
-      <Link>Base.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Board.cs">
-      <Link>Board.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\BreadthFirstSearch.cs">
       <Link>BreadthFirstSearch.cs</Link>
     </Compile>
@@ -129,9 +123,6 @@
     <Compile Include="..\KernelPanic\GameStateManager.cs">
       <Link>GameStateManager.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Grid.cs">
-      <Link>Grid.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Heatmap.cs">
       <Link>Heatmap.cs</Link>
     </Compile>
@@ -164,9 +155,6 @@
     </Compile>
     <Compile Include="..\KernelPanic\IUpdatable.cs">
       <Link>IUpdatable.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Lane.cs">
-      <Link>Lane.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
@@ -236,6 +224,18 @@
     </Compile>
     <Compile Include="..\KernelPanic\StorageManager.cs">
       <Link>StorageManager.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Table\Base.cs">
+      <Link>Table\Base.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Table\Board.cs">
+      <Link>Table\Board.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Table\Grid.cs">
+      <Link>Table\Grid.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Table\Lane.cs">
+      <Link>Table\Lane.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\KernelPanic\CollisionManager.cs">

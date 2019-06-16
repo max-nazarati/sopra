@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Table
 {
     [DataContract]
     internal sealed class Board

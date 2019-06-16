@@ -1,4 +1,4 @@
-namespace KernelPanic
+namespace KernelPanic.Table
 {
     internal sealed class Base
     {
