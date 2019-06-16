@@ -1,6 +1,9 @@
 using System;
-using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using KernelPanic.Data;
 using KernelPanic.Table;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
@@ -10,6 +13,10 @@ namespace KernelPanic
     internal sealed class ObstacleMatrix
     {
         private readonly bool[,] mObstacles;
+        private readonly Rectangle mBounds;
+
+        /*internal*/ private int Rows => mObstacles.GetLength(0);
+        /*internal*/ private int Columns => mObstacles.GetLength(1);
 
         /// <summary>
         /// Creates a new obstacle matrix without any obstacles.
@@ -25,7 +32,8 @@ namespace KernelPanic
             
             // Elements initialized to false by default.
             mObstacles = new bool[grid.LaneRectangle.Height * subTileCount, grid.LaneRectangle.Width * subTileCount];
-            
+            mBounds = grid.Bounds;
+
             // Set all elements to true which represent fields outside the lane.
             int cutoutXStart, cutoutXEnd;
             switch (grid.LaneSide)
@@ -76,6 +84,34 @@ namespace KernelPanic
             var size = mObstacles.GetLength(dimension);
             if (value < 0 || value > size)
                 throw new ArgumentOutOfRangeException(name, value, $"not in range [0; {size})");
+        }
+
+        /// <summary>
+        /// Adds all elements from <paramref name="elements"/> for which the predicate returns <c>true</c> as obstacles
+        /// into this <see cref="ObstacleMatrix"/>. Every tile—even if only intersected by a small part—is marked as an
+        /// obstacle.
+        /// </summary>
+        /// <param name="elements">The elements to add, can be a <see cref="QuadTree{T}"/>.</param>
+        /// <param name="predicate">A predicate to filter the elements.</param>
+        /// <typeparam name="T">The type of the elements, must implement <see cref="IBounded"/>.</typeparam>
+        internal void Rasterize<T>(IEnumerable<T> elements, Func<T, bool> predicate = null) where T: IBounded
+        {
+            if (predicate != null)
+                elements = elements.Where(predicate);
+            foreach (var element in elements)
+            {
+                var bounds = Rectangle.Intersect(element.Bounds, mBounds);
+                var xSize = (float) mBounds.Width / Columns;
+                var ySize = (float) mBounds.Height / Rows;
+
+                for (var i = (int) (bounds.Top / ySize); i * ySize < bounds.Bottom; ++i)
+                {
+                    for (var j = (int) (bounds.Left / xSize); j * xSize < bounds.Right; ++j)
+                    {
+                        mObstacles[i, j] = true;
+                    }
+                }
+            }
         }
     }
 }
