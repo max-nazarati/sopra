@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Data
 {
     internal enum RelativePosition
     {

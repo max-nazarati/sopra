@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using KernelPanic.Camera;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Interface;
 using KernelPanic.Selection;

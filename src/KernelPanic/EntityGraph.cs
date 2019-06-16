@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -12,9 +13,9 @@ namespace KernelPanic
     internal sealed class EntityGraph
     {
         [DataMember]
-        private readonly Quadtree<Entity> mQuadtree;
+        private readonly QuadTree<Entity> mQuadTree;
 
-        // We don't serialize this as it can be reconstructed from mQuadtree.
+        // We don't serialize this as it can be reconstructed from mQuadTree.
         private readonly ObstacleMatrix mObstacles;
 
         private readonly ImageSprite mSelectionBorder;
@@ -23,37 +24,37 @@ namespace KernelPanic
         {
             // Adjust for bounds which might (due to float/int conversions) be slightly bigger than the containing lane.
             bounds.Inflate(10, 10);
-            mQuadtree = new Quadtree<Entity>(bounds);
+            mQuadTree = new QuadTree<Entity>(bounds);
             mObstacles = obstacles;
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
         public void Add(Entity entity)
         {
-            mQuadtree.Add(entity);
+            mQuadTree.Add(entity);
         }
 
         public bool HasEntityAt(Vector2 point)
         {
-            return mQuadtree.HasEntityAt(point);
+            return mQuadTree.HasEntityAt(point);
         }
 
         internal IEnumerable<Entity> EntitiesAt(Vector2 point)
         {
-            return mQuadtree.EntitiesAt(point);
+            return mQuadTree.EntitiesAt(point);
         }
 
         public void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            foreach (var entity in mQuadtree)
+            foreach (var entity in mQuadTree)
             {
                 entity.Update(positionProvider, gameTime, inputManager);
             }
 
             // Checks whether collision works
-            foreach (var entity in mQuadtree)
+            foreach (var entity in mQuadTree)
             {
-                foreach (var nearEntity in mQuadtree.NearObjects(entity))
+                foreach (var nearEntity in mQuadTree.NearObjects(entity))
                 {
                     if (entity != nearEntity && entity.Bounds.Intersects(nearEntity.Bounds))
                     {
@@ -62,12 +63,12 @@ namespace KernelPanic
                     }
                 }
             }
-            mQuadtree.Rebuild();
+            mQuadTree.Rebuild();
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var entity in mQuadtree)
+            foreach (var entity in mQuadTree)
             {
                 if (entity.Selected)
                 {

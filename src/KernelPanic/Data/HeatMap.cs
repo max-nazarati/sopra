@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Data
 {
-    class Heatmap
+    class HeatMap
     {
         public const int Blocked = -1;
 
@@ -16,7 +16,7 @@ namespace KernelPanic
         private int mWidth;
         private int mHeight;
 
-        public Heatmap(int width, int height)
+        public HeatMap(int width, int height)
         {
             mMap = new double[height, width];
             mWidth = width;
@@ -71,19 +71,19 @@ namespace KernelPanic
         public int Height { get => mHeight;}
     }
 
-    class Vectorfield
+    class VectorField
     {
         private Vector2[,] mVectorField;
         private int mHeight;
         private int mWidth;
-        public Vectorfield(int width, int height)
+        public VectorField(int width, int height)
         {
             mVectorField = new Vector2[height, width];
             mHeight = height;
             mWidth = width;
         }
 
-        public void UpdateVectorfield(Heatmap map)
+        public void Update(HeatMap map)
         {
             if (map.Width > mWidth || map.Height > mHeight) return;
             for (int i = 0; i < map.Width; i++)

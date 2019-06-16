@@ -46,12 +46,17 @@
   <ItemGroup>
     <Compile Include="AGameState.cs" />
     <Compile Include="AStar.cs" />
-    <Compile Include="BreadthFirstSearch.cs" />
     <Compile Include="Camera\Camera2D.cs" />
     <Compile Include="Camera\Change.cs" />
     <Compile Include="Camera\ICamera.cs" />
     <Compile Include="Camera\StaticCamera.cs" />
     <Compile Include="ClickTarget.cs" />
+    <Compile Include="Data\BreadthFirstSearch.cs" />
+    <Compile Include="Data\HeatMap.cs" />
+    <Compile Include="Data\IBounded.cs" />
+    <Compile Include="Data\PriorityQueue.cs" />
+    <Compile Include="Data\QuadTree.cs" />
+    <Compile Include="Data\RelativePosition.cs" />
     <Compile Include="Entities\Building.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Firefox.cs" />
@@ -63,8 +68,6 @@
     <Compile Include="Entities\Trojan.cs" />
     <Compile Include="Entities\Troupe.cs" />
     <Compile Include="Entities\Unit.cs" />
-    <Compile Include="Heatmap.cs" />
-    <Compile Include="IBounded.cs" />
     <Compile Include="InGameOverlay.cs" />
     <Compile Include="InGameState.cs" />
     <Compile Include="Interface\Button.cs" />
@@ -73,7 +76,6 @@
     <Compile Include="PlayTime.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PositionProvider.cs" />
-    <Compile Include="PriorityQueue.cs" />
     <Compile Include="PurchasableAction.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameStateManager.cs" />
@@ -85,9 +87,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PurchaseButton.cs" />
-    <Compile Include="Quadtree.cs" />
     <Compile Include="RawInputState.cs" />
-    <Compile Include="RelativePosition.cs" />
     <Compile Include="ScoreOverlay.cs" />
     <Compile Include="Selection\SelectionManager.cs" />
     <Compile Include="SinglePurchasableAction.cs" />

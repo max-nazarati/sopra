@@ -63,9 +63,6 @@
     <Compile Include="..\KernelPanic\AStar.cs">
       <Link>AStar.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\BreadthFirstSearch.cs">
-      <Link>BreadthFirstSearch.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Camera\Camera2D.cs">
       <Link>Camera\Camera2D.cs</Link>
     </Compile>
@@ -80,6 +77,24 @@
     </Compile>
     <Compile Include="..\KernelPanic\ClickTarget.cs">
       <Link>ClickTarget.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Data\BreadthFirstSearch.cs">
+      <Link>Data\BreadthFirstSearch.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Data\HeatMap.cs">
+      <Link>Data\HeatMap.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Data\IBounded.cs">
+      <Link>Data\IBounded.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Data\PriorityQueue.cs">
+      <Link>Data\PriorityQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Data\QuadTree.cs">
+      <Link>Data\QuadTree.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Data\RelativePosition.cs">
+      <Link>Data\RelativePosition.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Building.cs">
       <Link>Entities\Building.cs</Link>
@@ -123,12 +138,6 @@
     <Compile Include="..\KernelPanic\GameStateManager.cs">
       <Link>GameStateManager.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Heatmap.cs">
-      <Link>Heatmap.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\IBounded.cs">
-      <Link>IBounded.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\IDrawable.cs">
       <Link>IDrawable.cs</Link>
     </Compile>
@@ -171,9 +180,6 @@
     <Compile Include="..\KernelPanic\PositionProvider.cs">
       <Link>PositionProvider.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\PriorityQueue.cs">
-      <Link>PriorityQueue.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
@@ -183,14 +189,8 @@
     <Compile Include="..\KernelPanic\PurchaseButton.cs">
       <Link>PurchaseButton.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Quadtree.cs">
-      <Link>Quadtree.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\RawInputState.cs">
       <Link>RawInputState.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\RelativePosition.cs">
-      <Link>RelativePosition.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\ScoreOverlay.cs">
       <Link>ScoreOverlay.cs</Link>

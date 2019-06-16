@@ -5,23 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Data
 {
     class BreadthFirstSearch
     {
         public const int Blocked = -1;
 
         private bool[,] mExplored;
-        private Heatmap mMap;
-        private Vectorfield mVectorfield;
+        private HeatMap mMap;
+        private VectorField mVectorField;
         private PriorityQueue mQueue;
         private List<Point> mGoalPoints;
 
-        public BreadthFirstSearch(Heatmap map, List<Point> goalPoints)
+        public BreadthFirstSearch(HeatMap map, List<Point> goalPoints)
         {
             mMap = map;
             mExplored = new bool[map.Height, map.Width];
-            mVectorfield = new Vectorfield(map.Width, map.Height);
+            mVectorField = new VectorField(map.Width, map.Height);
             mQueue = new PriorityQueue();
             mGoalPoints = goalPoints;
         }
@@ -94,24 +94,24 @@ namespace KernelPanic
         public void UpdateVectorField()
         {
             UpdateHeatMap();
-            mVectorfield.UpdateVectorfield(mMap);
+            mVectorField.Update(mMap);
         }
 
-        public Vectorfield Vectorfield { get => mVectorfield;}
+        public VectorField VectorField { get => mVectorField;}
 
         public void Test1()
         {
-            Heatmap emptyHeatmap = new Heatmap(8, 8);
-            emptyHeatmap.mMap[2, 1] = Blocked;
-            emptyHeatmap.mMap[3, 1] = Blocked;
-            emptyHeatmap.mMap[4, 1] = Blocked;
-            emptyHeatmap.mMap[4, 2] = Blocked;
-            emptyHeatmap.mMap[2, 3] = Blocked;
-            emptyHeatmap.mMap[3, 3] = Blocked;
-            emptyHeatmap.mMap[4, 3] = Blocked;
+            HeatMap emptyHeatMap = new HeatMap(8, 8);
+            emptyHeatMap.mMap[2, 1] = Blocked;
+            emptyHeatMap.mMap[3, 1] = Blocked;
+            emptyHeatMap.mMap[4, 1] = Blocked;
+            emptyHeatMap.mMap[4, 2] = Blocked;
+            emptyHeatMap.mMap[2, 3] = Blocked;
+            emptyHeatMap.mMap[3, 3] = Blocked;
+            emptyHeatMap.mMap[4, 3] = Blocked;
 
-            mMap = emptyHeatmap;
-            mVectorfield = new Vectorfield(emptyHeatmap.Width, emptyHeatmap.Height);
+            mMap = emptyHeatMap;
+            mVectorField = new VectorField(emptyHeatMap.Width, emptyHeatMap.Height);
             mQueue = new PriorityQueue();
             mGoalPoints.Add(new Point(2, 7));
             mGoalPoints.Add(new Point(2, 6));
@@ -139,7 +139,7 @@ namespace KernelPanic
             {
                 for (int j = 0; j < mMap.Width; j++)
                 {
-                    resultVectors += mVectorfield.Vector(new Point(j, i)).ToString();
+                    resultVectors += mVectorField.Vector(new Point(j, i)).ToString();
                     resultVectors += "  ";
                 }
 

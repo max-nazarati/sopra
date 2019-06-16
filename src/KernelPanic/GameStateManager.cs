@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -28,12 +29,12 @@ namespace KernelPanic
         private sealed class GameStateInfo
         {
             internal AGameState State { get; }
-            internal Quadtree<ClickTarget> ClickTargets { get; set; }
+            internal QuadTree<ClickTarget> ClickTargets { get; set; }
 
             internal GameStateInfo(AGameState state)
             {
                 State = state;
-                ClickTargets = Quadtree<ClickTarget>.Empty;
+                ClickTargets = QuadTree<ClickTarget>.Empty;
             }
         }
 
@@ -91,7 +92,7 @@ namespace KernelPanic
                 state.Update(input, gameTime);
 
                 // The call to Update filled newClickTargets via the reference in the InputManager.
-                info.ClickTargets = Quadtree<ClickTarget>.Create(newClickTargets);
+                info.ClickTargets = QuadTree<ClickTarget>.Create(newClickTargets);
             }
         }
 
