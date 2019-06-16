@@ -108,6 +108,7 @@
     <Compile Include="Table\Board.cs" />
     <Compile Include="Table\Grid.cs" />
     <Compile Include="Table\Lane.cs" />
+    <Compile Include="Table\TileIndex.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

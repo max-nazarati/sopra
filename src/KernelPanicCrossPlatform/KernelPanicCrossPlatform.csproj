@@ -237,6 +237,9 @@
     <Compile Include="..\KernelPanic\Table\Lane.cs">
       <Link>Table\Lane.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Table\TileIndex.cs">
+      <Link>Table\TileIndex.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\KernelPanic\CollisionManager.cs">
       <Link>CollisionManager.cs</Link>

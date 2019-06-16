@@ -316,6 +316,25 @@ namespace KernelPanic.Table
         }
 
         /// <summary>
+        /// Calculates the origin the tile identified by <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">The index of the tile.</param>
+        /// <param name="origin">Where to put the origin in the rectangle, <see cref="RelativePosition.Center"/> by default.</param>
+        /// <returns>The position of the origin, and the length of the square's sides.</returns>
+        /// <exception cref="IndexOutOfRangeException">If <paramref name="index"/> is outside the bounds of <see cref="LaneRectangle"/>.</exception>
+        internal (Vector2 Position, float Size)? GetTile(TileIndex index, RelativePosition origin = RelativePosition.Center)
+        {
+            if (index.Column / index.SubTileCount >= LaneRectangle.Width || index.Row / index.SubTileCount >= LaneRectangle.Height)
+            {
+                throw new IndexOutOfRangeException($"TileIndex {index} is out of bounds {LaneRectangle.Size}");
+            }
+
+            var subTileSize = (float) KachelSize / index.SubTileCount;
+            var position = mSprite.Position + index.ToPoint().ToVector2() + origin.RectangleOrigin(new Vector2(subTileSize));
+            return (position, subTileSize);
+        }
+
+        /// <summary>
         /// calling the different draw function
         /// </summary>
         /// <param name="spriteBatch"></param>
