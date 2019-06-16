@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Interface
 {
-    public abstract class InterfaceComponent: IDrawable
+    internal abstract class InterfaceComponent: IDrawable
     {
         internal bool Enabled { get; set; } = true;
 
