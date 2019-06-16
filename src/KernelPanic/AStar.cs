@@ -65,7 +65,7 @@ namespace KernelPanic
             mTarget = target;
             mStart = start;
 
-            // debug visually (only reason for imcludijng spritemanager)
+            // debug visually (only reason for including spritemnager)
             // mTile = content.Load<Texture2D>("LaneTile");
             mSpriteManager = spriteManager;
             mTile = Grid.CreateTile(spriteManager);
@@ -79,101 +79,69 @@ namespace KernelPanic
             UpdateStartAndTarget(inputManager);
             CalculatePath();
         }
-        
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            DrawObstacles(spriteBatch, gameTime);
-            DrawExplored(spriteBatch, gameTime);
-            // Console.WriteLine("[AStar] Drawing the path");
-            DrawPath(spriteBatch, gameTime);
-            DrawStartAndTarget(spriteBatch, gameTime);
-        }
-        
-        private void UpdateObstacles(InputManager inputManager)
-        {
-            if (inputManager.KeyPressed(Keys.D1, Keys.D2, Keys.D3, Keys.D0))
-            {
-                // mBlocked.Clear();
-                if (inputManager.KeyPressed(Keys.D1))
-                {
-                    ChangeObstacleEnvironment(1);
-                }
-
-                else if (inputManager.KeyPressed(Keys.D2))
-                {
-                    ChangeObstacleEnvironment(2);
-                }
-
-                else if (inputManager.KeyPressed(Keys.D3))
-                {
-                    ChangeObstacleEnvironment(3);
-                }
-                else
-                {
-                    ChangeObstacleEnvironment(0);
-                }
-            }
-        }
 
         private void UpdateStartAndTarget(InputManager inputManager)
         {
-            if (inputManager.KeyPressed(Keys.Up, Keys.Left, Keys.Down, Keys.Right))
+            if (!inputManager.KeyPressed(Keys.Up, Keys.Left, Keys.Down, Keys.Right)) return;
+            if (inputManager.KeyPressed(Keys.Up))
             {
-                if (inputManager.KeyPressed(Keys.Up))
+                if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
                 {
-                    if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
-                    {
-                        SetStart(new Point(mStart.X, mStart.Y - 1));
-                    }
-                    else
-                    {
-                        SetTarget(new Point(mTarget.X, mTarget.Y - 1));
-                    }
+                    SetStart(new Point(mStart.X, mStart.Y - 1));
+                }
+                else
+                {
+                    SetTarget(new Point(mTarget.X, mTarget.Y - 1));
+                }
                     
-                }
-                if (inputManager.KeyPressed(Keys.Left))
-                {
-                    if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
-                    {
-                        SetStart(new Point(mStart.X - 1, mStart.Y));
-                    }
-                    else
-                    {
-                        SetTarget(new Point(mTarget.X - 1, mTarget.Y));
-                    }
-
-                }
-                if (inputManager.KeyPressed(Keys.Down))
-                {
-                    if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
-                    {
-                        SetStart(new Point(mStart.X, mStart.Y + 1));
-                    }
-                    else
-                    {
-                        SetTarget(new Point(mTarget.X, mTarget.Y + 1));
-                    }
-                }
-                if (inputManager.KeyPressed(Keys.Right))
-                {
-                    if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
-                    {
-                        SetStart(new Point(mStart.X + 1, mStart.Y));
-                    }
-                    else
-                    {
-                        SetTarget(new Point(mTarget.X + 1, mTarget.Y));
-                    }
-                }
-                CalculatePath();
             }
+            if (inputManager.KeyPressed(Keys.Left))
+            {
+                if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
+                {
+                    SetStart(new Point(mStart.X - 1, mStart.Y));
+                }
+                else
+                {
+                    SetTarget(new Point(mTarget.X - 1, mTarget.Y));
+                }
+
+            }
+            if (inputManager.KeyPressed(Keys.Down))
+            {
+                if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
+                {
+                    SetStart(new Point(mStart.X, mStart.Y + 1));
+                }
+                else
+                {
+                    SetTarget(new Point(mTarget.X, mTarget.Y + 1));
+                }
+            }
+            if (inputManager.KeyPressed(Keys.Right))
+            {
+                if (inputManager.KeyDown(Keys.LeftShift, Keys.RightShift))
+                {
+                    SetStart(new Point(mStart.X + 1, mStart.Y));
+                }
+                else
+                {
+                    SetTarget(new Point(mTarget.X + 1, mTarget.Y));
+                }
+            }
+            CalculatePath();
         }
 
         public List<Point> Path => mPath;
 
+        #region Heuristics
+
         private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
         
         // private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
+
+        #endregion
+
 
         private void SetStart(Point start)
         {
@@ -317,7 +285,7 @@ namespace KernelPanic
             mHeap = new PriorityQueue();
             mPath = new List<Point>();
         }
-
+        
         /*
         public void test1()
         {
@@ -345,6 +313,33 @@ namespace KernelPanic
             queue.Insert(node8);
             queue.Insert(node9);
         }*/
+
+        #region ObstacleEnvironment
+        private void UpdateObstacles(InputManager inputManager)
+        {
+            if (inputManager.KeyPressed(Keys.D1, Keys.D2, Keys.D3, Keys.D0))
+            {
+                // mBlocked.Clear();
+                if (inputManager.KeyPressed(Keys.D1))
+                {
+                    ChangeObstacleEnvironment(1);
+                }
+
+                else if (inputManager.KeyPressed(Keys.D2))
+                {
+                    ChangeObstacleEnvironment(2);
+                }
+
+                else if (inputManager.KeyPressed(Keys.D3))
+                {
+                    ChangeObstacleEnvironment(3);
+                }
+                else
+                {
+                    ChangeObstacleEnvironment(0);
+                }
+            }
+        }
 
         private List<Point> CreateObstacleEnvironment(int testEnvironment = 1)
         {
@@ -411,6 +406,19 @@ namespace KernelPanic
             }
         }
 
+        #endregion ObstacleEnvironment
+
+        #region Draw
+        
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            DrawObstacles(spriteBatch, gameTime);
+            DrawExplored(spriteBatch, gameTime);
+            // Console.WriteLine("[AStar] Drawing the path");
+            DrawPath(spriteBatch, gameTime);
+            DrawStartAndTarget(spriteBatch, gameTime);
+        }
+        
         private void DrawStartAndTarget(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawTile(spriteBatch, mStart, gameTime, Color.Firebrick);
@@ -454,5 +462,8 @@ namespace KernelPanic
             mTile.TintColor = color;
             mTile.Draw(spriteBatch, gameTime);
         }
+        
+        #endregion
     }
+    
 }

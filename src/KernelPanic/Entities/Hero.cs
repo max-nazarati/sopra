@@ -41,11 +41,8 @@ namespace KernelPanic.Entities
             // mTarget = Sprite.Position;
             ShouldMove = false;
         }
-
         
-        // ------------------------------------------------------------------------------------------------------------
-        // BEGIN MOVEMENT
-        
+        #region Movement
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             UpdateTarget(positionProvider, gameTime, inputManager);
@@ -101,12 +98,9 @@ namespace KernelPanic.Entities
             ShouldMove = true;
         }
         
-        // END MOVEMENT
-        // ------------------------------------------------------------------------------------------------------------
-        
-        // ------------------------------------------------------------------------------------------------------------
-        // BEGIN ABILITY
-        
+        #endregion Movement
+
+        #region Ability
         protected virtual bool AbilityAvailable()
         {
             return Cooldown.Enabled;
@@ -156,9 +150,8 @@ namespace KernelPanic.Entities
             
         }
         
-        // END ABILITY
-        // ------------------------------------------------------------------------------------------------------------
-        
+        #endregion Ability
+
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             
