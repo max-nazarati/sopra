@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic.Table
 {
     [DataContract]
-    internal sealed class Grid
+    internal sealed class Grid : IBounded
     {
         private int mRelativeX, mRelativeY;
 
@@ -32,6 +32,8 @@ namespace KernelPanic.Table
         private static int TileCountPixelSize(int tiles) => tiles * KachelSize;
 
         private readonly Sprite mSprite;
+
+        public Rectangle Bounds => mSprite.Bounds;
 
         internal Grid(Rectangle laneBounds, SpriteManager sprites, Lane.Side laneSide)
         {
@@ -297,14 +299,13 @@ namespace KernelPanic.Table
         /// <returns><c>true</c> if the point is inside, <c>false</c> otherwise.</returns>
         internal bool Contains(Vector2 point)
         {
-            var full = mSprite.Bounds;
             var cutout = new Rectangle(
                 (int) mSprite.X + (LaneSide == Lane.Side.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
                 TileCountPixelSize(LaneWidthInTiles),
                 TileCountPixelSize(LaneRectangle.Width - LaneWidthInTiles),
                 TileCountPixelSize(LaneRectangle.Height - 2 * LaneWidthInTiles));
 
-            return full.Contains(point) && !cutout.Contains(point);
+            return Bounds.Contains(point) && !cutout.Contains(point);
         }
 
         /// <summary>
