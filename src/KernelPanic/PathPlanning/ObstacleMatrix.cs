@@ -5,7 +5,7 @@ using KernelPanic.Data;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.PathPlanning
 {
     /// <summary>
     /// Represents a 2-dimensional matrix which stores the existence or non-existence of obstacles on a specific tile.

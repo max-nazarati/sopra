@@ -75,6 +75,7 @@
     <Compile Include="Interface\InterfaceComponent.cs" />
     <Compile Include="Interface\StaticComponent.cs" />
     <Compile Include="PathPlanning\AStar.cs" />
+    <Compile Include="PathPlanning\ObstacleMatrix.cs" />
     <Compile Include="PathPlanning\Visualizer.cs" />
     <Compile Include="PlayTime.cs" />
     <Compile Include="Player.cs" />
@@ -104,7 +105,6 @@
     <Compile Include="CollisionManager.cs" />
     <Compile Include="CooldownComponent.cs" />
     <Compile Include="Sprites\AnimatedSprite.cs" />
-    <Compile Include="ObstacleMatrix.cs" />
     <Compile Include="Table\Base.cs" />
     <Compile Include="Table\Board.cs" />
     <Compile Include="Table\Grid.cs" />

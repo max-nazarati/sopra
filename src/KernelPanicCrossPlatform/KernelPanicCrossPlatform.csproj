@@ -168,11 +168,11 @@
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\ObstacleMatrix.cs">
-      <Link>ObstacleMatrix.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\AStar.cs">
       <Link>PathPlanning\AStar.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\PathPlanning\ObstacleMatrix.cs">
+      <Link>PathPlanning\ObstacleMatrix.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\Visualizer.cs">
       <Link>PathPlanning\Visualizer.cs</Link>
