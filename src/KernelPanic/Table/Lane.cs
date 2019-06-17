@@ -92,8 +92,10 @@ namespace KernelPanic.Table
                 {
                     var (position, size) = gridPoint.Value;
                     if (!EntityGraph.HasEntityAt(position))
+                    {
                         EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
                         mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
+                    }
                 }
             }
 
