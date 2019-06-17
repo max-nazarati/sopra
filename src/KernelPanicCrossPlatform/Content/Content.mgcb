@@ -126,7 +126,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/heroes/firefox_jumping.png;firefox_jumping.png
+/build:../../KernelPanic/Content/heroes/firefox_jumping.png;heroes/firefox_jumping.png
 
 #begin ../../KernelPanic/Content/heroes/firefox_left.png
 /importer:TextureImporter
@@ -138,7 +138,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/heroes/firefox_left.png;firefox_left.png
+/build:../../KernelPanic/Content/heroes/firefox_left.png;heroes/firefox_left.png
 
 #begin ../../KernelPanic/Content/heroes/firefox_standing.png
 /importer:TextureImporter
