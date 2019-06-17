@@ -48,8 +48,6 @@ namespace KernelPanic.Table
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
-        private AStar mAStar;
-
         private static Rectangle LaneBoundsInTiles(Side laneSide) =>
             new Rectangle(laneSide == Side.Left ? 0 : 32, 0, 16, 42);
 
@@ -73,11 +71,6 @@ namespace KernelPanic.Table
             EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), new ObstacleMatrix(mGrid), sprites);
             Target = new Base();
             mSpriteManager = sprites;
-            
-            if (VISUAL_DEBUG)
-            {
-                InitAStar(sprites);
-            }
         }
 
         internal bool Contains(Vector2 point) => mGrid.Contains(point);
@@ -103,21 +96,12 @@ namespace KernelPanic.Table
 
             var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
-            if (VISUAL_DEBUG)
-            {
-                mAStar.Update(inputManager);
-            }
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
-            if (VISUAL_DEBUG)
-            {
-               mAStar.Draw(spriteBatch, gameTime); // visual demo
-            }
-               
         }
         
         public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
@@ -145,19 +129,5 @@ namespace KernelPanic.Table
                 }
             }
         }
-        
-        // -------------------------- A STAR DEMO ----------------------------------------------------------------------
-        private void InitAStar(SpriteManager sprite, int obstacleEnv=2)
-        {
-            // set start and target
-            Point start = new Point(0, 0);
-            Point target = new Point(0, 15);
-            
-            mAStar = new AStar(mGrid.CoordSystem, start, target, new ObstacleMatrix(mGrid), sprite);
-            mAStar.ChangeObstacleEnvironment(obstacleEnv);
-       
-            mAStar.CalculatePath();
-        }
-        // ------------------------------------------------------------------------------------------------------------
     }
 }
