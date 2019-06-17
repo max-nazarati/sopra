@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../../KernelPanic/Content/Arrow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/Arrow.png;Arrow.png
+
 #begin ../../KernelPanic/Content/ball.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -116,30 +128,6 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/heroes/firefox_jumping.png;firefox_jumping.png
 
-#begin ../../KernelPanic/Content/heroes/firefox_jumping.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/heroes/firefox_jumping.png;firefox_jumping.png
-
-#begin ../../KernelPanic/Content/heroes/firefox_left.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/heroes/firefox_left.png;firefox_left.png
-
 #begin ../../KernelPanic/Content/heroes/firefox_left.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -230,6 +218,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/LaneTile.png;LaneTile.png
+
+#begin ../../KernelPanic/Content/LaneTileBorder.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/LaneTileBorder.png;LaneTileBorder.png
 
 #begin ../../KernelPanic/Content/loading.png
 /importer:TextureImporter
@@ -471,18 +471,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/troupes/thunderbird.png;thunderbird.png
-
-#begin ../../KernelPanic/Content/troupes/trojan.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/troupes/trojan.png;trojan.png
 
 #begin ../../KernelPanic/Content/troupes/trojan.png
 /importer:TextureImporter
