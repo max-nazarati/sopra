@@ -43,7 +43,7 @@ namespace KernelPanic.Entities
             MaximumLife = life;
             RemainingLife = life;
             AttackStrength = attackStrength;
-            ShouldMove = true;
+            mShouldMove = true;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace KernelPanic.Entities
             if (Sprite is AnimatedSprite animation)
             {
                 // children - classes want to know if movement is allowed(mShouldMove)
-                if (ShouldMove && MoveVector is Vector2 movement)
+                if (mShouldMove && MoveVector is Vector2 movement)
                 {
                     Sprite.Position += movement;
                     // choose correct movement animation

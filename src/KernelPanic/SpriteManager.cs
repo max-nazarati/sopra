@@ -24,7 +24,25 @@ namespace KernelPanic
             Trojan,
             SelectionBorder,
             Firefox,
-            FoxJump
+            FoxJump,
+            Base1,
+            Base2,
+            Skill,
+            Bluescreen,
+            Settings,
+            Antivirus,
+            CDThrower,
+            CD,
+            Cursor,
+            Fan,
+            Mouse,
+            Router,
+            ShockField,
+            Wires,
+            Bug,
+            Nokia,
+            Thunderbird,
+            Virus
         }
 
         private enum Font
@@ -54,6 +72,24 @@ namespace KernelPanic
                 Texture(Image.Trojan, "troupes/trojan"),
                 Texture(Image.Firefox, "heroes/firefox"),
                 Texture(Image.FoxJump, "heroes/firefox_jumping"),
+                Texture(Image.Antivirus, "towers/antivirus"),
+                Texture(Image.Base1, "base_1"),
+                Texture(Image.Base2, "base_2"),
+                Texture(Image.Bluescreen, "heroes/bluescreen"),
+                Texture(Image.CD, "towers/cd"),
+                Texture(Image.CDThrower, "towers/cd_thrower"),
+                Texture(Image.Cursor, "towers/cursor"),
+                Texture(Image.Fan, "towers/fan"),
+                Texture(Image.Mouse, "towers/mouse"),
+                Texture(Image.Router, "towers/router"),
+                Texture(Image.Settings, "heroes/settings"),
+                Texture(Image.ShockField, "towers/shock_field"),
+                Texture(Image.Skill, "skill_tile"),
+                Texture(Image.Wires, "towers/wires"),
+                Texture(Image.Bug, "troupes/bug"),
+                Texture(Image.Nokia, "troupes/nokia"),
+                Texture(Image.Thunderbird, "troupes/thunderbird"),
+                Texture(Image.Virus, "troupes/virus"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);

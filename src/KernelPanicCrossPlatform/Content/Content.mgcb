@@ -518,5 +518,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/troupes/virus.png;virus.png
+/build:../../KernelPanic/Content/troupes/virus.png;troupes/virus.png
 

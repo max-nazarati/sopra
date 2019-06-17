@@ -39,7 +39,7 @@ namespace KernelPanic.Entities
             // TODO set mTarget to the position itself so heroes spawn non moving
             // Kind of done... Hero starts moving when the first target command is set... :)
             // mTarget = Sprite.Position;
-            ShouldMove = false;
+            mShouldMove = false;
         }
         
         #region Movement
@@ -73,7 +73,7 @@ namespace KernelPanic.Entities
             }
             else // stop moving if target is reached;
             {
-                ShouldMove = false;
+                mShouldMove = false;
             }
             
             // MoveTarget will be used by the Update Function (of the base class 'unit') to move the object
@@ -96,7 +96,7 @@ namespace KernelPanic.Entities
             var mouse = inputManager.TranslatedMousePosition;
             if (positionProvider.GridCoordinate(mouse) == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
-            ShouldMove = true;
+            mShouldMove = true;
         }
         
         #endregion Movement
@@ -110,7 +110,7 @@ namespace KernelPanic.Entities
         protected virtual void ActivateAbility(InputManager inputManager)
         {
             AbilityActive = true;
-            ShouldMove = false;
+            mShouldMove = false;
             Cooldown.Reset();
         }
 
