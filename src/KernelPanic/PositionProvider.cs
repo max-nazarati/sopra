@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using KernelPanic.Entities;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
@@ -21,18 +21,11 @@ namespace KernelPanic
         {
             return mGrid.GridPointFromWorldPoint(position, subTileCount)?.Position;
         }
-        
-        internal AStar MakePathFinding(Vector2? start, Vector2? target)
-        {
-            Point startPoint = new Point((int)start?.X, (int)start?.Y);
-            Point targetPoint = new Point((int)target?.X, (int)target?.Y);
-            return MakePathFinding(startPoint, targetPoint);
-        }
-        
-        internal AStar MakePathFinding(Point start, Point target)
+
+        internal AStar MakePathFinding(Entity entity, Point start, Point target)
         {
             var matrixObstacles = new ObstacleMatrix(mGrid);
-            matrixObstacles.Rasterize(mEntities, mGrid.Bounds);
+            matrixObstacles.Rasterize(mEntities, mGrid.Bounds, e => e != entity);
             var aStar = new AStar(mGrid.CoordSystem, start, target, matrixObstacles, mSpriteManager);
             aStar.ChangeObstacleEnvironment(1);
             aStar.CalculatePath();

@@ -53,7 +53,7 @@ namespace KernelPanic.Entities
             var target = mTarget / new Point(100, 100);
             
             // calculate the path
-            mAStar = positionProvider.MakePathFinding(startPoint, target);
+            mAStar = positionProvider.MakePathFinding(this, startPoint, target);
             var path = mAStar.Path;
             
             // TODO get the next position of the path (should be at path[0]; something is ****ed up tho)...
