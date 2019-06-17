@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    public class AStar
+    internal sealed class AStar
     {
         private List<Point> mCoordinateList;
         private List<Point> mExploredNodes;
@@ -21,21 +21,22 @@ namespace KernelPanic
         // mainly debugging reasons for now
         private List<Point> mBlocked;
         private List<Point> mWalkable;
+        private readonly ObstacleMatrix mObstacles;
         
         // debugging the path visually
         private readonly SpriteManager mSpriteManager;
         private List<Point> mPath;
         private readonly ImageSprite mTile;
 
-        
         /// <summary>
         /// /// start and target as Point
         /// </summary>
         /// <param name="coordinateList"></param>
         /// <param name="start"></param>
         /// <param name="target"></param>
+        /// <param name="obstacles"></param>
         /// <param name="spriteManager"></param>
-        internal AStar(List<Point> coordinateList, Point start, Point target, SpriteManager spriteManager)
+        internal AStar(List<Point> coordinateList, Point start, Point target, ObstacleMatrix obstacles, SpriteManager spriteManager)
         {
             mCoordinateList = coordinateList;
             mExploredNodes = new List<Point>();
@@ -48,6 +49,7 @@ namespace KernelPanic
             mTile = Grid.CreateTileBorder(spriteManager);
             mWalkable = new List<Point>(); // = coordinateList;
             mBlocked = new List<Point>();
+            mObstacles = obstacles;
         }
         
         public void Update(InputManager inputManager)
@@ -140,64 +142,36 @@ namespace KernelPanic
 
         private bool IsTargetPosition(Point position) => position == mTarget;
 
-        private List<Node> CreateNeighbours(Node node)
+        private IEnumerable<Node> CreateNeighbours(Node node)
         {
-            var neighbours = new List<Node>();
-            var x = node.Position.X;
-            var y = node.Position.Y;
-            var up = new Point(x, y - 1);
-            var left = new Point(x - 1, y);
-            var down = new Point(x, y + 1);
-            var right = new Point(x + 1, y);
-            double estimatedCost;
             var cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
-            bool isStartNode; // = false;
-            bool isTargetNode; // = false;
 
-            if (mWalkable.Contains(up))
+            Node CreateNode(int xOffset, int yOffset)
             {
-                estimatedCost = EuclidHeuristic(up);
-                isStartNode = IsStartPosition(up);
-                isTargetNode = IsTargetPosition(up);
-                Node nodeUp = new Node(up, node, cost, estimatedCost, isStartNode, isTargetNode);
-                neighbours.Add(nodeUp);
+                var point = node.Position + new Point(xOffset, yOffset);
+                if (mObstacles[point])
+                    return null;
+
+                var estimatedCost = EuclidHeuristic(point);
+                var isStartNode = IsStartPosition(point);
+                var isGoalNode = IsTargetPosition(point);
+                return new Node(point, node, cost, estimatedCost, isStartNode, isGoalNode);
             }
 
-            if (mWalkable.Contains(down))
-            {
-                estimatedCost = EuclidHeuristic(down);
-                isStartNode = IsStartPosition(down);
-                isTargetNode = IsTargetPosition(down);
-                Node nodeDown = new Node(down, node, cost, estimatedCost, isStartNode, isTargetNode);
-                neighbours.Add(nodeDown);
-            }
-
-            if (mWalkable.Contains(left))
-            {
-                estimatedCost = EuclidHeuristic(left);
-                isStartNode = IsStartPosition(left);
-                isTargetNode = IsTargetPosition(left);
-                Node nodeLeft = new Node(left, node, cost, estimatedCost, isStartNode, isTargetNode);
-                neighbours.Add(nodeLeft);
-            }
-
-            if (mWalkable.Contains(right))
-            {
-                estimatedCost = EuclidHeuristic(right);
-                isStartNode = IsStartPosition(right);
-                isTargetNode = IsTargetPosition(right);
-                Node nodeRight = new Node(right, node, cost, estimatedCost, isStartNode, isTargetNode);
-                neighbours.Add(nodeRight);
-            }
-
-            return neighbours;
+            if (CreateNode(0, -1) is Node up)
+                yield return up;
+            if (CreateNode(0, 1) is Node down)
+                yield return down;
+            if (CreateNode(-1, 0) is Node left)
+                yield return left;
+            if (CreateNode(1, 0) is Node right)
+                yield return right;
         }
 
         private void ExpandNode(Node node)
         {
             if (mExploredNodes.Contains(node.Position)) return;
-            List<Node> neighbours = CreateNeighbours(node);
-            foreach (var neighbour in neighbours)
+            foreach (var neighbour in CreateNeighbours(node))
             {
                 if (!mExploredNodes.Contains(neighbour.Position)) mHeap.Insert(neighbour);
                 // Console.WriteLine(neighbour.Position.ToString());

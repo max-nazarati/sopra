@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Threading;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
@@ -34,9 +31,9 @@ namespace KernelPanic
         
         internal AStar MakePathFinding(Point start, Point target)
         {
-            // List<Point> obstacles = mEntities.Obstacles;
-            var obstacles =  new List<Point>();
-            var aStar = new AStar(mGrid.CoordSystem, start, target, mSpriteManager);
+            var matrixObstacles = new ObstacleMatrix(mGrid);
+            matrixObstacles.Rasterize(mEntities, mGrid.Bounds);
+            var aStar = new AStar(mGrid.CoordSystem, start, target, matrixObstacles, mSpriteManager);
             aStar.ChangeObstacleEnvironment(1);
             aStar.CalculatePath();
             return aStar;

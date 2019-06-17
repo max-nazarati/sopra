@@ -152,7 +152,7 @@ namespace KernelPanic.Table
             Point start = new Point(0, 0);
             Point target = new Point(0, 15);
             
-            mAStar = new AStar(mGrid.CoordSystem, start, target, sprite);
+            mAStar = new AStar(mGrid.CoordSystem, start, target, new ObstacleMatrix(mGrid), sprite);
             mAStar.ChangeObstacleEnvironment(obstacleEnv);
        
             mAStar.CalculatePath();
