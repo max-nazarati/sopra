@@ -37,7 +37,7 @@ namespace KernelPanic.Interface
             }
         }
 
-        internal override void Update(GameTime gameTime, InputManager inputManager)
+        public override void Update(InputManager inputManager, GameTime gameTime)
         {
             inputManager.RegisterClickTarget(Sprite.Bounds, () =>
             {

@@ -135,7 +135,7 @@ namespace KernelPanic
 
             mPurchaseDemoButton1.Update(gameTime, inputManager);
             mPurchaseDemoButton2.Update(gameTime, inputManager);
-            mPurchaseDemoReset.Update(gameTime, inputManager);
+            mPurchaseDemoReset.Update(inputManager, gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

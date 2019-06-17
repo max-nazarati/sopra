@@ -13,7 +13,7 @@ namespace KernelPanic.Interface
             Sprite = sprite;
         }
 
-        internal override void Update(GameTime gameTime, InputManager inputManager)
+        public override void Update(InputManager inputManager, GameTime gameTime)
         {
             // Nothing to update.
         }

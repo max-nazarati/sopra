@@ -50,7 +50,7 @@ namespace KernelPanic
         
         public void Update(GameTime gameTime, InputManager inputManager)
         {
-            Button.Update(gameTime, inputManager);
+            Button.Update(inputManager, gameTime);
             Button.Enabled = PossiblyEnabled && Action.Available(Player);
         }
 

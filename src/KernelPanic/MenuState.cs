@@ -324,7 +324,7 @@ namespace KernelPanic
         {
             foreach(var component in mComponents)
             {
-                component.Update(gameTime, inputManager);
+                component.Update(inputManager, gameTime);
             }
 
             if (!inputManager.KeyPressed(Keys.Escape))
