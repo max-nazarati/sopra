@@ -1,4 +1,5 @@
 using System;
+using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
@@ -6,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal sealed class PurchaseButton<TResource, TAction>: IDrawable
+    internal sealed class PurchaseButton<TResource, TAction>: IDrawable, IUpdatable, IBounded
         where TResource: class, IPriced
         where TAction: PurchasableAction<TResource>
     {
@@ -33,6 +34,9 @@ namespace KernelPanic
         /// </summary>
         internal bool PossiblyEnabled { get; set; } = true;
 
+        /// <inheritdoc />
+        public Rectangle Bounds => Button.Bounds;
+
         /// <summary>
         /// Creates a <code>PurchaseButton</code> so that a click on it purchases
         /// <paramref name="action"/> for <paramref name="player"/>.
@@ -48,7 +52,7 @@ namespace KernelPanic
             Button.Clicked += Purchase;
         }
         
-        public void Update(GameTime gameTime, InputManager inputManager)
+        public void Update(InputManager inputManager, GameTime gameTime)
         {
             Button.Update(inputManager, gameTime);
             Button.Enabled = PossiblyEnabled && Action.Available(Player);

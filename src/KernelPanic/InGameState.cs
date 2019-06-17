@@ -133,8 +133,8 @@ namespace KernelPanic
             mSelectionManager.Update(inputManager);
             mBoard.Update(gameTime, inputManager);
 
-            mPurchaseDemoButton1.Update(gameTime, inputManager);
-            mPurchaseDemoButton2.Update(gameTime, inputManager);
+            mPurchaseDemoButton1.Update(inputManager, gameTime);
+            mPurchaseDemoButton2.Update(inputManager, gameTime);
             mPurchaseDemoReset.Update(inputManager, gameTime);
         }
 
