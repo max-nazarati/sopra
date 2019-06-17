@@ -33,6 +33,7 @@ namespace KernelPanic.Interface
             {
                 mBackground.TintColor = value ? Color.White : Color.Gray;
                 mTitleSprite.TextColor = value ? Color.Black : Color.DarkGray;
+                base.Enabled = value;
             }
         }
 
