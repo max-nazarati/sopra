@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Diagnostics;
+using KernelPanic.Input;
 using KernelPanic.Sprites;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,7 +13,7 @@ namespace KernelPanic.Entities
     [KnownType(typeof(Firefox))]
     internal class Hero : Unit
     {
-        // public CooldownComponent Cooldown { get; set; }
+        protected CooldownComponent Cooldown { get; set; }
         
         
         private AStar mAStar; // save the AStar for path-drawing
@@ -39,11 +39,8 @@ namespace KernelPanic.Entities
             // mTarget = Sprite.Position;
             ShouldMove = false;
         }
-
         
-        // ------------------------------------------------------------------------------------------------------------
-        // BEGIN MOVEMENT
-        
+        #region Movement
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             UpdateTarget(positionProvider, gameTime, inputManager);
@@ -52,7 +49,7 @@ namespace KernelPanic.Entities
             var start = Sprite.Position;
             var startPoint = new Point((int)start.X, (int)start.Y) / new Point(100, 100);
             
-            // set the target Position for the Astar (latest updated target should be saved in mTarget
+            // set the target Position for the AStar (latest updated target should be saved in mTarget
             var target = mTarget / new Point(100, 100);
             
             // calculate the path
@@ -99,21 +96,19 @@ namespace KernelPanic.Entities
             ShouldMove = true;
         }
         
-        // END MOVEMENT
-        // ------------------------------------------------------------------------------------------------------------
-        
-        // ------------------------------------------------------------------------------------------------------------
-        // BEGIN ABILITY
-        
+        #endregion Movement
+
+        #region Ability
         protected virtual bool AbilityAvailable()
         {
-            return true;
+            return Cooldown.Enabled;
         }
 
         protected virtual void ActivateAbility(InputManager inputManager)
         {
             AbilityActive = true;
             ShouldMove = false;
+            Cooldown.Reset();
         }
 
         public bool AbilityActive { get; set; }
@@ -153,15 +148,16 @@ namespace KernelPanic.Entities
             
         }
         
-        // END ABILITY
-        // ------------------------------------------------------------------------------------------------------------
-        
+        #endregion Ability
+
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
             
+            Cooldown.Update(gameTime);
             UpdateAbility(positionProvider, gameTime, inputManager);
 
             // base.Update checks for mShouldMove

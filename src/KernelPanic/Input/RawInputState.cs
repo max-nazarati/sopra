@@ -2,7 +2,7 @@ using System.Collections;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace KernelPanic
+namespace KernelPanic.Input
 {
     /// <summary>
     /// Keeps track of the current and previous mouse and keyboard state.

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 ﻿using KernelPanic.Sprites;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities

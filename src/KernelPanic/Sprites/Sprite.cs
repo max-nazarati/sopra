@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.ComponentModel;
+using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -45,7 +46,8 @@ namespace KernelPanic.Sprites
         /// <inheritdoc />
         // TODO: This doesn't factor in rotation which might distort the surrounding rectangle.
         //       But maybe we don't even want this but the current behaviour.
-        public virtual Rectangle Bounds => KernelPanic.Bounds.ContainingRectangle(Position - Scale * Origin, Size);
+        public virtual Rectangle Bounds =>
+            KernelPanic.Data.Bounds.ContainingRectangle(Position - Scale * Origin, Size);
 
         #endregion
 

@@ -1,9 +1,10 @@
-﻿using KernelPanic.Sprites;
+﻿using KernelPanic.Input;
+using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Interface
 {
-    public sealed class Button : InterfaceComponent
+    internal sealed class Button : InterfaceComponent
     {
         internal delegate void Delegate(Button sender);
 

@@ -5,7 +5,7 @@ using KernelPanic.Camera;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace KernelPanic
+namespace KernelPanic.Input
 {
     /// <summary>
     /// Handles all input coming from the mouse and the keyboard including de-bouncing.

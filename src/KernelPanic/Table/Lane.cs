@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace KernelPanic
+namespace KernelPanic.Table
 {
     [DataContract]
     internal sealed class Lane
@@ -40,8 +42,8 @@ namespace KernelPanic
         private int mWidth = 16;
         private int mHeight = 42;
         private int mLaneWidth = 10;
-        private Heatmap mCoordinateMap;
-        private Vectorfield mVectorField;
+        private HeatMap mCoordinateMap;
+        private VectorField mVectorField;
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
@@ -123,7 +125,7 @@ namespace KernelPanic
 
         public void InitCoordinateMap()
         {
-            mCoordinateMap = new Heatmap(mWidth, mHeight);
+            mCoordinateMap = new HeatMap(mWidth, mHeight);
             int xAxisReflection = 1;
             int xAxisTranslation = 0;
             if (mLaneSide == Side.Left)
@@ -136,7 +138,7 @@ namespace KernelPanic
             {
                 for (int j = 0; j < mWidth - mLaneWidth; j++)
                 {
-                    mCoordinateMap.mMap[i, j * xAxisReflection + xAxisTranslation] = Heatmap.Blocked;
+                    mCoordinateMap.mMap[i, j * xAxisReflection + xAxisTranslation] = HeatMap.Blocked;
                 }
             }
         }

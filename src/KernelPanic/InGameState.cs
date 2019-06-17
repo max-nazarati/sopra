@@ -1,8 +1,11 @@
 ﻿using System.Runtime.Serialization;
 using KernelPanic.Camera;
+using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Selection;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

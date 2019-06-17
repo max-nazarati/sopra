@@ -1,10 +1,11 @@
-﻿using KernelPanic.Sprites;
+﻿using KernelPanic.Input;
+using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Interface
 {
-    public abstract class InterfaceComponent: IDrawable
+    internal abstract class InterfaceComponent: IDrawable
     {
         internal bool Enabled { get; set; } = true;
 
