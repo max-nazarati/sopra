@@ -21,7 +21,7 @@ namespace KernelPanic.Entities
         private Point mTarget; // the target we wish to move to
 
         private Visualizer mPathVisualizer;
-        // protected InputManager mInputManager;
+        protected InputManager InputManager;
 
         /// <summary>
         /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
@@ -157,7 +157,7 @@ namespace KernelPanic.Entities
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            mInputManager = inputManager;
+            InputManager = inputManager;
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
