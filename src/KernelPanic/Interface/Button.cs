@@ -10,19 +10,30 @@ namespace KernelPanic.Interface
 
         internal event Delegate Clicked;
 
+        private readonly ImageSprite mBackground;
         private readonly TextSprite mTitleSprite;
 
         internal override Sprite Sprite { get; }
 
         internal Button(SpriteManager sprites)
         {
-            (Sprite, mTitleSprite) = sprites.CreateButton();
+            (Sprite, mBackground, mTitleSprite) = sprites.CreateButton();
         }
 
         internal string Title
         {
             get => mTitleSprite.Text;
             set => mTitleSprite.Text = value;
+        }
+
+        internal override bool Enabled
+        {
+            get => base.Enabled;
+            set
+            {
+                mBackground.TintColor = value ? Color.White : Color.Gray;
+                mTitleSprite.TextColor = value ? Color.Black : Color.DarkGray;
+            }
         }
 
         internal override void Update(GameTime gameTime, InputManager inputManager)

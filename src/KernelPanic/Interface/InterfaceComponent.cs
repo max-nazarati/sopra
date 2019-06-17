@@ -7,7 +7,7 @@ namespace KernelPanic.Interface
 {
     internal abstract class InterfaceComponent: IDrawable
     {
-        internal bool Enabled { get; set; } = true;
+        internal virtual bool Enabled { get; set; } = true;
 
         internal abstract Sprite Sprite { get; }
 

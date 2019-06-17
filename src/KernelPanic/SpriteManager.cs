@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using KernelPanic.Data;
 using KernelPanic.Sprites;
@@ -152,7 +153,7 @@ namespace KernelPanic
             };
         }
 
-        internal (Sprite, TextSprite) CreateButton()
+        internal (Sprite, ImageSprite, TextSprite) CreateButton()
         {
             var background = new ImageSprite(Lookup(Image.ButtonBackground), 0, 0)
             {
@@ -166,6 +167,7 @@ namespace KernelPanic
                 {
                     Children = {background, titleSprite}
                 },
+                background,
                 titleSprite
             );
         }
