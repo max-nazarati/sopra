@@ -77,12 +77,4 @@ namespace KernelPanic.Entities
 
         #endregion
     }
-
-    internal static class EnumerableExtensions
-    {
-        internal static IEnumerable<T> Extend<T>(this IEnumerable<T> enumerable, params T[] values)
-        {
-            return enumerable.Concat(values);
-        }
-    }
 }
