@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Table;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Entities
 {
@@ -63,5 +64,26 @@ namespace KernelPanic.Entities
             var jumpDistance = mAbility.Pop();
             Sprite.Position += jumpDistance;
         }
+
+        #region Indicator
+        
+        #if false // indicator will get implemented if we have spare time
+        private void DrawIndicator(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            var mousePosition = mInputManager.TranslatedMousePosition;
+            var direction = (mousePosition - Sprite.Position);
+            direction.Normalize();
+            // var rotation = Math.Cos(direction);
+        }
+        
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            base.Draw(spriteBatch, gameTime);
+            // DrawIndicator(spriteBatch, gameTime);
+        }
+        
+        #endif
+        
+        #endregion
     }
 }
