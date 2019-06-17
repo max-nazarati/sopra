@@ -66,7 +66,7 @@ namespace KernelPanic.Entities
 
             public Rectangle Bounds => Provider.Bounds;
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime) => Provider.Draw(spriteBatch, gameTime);
-            public void Update(GameTime gameTime) => Provider.Update(gameTime);
+            public void Update(InputManager inputManager, GameTime gameTime) => Provider.Update(inputManager, gameTime);
         }
 
         #endregion
