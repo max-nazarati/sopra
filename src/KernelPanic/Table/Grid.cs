@@ -322,7 +322,7 @@ namespace KernelPanic.Table
         /// <param name="origin">Where to put the origin in the rectangle, <see cref="RelativePosition.Center"/> by default.</param>
         /// <returns>The position of the origin, and the length of the square's sides.</returns>
         /// <exception cref="IndexOutOfRangeException">If <paramref name="index"/> is outside the bounds of <see cref="LaneRectangle"/>.</exception>
-        internal (Vector2 Position, float Size)? GetTile(TileIndex index, RelativePosition origin = RelativePosition.Center)
+        internal (Vector2 Position, float Size) GetTile(TileIndex index, RelativePosition origin = RelativePosition.Center)
         {
             if (index.Column / index.SubTileCount >= LaneRectangle.Width || index.Row / index.SubTileCount >= LaneRectangle.Height)
             {
