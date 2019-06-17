@@ -25,31 +25,8 @@ namespace KernelPanic
         // debugging the path visually
         private readonly SpriteManager mSpriteManager;
         private List<Point> mPath;
-        private ImageSprite mTile;
+        private readonly ImageSprite mTile;
 
-
-        /// <summary>
-        /// start and target as Vector
-        /// </summary>
-        /// <param name="coordinateList"></param>
-        /// <param name="start"></param>
-        /// <param name="target"></param>
-        /// <param name="spriteManager"></param>
-        internal AStar(List<Point> coordinateList, Vector2 start, Vector2 target, SpriteManager spriteManager)
-        {
-            mCoordinateList = coordinateList;
-            mExploredNodes = new List<Point>();
-            
-            mStart = new Point((int) start.X, (int) start.Y);
-            mTarget = new Point((int)target.X, (int)target.Y);
-
-            // debug visually (only reason for imcludijng spritemanager)
-            // mTile = content.Load<Texture2D>("LaneTile");
-            mSpriteManager = spriteManager;
-            mTile = Grid.CreateTile(spriteManager);
-            mWalkable = new List<Point>(); // = coordinateList;
-            mBlocked = new List<Point>();
-        }
         
         /// <summary>
         /// /// start and target as Point
@@ -68,7 +45,7 @@ namespace KernelPanic
             // debug visually (only reason for including spritemnager)
             // mTile = content.Load<Texture2D>("LaneTile");
             mSpriteManager = spriteManager;
-            mTile = Grid.CreateTile(spriteManager);
+            mTile = Grid.CreateTileBorder(spriteManager);
             mWalkable = new List<Point>(); // = coordinateList;
             mBlocked = new List<Point>();
         }
@@ -421,8 +398,8 @@ namespace KernelPanic
         
         private void DrawStartAndTarget(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            DrawTile(spriteBatch, mStart, gameTime, Color.Firebrick);
-            DrawTile(spriteBatch, mTarget, gameTime, Color.Firebrick);
+            DrawTile(spriteBatch, mStart, gameTime, Color.Turquoise);
+            DrawTile(spriteBatch, mTarget, gameTime, Color.Blue);
         }
 
         private void DrawExplored(SpriteBatch spriteBatch, GameTime gameTime)
@@ -431,7 +408,7 @@ namespace KernelPanic
 
             foreach (var point in mExploredNodes)
             {
-                DrawTile(spriteBatch, point, gameTime, Color.Pink);
+                DrawTile(spriteBatch, point, gameTime, Color.Yellow);
             }
         }
 
@@ -442,7 +419,7 @@ namespace KernelPanic
             
             foreach (var point in mPath)
             {
-                DrawTile(spriteBatch, point, gameTime, Color.Red); 
+                DrawTile(spriteBatch, point, gameTime, Color.Green); 
             }
         }
 
@@ -452,7 +429,7 @@ namespace KernelPanic
 
             foreach (var point in mBlocked)
             {
-                DrawTile(spriteBatch, point, gameTime, Color.DarkSlateGray);
+                DrawTile(spriteBatch, point, gameTime, Color.Red);
             }
         }
         

@@ -18,6 +18,7 @@ namespace KernelPanic
             MenuBackground,
             ButtonBackground,
             LaneTile,
+            LaneBorder,
             Tower,
             Projectile,
             Trojan,
@@ -47,11 +48,12 @@ namespace KernelPanic
                 Texture(Image.MenuBackground, "Base"),
                 Texture(Image.ButtonBackground, "Papier"),
                 Texture(Image.LaneTile, "LaneTile"),
+                Texture(Image.LaneBorder, "LaneTileBorder"),
                 Texture(Image.Tower, "tower"),
                 Texture(Image.Projectile, "Projectile"),
-                Texture(Image.Trojan, "trojan"),
-                Texture(Image.FoxLeft, "firefox_left"),
-                Texture(Image.FoxJump, "firefox_jumping"),
+                Texture(Image.Trojan, "troupes/trojan"),
+                Texture(Image.FoxLeft, "heroes/firefox_left"),
+                Texture(Image.FoxJump, "heroes/firefox_jumping"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -133,6 +135,7 @@ namespace KernelPanic
         }
 
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile), 0, 0);
+        internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder), 0, 0);
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower), 0, 0);
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile), 0, 0);
 

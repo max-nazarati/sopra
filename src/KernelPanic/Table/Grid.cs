@@ -81,6 +81,13 @@ namespace KernelPanic.Table
             return tile;
         }
 
+        internal static ImageSprite CreateTileBorder(SpriteManager spriteManager)
+        {
+            var tile = spriteManager.CreateLaneBorder();
+            tile.ScaleToWidth(KachelSize);
+            return tile;
+        }
+
         /* TODO implement when needed
         private static bool CoordinateInGrid(Point coordinate)
         {

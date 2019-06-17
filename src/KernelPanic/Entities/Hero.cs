@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Diagnostics;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -51,7 +49,7 @@ namespace KernelPanic.Entities
             var start = Sprite.Position;
             var startPoint = new Point((int)start.X, (int)start.Y) / new Point(100, 100);
             
-            // set the target Position for the Astar (latest updated target should be saved in mTarget
+            // set the target Position for the AStar (latest updated target should be saved in mTarget
             var target = mTarget / new Point(100, 100);
             
             // calculate the path
