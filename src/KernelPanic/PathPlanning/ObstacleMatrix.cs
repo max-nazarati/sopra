@@ -49,7 +49,7 @@ namespace KernelPanic.PathPlanning
             switch (grid.LaneSide)
             {
                 case Lane.Side.Left:
-                    cutoutXStart = grid.LaneRectangle.Width - Grid.LaneWidthInTiles;
+                    cutoutXStart = Grid.LaneWidthInTiles;
                     cutoutXEnd = grid.LaneRectangle.Width;
                     break;
                 case Lane.Side.Right:
