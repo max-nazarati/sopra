@@ -330,7 +330,7 @@ namespace KernelPanic.Table
             }
 
             var subTileSize = (float) KachelSize / index.SubTileCount;
-            var position = mSprite.Position + index.ToPoint().ToVector2() + origin.RectangleOrigin(new Vector2(subTileSize));
+            var position = mSprite.Position + index.ToPoint().ToVector2() * subTileSize + origin.RectangleOrigin(new Vector2(subTileSize));
             return (position, subTileSize);
         }
 
