@@ -19,21 +19,17 @@ namespace KernelPanic
         [DataMember]
         private readonly QuadTree<Entity> mQuadTree;
 
-        // We don't serialize this as it can be reconstructed from mQuadTree.
-        private readonly ObstacleMatrix mObstacles;
-
         private readonly ImageSprite mSelectionBorder;
 
         #endregion
 
         #region Constructor
 
-        public EntityGraph(Rectangle bounds, ObstacleMatrix obstacles, SpriteManager spriteManager)
+        public EntityGraph(Rectangle bounds, SpriteManager spriteManager)
         {
             // Adjust for bounds which might (due to float/int conversions) be slightly bigger than the containing lane.
             bounds.Inflate(10, 10);
             mQuadTree = new QuadTree<Entity>(bounds);
-            mObstacles = obstacles;
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 

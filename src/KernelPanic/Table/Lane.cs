@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
-using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -68,7 +67,7 @@ namespace KernelPanic.Table
         {
             mSounds = sounds;
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), new ObstacleMatrix(mGrid), sprites);
+            EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), sprites);
             Target = new Base();
             mSpriteManager = sprites;
         }
