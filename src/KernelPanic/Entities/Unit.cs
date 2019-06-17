@@ -24,7 +24,7 @@ namespace KernelPanic.Entities
         [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }
         
-        protected bool ShouldMove; // should the basic movement take place this cycle? 
+        protected bool mShouldMove; // should the basic movement take place this cycle? 
 
         protected virtual Vector2? MoveVector
         {
@@ -97,12 +97,48 @@ namespace KernelPanic.Entities
             base.Update(positionProvider, gameTime, inputManager);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
-            
+            if (Sprite is AnimatedSprite animation)
+            {
+                // children - classes want to know if movement is allowed(mShouldMove)
+                if (ShouldMove && MoveVector is Vector2 movement)
+                {
+                    Sprite.Position += movement;
+                    // choose correct movement animation
+                    if (Math.Abs(movement.X) >= Math.Abs(movement.Y))
+                    {
+                        if (movement.X > 0)
+                        {
+                            animation.mMovement = AnimatedSprite.Movement.Right;
+                        }
+                        else
+                        {
+                            animation.mMovement = AnimatedSprite.Movement.Left;
+                        }
+                    }
+                    else
+                    {
+                        if (movement.Y > 0)
+                        {
+                            animation.mMovement = AnimatedSprite.Movement.Down;
+                        }
+                        else
+                        {
+                            animation.mMovement = AnimatedSprite.Movement.Up;
+                        }
+                    }
+                }
+                else
+                {
+                    animation.mMovement = AnimatedSprite.Movement.Standing;
+                }
+            }
+
             // children-classes want to know if movement is allowed (mShouldMove) 
-            if (ShouldMove && MoveVector is Vector2 movement)
+            /*if (ShouldMove && MoveVector is Vector2 movement)
             {
                 Sprite.Position += movement;
-            }
+            }*/
+
         }
         
     }

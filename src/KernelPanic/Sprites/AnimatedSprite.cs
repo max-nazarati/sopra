@@ -2,6 +2,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using KernelPanic.Entities;
 
 namespace KernelPanic.Sprites
 {
@@ -10,7 +11,20 @@ namespace KernelPanic.Sprites
     {
         private const int DefaultFrameSize = 64;
         private readonly Texture2D mTexture;
-        private readonly int mFrameCount;
+        private int mFrameCount;
+        private SpriteEffects mEffect;
+        private int mRow;
+
+        // specifies row of the sprite sheet
+        internal enum Movement
+        {
+            Standing,
+            Left,
+            Right,
+            Up,
+            Down
+        }
+        internal Movement mMovement;
 
         /// <summary>
         /// The duration for which each frame is displayed.
@@ -25,8 +39,10 @@ namespace KernelPanic.Sprites
         public AnimatedSprite(Texture2D texture, int x, int y, TimeSpan frameDuration) : base(x, y)
         {
             mTexture = texture;
-            mFrameCount = texture.Width / DefaultFrameSize;
+            mFrameCount = 1;
             mFrameDuration = frameDuration;
+            mMovement = Movement.Standing;
+            mEffect = SpriteEffects.None;
         }
 
         protected override void Draw(SpriteBatch spriteBatch,
@@ -35,9 +51,37 @@ namespace KernelPanic.Sprites
             float rotation,
             float scale)
         {
+            switch (mMovement)
+            {
+                case Movement.Standing:
+                    mFrameCount = 1;
+                    mEffect = SpriteEffects.None;
+                    mRow = 0;
+                    break;
+                case Movement.Left:
+                    mFrameCount = 8;
+                    mEffect = SpriteEffects.None;
+                    mRow = 1;
+                    break;
+                case Movement.Right:
+                    mFrameCount = 8;
+                    mEffect = SpriteEffects.FlipHorizontally;
+                    mRow = 1;
+                    break;
+                case Movement.Up:
+                    mFrameCount = 8;
+                    mEffect = SpriteEffects.None;
+                    mRow = 2;
+                    break;
+                case Movement.Down:
+                    mFrameCount = 8;
+                    mEffect = SpriteEffects.None;
+                    mRow = 3;
+                    break;
+            }
             var textureIndex = gameTime.TotalGameTime.Ticks / mFrameDuration.Ticks % mFrameCount;
             var sourceRect =
-                new Rectangle((int)textureIndex * DefaultFrameSize, 0, DefaultFrameSize, DefaultFrameSize);
+                new Rectangle((int)textureIndex * DefaultFrameSize, mRow * DefaultFrameSize, DefaultFrameSize, DefaultFrameSize);
 
             spriteBatch.Draw(mTexture,
                 position,
@@ -46,7 +90,7 @@ namespace KernelPanic.Sprites
                 rotation,
                 Origin,
                 scale,
-                SpriteEffects.None,
+                mEffect,
                 1f);
         }
     }

@@ -1,4 +1,4 @@
-
+﻿
 #----------------------------- Global Properties ----------------------------#
 
 /outputDir:bin/$(Platform)
@@ -114,7 +114,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/heroes/bluescreen.png;bluescreen.png
+/build:../../KernelPanic/Content/heroes/bluescreen.png;heroes/bluescreen.png
+
+#begin ../../KernelPanic/Content/heroes/firefox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/heroes/firefox.png;heroes/firefox.png
 
 #begin ../../KernelPanic/Content/heroes/firefox_jumping.png
 /importer:TextureImporter
@@ -150,7 +162,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/heroes/firefox_standing.png;firefox_standing.png
+/build:../../KernelPanic/Content/heroes/firefox_standing.png;heroes/firefox_standing.png
 
 #begin ../../KernelPanic/Content/heroes/settings.png
 /importer:TextureImporter
@@ -162,7 +174,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/heroes/settings.png;settings.png
+/build:../../KernelPanic/Content/heroes/settings.png;heroes/settings.png
 
 #begin ../../KernelPanic/Content/HUDFont.spritefont
 /importer:FontDescriptionImporter
@@ -338,7 +350,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/antivirus.png;antivirus.png
+/build:../../KernelPanic/Content/towers/antivirus.png;towers/antivirus.png
 
 #begin ../../KernelPanic/Content/towers/cd.png
 /importer:TextureImporter
@@ -350,7 +362,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/cd.png;cd.png
+/build:../../KernelPanic/Content/towers/cd.png;towers/cd.png
 
 #begin ../../KernelPanic/Content/towers/cd_thrower.png
 /importer:TextureImporter
@@ -362,7 +374,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/cd_thrower.png;cd_thrower.png
+/build:../../KernelPanic/Content/towers/cd_thrower.png;towers/cd_thrower.png
 
 #begin ../../KernelPanic/Content/towers/cursor.png
 /importer:TextureImporter
@@ -374,7 +386,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/cursor.png;cursor.png
+/build:../../KernelPanic/Content/towers/cursor.png;towers/cursor.png
 
 #begin ../../KernelPanic/Content/towers/fan.png
 /importer:TextureImporter
@@ -386,7 +398,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/fan.png;fan.png
+/build:../../KernelPanic/Content/towers/fan.png;towers/fan.png
 
 #begin ../../KernelPanic/Content/towers/mouse.png
 /importer:TextureImporter
@@ -398,7 +410,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/mouse.png;mouse.png
+/build:../../KernelPanic/Content/towers/mouse.png;towers/mouse.png
 
 #begin ../../KernelPanic/Content/towers/router.png
 /importer:TextureImporter
@@ -410,7 +422,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/router.png;router.png
+/build:../../KernelPanic/Content/towers/router.png;towers/router.png
 
 #begin ../../KernelPanic/Content/towers/shock_field.png
 /importer:TextureImporter
@@ -422,7 +434,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/shock_field.png;shock_field.png
+/build:../../KernelPanic/Content/towers/shock_field.png;towers/shock_field.png
 
 #begin ../../KernelPanic/Content/towers/wires.png
 /importer:TextureImporter
@@ -434,7 +446,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/wires.png;wires.png
+/build:../../KernelPanic/Content/towers/wires.png;towers/wires.png
 
 #begin ../../KernelPanic/Content/troupes/bug.png
 /importer:TextureImporter
@@ -446,7 +458,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/troupes/bug.png;bug.png
+/build:../../KernelPanic/Content/troupes/bug.png;troupes/bug.png
 
 #begin ../../KernelPanic/Content/troupes/nokia.png
 /importer:TextureImporter
@@ -458,7 +470,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/troupes/nokia.png;nokia.png
+/build:../../KernelPanic/Content/troupes/nokia.png;troupes/nokia.png
 
 #begin ../../KernelPanic/Content/troupes/thunderbird.png
 /importer:TextureImporter
@@ -470,7 +482,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/troupes/thunderbird.png;thunderbird.png
+/build:../../KernelPanic/Content/troupes/thunderbird.png;troupes/thunderbird.png
 
 #begin ../../KernelPanic/Content/troupes/trojan.png
 /importer:TextureImporter
@@ -494,7 +506,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/troupes/trojan_left.png;trojan_left.png
+/build:../../KernelPanic/Content/troupes/trojan_left.png;troupes/trojan_left.png
 
 #begin ../../KernelPanic/Content/troupes/virus.png
 /importer:TextureImporter

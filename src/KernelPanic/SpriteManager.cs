@@ -23,7 +23,7 @@ namespace KernelPanic
             Projectile,
             Trojan,
             SelectionBorder,
-            FoxLeft,
+            Firefox,
             FoxJump
         }
 
@@ -52,7 +52,7 @@ namespace KernelPanic
                 Texture(Image.Tower, "tower"),
                 Texture(Image.Projectile, "Projectile"),
                 Texture(Image.Trojan, "troupes/trojan"),
-                Texture(Image.FoxLeft, "heroes/firefox_left"),
+                Texture(Image.Firefox, "heroes/firefox"),
                 Texture(Image.FoxJump, "heroes/firefox_jumping"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
@@ -192,7 +192,7 @@ namespace KernelPanic
             new AnimatedSprite(Lookup(Image.Trojan), 0, 0, new TimeSpan(0, 0, 0, 0, 300));
 
         internal AnimatedSprite CreateFirefox() =>
-            new AnimatedSprite(Lookup(Image.FoxLeft), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
+            new AnimatedSprite(Lookup(Image.Firefox), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
 
         internal AnimatedSprite CreateFirefoxJump() =>
             new AnimatedSprite(Lookup(Image.FoxJump), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
