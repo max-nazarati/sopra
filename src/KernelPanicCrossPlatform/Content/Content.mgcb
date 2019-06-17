@@ -482,7 +482,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/troupes/trojan.png;trojan.png
+/build:../../KernelPanic/Content/troupes/trojan.png;troupes/trojan.png
 
 #begin ../../KernelPanic/Content/troupes/trojan_left.png
 /importer:TextureImporter
