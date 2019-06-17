@@ -51,11 +51,11 @@ namespace KernelPanic.Entities
         
         protected virtual IEnumerable<IAction> Actions => Enumerable.Empty<IAction>();
 
-        protected interface IAction : IDrawable, IUpdatable
+        protected interface IAction : IBounded, IDrawable, IUpdatable
         {
         }
 
-        protected class BaseAction<T> : IAction where T: IDrawable, IUpdatable
+        protected class BaseAction<T> : IAction where T: IBounded, IDrawable, IUpdatable
         {
             protected T Provider { get; }
 
@@ -64,15 +64,9 @@ namespace KernelPanic.Entities
                 Provider = provider;
             }
 
-            public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-            {
-                Provider.Draw(spriteBatch, gameTime);
-            }
-
-            public void Update(GameTime gameTime)
-            {
-                Provider.Update(gameTime);
-            }
+            public Rectangle Bounds => Provider.Bounds;
+            public void Draw(SpriteBatch spriteBatch, GameTime gameTime) => Provider.Draw(spriteBatch, gameTime);
+            public void Update(GameTime gameTime) => Provider.Update(gameTime);
         }
 
         #endregion
