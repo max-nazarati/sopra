@@ -45,7 +45,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AGameState.cs" />
-    <Compile Include="AStar.cs" />
     <Compile Include="Camera\Camera2D.cs" />
     <Compile Include="Camera\Change.cs" />
     <Compile Include="Camera\ICamera.cs" />
@@ -75,6 +74,7 @@
     <Compile Include="Interface\Button.cs" />
     <Compile Include="Interface\InterfaceComponent.cs" />
     <Compile Include="Interface\StaticComponent.cs" />
+    <Compile Include="PathPlanning\AStar.cs" />
     <Compile Include="PlayTime.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PositionProvider.cs" />

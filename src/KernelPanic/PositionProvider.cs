@@ -1,4 +1,5 @@
 using KernelPanic.Entities;
+using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
+using KernelPanic.PathPlanning;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;

@@ -60,9 +60,6 @@
     <Compile Include="..\KernelPanic\AGameState.cs">
       <Link>AGameState.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\AStar.cs">
-      <Link>AStar.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Camera\Camera2D.cs">
       <Link>Camera\Camera2D.cs</Link>
     </Compile>
@@ -173,6 +170,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\ObstacleMatrix.cs">
       <Link>ObstacleMatrix.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\PathPlanning\AStar.cs">
+      <Link>PathPlanning\AStar.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Player.cs">
       <Link>Player.cs</Link>

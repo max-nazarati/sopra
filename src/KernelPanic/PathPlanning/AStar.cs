@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace KernelPanic
+namespace KernelPanic.PathPlanning
 {
     internal sealed class AStar
     {
