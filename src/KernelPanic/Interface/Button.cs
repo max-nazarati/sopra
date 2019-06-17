@@ -6,7 +6,7 @@ namespace KernelPanic.Interface
 {
     internal sealed class Button : InterfaceComponent
     {
-        internal delegate void Delegate(Button sender);
+        internal delegate void Delegate(Button sender, InputManager inputManager);
 
         internal event Delegate Clicked;
 
@@ -42,7 +42,7 @@ namespace KernelPanic.Interface
             inputManager.RegisterClickTarget(Sprite.Bounds, localInputManager =>
             {
                 if (Enabled)
-                    Clicked?.Invoke(this);
+                    Clicked?.Invoke(this, localInputManager);
             });
         }
     }

@@ -60,7 +60,7 @@ namespace KernelPanic
             Button?.Draw(spriteBatch, gameTime);
         }
 
-        private void Purchase(Button sender)
+        private void Purchase(Button sender, InputManager inputManager)
         {
             if (!Action.TryPurchase(Player))
                 throw new InvalidOperationException($"Player {Player} was not able to purchase {Action}");

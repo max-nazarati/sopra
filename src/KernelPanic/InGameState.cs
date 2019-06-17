@@ -84,7 +84,7 @@ namespace KernelPanic
             };
 
             mPurchaseDemoReset = new Button(sprites);
-            mPurchaseDemoReset.Clicked += button =>
+            mPurchaseDemoReset.Clicked += (button, input) =>
             {
                 mPlayerA.Bitcoins = 50;
                 UpdateResetTitle();
