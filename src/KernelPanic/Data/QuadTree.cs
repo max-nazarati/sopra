@@ -272,6 +272,67 @@ namespace KernelPanic.Data
             nearEntities.AddRange(mObjects);
         }
 
+        /// <summary>
+        /// Enumerates through all overlapping elements in the <see cref="QuadTree{T}"/>.
+        ///
+        /// <para>
+        /// This function defines a irreflexive, asymmetric relation. Note that the symmetric closure of this relation
+        /// would still be correct in terms of overlapping elements but incurs a usage overhead because one doesn't care
+        /// about the order of two overlapping elements.
+        /// </para>
+        /// </summary>
+        /// <returns>All pairs of overlapping elements.</returns>
+        internal IEnumerable<(T, T)> Overlaps()
+        {
+            return LocalOverlaps(null, 0).Concat(ChildOverlaps(null));
+        }
+
+        private IEnumerable<(T, T)> ChildOverlaps(T[] parentElements)
+        {
+            if (mChilds == null)
+                return Enumerable.Empty<(T, T)>();
+
+            // TODO: We can elide these copies in some cases (e.g. parentElements empty or null, or all the children's mObjects empty).
+            var parentCount = parentElements?.Length ?? 0;
+            var additionalCount = mChilds.Max(t => t.mObjects.Count);
+            var parentElementsCopy = new T[parentCount + additionalCount];
+            if (parentElements != null)
+            {
+                Array.Copy(parentElements, parentElementsCopy, parentCount);
+            }
+
+            return mChilds.SelectMany(tree =>
+            {
+                tree.mObjects.CopyTo(parentElementsCopy, parentCount);
+                return tree
+                    .LocalOverlaps(parentElementsCopy, parentCount + tree.mObjects.Count)
+                    .Concat(tree.ChildOverlaps(parentElements));
+            });
+        }
+
+        private IEnumerable<(T, T)> LocalOverlaps(T[] parentElements, int count)
+        {
+            for (var i = 0; i < mObjects.Count; ++i)
+            {
+                var x = mObjects[i];
+                for (var j = i + 1; j < mObjects.Count; ++j)
+                {
+                    var y = mObjects[j];
+                    if (x.Bounds.Intersects(y.Bounds))
+                        yield return (x, y);
+                }
+
+                if (parentElements == null)
+                    continue;
+
+                foreach (var z in parentElements.Take(count))
+                {
+                    if (x.Bounds.Intersects(z.Bounds))
+                        yield return (x, z);
+                }
+            }
+        }
+
         #endregion
 
         #region Enumerating

@@ -52,18 +52,12 @@ namespace KernelPanic
                 entity.Update(positionProvider, gameTime, inputManager);
             }
 
-            // Checks whether collision works
-            foreach (var entity in mQuadTree)
+            foreach (var (a, b) in mQuadTree.Overlaps())
             {
-                foreach (var nearEntity in mQuadTree.NearObjects(entity))
-                {
-                    if (entity != nearEntity && entity.Bounds.Intersects(nearEntity.Bounds))
-                    {
-                        string collision = "[KOLLISION:] " + " UNIT " + entity + " AND UNIT " + nearEntity + " ARE COLLIDING! [TIME:] " + gameTime.TotalGameTime;
-                        Console.WriteLine(collision);
-                    }
-                }
+                Console.WriteLine(
+                    $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime}");
             }
+
             mQuadTree.Rebuild();
         }
 
