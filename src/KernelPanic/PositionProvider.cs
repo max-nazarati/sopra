@@ -27,10 +27,15 @@ namespace KernelPanic
         {
             var matrixObstacles = new ObstacleMatrix(mGrid);
             matrixObstacles.Rasterize(mEntities, mGrid.Bounds, e => e != entity);
-            var aStar = new AStar(mGrid.CoordSystem, start, target, matrixObstacles, mSpriteManager);
+            var aStar = new AStar(mGrid.CoordSystem, start, target, matrixObstacles);
             aStar.ChangeObstacleEnvironment(1);
             aStar.CalculatePath();
             return aStar;
+        }
+
+        internal Visualizer Visualize(AStar pathPlanner)
+        {
+            return pathPlanner.CreateVisualization(mGrid, mSpriteManager);
         }
     }
 }

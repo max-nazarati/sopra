@@ -19,6 +19,7 @@ namespace KernelPanic.Entities
         
         private AStar mAStar; // save the AStar for path-drawing
         private Point mTarget; // the target we wish to move to
+        private Visualizer mPathVisualizer;
 
         /// <summary>
         /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
@@ -55,6 +56,7 @@ namespace KernelPanic.Entities
             
             // calculate the path
             mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+            mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
             
             // TODO get the next position of the path (should be at path[0]; something is ****ed up tho)...
@@ -177,7 +179,7 @@ namespace KernelPanic.Entities
         {
             if (Selected)
             {
-                mAStar.Draw(spriteBatch, gameTime);    
+                mPathVisualizer?.Draw(spriteBatch, gameTime);
             }
         }
     }

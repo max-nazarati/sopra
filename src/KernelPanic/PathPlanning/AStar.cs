@@ -24,9 +24,7 @@ namespace KernelPanic.PathPlanning
         private readonly ObstacleMatrix mObstacles;
         
         // debugging the path visually
-        private readonly SpriteManager mSpriteManager;
         private List<Point> mPath;
-        private readonly ImageSprite mTile;
 
         /// <summary>
         /// /// start and target as Point
@@ -35,18 +33,13 @@ namespace KernelPanic.PathPlanning
         /// <param name="start"></param>
         /// <param name="target"></param>
         /// <param name="obstacles"></param>
-        /// <param name="spriteManager"></param>
-        internal AStar(List<Point> coordinateList, Point start, Point target, ObstacleMatrix obstacles, SpriteManager spriteManager)
+        internal AStar(List<Point> coordinateList, Point start, Point target, ObstacleMatrix obstacles)
         {
             mCoordinateList = coordinateList;
             mExploredNodes = new List<Point>();
             mTarget = target;
             mStart = start;
 
-            // debug visually (only reason for including spritemnager)
-            // mTile = content.Load<Texture2D>("LaneTile");
-            mSpriteManager = spriteManager;
-            mTile = Grid.CreateTileBorder(spriteManager);
             mWalkable = new List<Point>(); // = coordinateList;
             mBlocked = new List<Point>();
             mObstacles = obstacles;
@@ -359,61 +352,19 @@ namespace KernelPanic.PathPlanning
 
         #endregion ObstacleEnvironment
 
-        #region Draw
-        
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        #region Visualization
+
+        internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager)
         {
-            DrawObstacles(spriteBatch, gameTime);
-            DrawExplored(spriteBatch, gameTime);
-            // Console.WriteLine("[AStar] Drawing the path");
-            DrawPath(spriteBatch, gameTime);
-            DrawStartAndTarget(spriteBatch, gameTime);
-        }
-        
-        private void DrawStartAndTarget(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            DrawTile(spriteBatch, mStart, gameTime, Color.Turquoise);
-            DrawTile(spriteBatch, mTarget, gameTime, Color.Blue);
+            var visualization = new Visualizer(grid, spriteManager);
+            visualization.Append(mObstacles);
+            visualization.Append(mExploredNodes, Color.Yellow);
+            visualization.Append(mPath, Color.Green);
+            visualization.Append(new[] {mStart}, Color.Turquoise);
+            visualization.Append(new[] {mTarget}, Color.Blue);
+            return visualization;
         }
 
-        private void DrawExplored(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            if (mExploredNodes == null) { return; }
-
-            foreach (var point in mExploredNodes)
-            {
-                DrawTile(spriteBatch, point, gameTime, Color.Yellow);
-            }
-        }
-
-        private void DrawPath(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            // Console.WriteLine("drawing the path");
-            if (mPath == null) { return; }
-            
-            foreach (var point in mPath)
-            {
-                DrawTile(spriteBatch, point, gameTime, Color.Green); 
-            }
-        }
-
-        private void DrawObstacles(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            if (mBlocked == null) { return; }
-
-            foreach (var point in mBlocked)
-            {
-                DrawTile(spriteBatch, point, gameTime, Color.Red);
-            }
-        }
-        
-        private void DrawTile(SpriteBatch spriteBatch, Point point, GameTime gameTime, Color  color)
-        {
-            mTile.Position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
-            mTile.TintColor = color;
-            mTile.Draw(spriteBatch, gameTime);
-        }
-        
         #endregion
     }
     
