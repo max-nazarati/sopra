@@ -12,11 +12,15 @@ namespace KernelPanic
     /// </summary>
     internal sealed class ObstacleMatrix
     {
+        #region Properties
+
         private readonly bool[,] mObstacles;
         private readonly bool mHasBorder;
+        private readonly int mSubTileCount;
 
-        /*internal*/ private int Rows => mObstacles.GetLength(0);
-        /*internal*/ private int Columns => mObstacles.GetLength(1);
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Creates a new obstacle matrix without any obstacles.
@@ -32,6 +36,7 @@ namespace KernelPanic
                 throw new ArgumentOutOfRangeException(nameof(subTileCount), "should be at least 1");
 
             mHasBorder = includeBorder;
+            mSubTileCount = subTileCount;
 
             // Elements initialized to false by default.
             var borderCount = includeBorder ? 2 : 0;
@@ -83,6 +88,13 @@ namespace KernelPanic
             }
         }
 
+        #endregion
+
+        #region Accessing
+
+        /*internal*/ private int Rows => mObstacles.GetLength(0) - (mHasBorder ? 2 : 0);
+        /*internal*/ private int Columns => mObstacles.GetLength(1) - (mHasBorder ? 2 : 0);
+
         /// <summary>
         /// Queries whether there is an obstacle at the given point.
         /// </summary>
@@ -117,6 +129,10 @@ namespace KernelPanic
             value -= lowerBound;
         }
 
+        #endregion
+
+        #region Adding obstacles
+
         /// <summary>
         /// Adds all elements from <paramref name="elements"/> for which the predicate returns <c>true</c> as obstacles
         /// into this <see cref="ObstacleMatrix"/>. Every tile—even if only intersected by a small part—is marked as an
@@ -149,5 +165,26 @@ namespace KernelPanic
                 }
             }
         }
+
+        #endregion
+
+        #region Enumerating through the tiles
+
+        internal IEnumerable<TileIndex> Obstacles => EnumerateIndices(true);
+        internal IEnumerable<TileIndex> Walkables => EnumerateIndices(false);
+
+        private IEnumerable<TileIndex> EnumerateIndices(bool obstacles)
+        {
+            for (var row = 0; row < Rows; ++row)
+            {
+                for (var col = 0; col < Columns; ++col)
+                {
+                    if (this[row, col] == obstacles)
+                        yield return new TileIndex(row, col, mSubTileCount);
+                }
+            }
+        }
+
+        #endregion
     }
 }
