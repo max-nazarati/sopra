@@ -10,9 +10,9 @@ namespace KernelPanic.Input
     internal sealed class ClickTarget : IBounded
     {
         public Rectangle Bounds { get; }
-        public Action Action { get; }
+        public Action<InputManager> Action { get; }
 
-        internal ClickTarget(Rectangle bounds, Action action)
+        internal ClickTarget(Rectangle bounds, Action<InputManager> action)
         {
             Bounds = bounds;
             Action = action;

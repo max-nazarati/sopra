@@ -88,7 +88,7 @@ namespace KernelPanic
                     var possibleTargets = info.ClickTargets.EntitiesAt(input.TranslatedMousePosition);
                     var maybeTarget = possibleTargets.FirstOrDefault();
                     if (maybeTarget != null && input.MousePressed(InputManager.MouseButton.Left))
-                        maybeTarget.Action();
+                        maybeTarget.Action(input);
                 }
 
                 // Do the actual update.

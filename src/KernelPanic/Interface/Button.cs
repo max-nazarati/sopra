@@ -39,7 +39,7 @@ namespace KernelPanic.Interface
 
         public override void Update(InputManager inputManager, GameTime gameTime)
         {
-            inputManager.RegisterClickTarget(Sprite.Bounds, () =>
+            inputManager.RegisterClickTarget(Sprite.Bounds, localInputManager =>
             {
                 if (Enabled)
                     Clicked?.Invoke(this);
