@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
@@ -11,8 +12,10 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic
 {
     [DataContract]
-    internal sealed class EntityGraph
+    internal sealed class EntityGraph : IEnumerable<Entity>
     {
+        #region Properties
+
         [DataMember]
         private readonly QuadTree<Entity> mQuadTree;
 
@@ -20,6 +23,10 @@ namespace KernelPanic
         private readonly ObstacleMatrix mObstacles;
 
         private readonly ImageSprite mSelectionBorder;
+
+        #endregion
+
+        #region Constructor
 
         public EntityGraph(Rectangle bounds, ObstacleMatrix obstacles, SpriteManager spriteManager)
         {
@@ -30,10 +37,18 @@ namespace KernelPanic
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
+        #endregion
+
+        #region Modifying
+
         public void Add(Entity entity)
         {
             mQuadTree.Add(entity);
         }
+        
+        #endregion
+        
+        #region Querying
 
         public bool HasEntityAt(Vector2 point)
         {
@@ -44,6 +59,10 @@ namespace KernelPanic
         {
             return mQuadTree.EntitiesAt(point);
         }
+        
+        #endregion
+
+        #region Updating
 
         public void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
@@ -68,6 +87,10 @@ namespace KernelPanic
             mQuadTree.Rebuild();
         }
 
+        #endregion
+
+        #region Drawing
+
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             foreach (var entity in mQuadTree)
@@ -80,5 +103,21 @@ namespace KernelPanic
                 entity.Draw(spriteBatch, gameTime);
             }
         }
+
+        #endregion
+
+        #region Enumerable
+
+        public IEnumerator<Entity> GetEnumerator()
+        {
+            return mQuadTree.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable) mQuadTree).GetEnumerator();
+        }
+
+        #endregion
     }
 }
