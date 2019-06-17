@@ -69,12 +69,12 @@ namespace KernelPanic.Sprites
                     mRow = 1;
                     break;
                 case Movement.Up:
-                    mFrameCount = 8;
+                    mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 2;
                     break;
                 case Movement.Down:
-                    mFrameCount = 8;
+                    mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 3;
                     break;
