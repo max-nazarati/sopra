@@ -13,7 +13,6 @@ namespace KernelPanic
     internal sealed class ObstacleMatrix
     {
         private readonly bool[,] mObstacles;
-        private readonly Rectangle mBounds;
 
         /*internal*/ private int Rows => mObstacles.GetLength(0);
         /*internal*/ private int Columns => mObstacles.GetLength(1);
@@ -32,7 +31,6 @@ namespace KernelPanic
             
             // Elements initialized to false by default.
             mObstacles = new bool[grid.LaneRectangle.Height * subTileCount, grid.LaneRectangle.Width * subTileCount];
-            mBounds = grid.Bounds;
 
             // Set all elements to true which represent fields outside the lane.
             int cutoutXStart, cutoutXEnd;
@@ -90,19 +88,23 @@ namespace KernelPanic
         /// Adds all elements from <paramref name="elements"/> for which the predicate returns <c>true</c> as obstacles
         /// into this <see cref="ObstacleMatrix"/>. Every tile—even if only intersected by a small part—is marked as an
         /// obstacle.
+        ///
+        /// <para>
+        /// Because an obstacle matrix has no inherent position or size in the world, <paramref name="rasterBounds"/>
+        /// has to be provided to define where this matrix is located.
+        /// </para>
         /// </summary>
         /// <param name="elements">The elements to add, can be a <see cref="QuadTree{T}"/>.</param>
+        /// <param name="rasterBounds">Defines the area which is spanned by the <see cref="ObstacleMatrix"/>.</param>
         /// <param name="predicate">A predicate to filter the elements.</param>
         /// <typeparam name="T">The type of the elements, must implement <see cref="IBounded"/>.</typeparam>
-        internal void Rasterize<T>(IEnumerable<T> elements, Func<T, bool> predicate = null) where T: IBounded
+        internal void Rasterize<T>(IEnumerable<T> elements, Rectangle rasterBounds, Func<T, bool> predicate = null) where T: IBounded
         {
-            if (predicate != null)
-                elements = elements.Where(predicate);
-            foreach (var element in elements)
+            var xSize = (float) rasterBounds.Width / Columns;
+            var ySize = (float) rasterBounds.Height / Rows;
+            foreach (var element in predicate == null ? elements : elements.Where(predicate))
             {
-                var bounds = Rectangle.Intersect(element.Bounds, mBounds);
-                var xSize = (float) mBounds.Width / Columns;
-                var ySize = (float) mBounds.Height / Rows;
+                var bounds = Rectangle.Intersect(element.Bounds, rasterBounds);
 
                 for (var i = (int) (bounds.Top / ySize); i * ySize < bounds.Bottom; ++i)
                 {
