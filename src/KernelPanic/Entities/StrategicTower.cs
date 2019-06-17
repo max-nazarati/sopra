@@ -7,8 +7,8 @@ namespace KernelPanic.Entities
     {
         internal TowerStrategy Strategy { get; set; } = TowerStrategy.First;
         
-        internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites)
-            : base(price, radius, cooldown, sprite, sprites)
+        internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds)
+            : base(price, radius, cooldown, sprite, sprites, sounds)
         {
         }
     }

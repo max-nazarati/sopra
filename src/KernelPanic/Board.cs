@@ -22,10 +22,10 @@ namespace KernelPanic
             }
         }
 
-        internal Board(SpriteManager content)
+        internal Board(SpriteManager content, SoundManager sounds)
         {
-            LeftLane = new Lane(Lane.Side.Left, content);
-            RightLane = new Lane(Lane.Side.Right, content);
+            LeftLane = new Lane(Lane.Side.Left, content, sounds);
+            RightLane = new Lane(Lane.Side.Right, content, sounds);
         }
 
         internal void Update(GameTime gameTime, InputManager inputManager)

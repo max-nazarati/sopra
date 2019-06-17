@@ -38,7 +38,7 @@ namespace KernelPanic
         {
             mGameStateManager = gameStateManager;
             
-            mBoard = new Board(gameStateManager.Sprite);
+            mBoard = new Board(gameStateManager.Sprite, gameStateManager.Sound);
             mPlayerA = new Player(mBoard.RightLane, mBoard.LeftLane);
             mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);
             mSelectionManager = new SelectionManager(mPlayerA.AttackingLane, mPlayerA.DefendingLane);
@@ -47,7 +47,7 @@ namespace KernelPanic
             entityGraph.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
             entityGraph.Add(Firefox.CreateFirefox(new Point(350), gameStateManager.Sprite));
             entityGraph.Add(Firefox.CreateFirefoxJump(new Point(250), gameStateManager.Sprite));
-            InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite);
+            InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
         }
 
         internal static void PushGameStack(GameStateManager gameStateManager)
@@ -65,7 +65,7 @@ namespace KernelPanic
             gameStateManager.Push(hud);
         }
 
-        private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites)
+        private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites, SoundManager sounds)
         {
             var nextPosition = new Vector2(50, 150);
 
@@ -77,7 +77,7 @@ namespace KernelPanic
             };
 
             mPurchaseDemoButton2 = new PurchaseButton<Tower, SinglePurchasableAction<Tower>>(mPlayerA,
-                new SinglePurchasableAction<Tower>(Tower.Create(Vector2.Zero, Grid.KachelSize, sprites)),
+                new SinglePurchasableAction<Tower>(Tower.Create(Vector2.Zero, Grid.KachelSize, sprites, sounds)),
                 sprites)
             {
                 Button = {Title = "Buy Tower"}

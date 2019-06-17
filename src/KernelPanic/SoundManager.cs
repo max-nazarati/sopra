@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Media;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
@@ -10,57 +12,75 @@ namespace KernelPanic
         private SoundEffect mShoot, mPlacement;
         private Song mBackgroundSong1;
 
-        private SoundManager()
+        public enum Sound
         {
+            TowerPlacement,
+            Shoot1
         }
 
-        internal static SoundManager Instance { get; } = new SoundManager();
-
-        /// <summary>
-        /// loads content
-        /// </summary>
-        /// <param name="content">ContentManager object</param>
-        public void Init(ContentManager content)
+        public enum Music
         {
-            MediaPlayer.IsRepeating = true;
-            MediaPlayer.Volume = 0.2f;
-
-            // Uncomment if these are used.
-            mPlacement = content.Load<SoundEffect>("placement");
-            mShoot = content.Load<SoundEffect>("shoot");
-            mBackgroundSong1 = content.Load<Song>("testSoundtrack");
-            // mBuildTower = content.Load<SoundEffect>("");
+            BackgroundMusic1,
+            // MenuMusic1
         }
-#if true
+        
+        private readonly (Sound sound, SoundEffect soundEffect)[] mSounds;
+        private readonly (Music music, Song song)[] mSongs;
+
+        internal SoundManager(ContentManager contentManager)
+        {
+            (Sound, SoundEffect) SoundEffect(Sound sound, string name) => (sound, contentManager.Load<SoundEffect>(name));
+            (Music, Song) Song(Music music, string name) => (music, contentManager.Load<Song>(name));
+            
+            mSounds = new[]
+            {
+                SoundEffect(Sound.Shoot1, "shoot"),
+                SoundEffect(Sound.TowerPlacement, "placement"),
+            };
+            Array.Sort(mSounds);
+
+            mSongs = new[]
+            {
+                Song(Music.BackgroundMusic1, "testSoundtrack"),
+                // Song(Music.MenuMusic1, "placeholder")
+            };
+            Array.Sort(mSongs);
+        }
+        
+        private SoundEffect Lookup(Sound sound)
+        {
+            var (realSound, soundEffect) = mSounds[(int) sound];
+            Trace.Assert(realSound == sound, $"{nameof(mSounds)} not ordered correctly");
+            return soundEffect;
+        }
+
+        private Song Lookup(Music music)
+        {
+            var (realSong, song) = mSongs[(int) music];
+            Trace.Assert(realSong == music, $"{nameof(mSongs)} not ordered correctly");
+            return song;
+        }
+
         /// <summary>
         /// Plays background music when called
         /// </summary>
-        internal void PlayBackgroundMusic()
+        internal void PlaySong(Music music)
         {
-            MediaPlayer.Play(mBackgroundSong1);
+            MediaPlayer.Play(Lookup(music));
         }
-#endif
-#if true // Currently not used.
+
+        internal void StopMusic()
+        {
+            MediaPlayer.Stop();
+        }
 
         /// <summary>
         /// plays the sound according to the given string
         /// </summary>
         /// <param name="actionName">Sound to play. walk, shoot, buildTower</param>
-        internal void PlaySound(string actionName)
+        public void PlaySound(Sound sound)
         {
-            switch (actionName)
-            {
-                case "placement":
-                    mPlacement.Play(0.4f, 1f, 0.5f);
-                    break;
-                case "shoot":
-                    mShoot.Play(0.4f, 1f, 1f);
-                    break;
-                default:
-                    Console.WriteLine("No valid sound name. Try 'shoot' or 'placement' ");
-                    break;
-            }
+            Lookup(sound).Play(0.4f, 1f, 1f);
         }
-#endif
     }
 }

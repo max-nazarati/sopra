@@ -47,7 +47,14 @@ namespace KernelPanic
         {
             foreach (var entity in mQuadtree)
             {
-                entity.Update(positionProvider, gameTime, inputManager);
+                if (entity.GetType() != typeof(Tower))
+                {
+                    entity.Update(positionProvider, gameTime, inputManager);
+                }
+                else
+                {
+                    entity.Update(positionProvider, gameTime, inputManager, mQuadtree);
+                }
             }
 
             // Checks whether collision works

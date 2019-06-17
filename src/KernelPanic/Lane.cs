@@ -34,6 +34,7 @@ namespace KernelPanic
         private readonly Grid mGrid;
         private readonly SpriteManager mSpriteManager;
         private static bool VISUAL_DEBUG;
+        private SoundManager mSounds;
 
         private Side mLaneSide;
         private int mWidth = 16;
@@ -62,8 +63,9 @@ namespace KernelPanic
         internal static Rectangle LeftBounds => LaneBoundsInPixel(Side.Left);
         internal static Rectangle RightBounds => LaneBoundsInPixel(Side.Right);
 
-        public Lane(Side laneSide, SpriteManager sprites)
+        public Lane(Side laneSide, SpriteManager sprites, SoundManager sounds)
         {
+            mSounds = sounds;
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), new ObstacleMatrix(mGrid), sprites);
             Target = new Base();
@@ -88,7 +90,8 @@ namespace KernelPanic
                 {
                     var (position, size) = gridPoint.Value;
                     if (!EntityGraph.HasEntityAt(position))
-                        EntityGraph.Add(Tower.Create(position, size, mSpriteManager));
+                        EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
+                        mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
                 }
             }
 

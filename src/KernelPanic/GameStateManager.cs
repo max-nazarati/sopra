@@ -38,13 +38,15 @@ namespace KernelPanic
         }
 
         public SpriteManager Sprite { get; }
+        public SoundManager Sound { get; }
         private readonly Stack<GameStateInfo> mGameStates = new Stack<GameStateInfo>();
 
         internal Action ExitAction { get; }
 
-        public GameStateManager(Action exitAction, SpriteManager sprites)
+        public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds)
         {
             Sprite = sprites;
+            Sound = sounds;
             ExitAction = exitAction;
         }
 

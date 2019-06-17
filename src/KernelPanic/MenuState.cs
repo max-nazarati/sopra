@@ -128,10 +128,12 @@ namespace KernelPanic
             {
                 case "an":
                     soundOnOffButton.Title = "aus";
+                    // sounds.StopMusic();
                     break;
                 case "aus":
                     soundOnOffButton.Title = "an";
-                    SoundManager.Instance.PlayBackgroundMusic();
+                    // sounds.PlaySong(SoundManager.Music.BackgroundMusic1);
+                    // TODO implement updated SoundManager
                     break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
