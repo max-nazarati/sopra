@@ -56,24 +56,17 @@ namespace KernelPanic
         }
 
         /// <summary>
-        /// Queries/modifies whether there is an obstacle at the given point.
+        /// Queries whether there is an obstacle at the given point.
         /// </summary>
-        /// <param name="row">The row (zero-based).</param>
-        /// <param name="column">The column (zero-based).</param>
-        /// <exception cref="ArgumentOutOfRangeException">If either <paramref name="row"/> or <paramref name="column"/> are out of range.</exception>
-        internal bool this[int row, int column]
+        /// <param name="point">The point to ask about.</param>
+        /// <exception cref="ArgumentOutOfRangeException">If <paramref name="point"/> lies outside this matrix.</exception>
+        internal bool this[Point point]
         {
             get
             {
-                VerifyRange(nameof(row), row, 0);
-                VerifyRange(nameof(column), column, 1);
-                return mObstacles[row, column];
-            }
-            set
-            {
-                VerifyRange(nameof(row), row, 0);
-                VerifyRange(nameof(column), column, 1);
-                mObstacles[row, column] = value;
+                VerifyRange("point.Y", point.Y, 0);
+                VerifyRange("point.X", point.X, 1);
+                return mObstacles[point.Y, point.X];
             }
         }
 
