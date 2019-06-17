@@ -72,7 +72,7 @@ namespace KernelPanic.Entities
             }
         }
         
-        private Vector2 Target(Quadtree<Entity> quadtree)
+        private Vector2 Target(QuadTree<Entity> quadtree)
         {
             var target = Vector2.Zero;
             var minDistance = 1000;
@@ -93,7 +93,7 @@ namespace KernelPanic.Entities
             return target;
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager, Quadtree<Entity> quadtree)
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager, QuadTree<Entity> quadtree)
         {
             // Turn window coordinates into world coordinates.
             // var relativeMouseVector = inputManager.TranslatedMousePosition;

@@ -55,7 +55,7 @@ namespace KernelPanic
                 }
                 else
                 {
-                    entity.Update(positionProvider, gameTime, inputManager, mQuadtree);
+                    entity.Update(positionProvider, gameTime, inputManager, mQuadTree);
                 }
             }
 
