@@ -90,24 +90,15 @@ namespace KernelPanic.Data
 
         private SquareIndex? CalculatePosition(Rectangle bounds)
         {
-            var center = mBounds.Center;
-            var isLeft = mBounds.Left <= bounds.Left && bounds.Right < center.X;
-            var isRight = center.X < bounds.Left && bounds.Right <= mBounds.Right;
-            var isTop = mBounds.Top <= bounds.Top && bounds.Bottom < center.Y;
-            var isBottom = center.Y < bounds.Top && bounds.Bottom <= mBounds.Bottom;
+            if (mChilds == null)
+                throw new InvalidOperationException("Can't use CalculateBounds before Split.");
 
-            if (isLeft)
+            SquareIndex index = 0;
+            foreach (var child in mChilds)
             {
-                if (isTop) return SquareIndex.TopLeft;
-
-                if (isBottom) return SquareIndex.BottomLeft;
-            }
-
-            if (isRight)
-            {
-                if (isTop) return SquareIndex.TopRight;
-
-                if (isBottom) return SquareIndex.BottomRight;
+                if (child.mBounds.Contains(bounds))
+                    return index;
+                ++index;
             }
 
             return null;
