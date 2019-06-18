@@ -63,6 +63,16 @@ namespace KernelPanic.Entities
             return new Tower(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
         }
 
+        // Only for demonstration purposes.
+        internal static Tower CreateStrategic(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
+        {
+            var sprite = sprites.CreateTower();
+            sprite.Position = position;
+            sprite.ScaleToHeight(size);
+            sprite.SetOrigin(RelativePosition.Center);
+            return new StrategicTower(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+        }
+
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);

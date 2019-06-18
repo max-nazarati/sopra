@@ -77,7 +77,7 @@ namespace KernelPanic
             };
 
             mPurchaseDemoButton2 = new PurchaseButton<Tower, SinglePurchasableAction<Tower>>(mPlayerA,
-                new SinglePurchasableAction<Tower>(Tower.Create(Vector2.Zero, Grid.KachelSize, sprites, sounds)),
+                new SinglePurchasableAction<Tower>(Tower.CreateStrategic(Vector2.Zero, Grid.KachelSize, sprites, sounds)),
                 sprites)
             {
                 Button = {Title = "Buy Tower"}
