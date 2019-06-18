@@ -8,14 +8,31 @@ namespace KernelPanic
     class StorageManager
     {
         private DataContractSerializer mSerializer;
-        internal const string Folder = "SaveFiles\\";
+        private const string mFolder = "SaveFiles\\";
+        /*private static int mDirLength = 0;
+        internal int DirLength
+        {
+            get
+            {
+                return mDirLength;
+            }
+        }*/
+        internal static string Folder
+        {
+            get
+            {
+                Directory.CreateDirectory(mFolder);
+                return mFolder;
+            }
+        }
 
         internal static string[] Files { get; } = new string[5];
 
         public void SaveGame(String fileName, AGameState gameState)
         {
-            Directory.CreateDirectory(Folder);
-            fileName = Folder + fileName;
+            //mDirLength += 1;
+            Directory.CreateDirectory(mFolder);
+            fileName = mFolder + fileName;
             mSerializer = new DataContractSerializer(typeof(InGameState));
             var settings = new XmlWriterSettings { Indent = true };
             var writer = XmlWriter.Create(fileName, settings);
@@ -25,7 +42,7 @@ namespace KernelPanic
 
         public InGameState LoadGame(String fileName, GameStateManager stateManager)
         {
-            fileName = Folder + fileName;
+            fileName = mFolder + fileName;
             FileStream fs = new FileStream(fileName, FileMode.Open);
             XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
             mSerializer = new DataContractSerializer(typeof(InGameState));

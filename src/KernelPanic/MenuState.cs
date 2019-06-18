@@ -98,8 +98,11 @@ namespace KernelPanic
             var loadGameButton = CreateButton(stateManager.Sprite, "Spiel laden", 600, -150);
             loadGameButton.Clicked += (button, input) =>
             {
-                var loadedGame = (new StorageManager().LoadGame(selectedFile + ".xml", stateManager));
-                InGameState.PushGameStack(stateManager, loadedGame);
+                if (selectedFile != "")
+                {
+                    var loadedGame = (new StorageManager().LoadGame(selectedFile + ".xml", stateManager));
+                    InGameState.PushGameStack(stateManager, loadedGame);
+                }
             };
 
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 700);
