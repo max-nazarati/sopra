@@ -76,7 +76,7 @@ namespace KernelPanic.Table
             if (inputManager.KeyPressed(Keys.T))
             {
                 // It seems we can't use pattern matching here because of compiler-limitations.
-                var gridPoint = mGrid.GridPointFromWorldPoint(mouse, 2);
+                var gridPoint = mGrid.GridPointFromWorldPoint(mouse);
                 if (gridPoint != null)
                 {
                     var (position, size) = gridPoint.Value;
