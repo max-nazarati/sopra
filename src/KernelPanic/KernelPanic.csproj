@@ -51,6 +51,7 @@
     <Compile Include="Camera\StaticCamera.cs" />
     <Compile Include="Data\BreadthFirstSearch.cs" />
     <Compile Include="Data\EnumerableExtensions.cs" />
+    <Compile Include="Data\Geometry.cs" />
     <Compile Include="Data\HeatMap.cs" />
     <Compile Include="Data\IBounded.cs" />
     <Compile Include="Data\PriorityQueue.cs" />
