@@ -65,13 +65,13 @@ namespace KernelPanic
             string selectedFile = "";
             Button[] btnlist = new Button[5];
             
-            var files = System.IO.Directory.GetFiles(StorageManager.folder);
+            var files = System.IO.Directory.GetFiles(StorageManager.Folder);
 
             for (int i = 0; i < 5; i++)
             {
                 if (i < files.Length)
                 {
-                    files[i] = files[i].Replace(StorageManager.folder, "");
+                    files[i] = files[i].Replace(StorageManager.Folder, "");
                     files[i] = files[i].Remove(files[i].IndexOf("."));
                     btnlist[i] = CreateButton(stateManager.Sprite, files[i], (i + 1) * 100);
                 }
@@ -284,7 +284,7 @@ namespace KernelPanic
            var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
            saveButton.Clicked += (button, input) =>
            {
-               var dir = System.IO.Directory.GetFiles(StorageManager.folder);
+               var dir = System.IO.Directory.GetFiles(StorageManager.Folder);
                new StorageManager().SaveGame("save" + dir.Length % 5 + ".xml", inGameState);
                // TODO: change name on Button in CreatePlayMenu
            };

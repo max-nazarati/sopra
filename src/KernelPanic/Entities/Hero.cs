@@ -24,7 +24,7 @@ namespace KernelPanic.Entities
         private Point mTarget; // the target we wish to move to
 
         private Visualizer mPathVisualizer;
-        protected InputManager InputManager;
+        protected InputManager InputManager { get; set; }
 
         /// <summary>
         /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
