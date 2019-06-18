@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using KernelPanic.Data;
 using KernelPanic.Input;
+using KernelPanic.Interface;
 using KernelPanic.PathPlanning;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -186,5 +189,25 @@ namespace KernelPanic.Entities
                 mPathVisualizer?.Draw(spriteBatch, gameTime);
             }
         }
+
+        #region Actions
+
+        protected override IEnumerable<IAction> Actions =>
+            base.Actions.Extend(new AbilityAction(this, SpriteManager));
+
+        private sealed class AbilityAction : BaseAction<Button>
+        {
+            internal AbilityAction(Hero hero, SpriteManager sprites) : base(new Button(sprites) {Title = "Fähigkeit"})
+            {
+                Provider.Clicked += (button, inputManager) => hero.ActivateAbility(inputManager);
+            }
+
+            public override void MoveTo(Vector2 position)
+            {
+                Provider.Sprite.Position = position;
+            }
+        }
+
+        #endregion
     }
 }
