@@ -72,22 +72,17 @@ namespace KernelPanic.Entities
             }
         }
         
-        private Vector2 Target(QuadTree<Entity> quadtree)
+        private Vector2 Target(QuadTree<Entity> quadTree)
         {
             var target = Vector2.Zero;
             var minDistance = 1000;
-            int distance;
-            foreach (var entity in quadtree.NearObjects(this))
+            foreach (var entity in quadTree)
             {
-                if (entity.GetType() != typeof(Tower))
-                {
-                    distance = (int)Vector2.Distance(entity.Sprite.Position, Sprite.Position);
-                    if (distance < minDistance)
-                    {
-                        minDistance = distance;
-                        target = entity.Sprite.Position;
-                    }
-                }
+                if (entity.GetType() == typeof(Tower)) continue;
+                var distance = (int)Vector2.Distance(entity.Sprite.Position, Sprite.Position);
+                if (distance >= minDistance) continue;
+                minDistance = distance;
+                target = entity.Sprite.Position;
             }
 
             return target;
