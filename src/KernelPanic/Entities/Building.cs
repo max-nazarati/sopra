@@ -7,7 +7,7 @@ namespace KernelPanic.Entities
     [KnownType(typeof(Tower))]
     internal abstract class Building : Entity
     {
-        protected Building(int price, Sprite sprite) : base(price, sprite)
+        protected Building(int price, Sprite sprite, SpriteManager spriteManager) : base(price, sprite, spriteManager)
         {
             BitcoinWorth = price;
         }

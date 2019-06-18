@@ -18,11 +18,14 @@ namespace KernelPanic.Entities
     {
         internal Sprite Sprite { get; private set; }
 
-        protected Entity(int price, Sprite sprite)
+        protected SpriteManager SpriteManager { get; }
+
+        protected Entity(int price, Sprite sprite, SpriteManager spriteManager)
         {
             Price = price;
             Sprite = sprite;
             Sprite.SetOrigin(RelativePosition.Center);
+            SpriteManager = spriteManager;
         }
 
         public bool Selected { get; set; }

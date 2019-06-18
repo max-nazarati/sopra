@@ -19,7 +19,8 @@ namespace KernelPanic.Entities
         private SoundManager mSounds;
         private bool mInRange;
 
-        internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds) : base(price, sprite)
+        internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds)
+            : base(price, sprite, sprites)
         {
             mFireTimer = new CooldownComponent(cooldown);
             mRadius = radius;

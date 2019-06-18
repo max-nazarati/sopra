@@ -28,15 +28,17 @@ namespace KernelPanic.Entities
         /// </summary>
         /// <param name="position">The point where to position this troupe.</param>
         /// <param name="sprite">The sprite to display.</param>
+        /// <param name="spriteManager"></param>
         /// <returns>A new Troupe</returns>
-        private static Hero Create(Point position, Sprite sprite)
+        private static Hero Create(Point position, Sprite sprite, SpriteManager spriteManager)
         {
             sprite.Position = position.ToVector2();
             sprite.ScaleToWidth(Grid.KachelSize);
-            return new Hero(10, 1, 1, 1, sprite);
+            return new Hero(10, 1, 1, 1, sprite, spriteManager);
         }
 
-        public Hero(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, speed, life, attackStrength, sprite)
+        public Hero(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
+            : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
             // TODO set mTarget to the position itself so heroes spawn non moving
             // Kind of done... Hero starts moving when the first target command is set... :)
