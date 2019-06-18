@@ -13,7 +13,7 @@ namespace KernelPanic
     {
         protected GameStateManager GameStateManager { get; }
         internal virtual bool IsOverlay => false;
-        internal ICamera Camera { get; set; }
+        internal ICamera Camera { get; }
 
         protected AGameState(ICamera camera, GameStateManager gameStateManager)
         {

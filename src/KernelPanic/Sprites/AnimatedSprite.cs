@@ -30,7 +30,7 @@ namespace KernelPanic.Sprites
         /// </summary>
         private readonly TimeSpan mFrameDuration;
 
-        internal Color TintColor { get; set; } = Color.White;
+        /*internal*/ private Color TintColor { get; /*set;*/ } = Color.White;
 
         protected override float UnscaledWidth => DefaultFrameSize;
         protected override float UnscaledHeight => DefaultFrameSize;

@@ -43,7 +43,7 @@ namespace KernelPanic.Sprites
             }
         }
 
-        public Color TextColor { get; set; } = Color.Black;
+        public Color TextColor { /*internal*/ private get; set; } = Color.Black;
 
         public TextSprite(SpriteFont font, string text, float x, float y) : base(x, y)
         {

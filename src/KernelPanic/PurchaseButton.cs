@@ -21,7 +21,7 @@ namespace KernelPanic
         /// <summary>
         /// The player who buys <see cref="Action"/> when the button is clicked.
         /// </summary>
-        internal Player Player { get; }
+        /*internal*/ private Player Player { get; }
 
         /// <summary>
         /// The action which is bought when <see cref="Button"/> is clicked.
@@ -32,7 +32,7 @@ namespace KernelPanic
         /// Set this to <code>false</code> to keep the button disabled
         /// although the player is able to pay for <see cref="Action"/>.
         /// </summary>
-        internal bool PossiblyEnabled { get; set; } = true;
+        internal bool PossiblyEnabled { /*internal*/ private get; set; } = true;
 
         /// <inheritdoc />
         public Rectangle Bounds => Button.Bounds;

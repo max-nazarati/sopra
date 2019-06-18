@@ -4,8 +4,8 @@ namespace KernelPanic.Table
 {
     internal struct TileIndex
     {
-        internal int Row { get; set; }
-        internal int Column { get; set; }
+        internal int Row { get; /*set;*/ }
+        internal int Column { get; /*set;*/ }
         internal int SubTileCount { get; }
         
         internal Point ToPoint() => new Point(Column, Row);

@@ -24,7 +24,6 @@ namespace KernelPanic.Entities
         private Point mTarget; // the target we wish to move to
 
         private Visualizer mPathVisualizer;
-        protected InputManager InputManager { get; set; }
 
         /// <summary>
         /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
@@ -40,7 +39,7 @@ namespace KernelPanic.Entities
             return new Hero(10, 1, 1, 1, sprite, spriteManager);
         }
 
-        public Hero(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
+        protected Hero(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
             // TODO set mTarget to the position itself so heroes spawn non moving
@@ -121,7 +120,7 @@ namespace KernelPanic.Entities
             Cooldown.Reset();
         }
 
-        protected bool AbilityActive { get; set; }
+        protected bool AbilityActive { /*protected*/ private get; set; }
         
         protected virtual void UpdateAbility(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
@@ -162,7 +161,6 @@ namespace KernelPanic.Entities
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            InputManager = inputManager;
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);

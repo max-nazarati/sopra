@@ -21,7 +21,7 @@ namespace KernelPanic
             mEscapeAction = escapeAction;
         }
 
-        public static MenuState CreateMainMenu(GameStateManager stateManager)
+        private static MenuState CreateMainMenu(GameStateManager stateManager)
         {
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
             playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
@@ -60,7 +60,7 @@ namespace KernelPanic
             };
         }
 
-        public static MenuState CreatePlayMenu(GameStateManager stateManager)
+        private static MenuState CreatePlayMenu(GameStateManager stateManager)
         {
             string selectedFile = "";
             Button[] btnlist = new Button[5];
@@ -123,7 +123,7 @@ namespace KernelPanic
             };
         }
 
-        public static Button TurnSoundsOnOff(Button soundOnOffButton)
+        private static Button TurnSoundsOnOff(Button soundOnOffButton)
         {
             switch (soundOnOffButton.Title) // TODO: when SoundManager is updated: Interaction with SoundManager
             {
@@ -177,7 +177,7 @@ namespace KernelPanic
             };
         }
 
-        public static MenuState CreateInstructionsMenu(GameStateManager stateManager)
+        private static MenuState CreateInstructionsMenu(GameStateManager stateManager)
         {
             // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
@@ -193,7 +193,7 @@ namespace KernelPanic
             };
         }
 
-        public static MenuState CreateStatisticsMenu(GameStateManager stateManager)
+        private static MenuState CreateStatisticsMenu(GameStateManager stateManager)
         {
             // TODO: Collecting and processing game statistics. 
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
@@ -209,7 +209,7 @@ namespace KernelPanic
             };   
         }
 
-        public static MenuState CreateAchievementsMenu(GameStateManager stateManager)
+        private static MenuState CreateAchievementsMenu(GameStateManager stateManager)
         {
             // TODO: Create List with all Achievements with true/false flag.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
@@ -229,7 +229,7 @@ namespace KernelPanic
          * Connect current results of not yet integrated tasks for presentation
          * at sprint meeting with your Button.
          */
-        public static MenuState CreateCreditsMenu(GameStateManager stateManager)
+        private static MenuState CreateCreditsMenu(GameStateManager stateManager)
         {
             var janekButton = CreateButton(stateManager.Sprite, "Janek", 50);
             // janekButton.Clicked
