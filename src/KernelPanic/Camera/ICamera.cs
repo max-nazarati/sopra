@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Camera
