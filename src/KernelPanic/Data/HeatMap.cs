@@ -48,13 +48,13 @@ namespace KernelPanic.Data
             else heatUp = mMap[point.Y, point.X];
 
             if (IsWalkable(down)) heatDown = mMap[point.Y + 1, point.X];
-            else heatUp = mMap[point.Y, point.X];
+            else heatDown = mMap[point.Y, point.X];
 
             if (IsWalkable(left)) heatLeft = mMap[point.Y, point.X - 1];
-            else heatUp = mMap[point.Y, point.X];
+            else heatLeft = mMap[point.Y, point.X];
 
             if (IsWalkable(right)) heatRight = mMap[point.Y, point.X + 1];
-            else heatUp = mMap[point.Y, point.X];
+            else heatRight = mMap[point.Y, point.X];
 
             grad = new Vector2((float)(heatLeft - heatRight), (float)(heatUp - heatDown));
             return grad;
