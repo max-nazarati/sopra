@@ -44,8 +44,7 @@ namespace KernelPanic
         {
             return mEntities.QuadTree
                 .NearEntities(entity.Bounds.Center.ToVector2(), radius)
-                .Where(e => e is T)
-                .Cast<T>();
+                .OfType<T>();
         }
     }
 }
