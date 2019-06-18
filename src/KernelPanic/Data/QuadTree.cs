@@ -310,16 +310,15 @@ namespace KernelPanic.Data
         /// <returns>All pairs of overlapping elements.</returns>
         internal IEnumerable<(T, T)> Overlaps()
         {
-            return LocalOverlaps(null, 0).Concat(ChildOverlaps(null));
+            return LocalOverlaps(null, 0).Concat(ChildOverlaps(null, 0));
         }
 
-        private IEnumerable<(T, T)> ChildOverlaps(T[] parentElements)
+        private IEnumerable<(T, T)> ChildOverlaps(T[] parentElements, int parentCount)
         {
             if (mChilds == null)
                 return Enumerable.Empty<(T, T)>();
 
             // TODO: We can elide these copies in some cases (e.g. parentElements empty or null, or all the children's mObjects empty).
-            var parentCount = parentElements?.Length ?? 0;
             var additionalCount = mChilds.Max(t => t.mObjects.Count);
             var parentElementsCopy = new T[parentCount + additionalCount];
             if (parentElements != null)
@@ -331,8 +330,8 @@ namespace KernelPanic.Data
             {
                 tree.mObjects.CopyTo(parentElementsCopy, parentCount);
                 return tree
-                    .LocalOverlaps(parentElementsCopy, parentCount + tree.mObjects.Count)
-                    .Concat(tree.ChildOverlaps(parentElements));
+                    .LocalOverlaps(parentElements, parentCount)
+                    .Concat(tree.ChildOverlaps(parentElementsCopy, parentCount + additionalCount));
             });
         }
 
