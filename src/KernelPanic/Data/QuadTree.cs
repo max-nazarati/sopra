@@ -29,6 +29,8 @@ namespace KernelPanic.Data
         [DataMember(Name = "Childs")]
         private QuadTree<T>[] mChilds;
 
+        internal int Count { get; private set; }
+
         #endregion
 
         #region Constructor
@@ -141,6 +143,8 @@ namespace KernelPanic.Data
                 throw new InvalidOperationException(
                     $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}");
 
+            Count++;
+
             if (mChilds != null)
             {
                 if (CalculatePosition(entity) is SquareIndex index)
@@ -193,6 +197,7 @@ namespace KernelPanic.Data
         {
             mObjects.Clear();
             mChilds = null;
+            Count = 0;
         }
 
         #endregion
