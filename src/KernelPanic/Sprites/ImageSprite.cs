@@ -18,7 +18,7 @@ namespace KernelPanic.Sprites
 
         public Color TintColor { /*internal*/ private get; set; } = Color.White;
 
-        public ImageSprite(Texture2D texture, float x, float y) : base(x, y)
+        public ImageSprite(Texture2D texture)
         {
             Texture = texture;
         }

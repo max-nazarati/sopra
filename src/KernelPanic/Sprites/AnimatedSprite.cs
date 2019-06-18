@@ -35,7 +35,7 @@ namespace KernelPanic.Sprites
         protected override float UnscaledWidth => DefaultFrameSize;
         protected override float UnscaledHeight => DefaultFrameSize;
 
-        public AnimatedSprite(Texture2D texture, int x, int y, TimeSpan frameDuration) : base(x, y)
+        public AnimatedSprite(Texture2D texture, TimeSpan frameDuration)
         {
             mTexture = texture;
             mFrameCount = 1;

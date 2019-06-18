@@ -45,7 +45,7 @@ namespace KernelPanic.Sprites
 
         public Color TextColor { /*internal*/ private get; set; } = Color.Black;
 
-        public TextSprite(SpriteFont font, string text, float x, float y) : base(x, y)
+        public TextSprite(SpriteFont font, string text = "")
         {
             mFont = font ?? throw new ArgumentNullException(nameof(font));
             mText = text ?? throw new ArgumentNullException(nameof(text));

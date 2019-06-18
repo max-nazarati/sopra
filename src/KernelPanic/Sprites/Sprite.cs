@@ -51,16 +51,6 @@ namespace KernelPanic.Sprites
 
         #endregion
 
-        #region Constructor
-
-        protected Sprite(float x, float y)
-        {
-            X = x;
-            Y = y;
-        }
-        
-        #endregion
-
         #region Smart Property Modification
 
         /// <summary>

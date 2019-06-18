@@ -10,7 +10,7 @@ namespace KernelPanic.Sprites
 
         private Sprite Sprite { get; set; }
 
-        internal PatternSprite(Sprite sprite, float x, float y, int rows, int columns) : base(x, y)
+        internal PatternSprite(Sprite sprite, int rows, int columns)
         {
             Rows = rows;
             Columns = columns;
