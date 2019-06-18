@@ -263,6 +263,35 @@ namespace KernelPanic.Data
             nearEntities.AddRange(mObjects);
         }
 
+        internal IEnumerable<T> NearEntities(Vector2 point, float radius)
+        {
+            var rectangle = Bounds.ContainingRectangle(point - new Vector2(radius / 2), new Vector2(radius));
+            return Overlapping(point, radius, rectangle);
+        }
+
+        private IEnumerable<T> Overlapping(Vector2 point, float radius, Rectangle rectangle)
+        {
+            if (!mBounds.Intersects(rectangle))
+                yield break;
+
+            foreach (var o in mObjects)
+            {
+                if (Geometry.CircleIntersect(point, radius, o.Bounds))
+                    yield return o;
+            }
+
+            if (mChilds == null)
+                yield break;
+
+            foreach (var child in mChilds)
+            {
+                foreach (var o in child.Overlapping(point, radius, rectangle))
+                {
+                    yield return o;
+                }
+            }
+        }
+
         /// <summary>
         /// Enumerates through all overlapping elements in the <see cref="QuadTree{T}"/>.
         ///
