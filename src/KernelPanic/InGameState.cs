@@ -47,9 +47,6 @@ namespace KernelPanic
             mSelectionManager = new SelectionManager(mPlayerA.AttackingLane, mPlayerA.DefendingLane);
 
             var entityGraph = mBoard.LeftLane.EntityGraph;
-            entityGraph.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
-            entityGraph.Add(Firefox.CreateFirefox(new Point(350), gameStateManager.Sprite));
-            entityGraph.Add(Firefox.CreateFirefoxJump(new Point(250), gameStateManager.Sprite));
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
         }
 
