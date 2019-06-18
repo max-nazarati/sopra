@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
@@ -371,6 +372,46 @@ namespace KernelPanic.Data
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        #endregion
+
+        #region Debug Visualisation
+
+        public override string ToString()
+        {
+            var stringBuilder = new StringBuilder();
+            ToString("", stringBuilder);
+            return stringBuilder.ToString();
+        }
+
+        private void ToString(string indent, StringBuilder output)
+        {
+            output
+                .Append(indent)
+                .Append("- Count: ")
+                .Append(Count)
+                .Append("  Bounds: ")
+                .Append(mBounds)
+                .Append('\n');
+
+            indent += "   ";
+
+            foreach (var o in mObjects)
+            {
+                output
+                    .Append(indent)
+                    .Append("- ")
+                    .Append(o.Bounds)
+                    .Append(' ')
+                    .Append(o)
+                    .Append('\n');
+            }
+
+            foreach (var child in mChilds?.AsEnumerable() ?? Enumerable.Empty<QuadTree<T>>())
+            {
+                child.ToString(indent, output);
+            }
         }
 
         #endregion
