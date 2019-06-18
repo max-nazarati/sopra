@@ -82,13 +82,13 @@ namespace KernelPanic.Entities
             }
         }
         
-        private Vector2 Target(QuadTree<Entity> quadTree)
+        private Vector2 Target(PositionProvider positionProvider)
         {
             var target = Vector2.Zero;
             var minDistance = 1000;
-            foreach (var entity in quadTree)
+            foreach (var entity in positionProvider.NearEntities<Unit>(this, mRadius))
             {
-                if (entity.GetType() == typeof(Tower)) continue;
+                Console.WriteLine(entity.Bounds);
                 var distance = (int)Vector2.Distance(entity.Sprite.Position, Sprite.Position);
                 if (distance >= minDistance) continue;
                 minDistance = distance;
@@ -98,12 +98,13 @@ namespace KernelPanic.Entities
             return target;
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager, QuadTree<Entity> quadtree)
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            base.Update(positionProvider, gameTime, inputManager);
             // Turn window coordinates into world coordinates.
             // var relativeMouseVector = inputManager.TranslatedMousePosition;
             var a = 0;
-            var relativeMouseVector = Target(quadtree);
+            var relativeMouseVector = Target(positionProvider);
             var distance = Vector2.Distance(relativeMouseVector, Sprite.Position);
             mInRange = distance <= mRadius;
 

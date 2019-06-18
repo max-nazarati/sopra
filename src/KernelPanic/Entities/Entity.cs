@@ -32,11 +32,6 @@ namespace KernelPanic.Entities
 
         public Rectangle Bounds => Sprite.Bounds;
 
-        internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager, QuadTree<Entity> quadtree)
-        {
-            // TODO: Display the actions if this entity is selected.
-        }
-        
         internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             if (Selected)

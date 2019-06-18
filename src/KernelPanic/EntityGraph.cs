@@ -63,14 +63,7 @@ namespace KernelPanic
         {
             foreach (var entity in QuadTree)
             {
-                if (entity.GetType() != typeof(Tower))
-                {
-                    entity.Update(positionProvider, gameTime, inputManager);
-                }
-                else
-                {
-                    entity.Update(positionProvider, gameTime, inputManager, QuadTree);
-                }
+                entity.Update(positionProvider, gameTime, inputManager);
             }
 
             foreach (var (a, b) in QuadTree.Overlaps())
