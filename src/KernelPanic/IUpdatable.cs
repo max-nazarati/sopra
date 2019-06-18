@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using KernelPanic.Input;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
-    public interface IUpdatable
+    internal interface IUpdatable
     {
-        void Update(GameTime gameTime);
+        void Update(InputManager inputManager, GameTime gameTime);
     }
 }

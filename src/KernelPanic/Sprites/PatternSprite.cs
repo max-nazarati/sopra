@@ -5,12 +5,12 @@ namespace KernelPanic.Sprites
 {
     public sealed class PatternSprite: Sprite
     {
-        public int Rows { get; set; }
-        public int Columns { get; set; }
-        
-        public Sprite Sprite { get; set; }
+        private int Rows { get; set; }
+        private int Columns { get; set; }
 
-        public PatternSprite(Sprite sprite, float x, float y, int rows, int columns) : base(x, y)
+        private Sprite Sprite { get; set; }
+
+        internal PatternSprite(Sprite sprite, int rows, int columns)
         {
             Rows = rows;
             Columns = columns;

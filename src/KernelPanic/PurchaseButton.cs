@@ -1,4 +1,5 @@
 using System;
+using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
@@ -6,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal sealed class PurchaseButton<TResource, TAction>: IDrawable
+    internal sealed class PurchaseButton<TResource, TAction>: IDrawable, IUpdatable, IBounded
         where TResource: class, IPriced
         where TAction: PurchasableAction<TResource>
     {
@@ -20,7 +21,7 @@ namespace KernelPanic
         /// <summary>
         /// The player who buys <see cref="Action"/> when the button is clicked.
         /// </summary>
-        internal Player Player { get; }
+        /*internal*/ private Player Player { get; }
 
         /// <summary>
         /// The action which is bought when <see cref="Button"/> is clicked.
@@ -31,7 +32,10 @@ namespace KernelPanic
         /// Set this to <code>false</code> to keep the button disabled
         /// although the player is able to pay for <see cref="Action"/>.
         /// </summary>
-        internal bool PossiblyEnabled { get; set; } = true;
+        internal bool PossiblyEnabled { /*internal*/ private get; set; } = true;
+
+        /// <inheritdoc />
+        public Rectangle Bounds => Button.Bounds;
 
         /// <summary>
         /// Creates a <code>PurchaseButton</code> so that a click on it purchases
@@ -48,9 +52,9 @@ namespace KernelPanic
             Button.Clicked += Purchase;
         }
         
-        public void Update(GameTime gameTime, InputManager inputManager)
+        public void Update(InputManager inputManager, GameTime gameTime)
         {
-            Button.Update(gameTime, inputManager);
+            Button.Update(inputManager, gameTime);
             Button.Enabled = PossiblyEnabled && Action.Available(Player);
         }
 
@@ -60,7 +64,7 @@ namespace KernelPanic
             Button?.Draw(spriteBatch, gameTime);
         }
 
-        private void Purchase(Button sender)
+        private void Purchase(Button sender, InputManager inputManager)
         {
             if (!Action.TryPurchase(Player))
                 throw new InvalidOperationException($"Player {Player} was not able to purchase {Action}");

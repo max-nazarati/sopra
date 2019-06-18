@@ -31,8 +31,8 @@ namespace KernelPanic
             Bluescreen,
             Settings,
             Antivirus,
-            CDThrower,
-            CD,
+            CdThrower,
+            Cd,
             Cursor,
             Fan,
             Mouse,
@@ -76,8 +76,8 @@ namespace KernelPanic
                 Texture(Image.Base1, "base_1"),
                 Texture(Image.Base2, "base_2"),
                 Texture(Image.Bluescreen, "heroes/bluescreen"),
-                Texture(Image.CD, "towers/cd"),
-                Texture(Image.CDThrower, "towers/cd_thrower"),
+                Texture(Image.Cd, "towers/cd"),
+                Texture(Image.CdThrower, "towers/cd_thrower"),
                 Texture(Image.Cursor, "towers/cursor"),
                 Texture(Image.Fan, "towers/fan"),
                 Texture(Image.Mouse, "towers/mouse"),
@@ -123,38 +123,48 @@ namespace KernelPanic
             var fullCols = ScreenSize.X / texture.Width;
             var bottomRem = ScreenSize.Y - fullRows * texture.Height;
             var rightRem = ScreenSize.X - fullCols * texture.Width;
-            
-            var fullTile = new ImageSprite(texture, 0, 0);
-            var pattern = new PatternSprite(fullTile, 0, 0, fullRows, fullCols);
 
-            var bottomTile = new ImageSprite(texture, 0, 0)
+            var fullTile = new ImageSprite(texture);
+            var pattern = new PatternSprite(fullTile, fullRows, fullCols);
+
+            var bottomTile = new ImageSprite(texture)
             {
                 SourceRectangle = new Rectangle(0, 0, texture.Width, bottomRem)
             };
-            var rightTile = new ImageSprite(texture, 0, 0)
+            var rightTile = new ImageSprite(texture)
             {
                 SourceRectangle = new Rectangle(0, 0, rightRem, texture.Height)
             };
-            var cornerTile = new ImageSprite(texture, pattern.Width, pattern.Height)
+            var cornerTile = new ImageSprite(texture)
             {
+                X = pattern.Width,
+                Y = pattern.Height,
                 SourceRectangle = new Rectangle(0, 0, rightRem, bottomRem)
             };
 
-            return new CompositeSprite(0, 0)
+            return new CompositeSprite
             {
                 Children =
                 {
                     pattern,
-                    new PatternSprite(bottomTile, 0, pattern.Height, 1, fullCols),
-                    new PatternSprite(rightTile, pattern.Width, 0, fullRows, 1),
+                    new PatternSprite(bottomTile, 1, fullCols)
+                    {
+                        X = 0,
+                        Y = pattern.Height
+                    },
+                    new PatternSprite(rightTile, fullRows, 1)
+                    {
+                        X = pattern.Width,
+                        Y = 0
+                    },
                     cornerTile
                 }
             };
         }
 
-        internal (Sprite, TextSprite) CreateButton()
+        internal (Sprite, ImageSprite, TextSprite) CreateButton()
         {
-            var background = new ImageSprite(Lookup(Image.ButtonBackground), 0, 0)
+            var background = new ImageSprite(Lookup(Image.ButtonBackground))
             {
                 DestinationRectangle = new Rectangle(0, 0, 250, 70)
             };
@@ -162,35 +172,36 @@ namespace KernelPanic
             var titleSprite = AutoCenteredTextSprite(Lookup(Font.Button), background);
 
             return (
-                new CompositeSprite(0, 0)
+                new CompositeSprite
                 {
                     Children = {background, titleSprite}
                 },
+                background,
                 titleSprite
             );
         }
 
-        internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile), 0, 0);
-        internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder), 0, 0);
-        internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower), 0, 0);
-        internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile), 0, 0);
+        internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
+        internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
+        internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower));
+        internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile));
 
         internal (Sprite Main, TextSprite Left, TextSprite Right, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
         {
             var texture = Lookup(Image.ButtonBackground);
             var font = Lookup(Font.Hud);
 
-            var leftBackground = new ImageSprite(texture, 0, 0)
+            var leftBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
                 TintColor = Color.LightBlue
             };
-            var rightBackground = new ImageSprite(texture, 0, 0)
+            var rightBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
                 TintColor = Color.LightSalmon
             };
-            var clockBackground = new ImageSprite(texture, 0, 0)
+            var clockBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, clockSize)
             };
@@ -199,25 +210,31 @@ namespace KernelPanic
             var rightText = AutoCenteredTextSprite(font, rightBackground);
             var clockText = AutoCenteredTextSprite(font, clockBackground);
 
-            var left = new CompositeSprite((ScreenSize.X - clockSize.X) / 2f, 0)
+            var left = new CompositeSprite
             {
+                X = (ScreenSize.X - clockSize.X) / 2f,
+                Y = 0,
                 Children = {leftBackground, leftText}
             };
             left.SetOrigin(RelativePosition.TopRight);
-            
-            var right = new CompositeSprite((ScreenSize.X + clockSize.X) / 2.0f, 0)
+
+            var right = new CompositeSprite
             {
+                X = (ScreenSize.X + clockSize.X) / 2f,
+                Y = 0,
                 Children = {rightBackground, rightText}
             };
             right.SetOrigin(RelativePosition.TopLeft);
             
-            var clock = new CompositeSprite(ScreenSize.X / 2.0f, 0)
+            var clock = new CompositeSprite
             {
+                X = ScreenSize.X / 2f,
+                Y = 0,
                 Children = {clockBackground, clockText}
             };
             clock.SetOrigin(RelativePosition.CenterTop);
 
-            var sprite = new CompositeSprite(0, 0)
+            var sprite = new CompositeSprite
             {
                 Children = {left, right, clock}
             };
@@ -225,19 +242,19 @@ namespace KernelPanic
         }
 
         internal AnimatedSprite CreateTrojan() =>
-            new AnimatedSprite(Lookup(Image.Trojan), 0, 0, new TimeSpan(0, 0, 0, 0, 300));
+            new AnimatedSprite(Lookup(Image.Trojan), new TimeSpan(0, 0, 0, 0, 300));
 
         internal AnimatedSprite CreateFirefox() =>
-            new AnimatedSprite(Lookup(Image.Firefox), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
+            new AnimatedSprite(Lookup(Image.Firefox), new TimeSpan(0, 0, 0, 0, 100));
 
         internal AnimatedSprite CreateFirefoxJump() =>
-            new AnimatedSprite(Lookup(Image.FoxJump), 0, 0, new TimeSpan(0, 0, 0, 0, 100));
+            new AnimatedSprite(Lookup(Image.FoxJump), new TimeSpan(0, 0, 0, 0, 100));
 
         internal ImageSprite CreateColoredSquare(Color color)
         {
             var texture = new Texture2D(GraphicsDevice, 1, 1);
             texture.SetData(new[] {color});
-            return new ImageSprite(texture, 0, 0);
+            return new ImageSprite(texture);
         }
 
         private const int SelectionBorderThickness = 12;
@@ -282,7 +299,7 @@ namespace KernelPanic
         
         internal ImageSprite CreateSelectionBorder()
         {
-            var sprite = new ImageSprite(Lookup(Image.SelectionBorder), 0, 0);
+            var sprite = new ImageSprite(Lookup(Image.SelectionBorder));
             sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
@@ -303,7 +320,11 @@ namespace KernelPanic
         /// <returns>A new <see cref="TextSprite"/></returns>
         private static TextSprite AutoCenteredTextSprite(SpriteFont font, Sprite container)
         {
-            var text = new TextSprite(font, "", container.Width / 2, container.Height / 2);
+            var text = new TextSprite(font)
+            {
+                X = container.Width / 2,
+                Y = container.Height / 2
+            };
             text.SizeChanged += s => s.Origin = new Vector2(s.Width / 2, s.Height / 2);
             return text;
         }

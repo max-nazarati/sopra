@@ -41,14 +41,10 @@ namespace KernelPanic.Table
             LaneSide = laneSide;
 
             var tile = CreateTile(sprites);
-            var mainPart = new PatternSprite(tile, 0, 0, LaneRectangle.Height, LaneWidthInTiles);
+            var mainPart = new PatternSprite(tile, LaneRectangle.Height, LaneWidthInTiles);
 
-            var topPart = new PatternSprite(tile, 0, 0,
-                LaneWidthInTiles,
-                LaneRectangle.Width - LaneWidthInTiles);
-            var bottomPart = new PatternSprite(tile, 0, 0,
-                LaneWidthInTiles,
-                LaneRectangle.Width - LaneWidthInTiles);
+            var topPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
+            var bottomPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
             bottomPart.Y = mainPart.Height - bottomPart.Height;
 
             switch (laneSide)
@@ -66,15 +62,17 @@ namespace KernelPanic.Table
                     throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(Lane.Side));
             }
 
-            mSprite = new CompositeSprite(TileCountPixelSize(LaneRectangle.X), TileCountPixelSize(LaneRectangle.Y))
+            mSprite = new CompositeSprite
             {
+                X = TileCountPixelSize(LaneRectangle.X),
+                Y = TileCountPixelSize(LaneRectangle.Y),
                 Children = {mainPart, bottomPart, topPart}
             };
 
             CreateCoordinateSystem();
         }
 
-        internal static ImageSprite CreateTile(SpriteManager spriteManager)
+        private static ImageSprite CreateTile(SpriteManager spriteManager)
         {
             var tile = spriteManager.CreateLaneTile();
             tile.ScaleToWidth(KachelSize);

@@ -145,7 +145,7 @@ namespace KernelPanic.Input
         internal Point MouseMovement =>
             new Point(mInputState.CurrentMouse.X - mInputState.PreviousMouse.X, mInputState.CurrentMouse.Y - mInputState.PreviousMouse.Y);
 
-        internal void RegisterClickTarget(Rectangle position, Action action) =>
+        internal void RegisterClickTarget(Rectangle position, Action<InputManager> action) =>
             mClickTargets.Add(new ClickTarget(position, action));
 
         /// <summary>

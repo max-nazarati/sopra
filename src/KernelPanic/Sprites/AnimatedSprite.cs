@@ -2,7 +2,6 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using KernelPanic.Entities;
 
 namespace KernelPanic.Sprites
 {
@@ -31,12 +30,12 @@ namespace KernelPanic.Sprites
         /// </summary>
         private readonly TimeSpan mFrameDuration;
 
-        internal Color TintColor { get; set; } = Color.White;
+        /*internal*/ private Color TintColor { get; /*set;*/ } = Color.White;
 
         protected override float UnscaledWidth => DefaultFrameSize;
         protected override float UnscaledHeight => DefaultFrameSize;
 
-        public AnimatedSprite(Texture2D texture, int x, int y, TimeSpan frameDuration) : base(x, y)
+        public AnimatedSprite(Texture2D texture, TimeSpan frameDuration)
         {
             mTexture = texture;
             mFrameCount = 1;

@@ -16,7 +16,7 @@ namespace KernelPanic.Input
         internal KeyboardState CurrentKeyboard { get; private set; }
         internal KeyboardState PreviousKeyboard { get; private set; }
 
-        internal Hashtable ClaimedOperations { get; } = new Hashtable();
+        private Hashtable ClaimedOperations { get; } = new Hashtable();
 
         internal void Update(bool isActive, Viewport viewport)
         {

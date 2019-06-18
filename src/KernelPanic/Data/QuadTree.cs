@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
@@ -28,6 +29,8 @@ namespace KernelPanic.Data
 
         [DataMember(Name = "Childs")]
         private QuadTree<T>[] mChilds;
+
+        internal int Count { get; private set; }
 
         #endregion
 
@@ -90,24 +93,15 @@ namespace KernelPanic.Data
 
         private SquareIndex? CalculatePosition(Rectangle bounds)
         {
-            var center = mBounds.Center;
-            var isLeft = mBounds.Left <= bounds.Left && bounds.Right < center.X;
-            var isRight = center.X < bounds.Left && bounds.Right <= mBounds.Right;
-            var isTop = mBounds.Top <= bounds.Top && bounds.Bottom < center.Y;
-            var isBottom = center.Y < bounds.Top && bounds.Bottom <= mBounds.Bottom;
+            if (mChilds == null)
+                throw new InvalidOperationException("Can't use CalculateBounds before Split.");
 
-            if (isLeft)
+            SquareIndex index = 0;
+            foreach (var child in mChilds)
             {
-                if (isTop) return SquareIndex.TopLeft;
-
-                if (isBottom) return SquareIndex.BottomLeft;
-            }
-
-            if (isRight)
-            {
-                if (isTop) return SquareIndex.TopRight;
-
-                if (isBottom) return SquareIndex.BottomRight;
+                if (child.mBounds.Contains(bounds))
+                    return index;
+                ++index;
             }
 
             return null;
@@ -149,6 +143,8 @@ namespace KernelPanic.Data
             if (!mBounds.Contains(entity.Bounds))
                 throw new InvalidOperationException(
                     $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}");
+
+            Count++;
 
             if (mChilds != null)
             {
@@ -202,6 +198,7 @@ namespace KernelPanic.Data
         {
             mObjects.Clear();
             mChilds = null;
+            Count = 0;
         }
 
         #endregion
@@ -272,6 +269,35 @@ namespace KernelPanic.Data
             nearEntities.AddRange(mObjects);
         }
 
+        internal IEnumerable<T> NearEntities(Vector2 point, float radius)
+        {
+            var rectangle = Bounds.ContainingRectangle(point - new Vector2(radius / 2), new Vector2(radius));
+            return Overlapping(point, radius, rectangle);
+        }
+
+        private IEnumerable<T> Overlapping(Vector2 point, float radius, Rectangle rectangle)
+        {
+            if (!mBounds.Intersects(rectangle))
+                yield break;
+
+            foreach (var o in mObjects)
+            {
+                if (Geometry.CircleIntersect(point, radius, o.Bounds))
+                    yield return o;
+            }
+
+            if (mChilds == null)
+                yield break;
+
+            foreach (var child in mChilds)
+            {
+                foreach (var o in child.Overlapping(point, radius, rectangle))
+                {
+                    yield return o;
+                }
+            }
+        }
+
         /// <summary>
         /// Enumerates through all overlapping elements in the <see cref="QuadTree{T}"/>.
         ///
@@ -284,16 +310,15 @@ namespace KernelPanic.Data
         /// <returns>All pairs of overlapping elements.</returns>
         internal IEnumerable<(T, T)> Overlaps()
         {
-            return LocalOverlaps(null, 0).Concat(ChildOverlaps(null));
+            return LocalOverlaps(null, 0).Concat(ChildOverlaps(null, 0));
         }
 
-        private IEnumerable<(T, T)> ChildOverlaps(T[] parentElements)
+        private IEnumerable<(T, T)> ChildOverlaps(T[] parentElements, int parentCount)
         {
             if (mChilds == null)
                 return Enumerable.Empty<(T, T)>();
 
             // TODO: We can elide these copies in some cases (e.g. parentElements empty or null, or all the children's mObjects empty).
-            var parentCount = parentElements?.Length ?? 0;
             var additionalCount = mChilds.Max(t => t.mObjects.Count);
             var parentElementsCopy = new T[parentCount + additionalCount];
             if (parentElements != null)
@@ -305,8 +330,8 @@ namespace KernelPanic.Data
             {
                 tree.mObjects.CopyTo(parentElementsCopy, parentCount);
                 return tree
-                    .LocalOverlaps(parentElementsCopy, parentCount + tree.mObjects.Count)
-                    .Concat(tree.ChildOverlaps(parentElements));
+                    .LocalOverlaps(parentElements, parentCount)
+                    .Concat(tree.ChildOverlaps(parentElementsCopy, parentCount + additionalCount));
             });
         }
 
@@ -346,6 +371,46 @@ namespace KernelPanic.Data
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        #endregion
+
+        #region Debug Visualisation
+
+        public override string ToString()
+        {
+            var stringBuilder = new StringBuilder();
+            ToString("", stringBuilder);
+            return stringBuilder.ToString();
+        }
+
+        private void ToString(string indent, StringBuilder output)
+        {
+            output
+                .Append(indent)
+                .Append("- Count: ")
+                .Append(Count)
+                .Append("  Bounds: ")
+                .Append(mBounds)
+                .Append('\n');
+
+            indent += "   ";
+
+            foreach (var o in mObjects)
+            {
+                output
+                    .Append(indent)
+                    .Append("- ")
+                    .Append(o.Bounds)
+                    .Append(' ')
+                    .Append(o)
+                    .Append('\n');
+            }
+
+            foreach (var child in mChilds?.AsEnumerable() ?? Enumerable.Empty<QuadTree<T>>())
+            {
+                child.ToString(indent, output);
+            }
         }
 
         #endregion

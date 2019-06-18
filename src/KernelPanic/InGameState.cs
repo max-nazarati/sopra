@@ -47,9 +47,6 @@ namespace KernelPanic
             mSelectionManager = new SelectionManager(mPlayerA.AttackingLane, mPlayerA.DefendingLane);
 
             var entityGraph = mBoard.LeftLane.EntityGraph;
-            entityGraph.Add(Troupe.CreateTrojan(new Point(450), gameStateManager.Sprite));
-            entityGraph.Add(Firefox.CreateFirefox(new Point(350), gameStateManager.Sprite));
-            entityGraph.Add(Firefox.CreateFirefoxJump(new Point(250), gameStateManager.Sprite));
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
         }
 
@@ -80,14 +77,14 @@ namespace KernelPanic
             };
 
             mPurchaseDemoButton2 = new PurchaseButton<Tower, SinglePurchasableAction<Tower>>(mPlayerA,
-                new SinglePurchasableAction<Tower>(Tower.Create(Vector2.Zero, Grid.KachelSize, sprites, sounds)),
+                new SinglePurchasableAction<Tower>(Tower.CreateStrategic(Vector2.Zero, Grid.KachelSize, sprites, sounds)),
                 sprites)
             {
                 Button = {Title = "Buy Tower"}
             };
 
             mPurchaseDemoReset = new Button(sprites);
-            mPurchaseDemoReset.Clicked += button =>
+            mPurchaseDemoReset.Clicked += (button, input) =>
             {
                 mPlayerA.Bitcoins = 50;
                 UpdateResetTitle();
@@ -136,9 +133,9 @@ namespace KernelPanic
             mSelectionManager.Update(inputManager);
             mBoard.Update(gameTime, inputManager);
 
-            mPurchaseDemoButton1.Update(gameTime, inputManager);
-            mPurchaseDemoButton2.Update(gameTime, inputManager);
-            mPurchaseDemoReset.Update(gameTime, inputManager);
+            mPurchaseDemoButton1.Update(inputManager, gameTime);
+            mPurchaseDemoButton2.Update(inputManager, gameTime);
+            mPurchaseDemoReset.Update(inputManager, gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

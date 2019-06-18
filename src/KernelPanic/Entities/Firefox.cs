@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Table;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Entities
 {
@@ -13,24 +12,25 @@ namespace KernelPanic.Entities
     internal sealed class Firefox : Hero
     {
         private Stack<Vector2> mAbility = new Stack<Vector2>();
-        
-        public Firefox(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, speed, life, attackStrength, sprite)
+
+        private Firefox(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
+            : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
             Cooldown = new CooldownComponent(new TimeSpan(0, 0, 5));
         }
 
-        private static Firefox Create(Point position, Sprite sprite)
+        private static Firefox Create(Point position, Sprite sprite, SpriteManager spriteManager)
         {
             sprite.Position = position.ToVector2();
             sprite.ScaleToWidth(Grid.KachelSize);
-            return new Firefox(10, 2, 1, 1, sprite);
+            return new Firefox(10, 2, 1, 1, sprite, spriteManager);
         }
 
         internal static Firefox CreateFirefox(Point position, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateFirefox());
+            Create(position, spriteManager.CreateFirefox(), spriteManager);
         
         internal static Firefox CreateFirefoxJump(Point position, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateFirefoxJump());
+            Create(position, spriteManager.CreateFirefoxJump(), spriteManager);
         
 
         protected override void ActivateAbility(InputManager inputManager)

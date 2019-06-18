@@ -8,17 +8,17 @@ namespace KernelPanic.Sprites
     internal sealed class ImageSprite : Sprite
     {
         private Texture2D Texture { get; }
-        public Rectangle? SourceRectangle { get; set; }
+        public Rectangle? SourceRectangle { /*internal*/ private get; set; }
 
         /// <summary>
         /// Draw this sprite into this exact screen rectangle. This can be used to distort the image.
         /// If this is set <see cref="Sprite.Position"/> will not be used during drawing.
         /// </summary>
-        public Rectangle? DestinationRectangle { get; set; }
+        public Rectangle? DestinationRectangle { /*internal*/ private get; set; }
 
-        public Color TintColor { get; set; } = Color.White;
+        public Color TintColor { /*internal*/ private get; set; } = Color.White;
 
-        public ImageSprite(Texture2D texture, float x, float y) : base(x, y)
+        public ImageSprite(Texture2D texture)
         {
             Texture = texture;
         }

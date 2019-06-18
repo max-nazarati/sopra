@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using KernelPanic.Data;
 using KernelPanic.Input;
-using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic.PathPlanning

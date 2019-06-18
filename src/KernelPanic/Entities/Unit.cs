@@ -37,7 +37,8 @@ namespace KernelPanic.Entities
             }
         }
 
-        protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, sprite)
+        protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
+            : base(price, sprite, spriteManager)
         {
             Speed = speed;
             MaximumLife = life;

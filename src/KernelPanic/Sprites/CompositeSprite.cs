@@ -10,10 +10,6 @@ namespace KernelPanic.Sprites
     {
         public List<Sprite> Children { get; } = new List<Sprite>();
 
-        internal CompositeSprite(float x, float y) : base(x, y)
-        {
-        }
-
         protected override float UnscaledWidth => UnscaledSize.X;
         protected override float UnscaledHeight => UnscaledSize.Y;
 

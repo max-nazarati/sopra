@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic.Sprites
 {
     [DataContract]
-    [KnownType(typeof(Sprites.AnimatedSprite))]
+    [KnownType(typeof(AnimatedSprite))]
     [KnownType(typeof(ImageSprite))]
     public abstract class Sprite: IBounded
     {
@@ -26,9 +26,9 @@ namespace KernelPanic.Sprites
         /* internal */ protected abstract float UnscaledHeight { get; }
         /* internal */ protected virtual Vector2 UnscaledSize => new Vector2(UnscaledWidth, UnscaledHeight);
 
-        public float Width => Scale * UnscaledWidth;
-        public float Height => Scale * UnscaledHeight;
-        public Vector2 Size => Scale * UnscaledSize; 
+        internal float Width => Scale * UnscaledWidth;
+        internal float Height => Scale * UnscaledHeight;
+        /*internal*/ protected Vector2 Size => Scale * UnscaledSize; 
         
         public float X { get; set; }
         public float Y { get; set; }
@@ -49,16 +49,6 @@ namespace KernelPanic.Sprites
         public virtual Rectangle Bounds =>
             KernelPanic.Data.Bounds.ContainingRectangle(Position - Scale * Origin, Size);
 
-        #endregion
-
-        #region Constructor
-
-        protected Sprite(float x, float y)
-        {
-            X = x;
-            Y = y;
-        }
-        
         #endregion
 
         #region Smart Property Modification

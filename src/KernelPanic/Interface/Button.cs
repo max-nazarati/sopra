@@ -6,17 +6,18 @@ namespace KernelPanic.Interface
 {
     internal sealed class Button : InterfaceComponent
     {
-        internal delegate void Delegate(Button sender);
+        internal delegate void Delegate(Button sender, InputManager inputManager);
 
         internal event Delegate Clicked;
 
+        private readonly ImageSprite mBackground;
         private readonly TextSprite mTitleSprite;
 
         internal override Sprite Sprite { get; }
 
         internal Button(SpriteManager sprites)
         {
-            (Sprite, mTitleSprite) = sprites.CreateButton();
+            (Sprite, mBackground, mTitleSprite) = sprites.CreateButton();
         }
 
         internal string Title
@@ -25,12 +26,23 @@ namespace KernelPanic.Interface
             set => mTitleSprite.Text = value;
         }
 
-        internal override void Update(GameTime gameTime, InputManager inputManager)
+        internal override bool Enabled
         {
-            inputManager.RegisterClickTarget(Sprite.Bounds, () =>
+            get => base.Enabled;
+            set
+            {
+                mBackground.TintColor = value ? Color.White : Color.Gray;
+                mTitleSprite.TextColor = value ? Color.Black : Color.DarkGray;
+                base.Enabled = value;
+            }
+        }
+
+        public override void Update(InputManager inputManager, GameTime gameTime)
+        {
+            inputManager.RegisterClickTarget(Sprite.Bounds, localInputManager =>
             {
                 if (Enabled)
-                    Clicked?.Invoke(this);
+                    Clicked?.Invoke(this, localInputManager);
             });
         }
     }

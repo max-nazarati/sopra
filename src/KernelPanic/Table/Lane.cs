@@ -38,10 +38,6 @@ namespace KernelPanic.Table
         private static bool VISUAL_DEBUG;
         private SoundManager mSounds;
 
-        private Side mLaneSide;
-        private int mWidth = 16;
-        private int mHeight = 42;
-        private int mLaneWidth = 10;
         private HeatMap mCoordinateMap;
         private VectorField mVectorField;
         // private UnitSpawner mUnitSpawner;
@@ -80,7 +76,7 @@ namespace KernelPanic.Table
             if (inputManager.KeyPressed(Keys.T))
             {
                 // It seems we can't use pattern matching here because of compiler-limitations.
-                var gridPoint = mGrid.GridPointFromWorldPoint(mouse, 2);
+                var gridPoint = mGrid.GridPointFromWorldPoint(mouse);
                 if (gridPoint != null)
                 {
                     var (position, size) = gridPoint.Value;
@@ -111,18 +107,18 @@ namespace KernelPanic.Table
 
         public void InitCoordinateMap()
         {
-            mCoordinateMap = new HeatMap(mWidth, mHeight);
+            mCoordinateMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
             int xAxisReflection = 1;
             int xAxisTranslation = 0;
-            if (mLaneSide == Side.Left)
+            if (mGrid.LaneSide == Side.Left)
             {
                 xAxisReflection = -1;
-                xAxisTranslation = mWidth;
+                xAxisTranslation = mGrid.LaneRectangle.Width;
             }
 
-            for (int i = mLaneWidth; i < mHeight - mLaneWidth; i++)
+            for (int i = Grid.LaneWidthInTiles; i < mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles; i++)
             {
-                for (int j = 0; j < mWidth - mLaneWidth; j++)
+                for (int j = 0; j < mGrid.LaneRectangle.Width - Grid.LaneWidthInTiles; j++)
                 {
                     mCoordinateMap.mMap[i, j * xAxisReflection + xAxisTranslation] = HeatMap.Blocked;
                 }

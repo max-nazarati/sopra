@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
@@ -36,6 +38,13 @@ namespace KernelPanic
         internal Visualizer Visualize(AStar pathPlanner)
         {
             return pathPlanner.CreateVisualization(mGrid, mSpriteManager);
+        }
+
+        internal IEnumerable<T> NearEntities<T>(Entity entity, float radius) where T : Entity
+        {
+            return mEntities.QuadTree
+                .NearEntities(entity.Bounds.Center.ToVector2(), radius)
+                .OfType<T>();
         }
     }
 }

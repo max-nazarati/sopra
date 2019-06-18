@@ -16,8 +16,7 @@ namespace KernelPanic
     {
         #region Properties
 
-        [DataMember]
-        private readonly QuadTree<Entity> mQuadTree;
+        [DataMember] internal QuadTree<Entity> QuadTree { get; }
 
         private readonly ImageSprite mSelectionBorder;
 
@@ -29,7 +28,7 @@ namespace KernelPanic
         {
             // Adjust for bounds which might (due to float/int conversions) be slightly bigger than the containing lane.
             bounds.Inflate(10, 10);
-            mQuadTree = new QuadTree<Entity>(bounds);
+            QuadTree = new QuadTree<Entity>(bounds);
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
@@ -39,7 +38,7 @@ namespace KernelPanic
 
         public void Add(Entity entity)
         {
-            mQuadTree.Add(entity);
+            QuadTree.Add(entity);
         }
         
         #endregion
@@ -48,12 +47,12 @@ namespace KernelPanic
 
         public bool HasEntityAt(Vector2 point)
         {
-            return mQuadTree.HasEntityAt(point);
+            return QuadTree.HasEntityAt(point);
         }
 
         internal IEnumerable<Entity> EntitiesAt(Vector2 point)
         {
-            return mQuadTree.EntitiesAt(point);
+            return QuadTree.EntitiesAt(point);
         }
         
         #endregion
@@ -62,25 +61,18 @@ namespace KernelPanic
 
         public void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            foreach (var entity in mQuadTree)
+            foreach (var entity in QuadTree)
             {
-                if (entity.GetType() != typeof(Tower))
-                {
-                    entity.Update(positionProvider, gameTime, inputManager);
-                }
-                else
-                {
-                    entity.Update(positionProvider, gameTime, inputManager, mQuadTree);
-                }
+                entity.Update(positionProvider, gameTime, inputManager);
             }
 
-            foreach (var (a, b) in mQuadTree.Overlaps())
+            foreach (var (a, b) in QuadTree.Overlaps())
             {
                 Console.WriteLine(
-                    $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime}");
+                    $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime} [BOUNDS:] {a.Bounds} {b.Bounds}");
             }
 
-            mQuadTree.Rebuild();
+            QuadTree.Rebuild();
         }
 
         #endregion
@@ -89,7 +81,7 @@ namespace KernelPanic
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var entity in mQuadTree)
+            foreach (var entity in QuadTree)
             {
                 if (entity.Selected)
                 {
@@ -106,12 +98,12 @@ namespace KernelPanic
 
         public IEnumerator<Entity> GetEnumerator()
         {
-            return mQuadTree.GetEnumerator();
+            return QuadTree.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable) mQuadTree).GetEnumerator();
+            return ((IEnumerable) QuadTree).GetEnumerator();
         }
 
         #endregion

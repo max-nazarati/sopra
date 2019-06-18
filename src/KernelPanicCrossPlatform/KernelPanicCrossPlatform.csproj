@@ -75,6 +75,12 @@
     <Compile Include="..\KernelPanic\Data\BreadthFirstSearch.cs">
       <Link>Data\BreadthFirstSearch.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Data\EnumerableExtensions.cs">
+      <Link>Data\EnumerableExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Data\Geometry.cs">
+      <Link>Data\Geometry.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Data\HeatMap.cs">
       <Link>Data\HeatMap.cs</Link>
     </Compile>
