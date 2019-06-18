@@ -77,7 +77,7 @@ namespace KernelPanic
             foreach (var (a, b) in mQuadTree.Overlaps())
             {
                 Console.WriteLine(
-                    $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime}");
+                    $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime} [BOUNDS:] {a.Bounds} {b.Bounds}");
             }
 
             mQuadTree.Rebuild();
