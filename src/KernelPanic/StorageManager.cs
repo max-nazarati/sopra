@@ -80,6 +80,7 @@ namespace KernelPanic
             builder.Register(c => new EntityGraph(Rectangle.Empty, gameStateManager.Sprite));
             builder.Register(c => new Entities.Firefox(gameStateManager.Sprite)).As<Entities.Firefox>();
             builder.Register(c => new Entities.Tower(gameStateManager.Sprite, gameStateManager.Sound)).As<Entities.Tower>();
+            builder.Register(c => new Entities.Trojan(gameStateManager.Sprite));
             fileName = sFolder + fileName;
             using (StreamReader file = File.OpenText(fileName + ".json"))
             {
