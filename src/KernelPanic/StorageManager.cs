@@ -29,7 +29,7 @@ namespace KernelPanic
     {
         
         //private DataContractSerializer mSerializer;
-        private const string mFolder = "SaveFiles\\";
+        private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
         /*private static int mDirLength = 0;
         internal int DirLength
         {
@@ -42,8 +42,8 @@ namespace KernelPanic
         {
             get
             {
-                Directory.CreateDirectory(mFolder);
-                return mFolder;
+                Directory.CreateDirectory(sFolder);
+                return sFolder;
             }
         }
 
@@ -51,9 +51,9 @@ namespace KernelPanic
 
         public void SaveGame(String fileName, InGameState gameState)
         {
-            Directory.CreateDirectory(mFolder);
+            Directory.CreateDirectory(sFolder);
             
-            using (StreamWriter file = File.CreateText(mFolder + fileName + ".json"))
+            using (StreamWriter file = File.CreateText(sFolder + fileName + ".json"))
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.TypeNameHandling = TypeNameHandling.Auto;
@@ -63,7 +63,7 @@ namespace KernelPanic
             }
 
                 //mDirLength += 1;
-                Directory.CreateDirectory(mFolder);
+                Directory.CreateDirectory(sFolder);
             /*fileName = mFolder + fileName;
             mSerializer = new DataContractSerializer(typeof(InGameState));
             var settings = new XmlWriterSettings { Indent = true };
@@ -80,7 +80,7 @@ namespace KernelPanic
             builder.Register(c => new EntityGraph(Rectangle.Empty, gameStateManager.Sprite));
             builder.Register(c => new Entities.Firefox(gameStateManager.Sprite)).As<Entities.Firefox>();
             builder.Register(c => new Entities.Tower(gameStateManager.Sprite, gameStateManager.Sound)).As<Entities.Tower>();
-            fileName = mFolder + fileName;
+            fileName = sFolder + fileName;
             using (StreamReader file = File.OpenText(fileName + ".json"))
             {
                 JsonSerializer serializer = new JsonSerializer();
