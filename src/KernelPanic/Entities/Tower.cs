@@ -86,9 +86,8 @@ namespace KernelPanic.Entities
         {
             var target = Vector2.Zero;
             var minDistance = 1000;
-            foreach (var entity in positionProvider.NearObjects<Unit>(this, mRadius))
+            foreach (var entity in positionProvider.NearEntities<Unit>(this, mRadius))
             {
-                Console.WriteLine(entity.Bounds);
                 var distance = (int)Vector2.Distance(entity.Sprite.Position, Sprite.Position);
                 if (distance >= minDistance) continue;
                 minDistance = distance;

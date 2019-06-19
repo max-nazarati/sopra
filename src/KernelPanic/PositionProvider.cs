@@ -46,18 +46,18 @@ namespace KernelPanic
                 .NearEntities(entity.Bounds.Center.ToVector2(), radius)
                 .OfType<T>();
         }
+
+        internal IEnumerable<T> NearEntities<T>(Vector2 position, float radius) where T : Entity
+        {
+            return mEntities.QuadTree
+                .NearEntities(position, radius)
+                .OfType<T>();
+        }
         
         internal IEnumerable<T> NearObjects<T>(Entity entity, float radius) where T : Entity
         {
             return mEntities.QuadTree
                 .NearObjects(entity)
-                .OfType<T>();
-        }
-        
-        internal IEnumerable<T> NearEntities<T>(Vector2 position, float radius) where T : Entity
-        {
-            return mEntities.QuadTree
-                .NearEntities(position, radius)
                 .OfType<T>();
         }
     }

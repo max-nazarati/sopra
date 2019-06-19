@@ -285,7 +285,7 @@ namespace KernelPanic.Data
 
         internal IEnumerable<T> NearEntities(Vector2 point, float radius)
         {
-            var rectangle = Bounds.ContainingRectangle(point - new Vector2(radius / 2), new Vector2(radius));
+            var rectangle = Bounds.ContainingRectangle(point - new Vector2(radius), new Vector2(radius*2));
             return Overlapping(point, radius, rectangle);
         }
 
@@ -293,7 +293,6 @@ namespace KernelPanic.Data
         {
             if (!mBounds.Intersects(rectangle))
                 yield break;
-
             foreach (var o in mObjects)
             {
                 if (Geometry.CircleIntersect(point, radius, o.Bounds))
