@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using KernelPanic.Table;
+using Newtonsoft.Json;
 
 namespace KernelPanic
 {
@@ -7,7 +8,9 @@ namespace KernelPanic
     internal sealed class Player
     {
         // private List<Upgrade> Upgrades;
+        [DataMember]
         internal Lane AttackingLane { get; }
+        [DataMember]
         internal Lane DefendingLane { get; }
 
         [DataMember]
@@ -22,6 +25,7 @@ namespace KernelPanic
         {
         }
 
+        [JsonConstructor]
         private Player(int bitcoins, Lane defendingLane, Lane attackingLane)
         {
             Bitcoins = bitcoins;

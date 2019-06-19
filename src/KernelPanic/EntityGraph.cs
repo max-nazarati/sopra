@@ -8,10 +8,11 @@ using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace KernelPanic
 {
-    [DataContract]
+    [JsonArray]
     internal sealed class EntityGraph : IEnumerable<Entity>
     {
         #region Properties

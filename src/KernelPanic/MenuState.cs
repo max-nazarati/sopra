@@ -100,7 +100,7 @@ namespace KernelPanic
             {
                 if (selectedFile != "")
                 {
-                    var loadedGame = (new StorageManager().LoadGame(selectedFile + ".xml", stateManager));
+                    var loadedGame = (new StorageManager().LoadGame(selectedFile, stateManager));
                     InGameState.PushGameStack(stateManager, loadedGame);
                 }
             };
@@ -288,7 +288,7 @@ namespace KernelPanic
            saveButton.Clicked += (button, input) =>
            {
                var dir = System.IO.Directory.GetFiles(StorageManager.Folder);
-               new StorageManager().SaveGame("save" + dir.Length % 5 + ".xml", inGameState);
+               new StorageManager().SaveGame("save" + dir.Length % 5, inGameState);
                // TODO: change name on Button in CreatePlayMenu
            };
 

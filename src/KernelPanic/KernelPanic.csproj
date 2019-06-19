@@ -45,6 +45,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AGameState.cs" />
+    <Compile Include="BuyingMenuOverlay.cs" />
     <Compile Include="Camera\Camera2D.cs" />
     <Compile Include="Camera\Change.cs" />
     <Compile Include="Camera\ICamera.cs" />
@@ -112,8 +113,12 @@
     <Compile Include="Table\Grid.cs" />
     <Compile Include="Table\Lane.cs" />
     <Compile Include="Table\TileIndex.cs" />
+    <Compile Include="UnitBuyingMenu.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.9.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.9.2\lib\net45\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>

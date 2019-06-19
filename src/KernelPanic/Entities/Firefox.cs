@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Table;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities
 {
@@ -17,6 +18,11 @@ namespace KernelPanic.Entities
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
             Cooldown = new CooldownComponent(new TimeSpan(0, 0, 5));
+        }
+
+        internal Firefox(SpriteManager spriteManager) : this(0, 0, 0, 0, spriteManager.CreateFirefox(), spriteManager)
+        {
+            
         }
 
         private static Firefox Create(Point position, Sprite sprite, SpriteManager spriteManager)

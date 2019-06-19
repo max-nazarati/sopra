@@ -2,6 +2,7 @@ using System.Runtime.Serialization;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Table
 {
@@ -27,6 +28,13 @@ namespace KernelPanic.Table
         {
             LeftLane = new Lane(Lane.Side.Left, content, sounds);
             RightLane = new Lane(Lane.Side.Right, content, sounds);
+        }
+
+        [JsonConstructor]
+        internal Board(Lane leftLane, Lane rightLane)
+        {
+            LeftLane = leftLane;
+            RightLane = rightLane;
         }
 
         internal void Update(GameTime gameTime, InputManager inputManager)
