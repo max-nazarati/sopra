@@ -14,6 +14,7 @@ namespace KernelPanic.Entities
         protected Building(int price, Sprite sprite, SpriteManager spriteManager) : base(price, sprite, spriteManager)
         {
             BitcoinWorth = price;
+            sprite.ScaleToWidth(Table.Grid.KachelSize);
         }
 
         private int BitcoinWorth { get; set; }

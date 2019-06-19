@@ -28,7 +28,6 @@ namespace KernelPanic.Entities
         private static Firefox Create(Point position, Sprite sprite, SpriteManager spriteManager)
         {
             sprite.Position = position.ToVector2();
-            sprite.ScaleToWidth(Grid.KachelSize);
             return new Firefox(10, 2, 1, 1, sprite, spriteManager);
         }
 

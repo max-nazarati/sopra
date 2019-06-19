@@ -11,12 +11,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+
 namespace KernelPanic.Entities
 {
     [DataContract]
     [KnownType(typeof(Firefox))]
     internal class Hero : Unit
     {
+        [DataMember]
         protected CooldownComponent Cooldown { get; set; }
         
         

@@ -1,11 +1,14 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace KernelPanic
 {
     internal sealed class CooldownComponent
     {
+        [JsonProperty]
         private TimeSpan mCooldown;
+        [JsonProperty]
         private TimeSpan mRemainingCooldown;
 
         internal CooldownComponent(TimeSpan time)
