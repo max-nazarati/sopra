@@ -23,7 +23,7 @@ namespace KernelPanic.Entities
         private int MaximumLife { get; set; }
         [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }
-        
+
         protected bool mShouldMove; // should the basic movement take place this cycle? 
 
         protected virtual Vector2? MoveVector
@@ -45,6 +45,7 @@ namespace KernelPanic.Entities
             RemainingLife = life;
             AttackStrength = attackStrength;
             mShouldMove = true;
+            mDidDie = false;
         }
 
         /// <summary>
@@ -69,6 +70,7 @@ namespace KernelPanic.Entities
         /// </summary>
         protected virtual void DidDie()
         {
+            mDidDie = true;
         }
 
         /// <summary>

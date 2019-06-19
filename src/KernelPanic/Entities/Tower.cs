@@ -86,7 +86,7 @@ namespace KernelPanic.Entities
         {
             var target = Vector2.Zero;
             var minDistance = 1000;
-            foreach (var entity in positionProvider.NearEntities<Unit>(this, mRadius))
+            foreach (var entity in positionProvider.NearObjects<Unit>(this, mRadius))
             {
                 Console.WriteLine(entity.Bounds);
                 var distance = (int)Vector2.Distance(entity.Sprite.Position, Sprite.Position);
@@ -114,10 +114,13 @@ namespace KernelPanic.Entities
                 : (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
 
             mFireTimer.Update(gameTime);
-            foreach (var projectile in mProjectiles)
+            foreach (var projectile in new List<Projectile>(mProjectiles))
             {
-                projectile.Update();
-            }
+                if (projectile.mHasHit)
+                    mProjectiles.Remove(projectile);
+                else
+                    projectile.Update(positionProvider);
+            }   
         }
     }
 }

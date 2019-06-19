@@ -9,12 +9,14 @@ namespace KernelPanic.Entities
         private readonly Vector2 mDirection, mStartPoint;
         private readonly ImageSprite mSprite;
         private readonly float mRadius;
+        public bool mHasHit;
         
         public Projectile(Vector2 direction, Vector2 startPoint, float radius, SpriteManager sprites)
         {
             mStartPoint = startPoint;
             mDirection = direction;
             mRadius = radius;
+            mHasHit = false;
             
             mSprite = sprites.CreateProjectile();
             mSprite.Position = startPoint;
@@ -30,10 +32,17 @@ namespace KernelPanic.Entities
             }
         }
 
-        public void Update()
+        public void Update(PositionProvider positionProvider)
         {
             mSprite.X += mDirection.X * 7;
             mSprite.Y += mDirection.Y * 7;
+            foreach (var entity in positionProvider.NearEntities<Unit>(new Vector2(mSprite.X, mSprite.Y), 200))
+            {
+                if (!entity.Bounds.Intersects(mSprite.Bounds)) continue;
+                mHasHit = true;
+                entity.DealDamage(20);
+                break;
+            }
         }
     }
 }

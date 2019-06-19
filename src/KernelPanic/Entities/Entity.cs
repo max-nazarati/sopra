@@ -20,6 +20,8 @@ namespace KernelPanic.Entities
 
         protected SpriteManager SpriteManager { get; }
 
+        public bool mDidDie;
+
         protected Entity(int price, Sprite sprite, SpriteManager spriteManager)
         {
             Price = price;

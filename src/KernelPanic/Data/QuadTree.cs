@@ -179,6 +179,20 @@ namespace KernelPanic.Data
             }
         }
 
+        public void remove(T entity)
+        {
+            if (mObjects.Contains(entity))
+            {
+                mObjects.Remove(entity);
+            }
+            else
+            {
+                if (mChilds == null) return;
+                var index = CalculatePosition(entity);
+                mChilds[(int) index].remove(entity);
+            }
+        }
+
         /*internal*/ private void Add(IEnumerable<T> elements)
         {
             foreach (var element in elements)

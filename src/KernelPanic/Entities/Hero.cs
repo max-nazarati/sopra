@@ -36,7 +36,7 @@ namespace KernelPanic.Entities
         {
             sprite.Position = position.ToVector2();
             sprite.ScaleToWidth(Grid.KachelSize);
-            return new Hero(10, 1, 1, 1, sprite, spriteManager);
+            return new Hero(10, 1, 100, 1, sprite, spriteManager);
         }
 
         protected Hero(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
