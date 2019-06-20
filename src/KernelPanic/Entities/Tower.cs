@@ -20,9 +20,9 @@ namespace KernelPanic.Entities
         private SoundManager mSounds;
         private bool mInRange;
 
-        internal Tower(SpriteManager sprites, SoundManager sounds) :this(0, 0, new TimeSpan(), sprites.CreateTower(), sprites, sounds)
+        internal Tower(SpriteManager sprites, SoundManager sounds)
+            : this(0, 0, new TimeSpan(), sprites.CreateTower(), sprites, sounds)
         {
-            
         }
 
         internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds)

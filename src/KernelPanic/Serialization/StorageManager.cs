@@ -77,6 +77,7 @@ namespace KernelPanic.Serialization
             builder.Register(c => new EntityGraph(Rectangle.Empty, manager.Sprite));
             builder.Register(c => new Firefox(manager.Sprite));
             builder.Register(c => new Tower(manager.Sprite, manager.Sound));
+            builder.Register(c => new StrategicTower(manager.Sprite, manager.Sound));
             builder.Register(c => new Trojan(manager.Sprite));
 
             return new AutofacContractResolver(builder.Build());
