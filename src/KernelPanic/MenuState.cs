@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using KernelPanic.Camera;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -86,12 +87,10 @@ namespace KernelPanic
             {
                 positionY += 100;
 
-                var info = StorageManager.LoadStorageInfo(slot, stateManager);
-                var button = CreateButton(stateManager.Sprite,
-                    info?.Timestamp.ToString(CultureInfo.CurrentCulture) ?? "leer",
-                    positionY);
-
+                var info = StorageManager.LoadInfo(slot, stateManager);
                 var exists = info.HasValue;
+                var button = CreateButton(stateManager.Sprite, info?.Label ?? "leer", positionY);
+
                 button.Clicked += (btn, input) =>
                 {
                     if (selectedButton is Button oldSelection)

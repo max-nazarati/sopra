@@ -47,20 +47,20 @@ namespace KernelPanic.Data
 
             if (mMap.IsWalkable(down))
             {
-                Node nodeUp = new Node(down, node, cost, 0, false, false);
-                neighbours.Add(nodeUp);
+                Node nodeDown = new Node(down, node, cost, 0, false, false);
+                neighbours.Add(nodeDown);
             }
 
             if (mMap.IsWalkable(left))
             {
-                Node nodeUp = new Node(left, node, cost, 0, false, false);
-                neighbours.Add(nodeUp);
+                Node nodeLeft = new Node(left, node, cost, 0, false, false);
+                neighbours.Add(nodeLeft);
             }
 
             if (mMap.IsWalkable(right))
             {
-                Node nodeUp = new Node(right, node, cost, 0, false, false);
-                neighbours.Add(nodeUp);
+                Node nodeRight = new Node(right, node, cost, 0, false, false);
+                neighbours.Add(nodeRight);
             }
             return neighbours;
         }

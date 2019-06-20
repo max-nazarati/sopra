@@ -4,13 +4,11 @@ using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
-using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Collections.Generic;
 
 namespace KernelPanic.Table
 {
@@ -35,8 +33,6 @@ namespace KernelPanic.Table
         }
 
         internal EntityGraph EntityGraph { get; set; }
-        [JsonProperty]
-        internal List<Entities.Entity> mEntities;
        
         internal Base Target { get; }
 
@@ -49,7 +45,6 @@ namespace KernelPanic.Table
 
         private HeatMap mHeatMap;
         private VectorField mVectorField;
-        private Entities.Entity[] mDeserializedEntities;
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
@@ -75,7 +70,15 @@ namespace KernelPanic.Table
             mLaneSide = laneSide;
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), sprites);
-            Target = new Base();
+            switch (mGrid.LaneSide)
+            {
+                case Side.Left:
+                    Target = new Base(new Vector2(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 2));
+                    break;
+                case Side.Right:
+                    Target = new Base(new Vector2(1, 1));
+                    break;
+            }
             mSpriteManager = sprites;
             InitHeatMap();
             UpdateHeatMap();
@@ -86,24 +89,6 @@ namespace KernelPanic.Table
             Target = new Base();
             mSpriteManager = sprites;
             mSounds = sounds;
-
-        }
-
-        [OnSerializing]
-        internal void BeforeSerialization(StreamingContext context)
-        {
-            mEntities = new List<Entity>(EntityGraph);
-        }
-
-        [OnDeserialized]
-        internal void AfterDeserialization(StreamingContext context)
-        {
-            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
-            foreach (var entity in mEntities)
-            {
-                EntityGraph.Add(entity);
-            }
         }
 
         internal bool Contains(Vector2 point) => mGrid.Contains(point);
@@ -136,8 +121,8 @@ namespace KernelPanic.Table
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
-            EntityGraph.Draw(spriteBatch, gameTime);
             if (mGrid.LaneSide == Side.Left) Visualize(spriteBatch, gameTime);
+            EntityGraph.Draw(spriteBatch, gameTime);
         }
         
         public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
@@ -176,28 +161,15 @@ namespace KernelPanic.Table
         public void UpdateHeatMap()
         {
             List<Point> basePoints = new List<Point>();
-            // TODO: Add real positions of bases
-            switch (mGrid.LaneSide)
-            {
-                case Side.Left:
-                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 1, mGrid.LaneRectangle.Height - 1));
-                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 1, mGrid.LaneRectangle.Height - 2));
-                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 1));
-                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 2));
-                    break;
-                case Side.Right:
-                    basePoints.Add(new Point(0, 0));
-                    basePoints.Add(new Point(0, 1));
-                    basePoints.Add(new Point(1, 0));
-                    basePoints.Add(new Point(1, 1));
-                    break;
-            }
+            foreach (var basePoint in Target.GetHitBox())
+                {
+                basePoints.Add(new Point((int)basePoint.X, (int)basePoint.Y));
+                }
+            
             BreadthFirstSearch bfs = new BreadthFirstSearch(mHeatMap, basePoints);
             bfs.UpdateVectorField();
             mHeatMap = bfs.HeatMap;
             mVectorField = bfs.VectorField;
-            Console.WriteLine(mHeatMap.ToString());
-            Console.WriteLine("\n ==== \n");
         }
 
         internal void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
@@ -205,5 +177,35 @@ namespace KernelPanic.Table
             var visualizer = mHeatMap.CreateVisualization(mGrid, mSpriteManager, false);
             visualizer.Draw(spriteBatch, gameTime);
         }
+
+        #region Serialization
+
+        /// <summary>
+        /// Stores/receives the entities during serialization. Don't use it outside of this!
+        /// </summary>
+        [JsonProperty]
+        internal List<Entity> mEntitiesSerializing;
+
+        [OnSerializing]
+        private void BeforeSerialization(StreamingContext context)
+        {
+            mEntitiesSerializing = new List<Entity>(EntityGraph);
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
+            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
+            foreach (var entity in mEntitiesSerializing)
+            {
+                EntityGraph.Add(entity);
+            }
+            
+            InitHeatMap();
+            UpdateHeatMap();
+        }
+
+        #endregion
     }
 }

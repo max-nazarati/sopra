@@ -18,10 +18,7 @@ namespace KernelPanic.Entities
 
     internal abstract class Entity : IPriced, IBounded
     {
-        internal Sprite Sprite { get; private set; }
-
-        [DataMember]
-        private Vector2 Position;
+        internal Sprite Sprite { get; }
 
         protected SpriteManager SpriteManager { get; }
 
@@ -34,19 +31,6 @@ namespace KernelPanic.Entities
             Sprite.SetOrigin(RelativePosition.Center);
             SpriteManager = spriteManager;
         }
-
-        [OnSerializing]
-        internal void BeforeSerialization(StreamingContext context)
-        {
-            Position = Sprite.Position;
-        }
-
-        [OnDeserialized]
-        internal void AfterDeserialization(StreamingContext context)
-        {
-            Sprite.Position = Position;
-        }
-
         public bool Selected { get; set; }
 
         public Rectangle Bounds => Sprite.Bounds;
@@ -108,6 +92,28 @@ namespace KernelPanic.Entities
             public abstract void MoveTo(Vector2 position);
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime) => Provider.Draw(spriteBatch, gameTime);
             public void Update(InputManager inputManager, GameTime gameTime) => Provider.Update(inputManager, gameTime);
+        }
+
+        #endregion
+
+        #region Serializing
+
+        /// <summary>
+        /// Stores/receives the entity's position during serialization. Don't use it outside of this!
+        /// </summary>
+        [DataMember]
+        private Vector2 mPositionSerializing;
+
+        [OnSerializing]
+        private void BeforeSerialization(StreamingContext context)
+        {
+            mPositionSerializing = Sprite.Position;
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            Sprite.Position = mPositionSerializing;
         }
 
         #endregion

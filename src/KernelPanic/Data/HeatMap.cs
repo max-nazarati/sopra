@@ -97,7 +97,19 @@ namespace KernelPanic.Data
             else heatRight = mMap[point.Y, point.X];
 
             grad = new Vector2((float)(heatLeft - heatRight), (float)(heatUp - heatDown));
+            grad = AdjustGradientToWalls(point, grad);
             return grad;
+        }
+
+        public Vector2 AdjustGradientToWalls(Point point, Vector2 grad)
+        {
+            Vector2 adjustedGrad = grad;
+            if (grad.X > 0 && !IsWalkable(new Point(point.X + 1, point.Y))) adjustedGrad = new Vector2(0, grad.Y);
+            if (grad.X < 0 && !IsWalkable(new Point(point.X - 1, point.Y))) adjustedGrad = new Vector2(0, grad.Y);
+            if (grad.Y > 0 && !IsWalkable(new Point(point.X, point.Y + 1))) adjustedGrad = new Vector2(grad.X, 0);
+            if (grad.Y < 0 && !IsWalkable(new Point(point.X, point.Y - 1))) adjustedGrad = new Vector2(grad.X, 0);
+             
+            return adjustedGrad;
         }
 
         public Vector2 NormalizedGradient(Point point)
