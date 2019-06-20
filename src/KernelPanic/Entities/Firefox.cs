@@ -37,9 +37,12 @@ namespace KernelPanic.Entities
 
         protected override void ActivateAbility(InputManager inputManager)
         {
-            AbilityActive = true;
+            /*
+            AbilityStatus = AbilityState.Active;
             ShouldMove = false;
             Cooldown.Reset();
+            */
+            base.ActivateAbility(inputManager);
             
             // calculate the jump direction
             var mouse = inputManager.TranslatedMousePosition;
@@ -51,15 +54,17 @@ namespace KernelPanic.Entities
             {
                 mAbility.Push(direction);
             }
+            
         }
+        
         
         protected override void ContinueAbility(GameTime gameTime)
         {
-            Console.WriteLine(this + " JUST USED HIS ABILITY! (method of class Firefox)  [TIME:] " + gameTime.TotalGameTime);
             if (mAbility.Count == 0)
             {
-                AbilityActive = false;
+                AbilityStatus = AbilityState.Finished;
                 ShouldMove = true;
+                Console.WriteLine(this + " JUST USED HIS ABILITY! (method of class Firefox)  [TIME:] " + gameTime.TotalGameTime);
                 return;
             }
 
