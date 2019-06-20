@@ -86,11 +86,9 @@ namespace KernelPanic
                 positionY += 100;
 
                 var info = StorageManager.LoadStorageInfo(slot, stateManager);
-                var button = CreateButton(stateManager.Sprite,
-                    info?.Timestamp.ToString(CultureInfo.CurrentCulture) ?? "leer",
-                    positionY);
-
                 var exists = info.HasValue;
+                var button = CreateButton(stateManager.Sprite, info?.Label ?? "leer", positionY);
+
                 button.Clicked += (btn, input) =>
                 {
                     if (selectedButton is Button oldSelection)
