@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KernelPanic.PathPlanning;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data

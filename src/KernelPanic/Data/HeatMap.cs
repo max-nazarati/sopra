@@ -6,6 +6,8 @@ using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using KernelPanic.PathPlanning;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
@@ -150,6 +152,33 @@ namespace KernelPanic.Data
 
         public int Width { get => mWidth;}
         public int Height { get => mHeight;}
+
+        internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager, bool drawBorderOnly=true)
+        {
+            var visualization = new Visualizer(grid, spriteManager, drawBorderOnly);
+            for (int x = 0; x < mWidth; x++)
+            {
+                for (int y = 0; y < mHeight; y++)
+                {
+                    Color color;
+                    if ((int)mMap[y, x] == 0)
+                    {
+                        color = Color.Red;
+                    }
+                    else if (IsWalkable(new Point(x, y)))
+                    {
+                        color = new Color(255 - 4*(int)mMap[y, x], 255 - 4 * (int)mMap[y, x], 0);
+                    }
+                    else
+                    {
+                        color = Color.White;
+                    }
+                    visualization.Append(new Point[] {new Point(x, y)}, color);
+                }
+            }
+
+            return visualization;
+        }
     }
 
     class VectorField

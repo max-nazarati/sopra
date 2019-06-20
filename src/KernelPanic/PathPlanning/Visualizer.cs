@@ -29,10 +29,10 @@ namespace KernelPanic.PathPlanning
 
         private readonly List<Node> mNodes = new List<Node>();
 
-        internal Visualizer(Grid grid, SpriteManager spriteManager)
+        internal Visualizer(Grid grid, SpriteManager spriteManager, bool drawBorderOnly=true)
         {
             mGrid = grid;
-            mTile = Grid.CreateTileBorder(spriteManager);
+            mTile = drawBorderOnly ? Grid.CreateTileBorder(spriteManager) : Grid.CreateTile(spriteManager);
         }
 
         internal void Append(ObstacleMatrix obstacleMatrix)

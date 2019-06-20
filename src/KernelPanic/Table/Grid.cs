@@ -72,7 +72,7 @@ namespace KernelPanic.Table
             CreateCoordinateSystem();
         }
 
-        private static ImageSprite CreateTile(SpriteManager spriteManager)
+        internal static ImageSprite CreateTile(SpriteManager spriteManager)
         {
             var tile = spriteManager.CreateLaneTile();
             tile.ScaleToWidth(KachelSize);
