@@ -17,13 +17,16 @@ namespace KernelPanic.Entities
     [KnownType(typeof(Firefox))]
     internal class Hero : Unit
     {
+        #region MemberVariables
+        
         protected CooldownComponent Cooldown { get; set; }
-        
-        
         private AStar mAStar; // save the AStar for path-drawing
         private Point mTarget; // the target we wish to move to
-
         private Visualizer mPathVisualizer;
+
+        #endregion
+
+        #region Konstruktor / Create
 
         /// <summary>
         /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
@@ -47,7 +50,9 @@ namespace KernelPanic.Entities
             // mTarget = Sprite.Position;
             ShouldMove = false;
         }
-        
+
+        #endregion
+
         #region Movement
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
@@ -159,6 +164,8 @@ namespace KernelPanic.Entities
         
         #endregion Ability
 
+        #region Update
+
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             // Check if we still want to move to the same target, etc.
@@ -170,9 +177,12 @@ namespace KernelPanic.Entities
 
             // base.Update checks for mShouldMove
             base.Update(positionProvider, gameTime, inputManager);
-            
         }
         
+        #endregion
+
+        #region Draw
+
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawAStarPath(spriteBatch, gameTime);
@@ -187,6 +197,8 @@ namespace KernelPanic.Entities
                 mPathVisualizer?.Draw(spriteBatch, gameTime);
             }
         }
+
+        #endregion
 
         #region Actions
 
