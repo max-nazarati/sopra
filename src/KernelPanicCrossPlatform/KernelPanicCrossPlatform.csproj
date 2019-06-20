@@ -210,6 +210,15 @@
     <Compile Include="..\KernelPanic\Selection\SelectionManager.cs">
       <Link>Selection\SelectionManager.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Serialization\AutofacContractResolver.cs">
+      <Link>Serialization\AutofacContractResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Serialization\Storage.cs">
+      <Link>Serialization\Storage.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Serialization\StorageManager.cs">
+      <Link>Serialization\StorageManager.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\SinglePurchasableAction.cs">
       <Link>SinglePurchasableAction.cs</Link>
     </Compile>
@@ -233,9 +242,6 @@
     </Compile>
     <Compile Include="..\KernelPanic\Sprites\TextSprite.cs">
       <Link>Sprites\TextSprite.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\StorageManager.cs">
-      <Link>StorageManager.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Table\Base.cs">
       <Link>Table\Base.cs</Link>
