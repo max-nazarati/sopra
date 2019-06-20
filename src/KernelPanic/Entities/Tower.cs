@@ -15,6 +15,7 @@ namespace KernelPanic.Entities
         private readonly float mRadius;
         private readonly CooldownComponent mFireTimer;
         private readonly List<Projectile> mProjectiles = new List<Projectile>();
+        private readonly Sprite mRadiusSprite;
         private SoundManager mSounds;
         private bool mInRange;
 
@@ -51,6 +52,8 @@ namespace KernelPanic.Entities
 
                 timer.Reset();
             };
+
+            mRadiusSprite = sprites.CreateTowerRadiusIndicator(radius);
         }
 
         internal static Tower Create(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
@@ -69,7 +72,7 @@ namespace KernelPanic.Entities
             sprite.Position = position;
             sprite.ScaleToHeight(size);
             sprite.SetOrigin(RelativePosition.Center);
-            return new StrategicTower(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+            return new StrategicTower(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -80,6 +83,12 @@ namespace KernelPanic.Entities
             {
                 projectile.Draw(spriteBatch, gameTime);
             }
+            
+            if (!Selected)
+                return;
+            
+            mRadiusSprite.Position = Sprite.Position;
+            mRadiusSprite.Draw(spriteBatch, gameTime);
         }
         
         private Vector2 Target(PositionProvider positionProvider)

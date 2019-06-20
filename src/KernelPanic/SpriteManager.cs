@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -300,6 +301,64 @@ namespace KernelPanic
         internal ImageSprite CreateSelectionBorder()
         {
             var sprite = new ImageSprite(Lookup(Image.SelectionBorder));
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
+        }
+
+        private Texture2D CreateCircleTexture(int radius, Color color)
+        {
+            var radiusSquared = radius * radius;
+            var diameter = 2 * radius;
+            var data = Enumerable.Repeat(Color.Transparent, diameter * diameter).ToArray();
+
+            // This algorithm is based on https://en.wikipedia.org/wiki/Midpoint_circle_algorithm#Variant_with_integer-based_arithmetic.
+            //
+            // We only have to calculate the coordinates for the first octant, the others octants are just mirror-images.
+
+            var x = radius - 1;
+            var y = 0;
+
+            void Plot()
+            {
+                data[(radius + x) * diameter + radius + y] = color;
+                data[(radius + x) * diameter + radius - y] = color;
+                data[(radius - x) * diameter + radius - y] = color;
+                data[(radius - x) * diameter + radius + y] = color;
+
+                data[(radius + y) * diameter + radius + x] = color;
+                data[(radius + y) * diameter + radius - x] = color;
+                data[(radius - y) * diameter + radius - x] = color;
+                data[(radius - y) * diameter + radius + x] = color;
+            }
+
+            while (true)
+            {
+                // Plot the current point.
+                Plot();
+
+                // We have reached 45°.
+                if (x == y)
+                    break;
+
+                // Y always increases.
+                ++y;
+                
+                // Calculate the radius error for the two cases  a) decreasing x  b) keeping x
+                var error1 = Math.Abs((x - 1) * (x - 1) + y * y - radiusSquared);
+                var error2 = Math.Abs(x * x + y * y - radiusSquared);
+
+                if (error1 < error2)
+                    --x;
+            }
+
+            var texture = new Texture2D(GraphicsDevice, diameter, diameter);
+            texture.SetData(data);
+            return texture;
+        }
+
+        internal ImageSprite CreateTowerRadiusIndicator(float radius)
+        {
+            var sprite = new ImageSprite(CreateCircleTexture((int) radius, Color.Green));
             sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
