@@ -136,14 +136,13 @@ namespace KernelPanic
             mPurchaseDemoReset.Draw(spriteBatch, gameTime);
         }
 
-        public DataStorage toDataStorage()
+        public DataStorage ToDataStorage()
         {
             return new DataStorage
             {
                 PlayerA = mPlayerA,
                 PlayerB = mPlayerB,
                 Board = mBoard,
-
             };
         }
     }

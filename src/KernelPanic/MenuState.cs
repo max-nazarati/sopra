@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Camera;
@@ -76,16 +77,20 @@ namespace KernelPanic
                 CreateBackground(stateManager.Sprite), newGameButton, loadGameButton, backButton
             };
 
-            var index = 0;
-            var files = System.IO.Directory.GetFiles(StorageManager.Folder);
+            var positionY = 0;
             var selectedSlot = 0;
             Button selectedButton = null;
 
             foreach (var slot in StorageManager.Slots)
             {
-                var localIndex = index;
-                var title = index < files.Length ? files[index] : "leer";
-                var button = CreateButton(stateManager.Sprite, title, (index + 1) * 100);
+                positionY += 100;
+
+                var info = StorageManager.LoadStorageInfo(slot, stateManager);
+                var button = CreateButton(stateManager.Sprite,
+                    info?.Timestamp.ToString(CultureInfo.CurrentCulture) ?? "leer",
+                    positionY);
+
+                var exists = info.HasValue;
                 button.Clicked += (btn, input) =>
                 {
                     if (selectedButton is Button oldSelection)
@@ -93,13 +98,12 @@ namespace KernelPanic
 
                     btn.Enabled = false;
                     newGameButton.Enabled = true;
-                    loadGameButton.Enabled = localIndex < files.Length;
+                    loadGameButton.Enabled = exists;
                     selectedButton = btn;
                     selectedSlot = slot;
                 };
 
                 components.Add(button);
-                index++;
             }
 
             newGameButton.Clicked += (button, input) => InGameState.PushGameStack(stateManager);
@@ -269,11 +273,7 @@ namespace KernelPanic
            optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager));
 
            var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
-           saveButton.Clicked += (button, input) =>
-           {
-               var dir = System.IO.Directory.GetFiles(StorageManager.Folder);
-               StorageManager.SaveGame(dir.Length % 5, inGameState);
-           };
+           saveButton.Clicked += (button, input) => StorageManager.SaveGame(StorageManager.Debug.NextSaveSlot, inGameState);
 
            var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
            mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager));

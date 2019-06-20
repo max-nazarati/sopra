@@ -27,6 +27,11 @@ namespace KernelPanic
         internal TimeSpan GameTime { get; set; }
     }
 
+    internal struct DataInfo
+    {
+        internal DateTime Timestamp { get; set; }
+    }
+
     internal static class StorageManager
     {
         #region Constructor
@@ -40,7 +45,12 @@ namespace KernelPanic
 
         #region Save & Load
 
-        internal static string Folder => sFolder;    // TODO: remove when not used any more.
+        // TODO: Remove when not used any more.
+        internal static class Debug
+        {
+            internal static int NextSaveSlot =>
+                Directory.GetFiles(sFolder).Length / 2 % Slots.Count();
+        }
 
         internal static IEnumerable<int> Slots => Enumerable.Range(0, 5);
 
@@ -49,8 +59,12 @@ namespace KernelPanic
             if (!Slots.Contains(slot))
                 throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
 
+            var serializer = CreateSerializer(gameState.GameStateManager);
+
             using (var file = File.CreateText(DataPath(slot)))
-                CreateSerializer(gameState.GameStateManager).Serialize(file, gameState.toDataStorage());
+                serializer.Serialize(file, gameState.ToDataStorage());
+            using (var file = File.CreateText(InfoPath(slot)))
+                serializer.Serialize(file, new DataInfo {Timestamp = DateTime.Now});
         }
 
         internal static DataStorage LoadGame(int slot, GameStateManager gameStateManager)
@@ -60,6 +74,18 @@ namespace KernelPanic
 
             using (var file = File.OpenText(DataPath(slot)))
                 return (DataStorage) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataStorage));
+        }
+
+        internal static DataInfo? LoadStorageInfo(int slot, GameStateManager gameStateManager)
+        {
+            if (!Slots.Contains(slot))
+                throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
+
+            if (!File.Exists(DataPath(slot)) || !File.Exists(InfoPath(slot)))
+                return null;
+
+            using (var file = File.OpenText(InfoPath(slot)))
+                return (DataInfo) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataInfo));
         }
 
         #endregion
