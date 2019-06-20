@@ -15,8 +15,6 @@ namespace KernelPanic
     [DataContract]
     internal sealed class InGameState : AGameState
     {
-        private readonly GameStateManager mGameStateManager;
-
         [DataMember(Name = "Board")]
         private readonly Board mBoard;
         [DataMember(Name = "PlayerA")]
@@ -36,30 +34,22 @@ namespace KernelPanic
         // private HashSet<Wave> mActiveWaves;
         // private SelectionManager mSelectionManager;
 
-        internal InGameState(GameStateManager gameStateManager)
-            : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize),  gameStateManager)
+        
+        private InGameState(DataStorage storage, GameStateManager gameStateManager)
+            : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
-            mGameStateManager = gameStateManager;
-            
-            mBoard = new Board(gameStateManager.Sprite, gameStateManager.Sound);
-            mPlayerA = new Player(mBoard.RightLane, mBoard.LeftLane);
-            mPlayerB = new Player(mBoard.LeftLane, mBoard.RightLane);
+            mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
+            mPlayerA = storage?.PlayerA ?? new Player(mBoard.RightLane, mBoard.LeftLane);
+            mPlayerB = storage?.PlayerB ?? new Player(mBoard.LeftLane, mBoard.RightLane);
             mSelectionManager = new SelectionManager(mPlayerA.AttackingLane, mPlayerA.DefendingLane);
 
             var entityGraph = mBoard.LeftLane.EntityGraph;
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
         }
 
-        internal static void PushGameStack(GameStateManager gameStateManager)
+        internal static void PushGameStack(GameStateManager gameStateManager, DataStorage storage=null)
         {
-            var game = new InGameState(gameStateManager);
-            var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, game.mSelectionManager, gameStateManager);
-            gameStateManager.Restart(game);
-            gameStateManager.Push(hud);
-        }
-
-        internal static void PushGameStack(GameStateManager gameStateManager, InGameState game)
-        {
+            var game = new InGameState(storage, gameStateManager);
             var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, game.mSelectionManager, gameStateManager);
             gameStateManager.Restart(game);
             gameStateManager.Push(hud);
@@ -126,7 +116,7 @@ namespace KernelPanic
         {
             if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive)
             {
-                mGameStateManager.Push(MenuState.CreatePauseMenu(mGameStateManager, this));
+                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this));
                 return;
             }
 
@@ -144,6 +134,16 @@ namespace KernelPanic
             mPurchaseDemoButton1.Draw(spriteBatch, gameTime);
             mPurchaseDemoButton2.Draw(spriteBatch, gameTime);
             mPurchaseDemoReset.Draw(spriteBatch, gameTime);
+        }
+
+        public DataStorage ToDataStorage()
+        {
+            return new DataStorage
+            {
+                PlayerA = mPlayerA,
+                PlayerB = mPlayerB,
+                Board = mBoard,
+            };
         }
     }
 }

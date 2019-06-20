@@ -11,6 +11,7 @@ namespace KernelPanic
     {
         private Entity mSelection;
         private readonly ScoreOverlay mScoreOverlay;
+        private readonly UnitBuyingMenu mUnitBuyingMenu;
         // public BuildingBuyingMenu BuildingMenu { get; set; }
         // public UnitBuyingMenu UnitMenu { get; set; }
 
@@ -25,18 +26,19 @@ namespace KernelPanic
             selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
             
             mScoreOverlay = new ScoreOverlay(player1, player2, gameStateManager.Sprite);
-            // BuildingMenu = new BuildingBuyingMenu(0, 50);
+            mUnitBuyingMenu = new UnitBuyingMenu(gameStateManager.Sprite, player1);
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime)
         {
             mScoreOverlay.Update(gameTime);
+            mUnitBuyingMenu.Update(inputManager, gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mScoreOverlay.Draw(spriteBatch, gameTime);
-            // BuildingMenu.Draw(spriteBatch, gameTime);
+            mUnitBuyingMenu.Draw(spriteBatch, gameTime);
         }
     }
 }

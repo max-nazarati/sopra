@@ -11,7 +11,7 @@ namespace KernelPanic
     [KnownType(typeof(MenuState))]
     internal abstract class AGameState
     {
-        protected GameStateManager GameStateManager { get; }
+        internal GameStateManager GameStateManager { get; }
         internal virtual bool IsOverlay => false;
         internal ICamera Camera { get; }
 
