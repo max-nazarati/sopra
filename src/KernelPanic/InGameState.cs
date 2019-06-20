@@ -23,26 +23,28 @@ namespace KernelPanic
         private PurchaseButton<Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
         private TextButton mPurchaseDemoReset;
 
-        // public int SaveSlot { get; set; }
+        internal int SaveSlot { get; }
+
         // public SaveGame CurrentSaveGame { get; private set; } no such class yet
         // private HashSet<Wave> mActiveWaves;
         // private SelectionManager mSelectionManager;
 
-        private InGameState(Storage? storage, GameStateManager gameStateManager)
+        private InGameState(Storage? storage, int saveSlot, GameStateManager gameStateManager)
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
             mPlayerA = storage?.PlayerA ?? new Player(mBoard.RightLane, mBoard.LeftLane);
             mPlayerB = storage?.PlayerB ?? new Player(mBoard.LeftLane, mBoard.RightLane);
             mSelectionManager = new SelectionManager(mPlayerA.AttackingLane, mPlayerA.DefendingLane);
+            SaveSlot = saveSlot;
 
             var entityGraph = mBoard.LeftLane.EntityGraph;
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
         }
 
-        internal static void PushGameStack(GameStateManager gameStateManager, Storage? storage = null)
+        internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)
         {
-            var game = new InGameState(storage, gameStateManager);
+            var game = new InGameState(storage, saveSlot, gameStateManager);
             var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, game.mSelectionManager, gameStateManager);
             gameStateManager.Restart(game);
             gameStateManager.Push(hud);

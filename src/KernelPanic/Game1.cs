@@ -52,7 +52,7 @@ namespace KernelPanic
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
             mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), new SoundManager(Content));
-            InGameState.PushGameStack(mGameStateManager);
+            InGameState.PushGameStack(0, mGameStateManager);
             // SoundManager.Instance.PlayBackgroundMusic();
         }
 
