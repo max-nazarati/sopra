@@ -8,6 +8,9 @@ using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace KernelPanic.Table
 {
@@ -17,6 +20,7 @@ namespace KernelPanic.Table
         /// <summary>
         /// Left and Right lane
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
         public enum Side
         {
             /// <summary>
@@ -30,18 +34,22 @@ namespace KernelPanic.Table
             Right
         }
 
-        [DataMember]
         internal EntityGraph EntityGraph { get; set; }
+        [JsonProperty]
+        internal List<Entities.Entity> mEntities;
+       
         internal Base Target { get; }
 
-        [DataMember(Name = "Grid")]
-        private readonly Grid mGrid;
+        private Grid mGrid;
         private readonly SpriteManager mSpriteManager;
         private static bool VISUAL_DEBUG;
         private SoundManager mSounds;
+        [DataMember]
+        private Side mLaneSide;
 
         private HeatMap mHeatMap;
         private VectorField mVectorField;
+        private Entities.Entity[] mDeserializedEntities;
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
@@ -64,12 +72,38 @@ namespace KernelPanic.Table
         public Lane(Side laneSide, SpriteManager sprites, SoundManager sounds)
         {
             mSounds = sounds;
+            mLaneSide = laneSide;
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), sprites);
             Target = new Base();
             mSpriteManager = sprites;
             InitHeatMap();
             UpdateHeatMap();
+        }
+
+        internal Lane(SpriteManager sprites, SoundManager sounds)
+        {
+            Target = new Base();
+            mSpriteManager = sprites;
+            mSounds = sounds;
+
+        }
+
+        [OnSerializing]
+        internal void BeforeSerialization(StreamingContext context)
+        {
+            mEntities = new List<Entity>(EntityGraph);
+        }
+
+        [OnDeserialized]
+        internal void AfterDeserialization(StreamingContext context)
+        {
+            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
+            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
+            foreach (var entity in mEntities)
+            {
+                EntityGraph.Add(entity);
+            }
         }
 
         internal bool Contains(Vector2 point) => mGrid.Contains(point);

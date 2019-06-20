@@ -6,18 +6,24 @@ using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities
 {
-    [DataContract]
     internal class Tower : Building
     {
         private readonly float mRadius;
         private readonly CooldownComponent mFireTimer;
+        [JsonIgnore]
         private readonly List<Projectile> mProjectiles = new List<Projectile>();
         private readonly Sprite mRadiusSprite;
         private SoundManager mSounds;
         private bool mInRange;
+
+        internal Tower(SpriteManager sprites, SoundManager sounds) :this(0, 0, new TimeSpan(), sprites.CreateTower(), sprites, sounds)
+        {
+            
+        }
 
         internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds)
             : base(price, sprite, sprites)
@@ -56,6 +62,7 @@ namespace KernelPanic.Entities
             mRadiusSprite = sprites.CreateTowerRadiusIndicator(radius);
         }
 
+        
         internal static Tower Create(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
         {
             var sprite = sprites.CreateTower();

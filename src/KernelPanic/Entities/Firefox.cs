@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Table;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities
 {
@@ -19,18 +20,19 @@ namespace KernelPanic.Entities
             Cooldown = new CooldownComponent(new TimeSpan(0, 0, 5));
         }
 
+        internal Firefox(SpriteManager spriteManager) : this(0, 0, 0, 0, spriteManager.CreateFirefox(), spriteManager)
+        {
+            
+        }
+
         private static Firefox Create(Point position, Sprite sprite, SpriteManager spriteManager)
         {
             sprite.Position = position.ToVector2();
-            sprite.ScaleToWidth(Grid.KachelSize);
             return new Firefox(10, 2, 100, 1, sprite, spriteManager);
         }
 
         internal static Firefox CreateFirefox(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateFirefox(), spriteManager);
-        
-        internal static Firefox CreateFirefoxJump(Point position, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateFirefoxJump(), spriteManager);
         
 
         protected override void ActivateAbility(InputManager inputManager)

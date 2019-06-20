@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+
 namespace KernelPanic.Entities
 {
     [DataContract]
@@ -18,7 +19,8 @@ namespace KernelPanic.Entities
     internal class Hero : Unit
     {
         #region MemberVariables
-        
+
+        [DataMember]
         protected CooldownComponent Cooldown { get; set; }
         private AStar mAStar; // save the AStar for path-drawing
         private Point mTarget; // the target we wish to move to

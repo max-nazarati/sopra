@@ -7,6 +7,8 @@ using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+
 
 namespace KernelPanic.Entities
 {
@@ -18,6 +20,9 @@ namespace KernelPanic.Entities
     {
         internal Sprite Sprite { get; private set; }
 
+        [DataMember]
+        private Vector2 Position;
+
         protected SpriteManager SpriteManager { get; }
 
         public bool mDidDie;
@@ -28,6 +33,18 @@ namespace KernelPanic.Entities
             Sprite = sprite;
             Sprite.SetOrigin(RelativePosition.Center);
             SpriteManager = spriteManager;
+        }
+
+        [OnSerializing]
+        internal void BeforeSerialization(StreamingContext context)
+        {
+            Position = Sprite.Position;
+        }
+
+        [OnDeserialized]
+        internal void AfterDeserialization(StreamingContext context)
+        {
+            Sprite.Position = Position;
         }
 
         public bool Selected { get; set; }
