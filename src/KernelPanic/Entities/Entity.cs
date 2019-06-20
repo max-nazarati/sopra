@@ -36,13 +36,13 @@ namespace KernelPanic.Entities
         }
 
         [OnSerializing]
-        internal void BeforeSerialization(StreamingContext context)
+        private void BeforeSerialization(StreamingContext context)
         {
             Position = Sprite.Position;
         }
 
         [OnDeserialized]
-        internal void AfterDeserialization(StreamingContext context)
+        private void AfterDeserialization(StreamingContext context)
         {
             Sprite.Position = Position;
         }

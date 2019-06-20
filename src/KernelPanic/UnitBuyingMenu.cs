@@ -54,11 +54,6 @@ namespace KernelPanic
             {
                 element.Item2.Update(input, gameTime);
             }
-            if (mChoices[0].Item1 == 5)
-            {
-                ResetCounts();
-            }
-
         }
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {

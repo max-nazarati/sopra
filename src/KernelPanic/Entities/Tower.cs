@@ -16,7 +16,7 @@ namespace KernelPanic.Entities
         private readonly CooldownComponent mFireTimer;
         [JsonIgnore]
         private readonly List<Projectile> mProjectiles = new List<Projectile>();
-        private readonly Sprite mRadiusSprite;
+        private Sprite mRadiusSprite;
         private SoundManager mSounds;
         private bool mInRange;
 
@@ -62,7 +62,12 @@ namespace KernelPanic.Entities
             mRadiusSprite = sprites.CreateTowerRadiusIndicator(radius);
         }
 
-        
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            mRadiusSprite = SpriteManager.CreateTowerRadiusIndicator(mRadius);
+        }
+
         internal static Tower Create(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
         {
             var sprite = sprites.CreateTower();

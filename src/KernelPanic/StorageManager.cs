@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -29,7 +30,10 @@ namespace KernelPanic
 
     internal struct DataInfo
     {
+        [JsonProperty]
         internal DateTime Timestamp { get; set; }
+
+        internal string Label => Timestamp.ToString("d.M., HH:mm", CultureInfo.CurrentCulture);
     }
 
     internal static class StorageManager
