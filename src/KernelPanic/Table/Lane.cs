@@ -136,8 +136,8 @@ namespace KernelPanic.Table
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
+            // if (mGrid.LaneSide == Side.Left) Visualize(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
-            if (mGrid.LaneSide == Side.Left) Visualize(spriteBatch, gameTime);
         }
         
         public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
@@ -196,8 +196,6 @@ namespace KernelPanic.Table
             bfs.UpdateVectorField();
             mHeatMap = bfs.HeatMap;
             mVectorField = bfs.VectorField;
-            Console.WriteLine(mHeatMap.ToString());
-            Console.WriteLine("\n ==== \n");
         }
 
         internal void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
