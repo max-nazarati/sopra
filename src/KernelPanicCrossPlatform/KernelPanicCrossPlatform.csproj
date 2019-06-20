@@ -162,6 +162,9 @@
     <Compile Include="..\KernelPanic\Interface\Button.cs">
       <Link>Interface\Button.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Interface\ImageButton.cs">
+      <Link>Interface\ImageButton.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Interface\InterfaceComponent.cs">
       <Link>Interface\InterfaceComponent.cs</Link>
     </Compile>
@@ -169,7 +172,7 @@
       <Link>Interface\StaticComponent.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Interface\TextButton.cs">
-      <Link>TextButton.cs</Link>
+      <Link>Interface\TextButton.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\IPriced.cs">
       <Link>IPriced.cs</Link>
