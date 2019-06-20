@@ -33,8 +33,8 @@ namespace KernelPanic
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
-            mPlayerA = storage?.PlayerA ?? new Player(mBoard.RightLane, mBoard.LeftLane);
-            mPlayerB = storage?.PlayerB ?? new Player(mBoard.LeftLane, mBoard.RightLane);
+            mPlayerA = storage?.PlayerA ?? new Player(mBoard.LeftLane, mBoard.RightLane);
+            mPlayerB = storage?.PlayerB ?? new Player(mBoard.RightLane, mBoard.LeftLane);
             mSelectionManager = new SelectionManager(mPlayerA.AttackingLane, mPlayerA.DefendingLane);
             SaveSlot = saveSlot;
 
