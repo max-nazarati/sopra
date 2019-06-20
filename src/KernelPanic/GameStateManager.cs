@@ -65,6 +65,12 @@ namespace KernelPanic
             mGameStates.Push(new GameStateInfo(newGameState));
         }
 
+        internal void Switch(AGameState newGameState)
+        {
+            Pop();
+            Push(newGameState);
+        }
+
         /// <summary>
         /// Clears the stack and pushes the given <see cref="AGameState"/>.
         /// </summary>

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Camera;
+using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Serialization;
@@ -18,7 +17,7 @@ namespace KernelPanic
     internal sealed class MenuState : AGameState
     {
         private InterfaceComponent[] mComponents;
-        private Action mEscapeAction;
+        private readonly Action mEscapeAction;
 
         private MenuState(GameStateManager gameStateManager, Action escapeAction = null)
             : base(new StaticCamera(), gameStateManager)
@@ -65,7 +64,7 @@ namespace KernelPanic
             };
         }
 
-        private static MenuState CreatePlayMenu(GameStateManager stateManager)
+        private static MenuState CreatePlayMenu(GameStateManager stateManager, bool hasError = false)
         {
             var newGameButton = CreateButton(stateManager.Sprite, "Neues Spiel",600, 150);
             var loadGameButton = CreateButton(stateManager.Sprite, "Spiel laden", 600, -150);
@@ -73,11 +72,21 @@ namespace KernelPanic
 
             newGameButton.Enabled = false;
             loadGameButton.Enabled = false;
-
+            
             var components = new List<InterfaceComponent>
             {
                 CreateBackground(stateManager.Sprite), newGameButton, loadGameButton, backButton
             };
+
+            if (hasError)
+            {
+                var errorSprite = stateManager.Sprite.CreateText();
+                errorSprite.Text = "Es ist ein Fehler aufgetreten, bitte versuche es erneut.";
+                errorSprite.TextColor = Color.Red;
+                errorSprite.SetOrigin(RelativePosition.CenterTop);
+                errorSprite.X = stateManager.Sprite.ScreenSize.X / 2f;
+                components.Add(new StaticComponent(errorSprite));
+            }
 
             var positionY = 0;
             var selectedSlot = 0;
@@ -106,13 +115,30 @@ namespace KernelPanic
                 components.Add(button);
             }
 
-            newGameButton.Clicked += (button, input) => InGameState.PushGameStack(selectedSlot, stateManager);
-            loadGameButton.Clicked += (button, input) =>
-                InGameState.PushGameStack(selectedSlot, stateManager,
-                    StorageManager.LoadGame(selectedSlot, stateManager));
+            newGameButton.Clicked += (button, input) => InGameState.PushGameStack(stateManager);
+            loadGameButton.Clicked += LoadGameCallback(() => selectedSlot, stateManager);
             backButton.Clicked += (button, input) => stateManager.Pop();
 
             return new MenuState(stateManager) { mComponents = components.ToArray() };
+        }
+
+        private static Button.Delegate LoadGameCallback(Func<int> slotAccessor, GameStateManager gameStateManager)
+        {
+            return (button, inputManager) =>
+            {
+                try
+                {
+                    InGameState.PushGameStack(slotAccessor(),
+                        gameStateManager,
+                        StorageManager.LoadGame(slotAccessor(), gameStateManager));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Couldn't load slot {0}", slotAccessor());
+                    Console.WriteLine(e);
+                    gameStateManager.Switch(CreatePlayMenu(gameStateManager, true));
+                }
+            };
         }
 
         private static Button TurnSoundsOnOff(TextButton soundOnOffButton)

@@ -131,6 +131,12 @@ namespace KernelPanic
             var texture  = Lookup(Image.StandingFox);
             return new ImageSprite(texture);
         }
+
+        internal TextSprite CreateText()
+        {
+            return new TextSprite(Lookup(Font.Button));
+        }
+
         internal Sprite CreateMenuBackground()
         {
             var texture = Lookup(Image.MenuBackground);
