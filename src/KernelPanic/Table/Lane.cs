@@ -90,13 +90,13 @@ namespace KernelPanic.Table
         }
 
         [OnSerializing]
-        internal void BeforeSerialization(StreamingContext context)
+        private void BeforeSerialization(StreamingContext context)
         {
             mEntities = new List<Entity>(EntityGraph);
         }
 
         [OnDeserialized]
-        internal void AfterDeserialization(StreamingContext context)
+        private void AfterDeserialization(StreamingContext context)
         {
             mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);

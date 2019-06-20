@@ -358,6 +358,9 @@ namespace KernelPanic
 
         internal ImageSprite CreateTowerRadiusIndicator(float radius)
         {
+            if (Math.Abs(radius) < 0.00001)
+                return null;
+
             var sprite = new ImageSprite(CreateCircleTexture((int) radius, Color.Green));
             sprite.SetOrigin(RelativePosition.Center);
             return sprite;
