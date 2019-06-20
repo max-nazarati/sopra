@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Autofac.Core.Lifetime;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -29,6 +31,18 @@ namespace KernelPanic.Entities
                 mLastMovement = movementDirection;
             }
             MoveTarget = Sprite.Position + movementDirection;
+
+            List<Point> baseHitBox = new List<Point>();
+            foreach (var baseGrid in positionProvider.Target.GetHitBox())
+            {
+                baseHitBox.Add(baseGrid.ToPoint());
+            }
+
+            if (baseHitBox.Contains(Grid.CoordinatePositionFromScreen(Sprite.Position)))
+            {
+                DidDie();
+                positionProvider.DamageBase(5);
+            }
         }
     }
 }

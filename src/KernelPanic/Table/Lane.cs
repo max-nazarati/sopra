@@ -33,7 +33,8 @@ namespace KernelPanic.Table
         }
 
         internal EntityGraph EntityGraph { get; set; }
-       
+
+        [JsonProperty]
         internal Base Target { get; }
 
         private Grid mGrid;
@@ -114,7 +115,7 @@ namespace KernelPanic.Table
             }
 
 
-            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField);
+            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
         }
 

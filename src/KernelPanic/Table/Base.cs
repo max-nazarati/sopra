@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Table
 {
     internal sealed class Base
     {
-        public int Power { get; private set; }
+        [JsonProperty]
+        public int Power { get; set; }
+
+        [JsonProperty]
         private Vector2 mPosition;
 
         public Base(Vector2 position = new Vector2())

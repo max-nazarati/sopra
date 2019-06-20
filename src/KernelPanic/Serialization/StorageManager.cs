@@ -23,25 +23,18 @@ namespace KernelPanic.Serialization
 
         #region Save & Load
 
-        // TODO: Remove when not used any more.
-        internal static class Debug
-        {
-            internal static int NextSaveSlot =>
-                Directory.GetFiles(sFolder).Length / 2 % Slots.Count();
-        }
-
         internal static IEnumerable<int> Slots => Enumerable.Range(0, 5);
 
-        internal static void SaveGame(int slot, InGameState gameState)
+        internal static void SaveGame(InGameState gameState)
         {
-            if (!Slots.Contains(slot))
-                throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
+            if (!Slots.Contains(gameState.SaveSlot))
+                throw new InvalidOperationException("InGameState has invalid save-slot " + gameState.SaveSlot);
 
             var serializer = CreateSerializer(gameState.GameStateManager);
 
-            using (var file = File.CreateText(DataPath(slot)))
+            using (var file = File.CreateText(DataPath(gameState.SaveSlot)))
                 serializer.Serialize(file, gameState.Data);
-            using (var file = File.CreateText(InfoPath(slot)))
+            using (var file = File.CreateText(InfoPath(gameState.SaveSlot)))
                 serializer.Serialize(file, new Storage.Info {Timestamp = DateTime.Now});
         }
 

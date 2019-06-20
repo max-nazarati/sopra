@@ -118,6 +118,7 @@ namespace KernelPanic.Entities
                             animation.mMovement = AnimatedSprite.Movement.Left;
                         }
                     }
+                    /*
                     else
                     {
                         if (movement.Y > 0)
@@ -129,6 +130,7 @@ namespace KernelPanic.Entities
                             animation.mMovement = AnimatedSprite.Movement.Up;
                         }
                     }
+                    */
                 }
                 else
                 {
