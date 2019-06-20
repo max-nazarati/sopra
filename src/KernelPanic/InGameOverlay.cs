@@ -26,7 +26,7 @@ namespace KernelPanic
             selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
             
             mScoreOverlay = new ScoreOverlay(player1, player2, gameStateManager.Sprite);
-            mUnitBuyingMenu = new UnitBuyingMenu(gameStateManager.Sprite, player1);
+            mUnitBuyingMenu = new UnitBuyingMenu(gameStateManager.Sprite, player2);    // Fixme: This should become player1.
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime)
