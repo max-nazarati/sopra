@@ -53,7 +53,6 @@ namespace KernelPanic
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
             mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), new SoundManager(Content));
             InGameState.PushGameStack(mGameStateManager);
-            
             // SoundManager.Instance.PlayBackgroundMusic();
         }
 
