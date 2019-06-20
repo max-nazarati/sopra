@@ -46,6 +46,11 @@ namespace KernelPanic.PathPlanning
 
         internal void Append(IEnumerable<Point> points, Color color, float tileSize = Grid.KachelSize)
         {
+            if (points == null)
+            {
+                return;
+                
+            }
             mNodes.AddRange(points.Select(point =>
             {
                 var position = Grid.ScreenPositionFromCoordinate(point).ToVector2();

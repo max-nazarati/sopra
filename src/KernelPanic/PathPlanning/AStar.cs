@@ -10,11 +10,12 @@ namespace KernelPanic.PathPlanning
 {
     internal sealed class AStar
     {
-        private List<Point> mCoordinateList;
+        private readonly List<Point> mCoordinateList;
         private List<Point> mExploredNodes;
         private PriorityQueue mHeap = new PriorityQueue();
-        private Point mTarget;
-        private Point mStart;
+        private readonly Point mTarget;
+        private readonly Point mStart;
+        private readonly int mCountLimit;
 
         // mainly debugging reasons for now
         private List<Point> mBlocked;
@@ -41,6 +42,157 @@ namespace KernelPanic.PathPlanning
             mWalkable = new List<Point>(); // = coordinateList;
             mBlocked = new List<Point>();
             mObstacles = obstacles;
+            mCountLimit = coordinateList.Count;
+        }
+        
+        public List<Point> Path => mPath;
+
+        private bool IsStartPosition(Point position) => position == mStart;
+
+        private bool IsTargetPosition(Point position) => position == mTarget;
+
+        private IEnumerable<Node> CreateNeighbours(Node node)
+        {
+            var cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
+
+            Node CreateNode(int xOffset, int yOffset)
+            {
+                var point = node.Position + new Point(xOffset, yOffset);
+                if (mObstacles[point])
+                    return null;
+
+                var estimatedCost = EuclidHeuristic(point);
+                var isStartNode = IsStartPosition(point);
+                var isGoalNode = IsTargetPosition(point);
+                return new Node(point, node, cost, estimatedCost, isStartNode, isGoalNode);
+            }
+
+            if (CreateNode(0, -1) is Node up)
+                yield return up;
+            if (CreateNode(0, 1) is Node down)
+                yield return down;
+            if (CreateNode(-1, 0) is Node left)
+                yield return left;
+            if (CreateNode(1, 0) is Node right)
+                yield return right;
+        }
+
+        private void ExpandNode(Node node)
+        {
+            if (mExploredNodes.Contains(node.Position)) return;
+            foreach (var neighbour in CreateNeighbours(node))
+            {
+                if (!mExploredNodes.Contains(neighbour.Position)) mHeap.Insert(neighbour);
+                // Console.WriteLine(neighbour.Position.ToString());
+            }
+            mExploredNodes.Add(node.Position);
+            // Console.WriteLine(mExploredNodes.Count);
+            // Console.WriteLine(mHeap.Count);
+            // Console.WriteLine(node.Position.ToString());
+            // Console.WriteLine(node.Position.ToString());
+        }
+
+        private Node FindTarget()
+        {
+            Reset();
+            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true);
+            // double heuristicValue = startNode.Key;
+            mHeap.Insert(startNode);
+
+            var count = 0;
+            while (!mHeap.IsEmpty() && count < mCountLimit)
+            {
+                count++;
+                var heapNode = mHeap.RemoveMin();
+                if (IsTargetPosition(heapNode.Position)) return heapNode;
+                ExpandNode(heapNode);
+                // Console.Write("I am currently expanding: ");
+                // Console.WriteLine(heapNode.Position);
+            }
+
+            // Console.WriteLine("Couldn't find a path");
+            return null;
+        }
+
+        internal void CalculatePath()
+        {
+            Reset();
+            var path = new List<Point>();
+            var goalNode = FindTarget();
+            if (goalNode == null)
+            {
+                // Console.Write("Goal Node was null: ");
+                // Console.WriteLine("why tho");
+                return;
+            }
+            path.Add(goalNode.Position);
+            var currentNode = goalNode;
+            var currentPosition = goalNode.Position;
+
+            while (!IsStartPosition(currentPosition))
+            {
+                currentNode = currentNode.Parent;
+                currentPosition = currentNode.Position;
+                path.Add(currentPosition);
+            }
+            path.Reverse();
+            mPath = path;
+        }
+
+        private void Reset()
+        {
+            // mExploredNodes.Clear();
+            mExploredNodes = new List<Point>();
+            mHeap = new PriorityQueue();
+            mPath = new List<Point>();
+        }
+
+        public Point? FindNearestField()
+        {
+            /*
+            Console.WriteLine("----------- ExploredNodes:-----------");
+            foreach (var VARIABLE in mExploredNodes)
+            {
+                Console.WriteLine(VARIABLE);
+            }
+            Console.WriteLine("-------------------------------------");
+            if (!(mExploredNodes.Count > 0))
+            {
+                return new Point(0, 0);
+            }
+            */
+
+            double bestDistance = EuclidHeuristic(mExploredNodes[0]);
+            Point result = mExploredNodes[0];
+            foreach (var point in mExploredNodes)
+            {
+                var currentDistance = EuclidHeuristic(point);
+                if (currentDistance < bestDistance)
+                {
+                    bestDistance = currentDistance;
+                    result = point;
+                }
+            }
+
+            return result;
+        }
+        
+        #region update
+        /*
+        private void SetStart(Point start)
+        {
+            if (mWalkable.Contains(start))
+            {
+                mStart = start;
+            }
+        }
+
+        private void SetTarget(Point target)
+        {
+            if (mWalkable.Contains(target))
+            {
+                mTarget = target;
+            }
         }
         
         public void Update(InputManager inputManager)
@@ -101,9 +253,9 @@ namespace KernelPanic.PathPlanning
             }
             CalculatePath();
         }
-
-        public List<Point> Path => mPath;
-
+        */
+        #endregion update
+        
         #region Heuristics
 
         private double EuclidHeuristic(Point point) => Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
@@ -111,123 +263,9 @@ namespace KernelPanic.PathPlanning
         // private double ManhattenHeuristic(Point point) => Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
 
         #endregion
-
-
-        private void SetStart(Point start)
-        {
-            if (mWalkable.Contains(start))
-            {
-                mStart = start;
-            }
-        }
-
-        private void SetTarget(Point target)
-        {
-            if (mWalkable.Contains(target))
-            {
-                mTarget = target;
-            }
-        }
-
-        private bool IsStartPosition(Point position) => position == mStart;
-
-        private bool IsTargetPosition(Point position) => position == mTarget;
-
-        private IEnumerable<Node> CreateNeighbours(Node node)
-        {
-            var cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
-
-            Node CreateNode(int xOffset, int yOffset)
-            {
-                var point = node.Position + new Point(xOffset, yOffset);
-                if (mObstacles[point])
-                    return null;
-
-                var estimatedCost = EuclidHeuristic(point);
-                var isStartNode = IsStartPosition(point);
-                var isGoalNode = IsTargetPosition(point);
-                return new Node(point, node, cost, estimatedCost, isStartNode, isGoalNode);
-            }
-
-            if (CreateNode(0, -1) is Node up)
-                yield return up;
-            if (CreateNode(0, 1) is Node down)
-                yield return down;
-            if (CreateNode(-1, 0) is Node left)
-                yield return left;
-            if (CreateNode(1, 0) is Node right)
-                yield return right;
-        }
-
-        private void ExpandNode(Node node)
-        {
-            if (mExploredNodes.Contains(node.Position)) return;
-            foreach (var neighbour in CreateNeighbours(node))
-            {
-                if (!mExploredNodes.Contains(neighbour.Position)) mHeap.Insert(neighbour);
-                // Console.WriteLine(neighbour.Position.ToString());
-            }
-            mExploredNodes.Add(node.Position);
-            // Console.WriteLine(mExploredNodes.Count);
-            // Console.WriteLine(mHeap.Count);
-            // Console.WriteLine(node.Position.ToString());
-            // Console.WriteLine(node.Position.ToString());
-        }
-
-        private Node FindTarget()
-        {
-            Reset();
-            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true);
-            // double heuristicValue = startNode.Key;
-            mHeap.Insert(startNode);
-            
-            while (!mHeap.IsEmpty())
-            {
-                var heapNode = mHeap.RemoveMin();
-                if (IsTargetPosition(heapNode.Position)) return heapNode;
-                ExpandNode(heapNode);
-                // Console.Write("I am currently expanding: ");
-                // Console.WriteLine(heapNode.Position);
-            }
-
-            // Console.WriteLine("Couldn't find a path");
-            return null;
-        }
-
-        internal void CalculatePath()
-        {
-            // Reset();
-            var path = new List<Point>();
-            var goalNode = FindTarget();
-            if (goalNode == null)
-            {
-                // Console.Write("Goal Node was null: ");
-                // Console.WriteLine("why tho");
-                return;
-            }
-            path.Add(goalNode.Position);
-            var currentNode = goalNode;
-            var currentPosition = goalNode.Position;
-            var count = 0;
-            while (!IsStartPosition(currentPosition) && count < 1000)
-            {
-                count++;
-                currentNode = currentNode.Parent;
-                currentPosition = currentNode.Position;
-                path.Add(currentPosition);
-            }
-            path.Reverse();
-            mPath = path;
-        }
-
-        private void Reset()
-        {
-            // mExploredNodes.Clear();
-            mExploredNodes = new List<Point>();
-            mHeap = new PriorityQueue();
-            mPath = new List<Point>();
-        }
         
+        #region Test
+
         /*
         public void test1()
         {
@@ -256,6 +294,8 @@ namespace KernelPanic.PathPlanning
             queue.Insert(node9);
         }*/
 
+        #endregion
+        
         #region ObstacleEnvironment
         private void UpdateObstacles(InputManager inputManager)
         {

@@ -17,13 +17,16 @@ namespace KernelPanic.Entities
     [KnownType(typeof(Firefox))]
     internal class Hero : Unit
     {
+        #region MemberVariables
+        
         protected CooldownComponent Cooldown { get; set; }
-        
-        
         private AStar mAStar; // save the AStar for path-drawing
         private Point mTarget; // the target we wish to move to
-
         private Visualizer mPathVisualizer;
+
+        #endregion
+
+        #region Konstruktor / Create
 
         /// <summary>
         /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
@@ -45,9 +48,11 @@ namespace KernelPanic.Entities
             // TODO set mTarget to the position itself so heroes spawn non moving
             // Kind of done... Hero starts moving when the first target command is set... :)
             // mTarget = Sprite.Position;
-            mShouldMove = false;
+            ShouldMove = false;
         }
-        
+
+        #endregion
+
         #region Movement
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
@@ -64,6 +69,15 @@ namespace KernelPanic.Entities
             mAStar = positionProvider.MakePathFinding(this, startPoint, target);
             mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
+
+            if (path.Count == 0) // there is no path to be found
+            {
+                target = FindNearestWalkableField(target); // new Point(100, 100);
+                // Console.WriteLine("This is the debug message you are looking for" + mTarget);
+                mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+                mPathVisualizer = positionProvider.Visualize(mAStar);
+                path = mAStar.Path;
+            }
             
             // TODO get the next position of the path (should be at path[0]; something is ****ed up tho)...
             // ... setting it to 0 makes the firefox disappear (thus making me cry T_T) ...
@@ -79,7 +93,7 @@ namespace KernelPanic.Entities
             }
             else // stop moving if target is reached;
             {
-                mShouldMove = false;
+                ShouldMove = false;
             }
             
             // MoveTarget will be used by the Update Function (of the base class 'unit') to move the object
@@ -102,7 +116,13 @@ namespace KernelPanic.Entities
             var mouse = inputManager.TranslatedMousePosition;
             if (positionProvider.GridCoordinate(mouse) == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
-            mShouldMove = true;
+            ShouldMove = true;
+        }
+        
+        protected Point FindNearestWalkableField(Point target)
+        {
+            var result = mAStar.FindNearestField();
+            return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);
         }
         
         #endregion Movement
@@ -116,7 +136,7 @@ namespace KernelPanic.Entities
         protected virtual void ActivateAbility(InputManager inputManager)
         {
             AbilityActive = true;
-            mShouldMove = false;
+            ShouldMove = false;
             Cooldown.Reset();
         }
 
@@ -159,6 +179,8 @@ namespace KernelPanic.Entities
         
         #endregion Ability
 
+        #region Update
+
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             // Check if we still want to move to the same target, etc.
@@ -168,11 +190,14 @@ namespace KernelPanic.Entities
             Cooldown.Update(gameTime);
             UpdateAbility(positionProvider, gameTime, inputManager);
 
-            // base.Update checks for mShouldMove
+            // base.Update checks for ShouldMove
             base.Update(positionProvider, gameTime, inputManager);
-            
         }
         
+        #endregion
+
+        #region Draw
+
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawAStarPath(spriteBatch, gameTime);
@@ -187,6 +212,8 @@ namespace KernelPanic.Entities
                 mPathVisualizer?.Draw(spriteBatch, gameTime);
             }
         }
+
+        #endregion
 
         #region Actions
 

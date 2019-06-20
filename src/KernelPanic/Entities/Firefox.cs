@@ -36,7 +36,7 @@ namespace KernelPanic.Entities
         protected override void ActivateAbility(InputManager inputManager)
         {
             AbilityActive = true;
-            mShouldMove = false;
+            ShouldMove = false;
             Cooldown.Reset();
             
             // calculate the jump direction
@@ -57,7 +57,7 @@ namespace KernelPanic.Entities
             if (mAbility.Count == 0)
             {
                 AbilityActive = false;
-                mShouldMove = true;
+                ShouldMove = true;
                 return;
             }
 
