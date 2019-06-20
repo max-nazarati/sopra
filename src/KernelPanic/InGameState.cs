@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using KernelPanic.Camera;
+﻿using KernelPanic.Camera;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
@@ -13,20 +12,12 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    [DataContract]
     internal sealed class InGameState : AGameState
     {
-        [DataMember(Name = "Board")]
         private readonly Board mBoard;
-
-        [DataMember(Name = "PlayerA")]
-        private Player mPlayerA;
-
-        [DataMember(Name = "PlayerB")]
-        private Player mPlayerB;
-
-        [DataMember]
-        private SelectionManager mSelectionManager;
+        private readonly Player mPlayerA;
+        private readonly Player mPlayerB;
+        private readonly SelectionManager mSelectionManager;
 
         private PurchaseButton<Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
         private PurchaseButton<Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
