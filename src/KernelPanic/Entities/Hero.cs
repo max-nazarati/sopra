@@ -30,7 +30,7 @@ namespace KernelPanic.Entities
         }
 
         [DataMember]
-        protected CooldownComponent Cooldown { get; set; }
+        protected CooldownComponent Cooldown { get; }
         private AStar mAStar; // save the AStar for path-drawing
         private Point mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
@@ -61,6 +61,8 @@ namespace KernelPanic.Entities
             // Kind of done... Hero starts moving when the first target command is set... :)
             // mTarget = Sprite.Position;
             ShouldMove = false;
+            Cooldown = new CooldownComponent(new TimeSpan(0, 0, 0)) {Enabled = false};
+            Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
         #endregion
@@ -140,61 +142,7 @@ namespace KernelPanic.Entities
         #endregion Movement
 
         #region Ability
-        
-        
-        /*
-        protected virtual bool AbilityAvailable()
-        {
-            return Cooldown.Enabled;
-        }
-        */
-        
-        
-        // protected bool AbilityActive { /*protected*/ private get; set; }
 
-        protected virtual void ActivateAbility(InputManager inputManager)
-        {
-            AbilityStatus = AbilityState.Active; 
-            ShouldMove = false;
-            Cooldown.Reset();
-        }
-
-        protected virtual void IndicateAbility(InputManager inputManager)
-        {
-            // just quit indicating when not selected anymore
-            if (!Selected)
-            {
-                AbilityStatus = AbilityState.Ready;
-                return;
-            }
-            
-            if (inputManager.KeyPressed(Keys.Q, Keys.E))
-            {
-                if (inputManager.KeyPressed(Keys.Q))
-                {
-                    AbilityStatus = AbilityState.Starting;
-                }
-
-                else if (inputManager.KeyPressed(Keys.E))
-                {
-                    AbilityStatus = AbilityState.Ready;
-                }
-            }
-            else
-            {
-                AbilityStatus = AbilityState.Indicating;
-            }
-        }
-
-        protected virtual void InitializeAbility()
-        {
-            #region DEBUG
-#if DEBUG
-            Console.WriteLine("Ability is now initialized.");
-#endif
-            #endregion
-        }
-        
         protected virtual void UpdateAbility(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             #region DEBUG
@@ -208,7 +156,7 @@ namespace KernelPanic.Entities
             switch (AbilityStatus)
             {
                 case AbilityState.Ready:
-                    Console.WriteLine("NotActive");
+                    Console.WriteLine("Ready");
                     break;
 
                 case AbilityState.Indicating:
@@ -255,7 +203,7 @@ namespace KernelPanic.Entities
 
                 case AbilityState.Starting:
                     // initialize the ability
-                    InitializeAbility();
+                    StartAbility(inputManager);
                     break;
                 
                 case AbilityState.Active:
@@ -267,14 +215,11 @@ namespace KernelPanic.Entities
                     // finally cleaning up has to be done and starting to cool down
                     ShouldMove = true;
                     AbilityStatus = AbilityState.CoolingDown;
+                    Cooldown.Reset();
                     break;
 
                 case AbilityState.CoolingDown:
                     Cooldown.Update(gameTime);
-                    if (true)// if (Cooldown.Enabled)
-                    {
-                        AbilityStatus = AbilityState.Ready;
-                    }
                     break;
                 
                 default:
@@ -282,11 +227,46 @@ namespace KernelPanic.Entities
             }
         }
 
-        
         protected virtual bool CheckAbilityStart(InputManager inputManager)
         {
-             
-            return Selected  && inputManager.KeyPressed(Keys.Q);
+            return Selected  && (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle));
+        }
+
+        protected virtual void IndicateAbility(InputManager inputManager)
+        {
+            // just quit indicating when not selected anymore
+            if (!Selected)
+            {
+                AbilityStatus = AbilityState.Ready;
+                return;
+            }
+            
+            if (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle))
+            {
+                AbilityStatus = AbilityState.Starting;
+            }
+            
+            else if (inputManager.KeyPressed(Keys.E) || inputManager.MousePressed(InputManager.MouseButton.Right))
+            {
+                AbilityStatus = AbilityState.Ready;
+            }
+            else
+            {
+                AbilityStatus = AbilityState.Indicating;
+            }
+        }
+
+        protected virtual void StartAbility(InputManager inputManager)
+        {
+            #region DEBUG
+#if DEBUG
+            Console.WriteLine("Ability is now initialized.");
+#endif
+            #endregion
+            
+            AbilityStatus = AbilityState.Active; 
+            ShouldMove = false;
+            Cooldown.Reset();
         }
         
         protected virtual void ContinueAbility(GameTime gameTime)
@@ -295,23 +275,18 @@ namespace KernelPanic.Entities
             AbilityStatus = AbilityState.Finished;
         }
         
-        protected virtual void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            
-        }
-        
         #endregion Ability
 
         #region Update
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            // also updates the cooldown
+            UpdateAbility(positionProvider, gameTime, inputManager);
+            
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
-            
-            // also updates the cooldown
-            UpdateAbility(positionProvider, gameTime, inputManager);
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, gameTime, inputManager);
@@ -328,6 +303,10 @@ namespace KernelPanic.Entities
             DrawAbility(spriteBatch, gameTime);
         }
 
+        protected virtual void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+        }
+        
         private void DrawAStarPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if (Selected)
