@@ -20,8 +20,8 @@ namespace KernelPanic.Sprites
             Standing,
             Left,
             Right,
-            Up,
-            Down
+            /*Up,
+            Down*/
         }
         internal Movement mMovement;
 
@@ -75,7 +75,7 @@ namespace KernelPanic.Sprites
                     mEffect = SpriteEffects.FlipHorizontally;
                     mRow = 1;
                     break;
-                case Movement.Up:
+                /*case Movement.Up:
                     mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 2;
@@ -84,7 +84,7 @@ namespace KernelPanic.Sprites
                     mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 3;
-                    break;
+                    break;*/
             }
             var textureIndex = gameTime.TotalGameTime.Ticks / mFrameDuration.Ticks % mFrameCount;
             var sourceRect =

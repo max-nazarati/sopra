@@ -107,30 +107,14 @@ namespace KernelPanic.Entities
                 {
                     Sprite.Position += movement;
                     // choose correct movement animation
-                    if (Math.Abs(movement.X) >= Math.Abs(movement.Y))
+                    if (movement.X > 0)
                     {
-                        if (movement.X > 0)
-                        {
-                            animation.mMovement = AnimatedSprite.Movement.Right;
-                        }
-                        else
-                        {
-                            animation.mMovement = AnimatedSprite.Movement.Left;
-                        }
+                        animation.mMovement = AnimatedSprite.Movement.Right;
                     }
-                    /*
                     else
                     {
-                        if (movement.Y > 0)
-                        {
-                            animation.mMovement = AnimatedSprite.Movement.Down;
-                        }
-                        else
-                        {
-                            animation.mMovement = AnimatedSprite.Movement.Up;
-                        }
+                        animation.mMovement = AnimatedSprite.Movement.Left;
                     }
-                    */
                 }
                 else
                 {
