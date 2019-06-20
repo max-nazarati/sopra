@@ -13,7 +13,7 @@ using Newtonsoft.Json.Serialization;
 namespace KernelPanic
 {
     [DataContract]
-    public class DataStorage
+    internal sealed class DataStorage
     {
         [DataMember]
         internal Board Board { get; set; }
@@ -23,11 +23,41 @@ namespace KernelPanic
         internal Player PlayerB { get; set; }
         [DataMember]
         internal TimeSpan GameTime { get; set; }
-
     }
 
-    class StorageManager
+    internal static class StorageManager
     {
+        #region Constructor
+
+        static StorageManager()
+        {
+            Directory.CreateDirectory(sFolder);
+        }
+
+        #endregion
+
+        #region Save & Load
+
+        internal static string Folder => sFolder;    // TODO: remove when not used any more.
+
+        internal static void SaveGame(string fileName, InGameState gameState)
+        {
+            Directory.CreateDirectory(sFolder);
+
+            using (var file = File.CreateText(sFolder + fileName + ".json"))
+                CreateSerializer(gameState.GameStateManager).Serialize(file, gameState.toDataStorage());
+        }
+
+        internal static DataStorage LoadGame(string fileName, GameStateManager gameStateManager)
+        {
+            using (var file = File.OpenText(sFolder + fileName + ".json"))
+                return (DataStorage) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataStorage));
+        }
+
+        #endregion
+
+        #region Private Helpers
+
         private static AutofacContractResolver CreateContractResolver(GameStateManager manager)
         {
             var builder = new ContainerBuilder();
@@ -36,10 +66,9 @@ namespace KernelPanic
             builder.Register(c => new Firefox(manager.Sprite));
             builder.Register(c => new Tower(manager.Sprite, manager.Sound));
             builder.Register(c => new Trojan(manager.Sprite));
-            
+
             return new AutofacContractResolver(builder.Build());
         }
-        
 
         private static JsonSerializer CreateSerializer(GameStateManager gameStateManager)
         {
@@ -51,41 +80,10 @@ namespace KernelPanic
                 ContractResolver = CreateContractResolver(gameStateManager)
             };
         }
-        
-        //private DataContractSerializer mSerializer;
+
         private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
-        /*private static int mDirLength = 0;
-        internal int DirLength
-        {
-            get
-            {
-                return mDirLength;
-            }
-        }*/
-        internal static string Folder
-        {
-            get
-            {
-                Directory.CreateDirectory(sFolder);
-                return sFolder;
-            }
-        }
-
-        internal static string[] Files { get; } = new string[5];
-
-        public void SaveGame(string fileName, InGameState gameState)
-        {
-            Directory.CreateDirectory(sFolder);
-
-            using (var file = File.CreateText(sFolder + fileName + ".json"))
-                CreateSerializer(gameState.GameStateManager).Serialize(file, gameState.toDataStorage());
-        }
-
-        public DataStorage LoadGame(string fileName, GameStateManager gameStateManager)
-        {
-            using (var file = File.OpenText(sFolder + fileName + ".json"))
-                return (DataStorage) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataStorage));
-        }
+        private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
+        private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
 
         // Taken from https://www.newtonsoft.com/json/help/html/DeserializeWithDependencyInjection.htm.
         private sealed class AutofacContractResolver : DefaultContractResolver
@@ -127,5 +125,8 @@ namespace KernelPanic
                 return base.CreateObjectContract(objectType);
             }
         }
+
+        #endregion
+
     }
 }
