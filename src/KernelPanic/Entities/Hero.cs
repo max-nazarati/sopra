@@ -28,7 +28,6 @@ namespace KernelPanic.Entities
             Ready = 0, // default value since it has the value '0'
             Indicating, Starting, Active, Finished, CoolingDown
         }
-        
 
         [DataMember]
         protected CooldownComponent Cooldown { get; set; }
