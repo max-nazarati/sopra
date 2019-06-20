@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Xml;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
+using KernelPanic.Entities;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace KernelPanic
 {
@@ -15,7 +16,7 @@ namespace KernelPanic
     public class DataStorage
     {
         [DataMember]
-        internal Table.Board Board { get; set; }
+        internal Board Board { get; set; }
         [DataMember]
         internal Player PlayerA { get; set; }
         [DataMember]
@@ -23,10 +24,33 @@ namespace KernelPanic
         [DataMember]
         internal TimeSpan GameTime { get; set; }
 
-
     }
+
     class StorageManager
     {
+        private static AutofacContractResolver CreateContractResolver(GameStateManager manager)
+        {
+            var builder = new ContainerBuilder();
+            builder.Register(c => new Lane(manager.Sprite, manager.Sound));
+            builder.Register(c => new EntityGraph(Rectangle.Empty, manager.Sprite));
+            builder.Register(c => new Firefox(manager.Sprite));
+            builder.Register(c => new Tower(manager.Sprite, manager.Sound));
+            builder.Register(c => new Trojan(manager.Sprite));
+            
+            return new AutofacContractResolver(builder.Build());
+        }
+        
+
+        private static JsonSerializer CreateSerializer(GameStateManager gameStateManager)
+        {
+            return new JsonSerializer
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                Formatting = Formatting.Indented,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                ContractResolver = CreateContractResolver(gameStateManager)
+            };
+        }
         
         //private DataContractSerializer mSerializer;
         private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
@@ -49,48 +73,18 @@ namespace KernelPanic
 
         internal static string[] Files { get; } = new string[5];
 
-        public void SaveGame(String fileName, InGameState gameState)
+        public void SaveGame(string fileName, InGameState gameState)
         {
             Directory.CreateDirectory(sFolder);
-            
-            using (StreamWriter file = File.CreateText(sFolder + fileName + ".json"))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.TypeNameHandling = TypeNameHandling.Auto;
-                serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                serializer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
-                serializer.Serialize(file, gameState.toDataStorage());
-            }
 
-                //mDirLength += 1;
-                Directory.CreateDirectory(sFolder);
-            /*fileName = mFolder + fileName;
-            mSerializer = new DataContractSerializer(typeof(InGameState));
-            var settings = new XmlWriterSettings { Indent = true };
-            var writer = XmlWriter.Create(fileName, settings);
-            mSerializer.WriteObject(writer, gameState);
-            writer.Close();*/
+            using (var file = File.CreateText(sFolder + fileName + ".json"))
+                CreateSerializer(gameState.GameStateManager).Serialize(file, gameState.toDataStorage());
         }
-        
-       
-        public DataStorage LoadGame(String fileName, GameStateManager gameStateManager)
+
+        public DataStorage LoadGame(string fileName, GameStateManager gameStateManager)
         {
-            var builder = new ContainerBuilder();
-            builder.Register(c => new Table.Lane(gameStateManager.Sprite, gameStateManager.Sound)).As<Table.Lane>();
-            builder.Register(c => new EntityGraph(Rectangle.Empty, gameStateManager.Sprite));
-            builder.Register(c => new Entities.Firefox(gameStateManager.Sprite)).As<Entities.Firefox>();
-            builder.Register(c => new Entities.Tower(gameStateManager.Sprite, gameStateManager.Sound)).As<Entities.Tower>();
-            builder.Register(c => new Entities.Trojan(gameStateManager.Sprite));
-            fileName = sFolder + fileName;
-            using (StreamReader file = File.OpenText(fileName + ".json"))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.TypeNameHandling = TypeNameHandling.Auto;
-                serializer.ContractResolver = new AutofacContractResolver(builder.Build());
-                serializer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
-                
-                return (DataStorage)serializer.Deserialize(file, typeof(DataStorage));
-            }
+            using (var file = File.OpenText(sFolder + fileName + ".json"))
+                return (DataStorage) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataStorage));
         }
 
         public class AutofacContractResolver : DefaultContractResolver
