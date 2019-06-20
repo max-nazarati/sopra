@@ -168,6 +168,9 @@
     <Compile Include="..\KernelPanic\Interface\StaticComponent.cs">
       <Link>Interface\StaticComponent.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Interface\TextButton.cs">
+      <Link>TextButton.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\IPriced.cs">
       <Link>IPriced.cs</Link>
     </Compile>

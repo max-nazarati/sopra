@@ -16,7 +16,7 @@ namespace KernelPanic
         /// Use <see cref="PossiblyEnabled"/> to influence whether this button is enabled besides the ability to
         /// for <see cref="Player"/> to afford <see cref="Action"/>.
         /// </summary>
-        internal Button Button { get; }
+        internal TextButton Button { get; }
 
         /// <summary>
         /// The player who buys <see cref="Action"/> when the button is clicked.
@@ -48,7 +48,7 @@ namespace KernelPanic
         {
             Player = player;
             Action = action;
-            Button = new Button(spriteManager);
+            Button = new TextButton(spriteManager);
             Button.Clicked += Purchase;
         }
         

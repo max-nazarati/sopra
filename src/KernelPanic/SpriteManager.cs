@@ -163,7 +163,7 @@ namespace KernelPanic
             };
         }
 
-        internal (Sprite, ImageSprite, TextSprite) CreateButton()
+        internal (Sprite, ImageSprite, TextSprite) CreateTextButton()
         {
             var background = new ImageSprite(Lookup(Image.ButtonBackground))
             {
@@ -175,10 +175,11 @@ namespace KernelPanic
             return (
                 new CompositeSprite
                 {
-                    Children = {background, titleSprite}
+                    Children = { background, titleSprite }
                 },
                 background,
                 titleSprite
+                
             );
         }
 

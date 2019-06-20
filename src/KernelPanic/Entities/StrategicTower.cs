@@ -32,10 +32,10 @@ namespace KernelPanic.Entities
                 new StrategyAction(this, TowerStrategy.Weakest, SpriteManager)
             );
 
-        private sealed class StrategyAction : BaseAction<Button>
+        private sealed class StrategyAction : BaseAction<TextButton>
         {
             internal StrategyAction(StrategicTower tower, TowerStrategy strategy, SpriteManager spriteManager)
-                : base(new Button(spriteManager) {Title = strategy.ToString(), Enabled = tower.Strategy != strategy})
+                : base(new TextButton(spriteManager) {Title = strategy.ToString(), Enabled = tower.Strategy != strategy})
             {
                 Provider.Clicked += (button, input) => tower.Strategy = strategy;
             }

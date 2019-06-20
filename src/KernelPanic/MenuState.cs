@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+
 namespace KernelPanic
 {
     [DataContract]
@@ -29,7 +30,7 @@ namespace KernelPanic
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
             playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
             
-            var optionsButton = CreateButton( stateManager.Sprite, "Optionen", 200);
+            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 200);
             optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager));
             
             var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 300);
@@ -114,7 +115,7 @@ namespace KernelPanic
             return new MenuState(stateManager) { mComponents = components.ToArray() };
         }
 
-        private static Button TurnSoundsOnOff(Button soundOnOffButton)
+        private static Button TurnSoundsOnOff(TextButton soundOnOffButton)
         {
             switch (soundOnOffButton.Title) // TODO: when SoundManager is updated: Interaction with SoundManager
             {
@@ -296,10 +297,10 @@ namespace KernelPanic
             return new StaticComponent(sprites.CreateMenuBackground());
         }
         
-        private static Button CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
+        private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
         {
             // TODO: Change Text Color on Buttons
-            var button = new Button(sprites) {Title = title};
+            var button = new TextButton(sprites) {Title = title};
             button.Sprite.X = sprites.ScreenSize.X / 2.0f - button.Sprite.Width / 2.0f - shiftPositionX;
             button.Sprite.Y = positionY;
             

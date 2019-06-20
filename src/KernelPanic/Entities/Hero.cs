@@ -222,9 +222,9 @@ namespace KernelPanic.Entities
         protected override IEnumerable<IAction> Actions =>
             base.Actions.Extend(new AbilityAction(this, SpriteManager));
 
-        private sealed class AbilityAction : BaseAction<Button>
+        private sealed class AbilityAction : BaseAction<TextButton>
         {
-            internal AbilityAction(Hero hero, SpriteManager sprites) : base(new Button(sprites) {Title = "Fähigkeit"})
+            internal AbilityAction(Hero hero, SpriteManager sprites) : base(new TextButton(sprites) {Title = "Fähigkeit"})
             {
                 Provider.Clicked += (button, inputManager) => hero.ActivateAbility(inputManager);
             }
