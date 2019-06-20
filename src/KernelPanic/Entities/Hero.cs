@@ -29,6 +29,7 @@ namespace KernelPanic.Entities
             Indicating, Starting, Active, Finished, CoolingDown
         }
         
+
         [DataMember]
         protected CooldownComponent Cooldown { get; set; }
         private AStar mAStar; // save the AStar for path-drawing
