@@ -44,15 +44,21 @@ namespace KernelPanic
 
         internal static IEnumerable<int> Slots => Enumerable.Range(0, 5);
 
-        internal static void SaveGame(string fileName, InGameState gameState)
+        internal static void SaveGame(int slot, InGameState gameState)
         {
-            using (var file = File.CreateText(fileName))
+            if (!Slots.Contains(slot))
+                throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
+
+            using (var file = File.CreateText(DataPath(slot)))
                 CreateSerializer(gameState.GameStateManager).Serialize(file, gameState.toDataStorage());
         }
 
-        internal static DataStorage LoadGame(string fileName, GameStateManager gameStateManager)
+        internal static DataStorage LoadGame(int slot, GameStateManager gameStateManager)
         {
-            using (var file = File.OpenText(fileName))
+            if (!Slots.Contains(slot))
+                throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
+
+            using (var file = File.OpenText(DataPath(slot)))
                 return (DataStorage) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataStorage));
         }
 
@@ -84,7 +90,7 @@ namespace KernelPanic
         }
 
         private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
-        internal static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json"); // TODO: Make it private when not used outside any more.
+        private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
         private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
 
         // Taken from https://www.newtonsoft.com/json/help/html/DeserializeWithDependencyInjection.htm.

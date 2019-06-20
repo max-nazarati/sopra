@@ -104,8 +104,7 @@ namespace KernelPanic
 
             newGameButton.Clicked += (button, input) => InGameState.PushGameStack(stateManager);
             loadGameButton.Clicked += (button, input) =>
-                InGameState.PushGameStack(stateManager,
-                    StorageManager.LoadGame(StorageManager.DataPath(selectedSlot), stateManager));
+                InGameState.PushGameStack(stateManager, StorageManager.LoadGame(selectedSlot, stateManager));
             backButton.Clicked += (button, input) => stateManager.Pop();
 
             return new MenuState(stateManager) { mComponents = components.ToArray() };
@@ -273,7 +272,7 @@ namespace KernelPanic
            saveButton.Clicked += (button, input) =>
            {
                var dir = System.IO.Directory.GetFiles(StorageManager.Folder);
-               StorageManager.SaveGame(StorageManager.DataPath(dir.Length % 5), inGameState);
+               StorageManager.SaveGame(dir.Length % 5, inGameState);
            };
 
            var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
