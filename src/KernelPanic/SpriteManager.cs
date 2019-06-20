@@ -66,7 +66,7 @@ namespace KernelPanic
             mTextures = new[]
             {
                 Texture(Image.MenuBackground, "Base"),
-                Texture(Image.ButtonBackground, "Papier"),
+                Texture(Image.ButtonBackground, "button"),
                 Texture(Image.LaneTile, "LaneTile"),
                 Texture(Image.LaneBorder, "LaneTileBorder"),
                 Texture(Image.Tower, "tower"),
@@ -140,7 +140,7 @@ namespace KernelPanic
         internal Sprite CreateMenuBackground()
         {
             var texture = Lookup(Image.MenuBackground);
-            var fullRows = ScreenSize.Y / texture.Height;
+            /*var fullRows = ScreenSize.Y / texture.Height;
             var fullCols = ScreenSize.X / texture.Width;
             var bottomRem = ScreenSize.Y - fullRows * texture.Height;
             var rightRem = ScreenSize.X - fullCols * texture.Width;
@@ -180,7 +180,11 @@ namespace KernelPanic
                     },
                     cornerTile
                 }
-            };
+            };*/
+            var sprite = new ImageSprite(texture);
+            sprite.DestinationRectangle = new Rectangle(Point.Zero, ScreenSize);
+            return sprite; 
+
         }
 
         internal (Sprite, ImageSprite, TextSprite) CreateTextButton()
