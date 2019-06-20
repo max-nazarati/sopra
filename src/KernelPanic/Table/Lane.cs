@@ -33,7 +33,8 @@ namespace KernelPanic.Table
         }
 
         internal EntityGraph EntityGraph { get; set; }
-       
+
+        [JsonProperty]
         internal Base Target { get; }
 
         private Grid mGrid;
