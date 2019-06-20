@@ -35,6 +35,14 @@ namespace KernelPanic.Sprites
         protected override float UnscaledWidth => DefaultFrameSize;
         protected override float UnscaledHeight => DefaultFrameSize;
 
+        internal ImageSprite getSingleFrame(SpriteManager spriteManager)
+        {
+            var rect = new Rectangle(0, 0, DefaultFrameSize, DefaultFrameSize);
+            var texcolor = new Color[DefaultFrameSize * DefaultFrameSize];
+            mTexture.GetData<Color>(0, rect,  texcolor, 0, DefaultFrameSize * DefaultFrameSize);
+            return spriteManager.FrameToImageSprite(texcolor, rect.Width, rect.Height);
+        }
+
         public AnimatedSprite(Texture2D texture, TimeSpan frameDuration)
         {
             mTexture = texture;

@@ -4,20 +4,22 @@ using KernelPanic.Input;
 using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using KernelPanic.Sprites;
 
 namespace KernelPanic
 {
-    internal sealed class PurchaseButton<TResource, TAction>: IDrawable, IUpdatable, IBounded
+    internal sealed class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded
         where TResource: class, IPriced
         where TAction: PurchasableAction<TResource>
+        where TButton: Button
     {
         /// <summary>
         /// The button which is drawn and which is used to handle the click events.
         /// Use <see cref="PossiblyEnabled"/> to influence whether this button is enabled besides the ability to
         /// for <see cref="Player"/> to afford <see cref="Action"/>.
         /// </summary>
-        internal TextButton Button { get; }
-
+        internal TButton Button { get; }
+        
         /// <summary>
         /// The player who buys <see cref="Action"/> when the button is clicked.
         /// </summary>
@@ -44,14 +46,14 @@ namespace KernelPanic
         /// <param name="player">The player who purchases the action.</param>
         /// <param name="action">The action which can be purchased.</param>
         /// <param name="spriteManager">The sprite manager.</param>
-        internal PurchaseButton(Player player, TAction action, SpriteManager spriteManager)
+        internal PurchaseButton(Player player, TAction action, TButton button)
         {
             Player = player;
             Action = action;
-            Button = new TextButton(spriteManager);
+            Button = button;
             Button.Clicked += Purchase;
         }
-        
+
         public void Update(InputManager inputManager, GameTime gameTime)
         {
             Button.Update(inputManager, gameTime);

@@ -10,6 +10,7 @@ using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using KernelPanic.Sprites;
 
 namespace KernelPanic
 {
@@ -28,8 +29,8 @@ namespace KernelPanic
         [DataMember]
         private SelectionManager mSelectionManager;
 
-        private PurchaseButton<Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
-        private PurchaseButton<Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
+        private PurchaseButton<TextButton, Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
+        private PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
         private TextButton mPurchaseDemoReset;
 
         // public int SaveSlot { get; set; }
@@ -61,18 +62,18 @@ namespace KernelPanic
         {
             var nextPosition = new Vector2(50, 150);
 
-            mPurchaseDemoButton1 = new PurchaseButton<Unit, PurchasableAction<Unit>>(mPlayerA,
+            mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(mPlayerA,
                 new PurchasableAction<Unit>(Firefox.CreateFirefox(Point.Zero, sprites)),
-                sprites)
+                new TextButton(sprites))
             {
-                Button = {Title = "Buy Unit"}
+                Button = { Title = "Firefox" }
             };
 
-            mPurchaseDemoButton2 = new PurchaseButton<Tower, SinglePurchasableAction<Tower>>(mPlayerA,
+            mPurchaseDemoButton2 = new PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>>(mPlayerA,
                 new SinglePurchasableAction<Tower>(Tower.CreateStrategic(Vector2.Zero, Grid.KachelSize, sprites, sounds)),
-                sprites)
+                new TextButton(sprites))
             {
-                Button = {Title = "Buy Tower"}
+                Button = { Title = "Turm" }
             };
 
             mPurchaseDemoReset = new TextButton(sprites);

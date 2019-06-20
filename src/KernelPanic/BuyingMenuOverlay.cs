@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using KernelPanic.Entities;
+using KernelPanic.Sprites;
+using KernelPanic.Interface;
 
 namespace KernelPanic
 {
@@ -14,27 +16,27 @@ namespace KernelPanic
         internal IEnumerable<IDrawable> Drawables{ get; private set; }
         internal IEnumerable<IUpdatable> Updatables { get; private set; }
 
-        protected PurchaseButton<Unit, PurchasableAction<Unit>> CreateTrojanPurchaseButton(SpriteManager spriteManager, Player player)
+        protected PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>> CreateTrojanPurchaseButton(SpriteManager spriteManager, Player player)
         {
-            var btn = new PurchaseButton<Unit, PurchasableAction<Unit>>(player,
-                new PurchasableAction<Unit>((Unit)new Trojan(spriteManager)), spriteManager)
+            var sprite = (AnimatedSprite)new Trojan(spriteManager).Sprite;
+            var btn = new PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>>(player,
+                new PurchasableAction<Unit>((Unit)new Trojan(spriteManager)), new ImageButton(spriteManager, 
+                sprite.getSingleFrame(spriteManager), 70, 70));
             {
-                Button = { Title = "Trojan" }
+                
             };
             var trojanSprite = btn.Button.Sprite;
-            trojanSprite.Position = new Vector2(spriteManager.ScreenSize.X - trojanSprite.Width, 90 + trojanSprite.Height);
+            trojanSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*trojanSprite.Width, 90 + trojanSprite.Height);
             return btn;
         }
-        protected PurchaseButton<Unit, PurchasableAction<Unit>> CreateFirefoxPurchaseButton(SpriteManager spriteManager, Player player)
+        protected PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>> CreateFirefoxPurchaseButton(SpriteManager spriteManager, Player player)
         {
-            var firefoxButton = new PurchaseButton<Unit, PurchasableAction<Unit>>(player,
+            var sprite = (AnimatedSprite)Firefox.CreateFirefox(Point.Zero, spriteManager).Sprite;
+            var firefoxButton = new PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>>(player,
                 new PurchasableAction<Unit>(Firefox.CreateFirefox(Point.Zero, spriteManager)),
-                spriteManager)
-            {
-                Button = { Title = "Firefox" }
-            };
-            var sprite = firefoxButton.Button.Sprite;
-            sprite.Position = new Vector2(spriteManager.ScreenSize.X - sprite.Width, 90);
+                new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70));
+            var tmpsprite = firefoxButton.Button.Sprite;
+            tmpsprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpsprite.Width, 90);
             return firefoxButton;
         }
     }

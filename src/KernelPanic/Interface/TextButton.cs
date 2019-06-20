@@ -9,10 +9,9 @@ namespace KernelPanic.Interface
 {
     internal class TextButton : Button
     {
-        internal delegate void Delegate(TextButton sender, InputManager inputManager);
-
-        internal event Delegate Clicked;
+        
         internal override Sprite Sprite { get; }
+        
         private readonly TextSprite mTitleSprite;
 
         internal TextButton(SpriteManager sprites)
@@ -35,15 +34,6 @@ namespace KernelPanic.Interface
                 mTitleSprite.TextColor = value ? Color.Black : Color.DarkGray;
                 base.Enabled = value;
             }
-        }
-
-        public override void Update(InputManager inputManager, GameTime gameTime)
-        {
-            inputManager.RegisterClickTarget(Sprite.Bounds, localInputManager =>
-            {
-                if (Enabled)
-                    Clicked?.Invoke(this, localInputManager);
-            });
         }
     }
 }

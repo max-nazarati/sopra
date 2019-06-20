@@ -75,6 +75,7 @@
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\RawInputState.cs" />
     <Compile Include="Interface\Button.cs" />
+    <Compile Include="Interface\ImageButton.cs" />
     <Compile Include="Interface\InterfaceComponent.cs" />
     <Compile Include="Interface\StaticComponent.cs" />
     <Compile Include="Interface\TextButton.cs" />

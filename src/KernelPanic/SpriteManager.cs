@@ -43,7 +43,8 @@ namespace KernelPanic
             Bug,
             Nokia,
             Thunderbird,
-            Virus
+            Virus,
+            StandingFox
         }
 
         private enum Font
@@ -91,6 +92,7 @@ namespace KernelPanic
                 Texture(Image.Nokia, "troupes/nokia"),
                 Texture(Image.Thunderbird, "troupes/thunderbird"),
                 Texture(Image.Virus, "troupes/virus"),
+                Texture(Image.StandingFox, "heroes/firefox_standing"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -117,6 +119,18 @@ namespace KernelPanic
             return texture;
         }
 
+        internal ImageSprite FrameToImageSprite(Color[] colors, int width, int height)
+        {
+            var texture = new Texture2D(GraphicsDevice, width, height);
+            texture.SetData<Color>(colors);
+            return new ImageSprite(texture);
+        }
+
+        internal ImageSprite CreateStandingFox()
+        {
+            var texture  = Lookup(Image.StandingFox);
+            return new ImageSprite(texture);
+        }
         internal Sprite CreateMenuBackground()
         {
             var texture = Lookup(Image.MenuBackground);
@@ -180,6 +194,24 @@ namespace KernelPanic
                 background,
                 titleSprite
                 
+            );
+        }
+
+        internal (Sprite, ImageSprite, ImageSprite) CreateImageButton(ImageSprite sprite, int width=250, int height=70)
+        {
+            var background = new ImageSprite(Lookup(Image.ButtonBackground))
+            {
+                DestinationRectangle = new Rectangle(0, 0, width, height)
+            };
+            var imageSprite = sprite;
+            return (
+                new CompositeSprite
+            {
+                Children = { background, imageSprite }
+            },
+                background,
+                imageSprite
+
             );
         }
 
@@ -391,5 +423,7 @@ namespace KernelPanic
             text.SizeChanged += s => s.Origin = new Vector2(s.Width / 2, s.Height / 2);
             return text;
         }
+
+
     }
 }
