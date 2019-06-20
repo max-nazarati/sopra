@@ -140,6 +140,9 @@ namespace KernelPanic
         internal Sprite CreateMenuBackground()
         {
             var texture = Lookup(Image.MenuBackground);
+            var sprite = new ImageSprite(texture);
+            sprite.DestinationRectangle = new Rectangle(Point.Zero, ScreenSize);
+            return sprite;
             /*var fullRows = ScreenSize.Y / texture.Height;
             var fullCols = ScreenSize.X / texture.Width;
             var bottomRem = ScreenSize.Y - fullRows * texture.Height;
@@ -181,10 +184,6 @@ namespace KernelPanic
                     cornerTile
                 }
             };*/
-            var sprite = new ImageSprite(texture);
-            sprite.DestinationRectangle = new Rectangle(Point.Zero, ScreenSize);
-            return sprite; 
-
         }
 
         internal (Sprite, ImageSprite, TextSprite) CreateTextButton()
