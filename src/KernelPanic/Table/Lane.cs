@@ -68,6 +68,7 @@ namespace KernelPanic.Table
             Target = new Base();
             mSpriteManager = sprites;
             InitHeatMap();
+            UpdateHeatMap();
         }
 
         internal bool Contains(Vector2 point) => mGrid.Contains(point);
