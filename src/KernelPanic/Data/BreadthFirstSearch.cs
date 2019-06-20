@@ -98,6 +98,7 @@ namespace KernelPanic.Data
         }
 
         public VectorField VectorField { get => mVectorField;}
+        public HeatMap HeatMap { get => mMap;}
 
         public void Test1()
         {

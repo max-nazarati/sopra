@@ -67,6 +67,41 @@ namespace KernelPanic.Data
             return grad;
         }
 
+        public void Set(Point point, int value)
+        {
+            if (point.X < 0 || point.X >= mWidth) return;
+            if (point.Y < 0 || point.Y >= mHeight) return;
+            mMap[point.Y, point.X] = value;
+        }
+
+        public String ToString()
+        {
+            string result = "";
+            for (int y=0; y < mHeight; y++)
+            {
+                for (int x = 0; x < mWidth; x++)
+                {
+                    result += mMap[y, x].ToString();
+                    switch (mMap[y, x].ToString().Length)
+                    {
+                        case 1:
+                            result += "   ";
+                            break;
+                        case 2:
+                            result += "  ";
+                            break;
+                        case 3:
+                            result += " ";
+                            break;
+                        default: break;
+                    }
+                }
+                if (y != mHeight - 1) result += "\n";
+            }
+
+            return result;
+        }
+
         public int Width { get => mWidth;}
         public int Height { get => mHeight;}
     }

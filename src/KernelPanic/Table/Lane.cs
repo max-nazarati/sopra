@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
@@ -38,7 +39,7 @@ namespace KernelPanic.Table
         private static bool VISUAL_DEBUG;
         private SoundManager mSounds;
 
-        private HeatMap mCoordinateMap;
+        private HeatMap mHeatMap;
         private VectorField mVectorField;
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
@@ -66,6 +67,7 @@ namespace KernelPanic.Table
             EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), sprites);
             Target = new Base();
             mSpriteManager = sprites;
+            InitHeatMap();
         }
 
         internal bool Contains(Vector2 point) => mGrid.Contains(point);
@@ -83,6 +85,8 @@ namespace KernelPanic.Table
                     if (!EntityGraph.HasEntityAt(position))
                     {
                         EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
+                        mHeatMap.Set(Grid.CoordinatePositionFromScreen(position), HeatMap.Blocked);
+                        UpdateHeatMap();
                         mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
                     }
                 }
@@ -105,24 +109,56 @@ namespace KernelPanic.Table
         }
         
 
-        public void InitCoordinateMap()
+        public void InitHeatMap()
         {
-            mCoordinateMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
-            int xAxisReflection = 1;
-            int xAxisTranslation = 0;
-            if (mGrid.LaneSide == Side.Left)
-            {
-                xAxisReflection = -1;
-                xAxisTranslation = mGrid.LaneRectangle.Width;
-            }
+            mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
 
-            for (int i = Grid.LaneWidthInTiles; i < mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles; i++)
+            switch (mGrid.LaneSide)
             {
-                for (int j = 0; j < mGrid.LaneRectangle.Width - Grid.LaneWidthInTiles; j++)
-                {
-                    mCoordinateMap.mMap[i, j * xAxisReflection + xAxisTranslation] = HeatMap.Blocked;
-                }
+                case Side.Left:
+                    for (int y = Grid.LaneWidthInTiles; y < mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles; y++)
+                    {
+                        for (int x = Grid.LaneWidthInTiles; x < mGrid.LaneRectangle.Width; x++)
+                        {
+                            mHeatMap.mMap[y, x] = HeatMap.Blocked;
+                        }
+                    }
+                    break;
+                case Side.Right:
+                    for (int y = Grid.LaneWidthInTiles; y < mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles; y++)
+                    {
+                        for (int x = 0; x < mGrid.LaneRectangle.Width - Grid.LaneWidthInTiles; x++)
+                        {
+                            mHeatMap.mMap[y, x] = HeatMap.Blocked;
+                        }
+                    }
+                    break;
             }
+        }
+
+        public void UpdateHeatMap()
+        {
+            List<Point> basePoints = new List<Point>();
+            switch (mGrid.LaneSide)
+            {
+                case Side.Left:
+                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 1, mGrid.LaneRectangle.Height - 1));
+                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 1, mGrid.LaneRectangle.Height - 2));
+                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 1));
+                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 2));
+                    break;
+                case Side.Right:
+                    basePoints.Add(new Point(0, 0));
+                    basePoints.Add(new Point(0, 1));
+                    basePoints.Add(new Point(1, 0));
+                    basePoints.Add(new Point(1, 1));
+                    break;
+            }
+            BreadthFirstSearch bfs = new BreadthFirstSearch(mHeatMap, basePoints);
+            bfs.UpdateHeatMap();
+            bfs.UpdateVectorField();
+            mHeatMap = bfs.HeatMap;
+            mVectorField = bfs.VectorField;
         }
     }
 }

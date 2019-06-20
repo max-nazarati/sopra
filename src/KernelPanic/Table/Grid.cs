@@ -103,18 +103,16 @@ namespace KernelPanic.Table
         }
         */
 
-        /* TODO implement when needed
         /// <summary>
         /// calculates the position in the Grid for a given MousePosition on the screen
         /// </summary>
         /// <returns></returns>
-        private static Point CoordinatePositionFromScreen(Point screenCoordinate)
+        public static Point CoordinatePositionFromScreen(Vector2 screenCoordinate)
         {
-            var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
-            var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
-            return new Point(screenCoordinate.X * 100, screenCoordinate.Y * 100);
+            // var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
+            // var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
+            return (screenCoordinate / KachelSize).ToPoint();
         }
-        */
 
         /// <summary>
         /// calculates the position on the screen for a grid coordinate point,
