@@ -5,7 +5,6 @@ using System.Linq;
 using Autofac;
 using KernelPanic.Entities;
 using KernelPanic.Table;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Serialization
@@ -67,7 +66,6 @@ namespace KernelPanic.Serialization
         {
             var builder = new ContainerBuilder();
             builder.Register(c => new Lane(manager.Sprite, manager.Sound));
-            builder.Register(c => new EntityGraph(Rectangle.Empty, manager.Sprite));
             builder.Register(c => new Firefox(manager.Sprite));
             builder.Register(c => new Tower(manager.Sprite, manager.Sound));
             builder.Register(c => new StrategicTower(manager.Sprite, manager.Sound));
