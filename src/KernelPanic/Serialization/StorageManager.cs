@@ -1,41 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using Autofac;
-using Autofac.Core;
-using Autofac.Core.Activators.Reflection;
 using KernelPanic.Entities;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
-namespace KernelPanic
+namespace KernelPanic.Serialization
 {
-    [DataContract]
-    internal sealed class DataStorage
-    {
-        [DataMember]
-        internal Board Board { get; set; }
-        [DataMember]
-        internal Player PlayerA { get; set; }
-        [DataMember]
-        internal Player PlayerB { get; set; }
-        [DataMember]
-        internal TimeSpan GameTime { get; set; }
-    }
-
-    internal struct DataInfo
-    {
-        [JsonProperty]
-        internal DateTime Timestamp { get; set; }
-
-        internal string Label => Timestamp.ToString("d.M., HH:mm", CultureInfo.CurrentCulture);
-    }
-
     internal static class StorageManager
     {
         #region Constructor
@@ -66,21 +40,21 @@ namespace KernelPanic
             var serializer = CreateSerializer(gameState.GameStateManager);
 
             using (var file = File.CreateText(DataPath(slot)))
-                serializer.Serialize(file, gameState.ToDataStorage());
+                serializer.Serialize(file, gameState.Data);
             using (var file = File.CreateText(InfoPath(slot)))
-                serializer.Serialize(file, new DataInfo {Timestamp = DateTime.Now});
+                serializer.Serialize(file, new Storage.Info {Timestamp = DateTime.Now});
         }
 
-        internal static DataStorage LoadGame(int slot, GameStateManager gameStateManager)
+        internal static Storage LoadGame(int slot, GameStateManager gameStateManager)
         {
             if (!Slots.Contains(slot))
                 throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
 
             using (var file = File.OpenText(DataPath(slot)))
-                return (DataStorage) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataStorage));
+                return (Storage) CreateSerializer(gameStateManager).Deserialize(file, typeof(Storage));
         }
 
-        internal static DataInfo? LoadStorageInfo(int slot, GameStateManager gameStateManager)
+        internal static Storage.Info? LoadInfo(int slot, GameStateManager gameStateManager)
         {
             if (!Slots.Contains(slot))
                 throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
@@ -89,7 +63,7 @@ namespace KernelPanic
                 return null;
 
             using (var file = File.OpenText(InfoPath(slot)))
-                return (DataInfo) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataInfo));
+                return (Storage.Info) CreateSerializer(gameStateManager).Deserialize(file, typeof(Storage.Info));
         }
 
         #endregion
@@ -103,6 +77,7 @@ namespace KernelPanic
             builder.Register(c => new EntityGraph(Rectangle.Empty, manager.Sprite));
             builder.Register(c => new Firefox(manager.Sprite));
             builder.Register(c => new Tower(manager.Sprite, manager.Sound));
+            builder.Register(c => new StrategicTower(manager.Sprite, manager.Sound));
             builder.Register(c => new Trojan(manager.Sprite));
 
             return new AutofacContractResolver(builder.Build());
@@ -122,47 +97,6 @@ namespace KernelPanic
         private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
         private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
         private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
-
-        // Taken from https://www.newtonsoft.com/json/help/html/DeserializeWithDependencyInjection.htm.
-        private sealed class AutofacContractResolver : DefaultContractResolver
-        {
-            private readonly IContainer mContainer;
-
-            public AutofacContractResolver(IContainer container)
-            {
-                mContainer = container;
-            }
-
-            protected override JsonObjectContract CreateObjectContract(Type objectType)
-            {
-                // use Autofac to create types that have been registered with it
-                if (mContainer.IsRegistered(objectType))
-                {
-                    JsonObjectContract contract = ResolveContact(objectType);
-                    contract.DefaultCreator = () => mContainer.Resolve(objectType);
-
-                    return contract;
-                }
-
-                return base.CreateObjectContract(objectType);
-            }
-
-            private JsonObjectContract ResolveContact(Type objectType)
-            {
-                // attempt to create the contact from the resolved type
-                if (mContainer.ComponentRegistry.TryGetRegistration(new TypedService(objectType), out var registration))
-                {
-                    Type viewType = (registration.Activator as ReflectionActivator)?.LimitType;
-                    if (viewType != null)
-                    {
-                        return base.CreateObjectContract(viewType);
-                    }
-                }
-
-                // fall back to using the registered type
-                return base.CreateObjectContract(objectType);
-            }
-        }
 
         #endregion
 

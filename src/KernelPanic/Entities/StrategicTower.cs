@@ -23,6 +23,11 @@ namespace KernelPanic.Entities
         {
         }
 
+        internal StrategicTower(SpriteManager spriteManager, SoundManager soundManager)
+            : base(spriteManager, soundManager)
+        {
+        }
+
         #region Actions
 
         protected override IEnumerable<IAction> Actions =>

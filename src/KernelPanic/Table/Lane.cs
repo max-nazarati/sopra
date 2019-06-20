@@ -4,13 +4,11 @@ using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
-using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Collections.Generic;
 
 namespace KernelPanic.Table
 {
@@ -35,8 +33,6 @@ namespace KernelPanic.Table
         }
 
         internal EntityGraph EntityGraph { get; set; }
-        [JsonProperty]
-        internal List<Entities.Entity> mEntities;
        
         internal Base Target { get; }
 
@@ -49,7 +45,6 @@ namespace KernelPanic.Table
 
         private HeatMap mHeatMap;
         private VectorField mVectorField;
-        private Entities.Entity[] mDeserializedEntities;
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
@@ -94,24 +89,6 @@ namespace KernelPanic.Table
             Target = new Base();
             mSpriteManager = sprites;
             mSounds = sounds;
-
-        }
-
-        [OnSerializing]
-        private void BeforeSerialization(StreamingContext context)
-        {
-            mEntities = new List<Entity>(EntityGraph);
-        }
-
-        [OnDeserialized]
-        private void AfterDeserialization(StreamingContext context)
-        {
-            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
-            foreach (var entity in mEntities)
-            {
-                EntityGraph.Add(entity);
-            }
         }
 
         internal bool Contains(Vector2 point) => mGrid.Contains(point);
@@ -184,7 +161,6 @@ namespace KernelPanic.Table
         public void UpdateHeatMap()
         {
             List<Point> basePoints = new List<Point>();
-            // TODO: Add real positions of bases
             foreach (var basePoint in Target.GetHitBox())
                 {
                 basePoints.Add(new Point((int)basePoint.X, (int)basePoint.Y));
@@ -202,5 +178,34 @@ namespace KernelPanic.Table
             visualizer.Draw(spriteBatch, gameTime);
         }
 
+        #region Serialization
+
+        /// <summary>
+        /// Stores/receives the entities during serialization. Don't use it outside of this!
+        /// </summary>
+        [JsonProperty]
+        internal List<Entity> mEntitiesSerializing;
+
+        [OnSerializing]
+        private void BeforeSerialization(StreamingContext context)
+        {
+            mEntitiesSerializing = new List<Entity>(EntityGraph);
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
+            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
+            foreach (var entity in mEntitiesSerializing)
+            {
+                EntityGraph.Add(entity);
+            }
+            
+            InitHeatMap();
+            UpdateHeatMap();
+        }
+
+        #endregion
     }
 }

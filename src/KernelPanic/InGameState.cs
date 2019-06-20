@@ -5,6 +5,7 @@ using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Selection;
+using KernelPanic.Serialization;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,8 +18,10 @@ namespace KernelPanic
     {
         [DataMember(Name = "Board")]
         private readonly Board mBoard;
+
         [DataMember(Name = "PlayerA")]
         private Player mPlayerA;
+
         [DataMember(Name = "PlayerB")]
         private Player mPlayerB;
 
@@ -34,8 +37,7 @@ namespace KernelPanic
         // private HashSet<Wave> mActiveWaves;
         // private SelectionManager mSelectionManager;
 
-        
-        private InGameState(DataStorage storage, GameStateManager gameStateManager)
+        private InGameState(Storage? storage, GameStateManager gameStateManager)
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
@@ -47,7 +49,7 @@ namespace KernelPanic
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
         }
 
-        internal static void PushGameStack(GameStateManager gameStateManager, DataStorage storage=null)
+        internal static void PushGameStack(GameStateManager gameStateManager, Storage? storage = null)
         {
             var game = new InGameState(storage, gameStateManager);
             var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, game.mSelectionManager, gameStateManager);
@@ -136,14 +138,16 @@ namespace KernelPanic
             mPurchaseDemoReset.Draw(spriteBatch, gameTime);
         }
 
-        public DataStorage ToDataStorage()
+        #region Serialization
+
+        internal Storage Data => new Storage
         {
-            return new DataStorage
-            {
-                PlayerA = mPlayerA,
-                PlayerB = mPlayerB,
-                Board = mBoard,
-            };
-        }
+            PlayerA = mPlayerA,
+            PlayerB = mPlayerB,
+            Board = mBoard
+        };
+
+        #endregion
+
     }
 }
