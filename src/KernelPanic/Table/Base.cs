@@ -5,7 +5,7 @@ namespace KernelPanic.Table
 {
     internal sealed class Base
     {
-        public int Power { get; private set; }
+        public int Power { get; set; }
         private Vector2 mPosition;
 
         public Base(Vector2 position = new Vector2())

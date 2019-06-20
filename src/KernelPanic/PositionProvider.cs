@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -73,5 +74,6 @@ namespace KernelPanic
         }
 
         public Base Target => mTarget;
+        public void DamageBase(int damage) => mTarget.Power = Math.Max(0, mTarget.Power - damage);
     }
 }

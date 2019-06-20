@@ -41,6 +41,7 @@ namespace KernelPanic.Entities
             if (baseHitBox.Contains(Grid.CoordinatePositionFromScreen(Sprite.Position)))
             {
                 DidDie();
+                positionProvider.DamageBase(5);
             }
         }
     }
