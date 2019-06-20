@@ -15,8 +15,6 @@ namespace KernelPanic
     [DataContract]
     internal sealed class InGameState : AGameState
     {
-        private readonly GameStateManager mGameStateManager;
-
         [DataMember(Name = "Board")]
         private readonly Board mBoard;
         [DataMember(Name = "PlayerA")]
@@ -40,8 +38,6 @@ namespace KernelPanic
         private InGameState(DataStorage storage, GameStateManager gameStateManager)
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
-            mGameStateManager = gameStateManager;
-
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
             mPlayerA = storage?.PlayerA ?? new Player(mBoard.RightLane, mBoard.LeftLane);
             mPlayerB = storage?.PlayerB ?? new Player(mBoard.LeftLane, mBoard.RightLane);
@@ -120,7 +116,7 @@ namespace KernelPanic
         {
             if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive)
             {
-                mGameStateManager.Push(MenuState.CreatePauseMenu(mGameStateManager, this));
+                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this));
                 return;
             }
 
