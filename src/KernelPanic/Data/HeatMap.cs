@@ -2,8 +2,10 @@
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
@@ -73,6 +75,14 @@ namespace KernelPanic.Data
             if (point.Y < 0 || point.Y >= mHeight) return;
             mMap[point.Y, point.X] = value;
         }
+
+        public double Get(Point point)
+        {
+            if (point.X < 0 || point.X >= mWidth) return double.NaN;
+            if (point.Y < 0 || point.Y >= mHeight) return double.NaN;
+            return mMap[point.Y, point.X];
+        }
+
 
         public String ToString()
         {

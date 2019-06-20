@@ -93,7 +93,7 @@ namespace KernelPanic.Table
             }
 
 
-            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager);
+            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
         }
 
@@ -139,6 +139,7 @@ namespace KernelPanic.Table
         public void UpdateHeatMap()
         {
             List<Point> basePoints = new List<Point>();
+            // TODO: Add real positions of bases
             switch (mGrid.LaneSide)
             {
                 case Side.Left:
@@ -155,7 +156,6 @@ namespace KernelPanic.Table
                     break;
             }
             BreadthFirstSearch bfs = new BreadthFirstSearch(mHeatMap, basePoints);
-            bfs.UpdateHeatMap();
             bfs.UpdateVectorField();
             mHeatMap = bfs.HeatMap;
             mVectorField = bfs.VectorField;

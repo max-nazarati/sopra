@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
@@ -12,12 +13,14 @@ namespace KernelPanic
         private readonly SpriteManager mSpriteManager;
         private readonly Grid mGrid;
         private readonly EntityGraph mEntities;
+        private readonly VectorField mVectorField;
 
-        internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager spriteManager)
+        internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager spriteManager, VectorField vectorField)
         {
             mGrid = grid;
             mEntities = entities;
             mSpriteManager = spriteManager;
+            mVectorField = vectorField;
         }
 
         internal Vector2? GridCoordinate(Vector2 position, int subTileCount = 1)
@@ -59,6 +62,11 @@ namespace KernelPanic
             return mEntities.QuadTree
                 .NearObjects(entity)
                 .OfType<T>();
+        }
+
+        public Vector2 GetVector(Point point)
+        {
+            return mVectorField.Vector(point);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
-﻿using KernelPanic.Sprites;
+using KernelPanic.Input;
+using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
@@ -28,5 +29,12 @@ namespace KernelPanic.Entities
 
         internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateTrojan(), spriteManager);
+
+        protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        {
+            base.CalculateMovement(positionProvider, gameTime, inputManager);
+            Vector2 movementDirection = positionProvider.GetVector(new Point((int)Sprite.Position.X, (int)Sprite.Position.Y));
+            MoveTarget = Sprite.Position + movementDirection;
+        }
     }
 }
