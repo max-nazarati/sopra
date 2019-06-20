@@ -115,7 +115,7 @@ namespace KernelPanic
                 components.Add(button);
             }
 
-            newGameButton.Clicked += (button, input) => InGameState.PushGameStack(stateManager);
+            newGameButton.Clicked += (button, input) => InGameState.PushGameStack(selectedSlot, stateManager);
             loadGameButton.Clicked += LoadGameCallback(() => selectedSlot, stateManager);
             backButton.Clicked += (button, input) => stateManager.Pop();
 
