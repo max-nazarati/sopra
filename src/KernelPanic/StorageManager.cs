@@ -87,22 +87,23 @@ namespace KernelPanic
                 return (DataStorage) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataStorage));
         }
 
-        public class AutofacContractResolver : DefaultContractResolver
+        // Taken from https://www.newtonsoft.com/json/help/html/DeserializeWithDependencyInjection.htm.
+        private sealed class AutofacContractResolver : DefaultContractResolver
         {
-            private readonly IContainer _container;
+            private readonly IContainer mContainer;
 
             public AutofacContractResolver(IContainer container)
             {
-                _container = container;
+                mContainer = container;
             }
 
             protected override JsonObjectContract CreateObjectContract(Type objectType)
             {
                 // use Autofac to create types that have been registered with it
-                if (_container.IsRegistered(objectType))
+                if (mContainer.IsRegistered(objectType))
                 {
                     JsonObjectContract contract = ResolveContact(objectType);
-                    contract.DefaultCreator = () => _container.Resolve(objectType);
+                    contract.DefaultCreator = () => mContainer.Resolve(objectType);
 
                     return contract;
                 }
@@ -113,8 +114,7 @@ namespace KernelPanic
             private JsonObjectContract ResolveContact(Type objectType)
             {
                 // attempt to create the contact from the resolved type
-                IComponentRegistration registration;
-                if (_container.ComponentRegistry.TryGetRegistration(new TypedService(objectType), out registration))
+                if (mContainer.ComponentRegistry.TryGetRegistration(new TypedService(objectType), out var registration))
                 {
                     Type viewType = (registration.Activator as ReflectionActivator)?.LimitType;
                     if (viewType != null)
