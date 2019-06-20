@@ -146,6 +146,36 @@ namespace KernelPanic.PathPlanning
             mHeap = new PriorityQueue();
             mPath = new List<Point>();
         }
+
+        public Point? FindNearestField()
+        {
+            /*
+            Console.WriteLine("----------- ExploredNodes:-----------");
+            foreach (var VARIABLE in mExploredNodes)
+            {
+                Console.WriteLine(VARIABLE);
+            }
+            Console.WriteLine("-------------------------------------");
+            if (!(mExploredNodes.Count > 0))
+            {
+                return new Point(0, 0);
+            }
+            */
+
+            double bestDistance = EuclidHeuristic(mExploredNodes[0]);
+            Point result = mExploredNodes[0];
+            foreach (var point in mExploredNodes)
+            {
+                var currentDistance = EuclidHeuristic(point);
+                if (currentDistance < bestDistance)
+                {
+                    bestDistance = currentDistance;
+                    result = point;
+                }
+            }
+
+            return result;
+        }
         
         #region update
         /*

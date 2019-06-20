@@ -69,6 +69,15 @@ namespace KernelPanic.Entities
             mAStar = positionProvider.MakePathFinding(this, startPoint, target);
             mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
+
+            if (path.Count == 0) // there is no path to be found
+            {
+                target = FindNearestWalkableField(target); // new Point(100, 100);
+                // Console.WriteLine("This is the debug message you are looking for" + mTarget);
+                mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+                mPathVisualizer = positionProvider.Visualize(mAStar);
+                path = mAStar.Path;
+            }
             
             // TODO get the next position of the path (should be at path[0]; something is ****ed up tho)...
             // ... setting it to 0 makes the firefox disappear (thus making me cry T_T) ...
@@ -108,6 +117,12 @@ namespace KernelPanic.Entities
             if (positionProvider.GridCoordinate(mouse) == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
             ShouldMove = true;
+        }
+        
+        protected Point FindNearestWalkableField(Point target)
+        {
+            var result = mAStar.FindNearestField();
+            return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);
         }
         
         #endregion Movement
@@ -175,7 +190,7 @@ namespace KernelPanic.Entities
             Cooldown.Update(gameTime);
             UpdateAbility(positionProvider, gameTime, inputManager);
 
-            // base.Update checks for mShouldMove
+            // base.Update checks for ShouldMove
             base.Update(positionProvider, gameTime, inputManager);
         }
         
