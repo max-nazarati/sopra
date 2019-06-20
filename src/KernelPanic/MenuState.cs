@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Camera;
 using KernelPanic.Input;
@@ -62,68 +64,51 @@ namespace KernelPanic
 
         private static MenuState CreatePlayMenu(GameStateManager stateManager)
         {
-            string selectedFile = "";
-            Button[] btnlist = new Button[5];
-            
-            var files = System.IO.Directory.GetFiles(StorageManager.Folder);
-
-            for (int i = 0; i < 5; i++)
-            {
-                if (i < files.Length)
-                {
-                    files[i] = files[i].Replace(StorageManager.Folder, "");
-                    files[i] = files[i].Remove(files[i].IndexOf("."));
-                    btnlist[i] = CreateButton(stateManager.Sprite, files[i], (i + 1) * 100);
-                }
-                else
-                {
-                    btnlist[i] = CreateButton(stateManager.Sprite, "leer", (i + 1) * 100);
-                }
-            }
-
-            foreach (var btn in btnlist)
-            {
-                if (btn.Title != "leer")
-                {
-                    btn.Clicked += (button, input) =>
-                    {
-                        selectedFile = btn.Title;
-                    };
-                }
-            }
-
             var newGameButton = CreateButton(stateManager.Sprite, "Neues Spiel",600, 150);
-            newGameButton.Clicked += (button, input) => InGameState.PushGameStack(stateManager);
-
             var loadGameButton = CreateButton(stateManager.Sprite, "Spiel laden", 600, -150);
-            loadGameButton.Clicked += (button, input) =>
-            {
-                if (selectedFile != "")
-                {
-                    var loadedGame = StorageManager.LoadGame(selectedFile, stateManager);
-                    InGameState.PushGameStack(stateManager, loadedGame);
-                }
-            };
-
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 700);
 
+            newGameButton.Enabled = false;
+            loadGameButton.Enabled = false;
+
+            var components = new List<InterfaceComponent>
+            {
+                CreateBackground(stateManager.Sprite), newGameButton, loadGameButton, backButton
+            };
+
+            var index = 0;
+            var files = System.IO.Directory.GetFiles(StorageManager.Folder);
+            var selectedSlot = 0;
+            Button selectedButton = null;
+
+            foreach (var slot in StorageManager.Slots)
+            {
+                var localIndex = index;
+                var title = index < files.Length ? files[index] : "leer";
+                var button = CreateButton(stateManager.Sprite, title, (index + 1) * 100);
+                button.Clicked += (btn, input) =>
+                {
+                    if (selectedButton is Button oldSelection)
+                        oldSelection.Enabled = true;
+
+                    btn.Enabled = false;
+                    newGameButton.Enabled = true;
+                    loadGameButton.Enabled = localIndex < files.Length;
+                    selectedButton = btn;
+                    selectedSlot = slot;
+                };
+
+                components.Add(button);
+                index++;
+            }
+
+            newGameButton.Clicked += (button, input) => InGameState.PushGameStack(stateManager);
+            loadGameButton.Clicked += (button, input) =>
+                InGameState.PushGameStack(stateManager,
+                    StorageManager.LoadGame(StorageManager.DataPath(selectedSlot), stateManager));
             backButton.Clicked += (button, input) => stateManager.Pop();
 
-            return new MenuState(stateManager)
-            {
-                mComponents = new InterfaceComponent[]
-                {
-                    CreateBackground(stateManager.Sprite),
-                    btnlist[0],
-                    btnlist[1],
-                    btnlist[2],
-                    btnlist[3],
-                    btnlist[4],
-                    newGameButton,
-                    loadGameButton,
-                    backButton
-                }
-            };
+            return new MenuState(stateManager) { mComponents = components.ToArray() };
         }
 
         private static Button TurnSoundsOnOff(Button soundOnOffButton)
@@ -288,8 +273,7 @@ namespace KernelPanic
            saveButton.Clicked += (button, input) =>
            {
                var dir = System.IO.Directory.GetFiles(StorageManager.Folder);
-               StorageManager.SaveGame("save" + dir.Length % 5, inGameState);
-               // TODO: change name on Button in CreatePlayMenu
+               StorageManager.SaveGame(StorageManager.DataPath(dir.Length % 5), inGameState);
            };
 
            var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);

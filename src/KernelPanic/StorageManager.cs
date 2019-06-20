@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using Autofac;
 using Autofac.Core;
@@ -40,17 +42,17 @@ namespace KernelPanic
 
         internal static string Folder => sFolder;    // TODO: remove when not used any more.
 
+        internal static IEnumerable<int> Slots => Enumerable.Range(0, 5);
+
         internal static void SaveGame(string fileName, InGameState gameState)
         {
-            Directory.CreateDirectory(sFolder);
-
-            using (var file = File.CreateText(sFolder + fileName + ".json"))
+            using (var file = File.CreateText(fileName))
                 CreateSerializer(gameState.GameStateManager).Serialize(file, gameState.toDataStorage());
         }
 
         internal static DataStorage LoadGame(string fileName, GameStateManager gameStateManager)
         {
-            using (var file = File.OpenText(sFolder + fileName + ".json"))
+            using (var file = File.OpenText(fileName))
                 return (DataStorage) CreateSerializer(gameStateManager).Deserialize(file, typeof(DataStorage));
         }
 
@@ -82,7 +84,7 @@ namespace KernelPanic
         }
 
         private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
-        private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
+        internal static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json"); // TODO: Make it private when not used outside any more.
         private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
 
         // Taken from https://www.newtonsoft.com/json/help/html/DeserializeWithDependencyInjection.htm.
