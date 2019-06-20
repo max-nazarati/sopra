@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Table;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Entities
@@ -17,7 +18,7 @@ namespace KernelPanic.Entities
         private Firefox(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
-            Cooldown = new CooldownComponent(new TimeSpan(0, 0, 5));
+            Cooldown.Reset(new TimeSpan(0, 0, 5));
         }
 
         internal Firefox(SpriteManager spriteManager) : this(0, 0, 0, 0, spriteManager.CreateFirefox(), spriteManager)
@@ -33,14 +34,13 @@ namespace KernelPanic.Entities
 
         internal static Firefox CreateFirefox(Point position, SpriteManager spriteManager) =>
             Create(position, spriteManager.CreateFirefox(), spriteManager);
-        
 
-        protected override void ActivateAbility(InputManager inputManager)
+
+        protected override void StartAbility(InputManager inputManager)
         {
-            AbilityActive = true;
-            ShouldMove = false;
-            Cooldown.Reset();
-            
+            // debug
+            base.StartAbility(inputManager);
+
             // calculate the jump direction
             var mouse = inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
@@ -52,14 +52,15 @@ namespace KernelPanic.Entities
                 mAbility.Push(direction);
             }
         }
-        
+
+
         protected override void ContinueAbility(GameTime gameTime)
         {
-            Console.WriteLine(this + " JUST USED HIS ABILITY! (method of class Firefox)  [TIME:] " + gameTime.TotalGameTime);
             if (mAbility.Count == 0)
             {
-                AbilityActive = false;
+                AbilityStatus = AbilityState.Finished;
                 ShouldMove = true;
+                Console.WriteLine(this + " JUST USED HIS ABILITY! (method of class Firefox)  [TIME:] " + gameTime.TotalGameTime);
                 return;
             }
 
@@ -67,24 +68,32 @@ namespace KernelPanic.Entities
             Sprite.Position += jumpDistance;
         }
 
-        #region Indicator
-        
-        #if false // indicator will get implemented if we have spare time
-        private void DrawIndicator(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            var mousePosition = mInputManager.TranslatedMousePosition;
-            var direction = (mousePosition - Sprite.Position);
-            direction.Normalize();
-            // var rotation = Math.Cos(direction);
-        }
-        
+        #region Draw
+
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
             // DrawIndicator(spriteBatch, gameTime);
         }
         
-        #endif
+        protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            base.DrawAbility(spriteBatch, gameTime);
+            if (AbilityStatus == AbilityState.Indicating)
+            {
+                DrawIndicator(spriteBatch, gameTime);
+            }
+        }
+        
+        private void DrawIndicator(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            /*
+            var mousePosition = mInputManager.TranslatedMousePosition;
+            var direction = (mousePosition - Sprite.Position);
+            direction.Normalize();
+            // var rotation = Math.Cos(direction);
+            */
+        }
         
         #endregion
     }

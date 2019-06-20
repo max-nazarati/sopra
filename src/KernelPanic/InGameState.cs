@@ -30,7 +30,7 @@ namespace KernelPanic
 
         private PurchaseButton<Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
         private PurchaseButton<Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
-        private Button mPurchaseDemoReset;
+        private TextButton mPurchaseDemoReset;
 
         // public int SaveSlot { get; set; }
         // public SaveGame CurrentSaveGame { get; private set; } no such class yet
@@ -75,7 +75,7 @@ namespace KernelPanic
                 Button = {Title = "Buy Tower"}
             };
 
-            mPurchaseDemoReset = new Button(sprites);
+            mPurchaseDemoReset = new TextButton(sprites);
             mPurchaseDemoReset.Clicked += (button, input) =>
             {
                 mPlayerA.Bitcoins = 50;

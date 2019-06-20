@@ -1,4 +1,7 @@
-﻿using System;
+﻿#define DEBUG
+// #undef DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
@@ -19,13 +22,20 @@ namespace KernelPanic.Entities
     internal class Hero : Unit
     {
         #region MemberVariables
+        
+        protected enum AbilityState
+        {
+            Ready = 0, // default value since it has the value '0'
+            Indicating, Starting, Active, Finished, CoolingDown
+        }
 
         [DataMember]
-        protected CooldownComponent Cooldown { get; set; }
+        protected CooldownComponent Cooldown { get; }
         private AStar mAStar; // save the AStar for path-drawing
         private Point mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
-
+        protected AbilityState AbilityStatus;
+        
         #endregion
 
         #region Konstruktor / Create
@@ -51,6 +61,8 @@ namespace KernelPanic.Entities
             // Kind of done... Hero starts moving when the first target command is set... :)
             // mTarget = Sprite.Position;
             ShouldMove = false;
+            Cooldown = new CooldownComponent(new TimeSpan(0, 0, 0)) {Enabled = false};
+            Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
         #endregion
@@ -66,7 +78,7 @@ namespace KernelPanic.Entities
             
             // set the target Position for the AStar (latest updated target should be saved in mTarget
             var target = mTarget / new Point(100, 100);
-            
+
             // calculate the path
             mAStar = positionProvider.MakePathFinding(this, startPoint, target);
             mPathVisualizer = positionProvider.Visualize(mAStar);
@@ -130,53 +142,137 @@ namespace KernelPanic.Entities
         #endregion Movement
 
         #region Ability
-        protected virtual bool AbilityAvailable()
-        {
-            return Cooldown.Enabled;
-        }
 
-        protected virtual void ActivateAbility(InputManager inputManager)
-        {
-            AbilityActive = true;
-            ShouldMove = false;
-            Cooldown.Reset();
-        }
-
-        protected bool AbilityActive { /*protected*/ private get; set; }
-        
         protected virtual void UpdateAbility(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            // Console.WriteLine(this + " JUST UPDATED HIS ABILITY!");
-            if (AbilityActive)
+            #region DEBUG
+#if DEBUG
+            if (!Selected) { goto SwitchAbilityState; }
+            Console.WriteLine("################################################################################");
+            Console.WriteLine("[TIME:] " + gameTime.TotalGameTime);
+            Console.WriteLine(this + " WANTS TO UPDATED HIS ABILITY!");
+            Console.Write("CURRENT ABILITY STATE IS: ");
+
+            switch (AbilityStatus)
             {
-                ContinueAbility(gameTime);
+                case AbilityState.Ready:
+                    Console.WriteLine("Ready");
+                    break;
+
+                case AbilityState.Indicating:
+                    Console.WriteLine("Indicating");
+                    break;
+
+                case AbilityState.Active:
+                    Console.WriteLine("Active");
+                    break;
+
+                case AbilityState.Starting:
+                    Console.WriteLine("Starting");
+                    break;
+
+                case AbilityState.Finished:
+                    Console.WriteLine("Finished");
+                    break;
+
+                case AbilityState.CoolingDown:
+                    Console.WriteLine("CoolingDown");
+                    break;
             }
-            else
+
+            Console.WriteLine("################################################################################"+'\n'); 
+#endif
+            #endregion
+            
+            SwitchAbilityState:
+            switch (AbilityStatus)
             {
-                if (CheckAbilityStart(inputManager))
-                {
-                    ActivateAbility(inputManager);
+                case AbilityState.Ready:
+                    // Here we should check if we should start to indicate the ability
+
+                    if (CheckAbilityStart(inputManager))
+                    {
+                        AbilityStatus = AbilityState.Indicating;
+                    }
+                    break;
+                
+                case AbilityState.Indicating:
+                    // sets the next AbilityState if wanted.
+                    IndicateAbility(inputManager);
+                    break;
+
+                case AbilityState.Starting:
+                    // initialize the ability
+                    StartAbility(inputManager);
+                    break;
+                
+                case AbilityState.Active:
+                    // take one action per update cycle until the ability is finished
                     ContinueAbility(gameTime);
-                }
+                    break;
+
+                case AbilityState.Finished:
+                    // finally cleaning up has to be done and starting to cool down
+                    ShouldMove = true;
+                    AbilityStatus = AbilityState.CoolingDown;
+                    Cooldown.Reset();
+                    break;
+
+                case AbilityState.CoolingDown:
+                    Cooldown.Update(gameTime);
+                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         protected virtual bool CheckAbilityStart(InputManager inputManager)
         {
-            // return false if not ready, selected or not activated by pressing 'q': 
-            return Selected && AbilityAvailable() && inputManager.KeyPressed(Keys.Q);
+            return Selected  && (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle));
+        }
+
+        protected virtual void IndicateAbility(InputManager inputManager)
+        {
+            // just quit indicating when not selected anymore
+            if (!Selected)
+            {
+                AbilityStatus = AbilityState.Ready;
+                return;
+            }
+            
+            if (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle))
+            {
+                AbilityStatus = AbilityState.Starting;
+            }
+            
+            else if (inputManager.KeyPressed(Keys.E) || inputManager.MousePressed(InputManager.MouseButton.Right))
+            {
+                AbilityStatus = AbilityState.Ready;
+            }
+            else
+            {
+                AbilityStatus = AbilityState.Indicating;
+            }
+        }
+
+        protected virtual void StartAbility(InputManager inputManager)
+        {
+            #region DEBUG
+#if DEBUG
+            Console.WriteLine("Ability is now initialized.");
+#endif
+            #endregion
+            
+            AbilityStatus = AbilityState.Active; 
+            ShouldMove = false;
+            Cooldown.Reset();
         }
         
         protected virtual void ContinueAbility(GameTime gameTime)
         {
             Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
-            AbilityActive = false;
-            // ShouldMove = true;
-        }
-        
-        protected virtual void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            
+            AbilityStatus = AbilityState.Finished;
         }
         
         #endregion Ability
@@ -185,12 +281,12 @@ namespace KernelPanic.Entities
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            // also updates the cooldown
+            UpdateAbility(positionProvider, gameTime, inputManager);
+            
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
-            
-            Cooldown.Update(gameTime);
-            UpdateAbility(positionProvider, gameTime, inputManager);
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, gameTime, inputManager);
@@ -207,6 +303,10 @@ namespace KernelPanic.Entities
             DrawAbility(spriteBatch, gameTime);
         }
 
+        protected virtual void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+        }
+        
         private void DrawAStarPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if (Selected)
@@ -222,11 +322,11 @@ namespace KernelPanic.Entities
         protected override IEnumerable<IAction> Actions =>
             base.Actions.Extend(new AbilityAction(this, SpriteManager));
 
-        private sealed class AbilityAction : BaseAction<Button>
+        private sealed class AbilityAction : BaseAction<TextButton>
         {
-            internal AbilityAction(Hero hero, SpriteManager sprites) : base(new Button(sprites) {Title = "Fähigkeit"})
+            internal AbilityAction(Hero hero, SpriteManager sprites) : base(new TextButton(sprites) {Title = "Fähigkeit"})
             {
-                Provider.Clicked += (button, inputManager) => hero.ActivateAbility(inputManager);
+                Provider.Clicked += (button, inputManager) => hero.IndicateAbility(inputManager);
             }
 
             public override void MoveTo(Vector2 position)
