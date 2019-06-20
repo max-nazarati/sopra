@@ -75,7 +75,15 @@ namespace KernelPanic.Table
             mLaneSide = laneSide;
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), sprites);
-            Target = new Base();
+            switch (mGrid.LaneSide)
+            {
+                case Side.Left:
+                    Target = new Base(new Vector2(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 2));
+                    break;
+                case Side.Right:
+                    Target = new Base(new Vector2(1, 1));
+                    break;
+            }
             mSpriteManager = sprites;
             InitHeatMap();
             UpdateHeatMap();
@@ -136,7 +144,7 @@ namespace KernelPanic.Table
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
-            // if (mGrid.LaneSide == Side.Left) Visualize(spriteBatch, gameTime);
+            if (mGrid.LaneSide == Side.Left) Visualize(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
         }
         
@@ -177,21 +185,11 @@ namespace KernelPanic.Table
         {
             List<Point> basePoints = new List<Point>();
             // TODO: Add real positions of bases
-            switch (mGrid.LaneSide)
-            {
-                case Side.Left:
-                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 1, mGrid.LaneRectangle.Height - 1));
-                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 1, mGrid.LaneRectangle.Height - 2));
-                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 1));
-                    basePoints.Add(new Point(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 2));
-                    break;
-                case Side.Right:
-                    basePoints.Add(new Point(0, 0));
-                    basePoints.Add(new Point(0, 1));
-                    basePoints.Add(new Point(1, 0));
-                    basePoints.Add(new Point(1, 1));
-                    break;
-            }
+            foreach (var basePoint in Target.GetHitBox())
+                {
+                basePoints.Add(new Point((int)basePoint.X, (int)basePoint.Y));
+                }
+            
             BreadthFirstSearch bfs = new BreadthFirstSearch(mHeatMap, basePoints);
             bfs.UpdateVectorField();
             mHeatMap = bfs.HeatMap;
@@ -203,5 +201,6 @@ namespace KernelPanic.Table
             var visualizer = mHeatMap.CreateVisualization(mGrid, mSpriteManager, false);
             visualizer.Draw(spriteBatch, gameTime);
         }
+
     }
 }
