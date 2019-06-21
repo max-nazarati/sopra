@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KernelPanic.PathPlanning;
-using KernelPanic.Table;
+using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic.Data
+namespace KernelPanic.PathPlanning
 {
-    class BreadthFirstSearch
+    internal sealed class BreadthFirstSearch
     {
-        public const int Blocked = -1;
+        private const int Blocked = HeatMap.Blocked;
 
         private readonly bool[,] mExplored;
         private HeatMap mMap;

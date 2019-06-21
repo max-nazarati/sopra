@@ -75,9 +75,6 @@
     <Compile Include="..\KernelPanic\Camera\StaticCamera.cs">
       <Link>Camera\StaticCamera.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Data\BreadthFirstSearch.cs">
-      <Link>Data\BreadthFirstSearch.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Data\EnumerableExtensions.cs">
       <Link>Data\EnumerableExtensions.cs</Link>
     </Compile>
@@ -188,6 +185,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\AStar.cs">
       <Link>PathPlanning\AStar.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\PathPlanning\BreadthFirstSearch.cs">
+      <Link>PathPlanning\BreadthFirstSearch.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\ObstacleMatrix.cs">
       <Link>PathPlanning\ObstacleMatrix.cs</Link>
