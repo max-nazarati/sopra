@@ -55,14 +55,14 @@ namespace KernelPanic
         {
             var nextPosition = new Vector2(50, 150);
 
-            mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(mPlayerA,
+            mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(mPlayerB,
                 new PurchasableAction<Unit>(Firefox.CreateFirefox(Point.Zero, sprites)),
                 new TextButton(sprites))
             {
                 Button = { Title = "Firefox" }
             };
 
-            mPurchaseDemoButton2 = new PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>>(mPlayerA,
+            mPurchaseDemoButton2 = new PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>>(mPlayerB,
                 new SinglePurchasableAction<Tower>(Tower.CreateStrategic(Vector2.Zero, Grid.KachelSize, sprites, sounds)),
                 new TextButton(sprites))
             {
@@ -78,7 +78,7 @@ namespace KernelPanic
 
             void UpdateResetTitle()
             {
-                mPurchaseDemoReset.Title = mPlayerA.Bitcoins.ToString();
+                mPurchaseDemoReset.Title = mPlayerB.Bitcoins.ToString();
             }
 
             void OnPurchase(Player buyer, Entity resource)
