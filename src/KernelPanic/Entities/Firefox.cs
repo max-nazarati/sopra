@@ -46,7 +46,6 @@ namespace KernelPanic.Entities
             direction.Normalize();
             var jumpSegment = direction * JumpSegmentLength;
 
-
             for (var _ = 0; _ < JumpDuration; _++)
             {
                 mAbility.Push(jumpSegment);
@@ -58,32 +57,26 @@ namespace KernelPanic.Entities
         
         private void CorrectJump(Vector2 direction, int duration, PositionProvider positionProvider)
         {
-            var jump = direction * JumpSegmentLength * duration;
-            var goal = Sprite.Position + jump;
-            if (positionProvider.Contains(goal)) // goal of jump is on the lane?
+            var jumpFrame = direction * JumpSegmentLength;
+            var goal = Sprite.Position + jumpFrame * duration;
+            
+            if (positionProvider.Contains(goal) && !positionProvider.HasEntityAt(goal)) // goal of jump is on the lane?
             {
-                if (false) // goal is on turret
-                {
-                    return;
-                }
+                return;
             }
-
+            
+            while (positionProvider.HasEntityAt(goal))
+            {
+                mAbility.Push(jumpFrame);
+                goal += jumpFrame;
+            }
             // jump was too long
-            var count = 0;
-            while (!positionProvider.Contains(goal)) // this if is not working atm, bois aint stealing
+            while (!positionProvider.Contains(goal) || positionProvider.HasEntityAt(goal))
             {
-                
-                count += 1;
-                
-                goal -= JumpSegmentLength * direction;
-            } 
-
-            for (var _ = 0; _ <= count; _++)
-            {
-                // mAbility.Clear();
-                mAbility.Pop();
+                goal -= mAbility.Pop();
             }
-            // Console.WriteLine("Stack size of jump: " + mAbility.Count +'\n');
+            mAbility.Pop();
+            
             // jump was too short
             // goal += direction;
 

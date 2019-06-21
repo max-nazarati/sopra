@@ -72,6 +72,11 @@ namespace KernelPanic
                 .NearObjects(entity)
                 .OfType<T>();
         }
+        
+        internal bool HasEntityAt(Vector2 point)
+        {
+            return mEntities.HasEntityAt(point);
+        }
 
         public Vector2 GetVector(Point point)
         {
