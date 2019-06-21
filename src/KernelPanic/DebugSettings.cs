@@ -13,7 +13,7 @@ namespace KernelPanic
             if (inputManager.KeyPressed(Keys.H))
                 VisualizeHeatMap = !VisualizeHeatMap;
 
-            if (inputManager.KeyPressed(Keys.A))
+            if (inputManager.KeyPressed(Keys.G))
                 VisualizeAStar = !VisualizeAStar;
         }
     }
