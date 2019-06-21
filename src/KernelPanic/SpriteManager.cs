@@ -208,21 +208,15 @@ namespace KernelPanic
             );
         }
 
-        internal (Sprite, ImageSprite, ImageSprite) CreateImageButton(ImageSprite sprite, int width=250, int height=70)
+        internal (Sprite, ImageSprite) CreateImageButton(ImageSprite image, int width=250, int height=70)
         {
             var background = new ImageSprite(Lookup(Image.ButtonBackground))
             {
                 DestinationRectangle = new Rectangle(0, 0, width, height)
             };
-            var imageSprite = sprite;
             return (
-                new CompositeSprite
-            {
-                Children = { background, imageSprite }
-            },
-                background,
-                imageSprite
-
+                new CompositeSprite {Children = {background, image}},
+                background
             );
         }
 

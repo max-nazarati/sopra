@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using KernelPanic.Sprites;
-using KernelPanic.Input;
+﻿using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Interface
 {
-    internal class TextButton : Button
+    internal sealed class TextButton : Button
     {
-        
         internal override Sprite Sprite { get; }
         
         private readonly TextSprite mTitleSprite;
@@ -25,15 +21,10 @@ namespace KernelPanic.Interface
             set => mTitleSprite.Text = value;
         }
 
-        internal override bool Enabled
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            get => base.Enabled;
-            set
-            {
-                mBackground.TintColor = value ? Color.White : Color.Gray;
-                mTitleSprite.TextColor = value ? Color.Black : Color.DarkGray;
-                base.Enabled = value;
-            }
+            mTitleSprite.TextColor = ViewEnabled ? Color.Black : Color.DarkGray;
+            base.Draw(spriteBatch, gameTime);
         }
     }
 }
