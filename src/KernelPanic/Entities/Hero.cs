@@ -188,11 +188,7 @@ namespace KernelPanic.Entities
             {
                 case AbilityState.Ready:
                     // Here we should check if we should start to indicate the ability
-
-                    if (CheckAbilityStart(inputManager))
-                    {
-                        AbilityStatus = AbilityState.Indicating;
-                    }
+                    TryActivateAbility(inputManager);
                     break;
                 
                 case AbilityState.Indicating:
@@ -224,6 +220,12 @@ namespace KernelPanic.Entities
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void TryActivateAbility(InputManager inputManager)
+        {
+            if (CheckAbilityStart(inputManager))
+                AbilityStatus = AbilityState.Indicating;
         }
 
         protected virtual bool CheckAbilityStart(InputManager inputManager)
@@ -325,7 +327,7 @@ namespace KernelPanic.Entities
         {
             internal AbilityAction(Hero hero, SpriteManager sprites) : base(new TextButton(sprites) {Title = "Fähigkeit"})
             {
-                Provider.Clicked += (button, inputManager) => hero.IndicateAbility(inputManager);
+                Provider.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager);
             }
 
             public override void MoveTo(Vector2 position)
