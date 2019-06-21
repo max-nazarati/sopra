@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
+using KernelPanic.Data;
+using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
+    [DataContract]
     internal sealed class GameStateManager
     {
         /*
@@ -19,15 +23,32 @@ namespace KernelPanic
             mGameStates.Push(newGameState);
         }
         */
-        
+
+        /// <summary>
+        /// Stores a <see cref="AGameState"/> together with the current quad-tree of click targets.
+        /// </summary>
+        private sealed class GameStateInfo
+        {
+            internal AGameState State { get; }
+            internal QuadTree<ClickTarget> ClickTargets { get; set; }
+
+            internal GameStateInfo(AGameState state)
+            {
+                State = state;
+                ClickTargets = QuadTree<ClickTarget>.Empty;
+            }
+        }
+
         public SpriteManager Sprite { get; }
-        private readonly Stack<AGameState> mGameStates = new Stack<AGameState>();
+        public SoundManager Sound { get; }
+        private readonly Stack<GameStateInfo> mGameStates = new Stack<GameStateInfo>();
 
         internal Action ExitAction { get; }
 
-        public GameStateManager(Action exitAction, SpriteManager sprites)
+        public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds)
         {
             Sprite = sprites;
+            Sound = sounds;
             ExitAction = exitAction;
         }
 
@@ -38,31 +59,72 @@ namespace KernelPanic
                 mGameStates.Pop();
             }
         }
+
         public void Push(AGameState newGameState)
         {
-            mGameStates.Push(newGameState);
+            mGameStates.Push(new GameStateInfo(newGameState));
         }
-        public void Update(GameTime gameTime)
+
+        internal void Switch(AGameState newGameState)
         {
-            foreach (var state in ActiveStates())
-            {
-                state.Update(gameTime);
-            }
+            Pop();
+            Push(newGameState);
         }
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+
+        /// <summary>
+        /// Clears the stack and pushes the given <see cref="AGameState"/>.
+        /// </summary>
+        /// <param name="newGameState">The new state.</param>
+        internal void Restart(AGameState newGameState)
         {
-            foreach (var state in ActiveStates().Reverse())
+            mGameStates.Clear();
+            Push(newGameState);
+        }
+
+        public void Update(RawInputState rawInput, GameTime gameTime, SoundManager soundManager)
+        {
+            foreach (var info in ActiveStates())
             {
-                state.Draw(spriteBatch, gameTime);
+                var state = info.State;
+                var newClickTargets = new List<ClickTarget>();
+                var input = new InputManager(newClickTargets, state.Camera, rawInput);
+
+                if (!rawInput.IsClaimed(InputManager.MouseButton.Left))
+                {
+                    var possibleTargets = info.ClickTargets.EntitiesAt(input.TranslatedMousePosition);
+                    var maybeTarget = possibleTargets.FirstOrDefault();
+                    if (maybeTarget != null && input.MousePressed(InputManager.MouseButton.Left))
+                        maybeTarget.Action(input);
+                }
+
+                // Do the actual update.
+                state.Update(input, gameTime, soundManager);
+
+                // The call to Update filled newClickTargets via the reference in the InputManager.
+                info.ClickTargets = QuadTree<ClickTarget>.Create(newClickTargets);
             }
         }
 
-        private IEnumerable<AGameState> ActiveStates()
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var state in mGameStates)
+            foreach (var state in ActiveStates().Select(i => i.State).Reverse())
             {
-                yield return state;
-                if (!state.IsOverlay)
+                spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: state.Camera.Transformation);
+                state.Draw(spriteBatch, gameTime);
+                spriteBatch.End();
+            }
+        }
+
+        /// <summary>
+        /// Enumerates from top to bottom through all currently visible states.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{AGameState}"/>.</returns>
+        private IEnumerable<GameStateInfo> ActiveStates()
+        {
+            foreach (var info in mGameStates)
+            {
+                yield return info;
+                if (!info.State.IsOverlay)
                     break;
             }
         }

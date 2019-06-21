@@ -1,26 +1,22 @@
+using System.Runtime.Serialization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using KernelPanic.Data;
+using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Table
 {
-    internal sealed class Grid
+    [DataContract]
+    internal sealed class Grid : IBounded
     {
-        /// <summary>
-        /// Left and Right lane
-        /// </summary>
-        public enum LaneSide
-        {
-            Left,
-            Right
-        }
-
         private int mRelativeX, mRelativeY;
 
-        private readonly LaneSide mLaneSide;
-        private readonly Rectangle mLaneRectangle;
+        internal const int LaneWidthInTiles = 10;
+        internal Lane.Side LaneSide { get; }
+        internal Rectangle LaneRectangle { get; }
 
         private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly
         public List<Point> CoordSystem => mCoordinateSystem;
@@ -32,46 +28,44 @@ namespace KernelPanic
         
         private const int TilesPerSprite = 1; // per Dimension
         private const int SingleTileSizePixel = KachelSize / TilesPerSprite;
-        private const int LaneWidthInTiles = 10;
 
         private static int TileCountPixelSize(int tiles) => tiles * KachelSize;
 
         private readonly Sprite mSprite;
 
-        internal Grid(SpriteManager sprites, LaneSide laneSide)
+        public Rectangle Bounds => mSprite.Bounds;
+
+        internal Grid(Rectangle laneBounds, SpriteManager sprites, Lane.Side laneSide)
         {
-            mLaneRectangle = new Rectangle(0, 0, 16, 42);
-            mLaneSide = laneSide;
+            LaneRectangle = laneBounds;
+            LaneSide = laneSide;
 
             var tile = CreateTile(sprites);
-            var mainPart = new PatternSprite(tile, 0, 0, mLaneRectangle.Height, LaneWidthInTiles);
+            var mainPart = new PatternSprite(tile, LaneRectangle.Height, LaneWidthInTiles);
 
-            var topPart = new PatternSprite(tile, 0, 0,
-                LaneWidthInTiles,
-                mLaneRectangle.Width - LaneWidthInTiles);
-            var bottomPart = new PatternSprite(tile, 0, 0,
-                LaneWidthInTiles,
-                mLaneRectangle.Width - LaneWidthInTiles);
+            var topPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
+            var bottomPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
             bottomPart.Y = mainPart.Height - bottomPart.Height;
 
             switch (laneSide)
             {
-                case LaneSide.Left:
+                case Lane.Side.Left:
                     topPart.X = mainPart.Width;
                     bottomPart.X = mainPart.Width;
                     break;
 
-                case LaneSide.Right:
+                case Lane.Side.Right:
                     mainPart.X = topPart.Width;
-                    mLaneRectangle.X = 32;
                     break;
 
                 default:
-                    throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(LaneSide));
+                    throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(Lane.Side));
             }
 
-            mSprite = new CompositeSprite(TileCountPixelSize(mLaneRectangle.X), TileCountPixelSize(mLaneRectangle.Y))
+            mSprite = new CompositeSprite
             {
+                X = TileCountPixelSize(LaneRectangle.X),
+                Y = TileCountPixelSize(LaneRectangle.Y),
                 Children = {mainPart, bottomPart, topPart}
             };
 
@@ -81,6 +75,13 @@ namespace KernelPanic
         internal static ImageSprite CreateTile(SpriteManager spriteManager)
         {
             var tile = spriteManager.CreateLaneTile();
+            tile.ScaleToWidth(KachelSize);
+            return tile;
+        }
+
+        internal static ImageSprite CreateTileBorder(SpriteManager spriteManager)
+        {
+            var tile = spriteManager.CreateLaneBorder();
             tile.ScaleToWidth(KachelSize);
             return tile;
         }
@@ -102,18 +103,16 @@ namespace KernelPanic
         }
         */
 
-        /* TODO implement when needed
         /// <summary>
         /// calculates the position in the Grid for a given MousePosition on the screen
         /// </summary>
         /// <returns></returns>
-        private static Point CoordinatePositionFromScreen(Point screenCoordinate)
+        public static Point CoordinatePositionFromScreen(Vector2 screenCoordinate)
         {
-            var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
-            var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
-            return new Point(screenCoordinate.X * 100, screenCoordinate.Y * 100);
+            // var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
+            // var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
+            return (screenCoordinate / KachelSize).ToPoint();
         }
-        */
 
         /// <summary>
         /// calculates the position on the screen for a grid coordinate point,
@@ -155,15 +154,15 @@ namespace KernelPanic
         {
             // calculate new Values depending on the Size of the sprite
             var laneWidth = LaneWidthInTiles / TilesPerSprite;
-            var rectangleWidth = mLaneRectangle.Width / TilesPerSprite;
-            var rectangleHeight = mLaneRectangle.Height / TilesPerSprite;
+            var rectangleWidth = LaneRectangle.Width / TilesPerSprite;
+            var rectangleHeight = LaneRectangle.Height / TilesPerSprite;
 
             // adding the top part
             for (var y = 0; y < laneWidth; y++)
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
 
@@ -172,7 +171,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < laneWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
 
@@ -181,7 +180,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
         }
@@ -208,15 +207,15 @@ namespace KernelPanic
         {
             // calculate new Values depending on the Size of the sprite
             var laneWidth = LaneWidthInTiles / TilesPerSprite;
-            var rectangleWidth = mLaneRectangle.Width / TilesPerSprite;
-            var rectangleHeight = mLaneRectangle.Height / TilesPerSprite;
+            var rectangleWidth = LaneRectangle.Width / TilesPerSprite;
+            var rectangleHeight = LaneRectangle.Height / TilesPerSprite;
 
             // adding the top part
             for (var y = 0; y < laneWidth; y++)
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
 
@@ -225,7 +224,7 @@ namespace KernelPanic
             {
                 for (var x = rectangleWidth - laneWidth; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
 
@@ -234,7 +233,7 @@ namespace KernelPanic
             {
                 for (var x = 0; x < rectangleWidth; x++)
                 {
-                    mCoordinateSystem.Add(new Point(x + mLaneRectangle.X, y + mLaneRectangle.Y));
+                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
                 }
             }
         }
@@ -244,12 +243,12 @@ namespace KernelPanic
         /// </summary>
         private void CreateCoordinateSystem()
         {
-            switch (mLaneSide)
+            switch (LaneSide)
             {
-                case LaneSide.Left:
+                case Lane.Side.Left:
                     CreateCoordinateSystemLeft();
                     break;
-                case LaneSide.Right:
+                case Lane.Side.Right:
                     CreateCoordinateSystemRight();
                     break;
             }
@@ -270,16 +269,7 @@ namespace KernelPanic
             int subTileCount = 1,
             RelativePosition origin = RelativePosition.Center)
         {
-            // TODO: We just convert float to int and Vector2 to Point,
-            //       does this make a discernible difference to doing the exact calculations?
-            var full = new Rectangle(mSprite.Position.ToPoint(), mSprite.Size.ToPoint());
-            var cutout = new Rectangle(
-                (int) mSprite.X + (mLaneSide == LaneSide.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
-                TileCountPixelSize(LaneWidthInTiles),
-                TileCountPixelSize(mLaneRectangle.Width - LaneWidthInTiles),
-                TileCountPixelSize(mLaneRectangle.Height - 2 * LaneWidthInTiles));
-
-            if (!full.Contains(point.ToPoint()) || cutout.Contains(point.ToPoint()))
+            if (!Contains(point))
                 return null;
 
             var subTileSize = (float) KachelSize / subTileCount;
@@ -303,6 +293,41 @@ namespace KernelPanic
             point += mSprite.Position + origin.RectangleOrigin(new Vector2(subTileSize));
 
             return (point, (float) KachelSize / subTileCount);
+        }
+
+        /// <summary>
+        /// Tests if the given <paramref name="point"/> lies in this grid.
+        /// </summary>
+        /// <param name="point">The point to test for.</param>
+        /// <returns><c>true</c> if the point is inside, <c>false</c> otherwise.</returns>
+        internal bool Contains(Vector2 point)
+        {
+            var cutout = new Rectangle(
+                (int) mSprite.X + (LaneSide == Lane.Side.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
+                TileCountPixelSize(LaneWidthInTiles),
+                TileCountPixelSize(LaneRectangle.Width - LaneWidthInTiles),
+                TileCountPixelSize(LaneRectangle.Height - 2 * LaneWidthInTiles));
+
+            return Bounds.Contains(point) && !cutout.Contains(point);
+        }
+
+        /// <summary>
+        /// Calculates the origin the tile identified by <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">The index of the tile.</param>
+        /// <param name="origin">Where to put the origin in the rectangle, <see cref="RelativePosition.Center"/> by default.</param>
+        /// <returns>The position of the origin, and the length of the square's sides.</returns>
+        /// <exception cref="IndexOutOfRangeException">If <paramref name="index"/> is outside the bounds of <see cref="LaneRectangle"/>.</exception>
+        internal (Vector2 Position, float Size) GetTile(TileIndex index, RelativePosition origin = RelativePosition.Center)
+        {
+            if (index.Column / index.SubTileCount >= LaneRectangle.Width || index.Row / index.SubTileCount >= LaneRectangle.Height)
+            {
+                throw new IndexOutOfRangeException($"TileIndex {index} is out of bounds {LaneRectangle.Size}");
+            }
+
+            var subTileSize = (float) KachelSize / index.SubTileCount;
+            var position = mSprite.Position + index.ToPoint().ToVector2() * subTileSize + origin.RectangleOrigin(new Vector2(subTileSize));
+            return (position, subTileSize);
         }
 
         /// <summary>

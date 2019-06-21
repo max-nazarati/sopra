@@ -1,34 +1,44 @@
-﻿using Microsoft.Xna.Framework;
+﻿using KernelPanic.Camera;
+using KernelPanic.Entities;
+using KernelPanic.Input;
+using KernelPanic.Selection;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal sealed class InGameOverlay
+    internal sealed class InGameOverlay: AGameState
     {
-        private IEntitySelection mSelection;
+        private Entity mSelection;
         private readonly ScoreOverlay mScoreOverlay;
+        private readonly UnitBuyingMenu mUnitBuyingMenu;
         // public BuildingBuyingMenu BuildingMenu { get; set; }
         // public UnitBuyingMenu UnitMenu { get; set; }
 
-        public InGameOverlay(Player player1, Player player2, SpriteManager spriteManager)
+        internal override bool IsOverlay => true;
+
+        public InGameOverlay(Player player1, Player player2, SelectionManager selectionManager, GameStateManager gameStateManager)
+            : base(new StaticCamera(), gameStateManager)
         {
-            // TODO: Add SelectionManager and Button parameters
-            mScoreOverlay = new ScoreOverlay(player1, player2, spriteManager);
-            // BuildingMenu = new BuildingBuyingMenu(0, 50);
+            // TODO: Add Button parameters
+
+            mSelection = selectionManager.Selection;
+            selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
+            
+            mScoreOverlay = new ScoreOverlay(player1, player2, gameStateManager.Sprite);
+            mUnitBuyingMenu = new UnitBuyingMenu(gameStateManager.Sprite, player2);    // Fixme: This should become player1.
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
         {
             mScoreOverlay.Update(gameTime);
+            mUnitBuyingMenu.Update(inputManager, gameTime);
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            // Should not be drawn in the same SpriteBatch as Camera2d
-            spriteBatch.Begin();
             mScoreOverlay.Draw(spriteBatch, gameTime);
-            // BuildingMenu.Draw(spriteBatch, gameTime);
-            spriteBatch.End();
+            mUnitBuyingMenu.Draw(spriteBatch, gameTime);
         }
     }
 }

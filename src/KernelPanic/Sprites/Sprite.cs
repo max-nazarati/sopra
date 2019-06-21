@@ -1,27 +1,34 @@
-﻿using System.ComponentModel;
+﻿using System.Runtime.Serialization;
+using System.ComponentModel;
+using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Sprites
 {
-    public abstract class Sprite
+    [DataContract]
+    [KnownType(typeof(AnimatedSprite))]
+    [KnownType(typeof(ImageSprite))]
+    public abstract class Sprite: IBounded
     {
-        public float Rotation { get; set; } = 0.0f;
-        public float Scale { get; set; } = 1.0f;
+        #region Properties
+
+        internal float Rotation { get; set; }
+        /* internal */ private float Scale { get; set; } = 1.0f;
         
         /// <summary>
         /// The origin of a sprite is used as the center for rotation and as a offset for <see cref="Position"/>.
         /// Due to the way MonoGame drawing works, it has to be calculated with respect to the <see cref="UnscaledSize"/>.
         /// </summary>
-        public Vector2 Origin { get; set; } = Vector2.Zero;
+        internal Vector2 Origin { get; set; } = Vector2.Zero;
 
-        public abstract float UnscaledWidth { get; }
-        public abstract float UnscaledHeight { get; }
-        public virtual Vector2 UnscaledSize => new Vector2(UnscaledWidth, UnscaledHeight);
+        /* internal */ protected abstract float UnscaledWidth { get; }
+        /* internal */ protected abstract float UnscaledHeight { get; }
+        /* internal */ protected virtual Vector2 UnscaledSize => new Vector2(UnscaledWidth, UnscaledHeight);
 
-        public float Width => Scale * UnscaledWidth;
-        public float Height => Scale * UnscaledHeight;
-        public Vector2 Size => Scale * UnscaledSize; 
+        internal float Width => Scale * UnscaledWidth;
+        internal float Height => Scale * UnscaledHeight;
+        /*internal*/ protected Vector2 Size => Scale * UnscaledSize; 
         
         public float X { get; set; }
         public float Y { get; set; }
@@ -36,11 +43,13 @@ namespace KernelPanic
             }
         }
 
-        protected Sprite(float x, float y)
-        {
-            X = x;
-            Y = y;
-        }
+        /// <inheritdoc />
+        // TODO: This doesn't factor in rotation which might distort the surrounding rectangle.
+        //       But maybe we don't even want this but the current behaviour.
+        public virtual Rectangle Bounds =>
+            KernelPanic.Data.Bounds.ContainingRectangle(Position - Scale * Origin, Size);
+
+        #endregion
 
         #region Smart Property Modification
 

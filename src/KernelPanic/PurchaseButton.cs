@@ -1,24 +1,29 @@
 using System;
+using KernelPanic.Data;
+using KernelPanic.Input;
+using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using KernelPanic.Sprites;
 
 namespace KernelPanic
 {
-    internal sealed class PurchaseButton<TResource, TAction>: IDrawable
+    internal sealed class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded
         where TResource: class, IPriced
         where TAction: PurchasableAction<TResource>
+        where TButton: Button
     {
         /// <summary>
         /// The button which is drawn and which is used to handle the click events.
         /// Use <see cref="PossiblyEnabled"/> to influence whether this button is enabled besides the ability to
         /// for <see cref="Player"/> to afford <see cref="Action"/>.
         /// </summary>
-        internal Button Button { get; }
-
+        internal TButton Button { get; }
+        
         /// <summary>
         /// The player who buys <see cref="Action"/> when the button is clicked.
         /// </summary>
-        internal Player Player { get; }
+        /*internal*/ private Player Player { get; }
 
         /// <summary>
         /// The action which is bought when <see cref="Button"/> is clicked.
@@ -29,7 +34,10 @@ namespace KernelPanic
         /// Set this to <code>false</code> to keep the button disabled
         /// although the player is able to pay for <see cref="Action"/>.
         /// </summary>
-        internal bool PossiblyEnabled { get; set; } = true;
+        internal bool PossiblyEnabled { /*internal*/ private get; set; } = true;
+
+        /// <inheritdoc />
+        public Rectangle Bounds => Button.Bounds;
 
         /// <summary>
         /// Creates a <code>PurchaseButton</code> so that a click on it purchases
@@ -38,18 +46,17 @@ namespace KernelPanic
         /// <param name="player">The player who purchases the action.</param>
         /// <param name="action">The action which can be purchased.</param>
         /// <param name="spriteManager">The sprite manager.</param>
-        internal PurchaseButton(Player player, TAction action, SpriteManager spriteManager)
+        internal PurchaseButton(Player player, TAction action, TButton button)
         {
             Player = player;
             Action = action;
-            Button = new Button(spriteManager);
+            Button = button;
             Button.Clicked += Purchase;
         }
-        
-        /// <inheritdoc />
-        public void Update(GameTime gameTime, Matrix invertedViewMatrix)
+
+        public void Update(InputManager inputManager, GameTime gameTime)
         {
-            Button.Update(gameTime, invertedViewMatrix);
+            Button.Update(inputManager, gameTime);
             Button.Enabled = PossiblyEnabled && Action.Available(Player);
         }
 
@@ -59,7 +66,7 @@ namespace KernelPanic
             Button?.Draw(spriteBatch, gameTime);
         }
 
-        private void Purchase(Button sender)
+        private void Purchase(Button sender, InputManager inputManager)
         {
             if (!Action.TryPurchase(Player))
                 throw new InvalidOperationException($"Player {Player} was not able to purchase {Action}");

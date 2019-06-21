@@ -1,28 +1,30 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Sprites
 {
+    [DataContract]
     internal sealed class ImageSprite : Sprite
     {
         private Texture2D Texture { get; }
-        public Rectangle? SourceRectangle { get; set; }
+        public Rectangle? SourceRectangle { /*internal*/ private get; set; }
 
         /// <summary>
         /// Draw this sprite into this exact screen rectangle. This can be used to distort the image.
         /// If this is set <see cref="Sprite.Position"/> will not be used during drawing.
         /// </summary>
-        public Rectangle? DestinationRectangle { get; set; }
+        public Rectangle? DestinationRectangle { /*internal*/ private get; set; }
 
-        public Color TintColor { get; set; } = Color.White;
+        public Color TintColor { /*internal*/ private get; set; } = Color.White;
 
-        public ImageSprite(Texture2D texture, float x, float y) : base(x, y)
+        public ImageSprite(Texture2D texture)
         {
             Texture = texture;
         }
 
-        public override float UnscaledWidth => DestinationRectangle?.Width ?? SourceRectangle?.Width ?? Texture.Width;
-        public override float UnscaledHeight => DestinationRectangle?.Height ?? SourceRectangle?.Height ?? Texture.Height;
+        protected override float UnscaledWidth => DestinationRectangle?.Width ?? SourceRectangle?.Width ?? Texture.Width;
+        protected override float UnscaledHeight => DestinationRectangle?.Height ?? SourceRectangle?.Height ?? Texture.Height;
 
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,

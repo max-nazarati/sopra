@@ -1,24 +1,24 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Sprites
 {
     public sealed class PatternSprite: Sprite
     {
-        public int Rows { get; set; }
-        public int Columns { get; set; }
-        
-        public Sprite Sprite { get; set; }
+        private int Rows { get; set; }
+        private int Columns { get; set; }
 
-        public PatternSprite(Sprite sprite, float x, float y, int rows, int columns) : base(x, y)
+        private Sprite Sprite { get; set; }
+
+        internal PatternSprite(Sprite sprite, int rows, int columns)
         {
             Rows = rows;
             Columns = columns;
             Sprite = sprite;
         }
 
-        public override float UnscaledWidth => Sprite.Width * Columns;
-        public override float UnscaledHeight => Sprite.Height * Rows;
+        protected override float UnscaledWidth => Sprite.Width * Columns;
+        protected override float UnscaledHeight => Sprite.Height * Rows;
         
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,

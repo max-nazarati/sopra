@@ -1,39 +1,121 @@
-﻿using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using KernelPanic.Data;
+using KernelPanic.Input;
+using KernelPanic.Sprites;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
-namespace KernelPanic
+
+namespace KernelPanic.Entities
 {
-    internal abstract class Entity : IPriced
+    [DataContract]
+    [KnownType(typeof(Unit))]
+    [KnownType(typeof(Building))]
+
+    internal abstract class Entity : IPriced, IBounded
     {
         internal Sprite Sprite { get; }
 
-        protected Entity(int price, Sprite sprite)
+        protected SpriteManager SpriteManager { get; }
+
+        public bool mDidDie;
+
+        protected Entity(int price, Sprite sprite, SpriteManager spriteManager)
         {
             Price = price;
             Sprite = sprite;
             Sprite.SetOrigin(RelativePosition.Center);
+            SpriteManager = spriteManager;
         }
-
         public bool Selected { get; set; }
 
-        internal Rectangle Bounds => new Rectangle((int)Sprite.X-25, 
-            (int)Sprite.Y-25, (int)Sprite.Width-4, (int)Sprite.Height);
+        public Rectangle Bounds => Sprite.Bounds;
 
-        internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            var input = InputManager.Default;
-            if (input.MousePressed(InputManager.MouseButton.Left))
+            if (Selected)
             {
-                Selected = Sprite.Contains(Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix));
+                PositionActions(action => action.Update(inputManager, gameTime));
             }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Sprite.Draw(spriteBatch, gameTime);
+
+            if (Selected)
+            {
+                PositionActions(action => action.Draw(spriteBatch, gameTime));
+            }
         }
 
         public int Price { get; }
         public Currency Currency => Currency.Bitcoin;
+
+        #region Actions
+
+        private void PositionActions(Action<IAction> body)
+        {
+            const int actionSpacer = 15;
+            var bounds = Sprite.Bounds;
+            var position = bounds.Location + new Point(bounds.Width + actionSpacer, -actionSpacer);
+            foreach (var action in Actions)
+            {
+                position.Y += actionSpacer;
+                action.MoveTo(position.ToVector2());
+                body(action);
+                position.Y += action.Bounds.Height;
+            }
+        }
+        
+        protected virtual IEnumerable<IAction> Actions => Enumerable.Empty<IAction>();
+
+        protected interface IAction : IBounded, IDrawable, IUpdatable
+        {
+            void MoveTo(Vector2 position);
+        }
+
+        protected abstract class BaseAction<T> : IAction where T: IBounded, IDrawable, IUpdatable
+        {
+            protected T Provider { get; }
+
+            protected BaseAction(T provider)
+            {
+                Provider = provider;
+            }
+
+            public Rectangle Bounds => Provider.Bounds;
+            public abstract void MoveTo(Vector2 position);
+            public void Draw(SpriteBatch spriteBatch, GameTime gameTime) => Provider.Draw(spriteBatch, gameTime);
+            public void Update(InputManager inputManager, GameTime gameTime) => Provider.Update(inputManager, gameTime);
+        }
+
+        #endregion
+
+        #region Serializing
+
+        /// <summary>
+        /// Stores/receives the entity's position during serialization. Don't use it outside of this!
+        /// </summary>
+        [DataMember]
+        private Vector2 mPositionSerializing;
+
+        [OnSerializing]
+        private void BeforeSerialization(StreamingContext context)
+        {
+            mPositionSerializing = Sprite.Position;
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            Sprite.Position = mPositionSerializing;
+        }
+
+        #endregion
     }
 }

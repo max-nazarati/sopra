@@ -15,7 +15,7 @@ namespace KernelPanic
         }
 
         /// <summary>
-        /// Overwrites <see cref="Resource"/> with a new value.
+        /// Overwrites <see cref="mResource"/> with a new value.
         /// </summary>
         /// <param name="newResource">The new resource which will be purchased.</param>
         internal void ResetResource(TResource newResource = null)

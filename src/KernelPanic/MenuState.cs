@@ -1,7 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using KernelPanic.Camera;
+using KernelPanic.Data;
+using KernelPanic.Input;
+using KernelPanic.Interface;
+using KernelPanic.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
 
 namespace KernelPanic
 {
@@ -9,35 +17,38 @@ namespace KernelPanic
     internal sealed class MenuState : AGameState
     {
         private InterfaceComponent[] mComponents;
+        private readonly Action mEscapeAction;
 
-        private MenuState(GameStateManager gameStateManager) : base(gameStateManager)
+        private MenuState(GameStateManager gameStateManager, Action escapeAction = null)
+            : base(new StaticCamera(), gameStateManager)
         {
+            mEscapeAction = escapeAction;
         }
 
-        public static MenuState CreateMainMenu(GameStateManager stateManager)
+        private static MenuState CreateMainMenu(GameStateManager stateManager, SoundManager soundManager)
         {
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
-            playButton.Clicked += _ => stateManager.Push(CreatePlayMenu(stateManager));
+            playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
             
-            var optionsButton = CreateButton( stateManager.Sprite, "Optionen", 200);
-            optionsButton.Clicked += _ => stateManager.Push(CreateOptionsMenu(stateManager));
+            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 200);
+            optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager, soundManager));
             
             var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 300);
-            instructionsButton.Clicked += _ => stateManager.Push(CreateInstructionsMenu(stateManager));
+            instructionsButton.Clicked += (button, input) => stateManager.Push(CreateInstructionsMenu(stateManager));
             
             var achievementsButton = CreateButton(stateManager.Sprite, "Achievements",400);
-            achievementsButton.Clicked += _ => stateManager.Push(CreateAchievementsMenu(stateManager));
+            achievementsButton.Clicked += (button, input) => stateManager.Push(CreateAchievementsMenu(stateManager));
             
             var statisticsButton = CreateButton(stateManager.Sprite, "Statistiken", 500);
-            statisticsButton.Clicked += _ => stateManager.Push(CreateStatisticsMenu(stateManager));
+            statisticsButton.Clicked += (button, input) => stateManager.Push(CreateStatisticsMenu(stateManager));
 
             var creditsButton = CreateButton(stateManager.Sprite, "Credits", 600);
-            creditsButton.Clicked += _ => stateManager.Push(CreateCreditsMenu(stateManager));
+            creditsButton.Clicked += (button, input) => stateManager.Push(CreateCreditsMenu(stateManager));
             
             var quitButton = CreateButton( stateManager.Sprite, "Beenden", 700);
-            quitButton.Clicked += _ => stateManager.ExitAction();
+            quitButton.Clicked += (button, input) => stateManager.ExitAction();
 
-            return new MenuState(stateManager)
+            return new MenuState(stateManager, stateManager.ExitAction)
             {
                 mComponents = new InterfaceComponent[]
                 {
@@ -53,51 +64,95 @@ namespace KernelPanic
             };
         }
 
-        public static MenuState CreatePlayMenu(GameStateManager stateManager)
+        private static MenuState CreatePlayMenu(GameStateManager stateManager, bool hasError = false)
         {
-            var savedGame1 = CreateButton(stateManager.Sprite, "leer", 100);
-            var savedGame2 = CreateButton(stateManager.Sprite, "leer", 200);
-            var savedGame3 = CreateButton(stateManager.Sprite, "leer", 300);
-            var savedGame4 = CreateButton(stateManager.Sprite, "leer", 400);
-            var savedGame5 = CreateButton(stateManager.Sprite, "leer", 500);
-
             var newGameButton = CreateButton(stateManager.Sprite, "Neues Spiel",600, 150);
-            newGameButton.Clicked += _ => stateManager.Push(new InGameState(stateManager));
-
             var loadGameButton = CreateButton(stateManager.Sprite, "Spiel laden", 600, -150);
-            loadGameButton.Clicked += _ => stateManager.Push(new StorageManager().LoadGame("testSave.xml"));
-
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 700);
 
-            backButton.Clicked += _ => stateManager.Pop();
-
-            return new MenuState(stateManager)
+            newGameButton.Enabled = false;
+            loadGameButton.Enabled = false;
+            
+            var components = new List<InterfaceComponent>
             {
-                mComponents = new InterfaceComponent[]
+                CreateBackground(stateManager.Sprite), newGameButton, loadGameButton, backButton
+            };
+
+            if (hasError)
+            {
+                var errorSprite = stateManager.Sprite.CreateText();
+                errorSprite.Text = "Es ist ein Fehler aufgetreten, bitte versuche es erneut.";
+                errorSprite.TextColor = Color.Red;
+                errorSprite.SetOrigin(RelativePosition.CenterTop);
+                errorSprite.X = stateManager.Sprite.ScreenSize.X / 2f;
+                components.Add(new StaticComponent(errorSprite));
+            }
+
+            var positionY = 0;
+            var selectedSlot = 0;
+            Button selectedButton = null;
+
+            foreach (var slot in StorageManager.Slots)
+            {
+                positionY += 100;
+
+                var info = StorageManager.LoadInfo(slot, stateManager);
+                var exists = info.HasValue;
+                var button = CreateButton(stateManager.Sprite, info?.Label ?? "leer", positionY);
+
+                button.Clicked += (btn, input) =>
                 {
-                    CreateBackground(stateManager.Sprite),
-                    savedGame1,
-                    savedGame2,
-                    savedGame3,
-                    savedGame4,
-                    savedGame5,
-                    newGameButton,
-                    loadGameButton,
-                    backButton
+                    if (selectedButton is Button oldSelection)
+                        oldSelection.Enabled = true;
+
+                    btn.Enabled = false;
+                    newGameButton.Enabled = true;
+                    loadGameButton.Enabled = exists;
+                    selectedButton = btn;
+                    selectedSlot = slot;
+                };
+
+                components.Add(button);
+            }
+
+            newGameButton.Clicked += (button, input) => InGameState.PushGameStack(selectedSlot, stateManager);
+            loadGameButton.Clicked += LoadGameCallback(() => selectedSlot, stateManager);
+            backButton.Clicked += (button, input) => stateManager.Pop();
+
+            return new MenuState(stateManager) { mComponents = components.ToArray() };
+        }
+
+        private static Button.Delegate LoadGameCallback(Func<int> slotAccessor, GameStateManager gameStateManager)
+        {
+            return (button, inputManager) =>
+            {
+                try
+                {
+                    InGameState.PushGameStack(slotAccessor(),
+                        gameStateManager,
+                        StorageManager.LoadGame(slotAccessor(), gameStateManager));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Couldn't load slot {0}", slotAccessor());
+                    Console.WriteLine(e);
+                    gameStateManager.Switch(CreatePlayMenu(gameStateManager, true));
                 }
             };
         }
 
-        public static Button TurnSoundsOnOff(Button soundOnOffButton)
+        private static Button TurnSoundsOnOff(TextButton soundOnOffButton, SoundManager soundManager)
         {
             switch (soundOnOffButton.Title) // TODO: when SoundManager is updated: Interaction with SoundManager
             {
                 case "an":
-                    soundOnOffButton.Title = "aus";
+                    soundOnOffButton.Title = "aus"; 
+                    soundManager.StopMusic();
                     break;
                 case "aus":
                     soundOnOffButton.Title = "an";
-                    SoundManager.Instance.PlayBackgroundMusic();
+                    soundManager.PlaySong(SoundManager.Music.BackgroundMusic1);
+                    // TODO implement updated SoundManager
                     break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
@@ -107,22 +162,22 @@ namespace KernelPanic
             return soundOnOffButton;
         }
 
-        private static MenuState CreateOptionsMenu(GameStateManager stateManager)
+        private static MenuState CreateOptionsMenu(GameStateManager stateManager, SoundManager soundManager)
         {
             var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
             var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
-            musicOnOffButton.Clicked += _=> TurnSoundsOnOff(musicOnOffButton);
+            musicOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(musicOnOffButton, soundManager);
             
             var effectsButton = CreateButton(stateManager.Sprite, "Soundeffekte", 325, 150);
             var effectsOnOffButton = CreateButton(stateManager.Sprite, "aus", 325, -150);
-            effectsOnOffButton.Clicked += _ => TurnSoundsOnOff(effectsOnOffButton);
+            effectsOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(effectsOnOffButton, soundManager);
 
             var volumeButton = CreateButton(stateManager.Sprite, "Lautstärke", 450, 150);
             var volumeRegulatorButton = CreateButton(stateManager.Sprite, "Mittel",450, -150);
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
 
-            backButton.Clicked += _ => stateManager.Pop();
+            backButton.Clicked += (button, input) => stateManager.Pop();
 
             return new MenuState(stateManager)
             {
@@ -140,11 +195,11 @@ namespace KernelPanic
             };
         }
 
-        public static MenuState CreateInstructionsMenu(GameStateManager stateManager)
+        private static MenuState CreateInstructionsMenu(GameStateManager stateManager)
         {
             // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
-            backButton.Clicked += _ => stateManager.Pop();
+            backButton.Clicked += (button, input) => stateManager.Pop();
             
             return new MenuState(stateManager)
             {
@@ -156,11 +211,11 @@ namespace KernelPanic
             };
         }
 
-        public static MenuState CreateStatisticsMenu(GameStateManager stateManager)
+        private static MenuState CreateStatisticsMenu(GameStateManager stateManager)
         {
             // TODO: Collecting and processing game statistics. 
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
-            backButton.Clicked += _ => stateManager.Pop();
+            backButton.Clicked += (button, input) => stateManager.Pop();
             
             return new MenuState(stateManager)
             {
@@ -172,11 +227,11 @@ namespace KernelPanic
             };   
         }
 
-        public static MenuState CreateAchievementsMenu(GameStateManager stateManager)
+        private static MenuState CreateAchievementsMenu(GameStateManager stateManager)
         {
             // TODO: Create List with all Achievements with true/false flag.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
-            backButton.Clicked += _ => stateManager.Pop();
+            backButton.Clicked += (button, input) => stateManager.Pop();
             
             return new MenuState(stateManager)
             {
@@ -192,7 +247,7 @@ namespace KernelPanic
          * Connect current results of not yet integrated tasks for presentation
          * at sprint meeting with your Button.
          */
-        public static MenuState CreateCreditsMenu(GameStateManager stateManager)
+        private static MenuState CreateCreditsMenu(GameStateManager stateManager)
         {
             var janekButton = CreateButton(stateManager.Sprite, "Janek", 50);
             // janekButton.Clicked
@@ -216,7 +271,7 @@ namespace KernelPanic
             // zoeButton.Clicked
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 750);
-            backButton.Clicked += _ => stateManager.Pop();
+            backButton.Clicked += (button, input) => stateManager.Pop();
             
             return new MenuState(stateManager)
             {
@@ -236,24 +291,19 @@ namespace KernelPanic
         } 
         
        
-       public static MenuState CreatePauseMenu(GameStateManager stateManager, InGameState inGameState) 
+       public static MenuState CreatePauseMenu(GameStateManager stateManager, InGameState inGameState, SoundManager soundManager) 
        {
            var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
-           backButton.Clicked += _ => stateManager.Pop();
+           backButton.Clicked += (button, input) => stateManager.Pop();
 
            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
-           optionsButton.Clicked += _ => stateManager.Push(CreateOptionsMenu(stateManager));
+           optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager, soundManager));
 
            var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
-           saveButton.Clicked += _ =>
-           {
-               
-               new StorageManager().SaveGame("testSave.xml", inGameState);
-               // TODO: change name on Button in CreatePlayMenu
-           };
+           saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);
 
-               var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
-           mainMenuButton.Clicked += _ => stateManager.Push(CreateMainMenu(stateManager));
+           var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
+           mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager, soundManager));
            
            return new MenuState(stateManager)
            {
@@ -273,32 +323,38 @@ namespace KernelPanic
             return new StaticComponent(sprites.CreateMenuBackground());
         }
         
-        private static Button CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
+        private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
         {
             // TODO: Change Text Color on Buttons
-            var button = new Button(sprites) {Title = title};
+            var button = new TextButton(sprites) {Title = title};
             button.Sprite.X = sprites.ScreenSize.X / 2.0f - button.Sprite.Width / 2.0f - shiftPositionX;
             button.Sprite.Y = positionY;
             
             return button;
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
         {
             foreach(var component in mComponents)
             {
-                component.Update(gameTime, Matrix.Identity);
+                component.Update(inputManager, gameTime);
             }
+
+            if (!inputManager.KeyPressed(Keys.Escape))
+                return;
+
+            if (mEscapeAction != null)
+                mEscapeAction();
+            else
+                GameStateManager.Pop();
         }
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Begin();
             foreach (var component in mComponents)
             {
                 component.Draw(spriteBatch, gameTime);
             }
-            spriteBatch.End();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿
-namespace KernelPanic
+namespace KernelPanic.Entities
 {
     class ShockField
     {

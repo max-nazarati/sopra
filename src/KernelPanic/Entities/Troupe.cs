@@ -1,34 +1,48 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Autofac.Core.Lifetime;
+using KernelPanic.Input;
+using KernelPanic.Sprites;
+using KernelPanic.Table;
+using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Entities
 {
-    internal class Troupe : Unit
+    internal abstract class Troupe : Unit
     {
-        private Troupe(int price, int speed, int life, int attackStrength, Sprite sprite)
-            : base(price, speed, life, attackStrength, sprite)
+        private Vector2 mLastMovement;
+        protected Troupe(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
+            : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
+            mLastMovement = new Vector2(0, 0);
         }
 
-        /// <summary>
-        /// Convenience function for creating a Troupe. The sprite is automatically scaled to the size of one tile.
-        /// </summary>
-        /// <param name="position">The point where to position this troupe.</param>
-        /// <param name="sprite">The sprite to display.</param>
-        /// <returns>A new Troupe</returns>
-        private static Troupe Create(Point position, Sprite sprite)
+        protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            sprite.Position = position.ToVector2();
-            sprite.ScaleToWidth(Grid.KachelSize);
-            return new Troupe(10, 1, 1, 1, sprite);
+            base.CalculateMovement(positionProvider, gameTime, inputManager);
+            Vector2 movementDirection = positionProvider.GetVector(Grid.CoordinatePositionFromScreen(Sprite.Position));
+            if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
+            {
+                movementDirection = mLastMovement;
+            }
+            else
+            {
+                mLastMovement = movementDirection;
+            }
+            MoveTarget = Sprite.Position + movementDirection;
+
+            List<Point> baseHitBox = new List<Point>();
+            foreach (var baseGrid in positionProvider.Target.GetHitBox())
+            {
+                baseHitBox.Add(baseGrid.ToPoint());
+            }
+
+            if (baseHitBox.Contains(Grid.CoordinatePositionFromScreen(Sprite.Position)))
+            {
+                DidDie();
+                positionProvider.DamageBase(5);
+            }
         }
-
-        internal static Troupe CreateTrojan(Point position, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateTrojan());
-
-        internal static Troupe CreateFirefox(Point position, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateFirefox());
-
-        internal static Troupe CreateFirefoxJump(Point position, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateFirefoxJump());
     }
 }

@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Sprites
 {
     internal sealed class CompositeSprite : Sprite
     {
         public List<Sprite> Children { get; } = new List<Sprite>();
 
-        internal CompositeSprite(float x, float y) : base(x, y)
-        {
-        }
+        protected override float UnscaledWidth => UnscaledSize.X;
+        protected override float UnscaledHeight => UnscaledSize.Y;
 
-        public override float UnscaledWidth => UnscaledSize.X;
-        public override float UnscaledHeight => UnscaledSize.Y;
-
-        public override Vector2 UnscaledSize
+        protected override Vector2 UnscaledSize
         {
             get
             {
@@ -33,6 +30,9 @@ namespace KernelPanic
                 return new Vector2(maxX - minX, maxY - minY);
             }
         }
+
+        public override Rectangle Bounds =>
+            Children.Union(Position - Origin);
 
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,

@@ -1,4 +1,6 @@
 ﻿using System.Runtime.Serialization;
+using KernelPanic.Camera;
+using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -9,16 +11,17 @@ namespace KernelPanic
     [KnownType(typeof(MenuState))]
     internal abstract class AGameState
     {
-        protected GameStateManager GameStateGameStateManager { get; }
+        internal GameStateManager GameStateManager { get; }
         internal virtual bool IsOverlay => false;
-        internal virtual Camera2D Camera => null;
+        internal ICamera Camera { get; }
 
-        protected AGameState(GameStateManager gameStateManager)
+        protected AGameState(ICamera camera, GameStateManager gameStateManager)
         {
-            GameStateGameStateManager = gameStateManager;
+            GameStateManager = gameStateManager;
+            Camera = camera;
         }
         
         public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
-        public abstract void Update(GameTime gameTime);
+        public abstract void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager);
     }
 }

@@ -1,31 +1,26 @@
-﻿using Microsoft.Xna.Framework;
+﻿using KernelPanic.Input;
+using KernelPanic.Sprites;
+using Microsoft.Xna.Framework;
 
-namespace KernelPanic
+namespace KernelPanic.Interface
 {
-    public sealed class Button : InterfaceComponent
+    internal class Button : InterfaceComponent
     {
-        public delegate void Delegate(Button sender);
-        public event Delegate Clicked;
+        internal delegate void Delegate(Button sender, InputManager inputManager);
 
-        private readonly TextSprite mTitleSprite;
+        internal event Delegate Clicked;
+        protected ImageSprite mBackground;
 
-        public override Sprite Sprite { get; }
+        internal override Sprite Sprite { get; }
 
-        internal Button(SpriteManager sprites)
+        public override void Update(InputManager inputManager, GameTime gameTime)
         {
-            (Sprite, mTitleSprite) = sprites.CreateButton();
-        }
-
-        internal string Title
-        {
-            get => mTitleSprite.Text;
-            set => mTitleSprite.Text = value;
-        }
-
-        public override void Update(GameTime gameTime, Matrix invertedViewMatrix)
-        {
-            if (Enabled && InputManager.Default.MousePressed(InputManager.MouseButton.Left) && ContainsMouse(invertedViewMatrix))
-                Clicked?.Invoke(this);
+            inputManager.RegisterClickTarget(Sprite.Bounds, localInputManager =>
+            {
+                if (Enabled)
+                    Clicked?.Invoke(this, localInputManager);
+            });
         }
     }
+
 }

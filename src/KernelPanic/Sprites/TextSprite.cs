@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Sprites
 {
     internal sealed class TextSprite : Sprite
     {
@@ -43,9 +43,9 @@ namespace KernelPanic
             }
         }
 
-        public Color TextColor { get; set; } = Color.Black;
+        public Color TextColor { /*internal*/ private get; set; } = Color.Black;
 
-        public TextSprite(SpriteFont font, string text, float x, float y) : base(x, y)
+        public TextSprite(SpriteFont font, string text = "")
         {
             mFont = font ?? throw new ArgumentNullException(nameof(font));
             mText = text ?? throw new ArgumentNullException(nameof(text));
@@ -53,9 +53,9 @@ namespace KernelPanic
         }
         
         private Lazy<Vector2> mLazySize;
-        public override float UnscaledWidth => Size.X;
-        public override float UnscaledHeight => Size.Y;
-        public override Vector2 UnscaledSize => mLazySize.Value;
+        protected override float UnscaledWidth => Size.X;
+        protected override float UnscaledHeight => Size.Y;
+        protected override Vector2 UnscaledSize => mLazySize.Value;
 
         private void ResetLazySize()
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using KernelPanic.Input;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
@@ -11,6 +12,8 @@ namespace KernelPanic
         private readonly GraphicsDeviceManager mGraphics;
         private SpriteBatch mSpriteBatch;
         private GameStateManager mGameStateManager;
+        private readonly RawInputState mInputState;
+        private SoundManager mSoundManager;
 
         public Game1()
         {
@@ -24,6 +27,8 @@ namespace KernelPanic
 
             // No mGraphics.ApplyChanges() required as explained here:
             // https://stackoverflow.com/a/11287316/1592765
+
+            mInputState = new RawInputState();
         }
 
         /// <summary>
@@ -36,6 +41,7 @@ namespace KernelPanic
         {
             // TODO: Add your initialization logic here
             IsMouseVisible = true;
+            mSoundManager = new SoundManager(Content);
             base.Initialize();
         }
 
@@ -47,10 +53,8 @@ namespace KernelPanic
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
-            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice));
-            mGameStateManager.Push(new InGameState(mGameStateManager));
-
-            SoundManager.Instance.Init(Content);
+            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mSoundManager);
+            InGameState.PushGameStack(0, mGameStateManager);
             // SoundManager.Instance.PlayBackgroundMusic();
         }
 
@@ -70,8 +74,8 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            InputManager.Default.Update(gameTime);
-            mGameStateManager.Update(gameTime);
+            mInputState.Update(IsActive, GraphicsDevice.Viewport);
+            mGameStateManager.Update(mInputState, gameTime, mSoundManager);
             base.Update(gameTime);
         }
 

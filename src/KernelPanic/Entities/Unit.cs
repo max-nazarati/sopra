@@ -1,19 +1,32 @@
-﻿using System;
+using System;
+using System.Runtime.Serialization;
+using KernelPanic.Input;
+using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 
 
-namespace KernelPanic
+namespace KernelPanic.Entities
 {
+    [DataContract]
+    [KnownType(typeof(Troupe))]
+    [KnownType(typeof(Hero))]
     internal abstract class Unit : Entity
     {
-        private Vector2? MoveTarget { get; set; }
+        [DataMember]
+        protected Vector2? MoveTarget { get; set; }
 
+        [DataMember]
         private int Speed { get; set; }
+        [DataMember]
         private int AttackStrength { get; set; }
+        [DataMember]
         private int MaximumLife { get; set; }
+        [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }
 
-        private Vector2? MoveVector
+        protected bool ShouldMove; // should the basic movement take place this cycle? 
+
+        protected virtual Vector2? MoveVector
         {
             get
             {
@@ -24,12 +37,15 @@ namespace KernelPanic
             }
         }
 
-        protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite) : base(price, sprite)
+        protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
+            : base(price, sprite, spriteManager)
         {
             Speed = speed;
             MaximumLife = life;
             RemainingLife = life;
             AttackStrength = attackStrength;
+            ShouldMove = true;
+            mDidDie = false;
         }
 
         /// <summary>
@@ -54,6 +70,7 @@ namespace KernelPanic
         /// </summary>
         protected virtual void DidDie()
         {
+            mDidDie = true;
         }
 
         /// <summary>
@@ -65,25 +82,53 @@ namespace KernelPanic
         {
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, Matrix invertedViewMatrix)
+        protected virtual void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            base.Update(positionProvider, gameTime, invertedViewMatrix);
-
             if (Selected)
             {
-                var input = InputManager.Default;
-                if (input.MousePressed(InputManager.MouseButton.Right))
+                if (inputManager.MousePressed(InputManager.MouseButton.Right))
                 {
-                    var mouse = Vector2.Transform(input.MousePosition.ToVector2(), invertedViewMatrix);
+                    var mouse = inputManager.TranslatedMousePosition;
                     if (positionProvider.GridCoordinate(mouse) != null)
                         MoveTarget = mouse;
                 }
             }
+        }
 
-            if (MoveVector is Vector2 movement)
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        {
+            base.Update(positionProvider, gameTime, inputManager);
+
+            CalculateMovement(positionProvider, gameTime, inputManager);
+            if (Sprite is AnimatedSprite animation)
+            {
+                // children - classes want to know if movement is allowed(mShouldMove)
+                if (ShouldMove && MoveVector is Vector2 movement)
+                {
+                    Sprite.Position += movement;
+                    // choose correct movement animation
+                    if (movement.X > 0)
+                    {
+                        animation.mMovement = AnimatedSprite.Movement.Right;
+                    }
+                    else
+                    {
+                        animation.mMovement = AnimatedSprite.Movement.Left;
+                    }
+                }
+                else
+                {
+                    animation.mMovement = AnimatedSprite.Movement.Standing;
+                }
+            }
+
+            // children-classes want to know if movement is allowed (mShouldMove) 
+            /*if (ShouldMove && MoveVector is Vector2 movement)
             {
                 Sprite.Position += movement;
-            }
+            }*/
+
         }
+        
     }
 }
