@@ -42,6 +42,11 @@ namespace KernelPanic
             return aStar;
         }
 
+        internal bool Contains(Vector2 point)
+        {
+            return mGrid.Contains(point);
+        }
+
         internal Visualizer Visualize(AStar pathPlanner)
         {
             return pathPlanner.CreateVisualization(mGrid, mSpriteManager);

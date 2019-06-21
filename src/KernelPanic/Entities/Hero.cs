@@ -1,5 +1,5 @@
-﻿#define DEBUG
-// #undef DEBUG
+﻿// #define DEBUG
+#undef DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -74,10 +74,10 @@ namespace KernelPanic.Entities
             
             // set the start Position for the AStar (something like the current position should do great)
             var start = Sprite.Position;
-            var startPoint = new Point((int)start.X, (int)start.Y) / new Point(100, 100);
+            var startPoint = Grid.CoordinatePositionFromScreen(start);
             
             // set the target Position for the AStar (latest updated target should be saved in mTarget
-            var target = mTarget / new Point(100, 100);
+            var target = Grid.CoordinatePositionFromScreen(mTarget.ToVector2());
 
             // calculate the path
             mAStar = positionProvider.MakePathFinding(this, startPoint, target);
@@ -86,8 +86,7 @@ namespace KernelPanic.Entities
 
             if (path.Count == 0) // there is no path to be found
             {
-                target = FindNearestWalkableField(target); // new Point(100, 100);
-                // Console.WriteLine("This is the debug message you are looking for" + mTarget);
+                target = FindNearestWalkableField(target);
                 mAStar = positionProvider.MakePathFinding(this, startPoint, target);
                 mPathVisualizer = positionProvider.Visualize(mAStar);
                 path = mAStar.Path;
@@ -203,7 +202,7 @@ namespace KernelPanic.Entities
 
                 case AbilityState.Starting:
                     // initialize the ability
-                    StartAbility(inputManager);
+                    StartAbility(positionProvider, inputManager);
                     break;
                 
                 case AbilityState.Active:
@@ -256,7 +255,7 @@ namespace KernelPanic.Entities
             }
         }
 
-        protected virtual void StartAbility(InputManager inputManager)
+        protected virtual void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             #region DEBUG
 #if DEBUG
