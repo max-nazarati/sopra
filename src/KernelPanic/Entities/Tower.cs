@@ -105,9 +105,9 @@ namespace KernelPanic.Entities
             mRadiusSprite.Draw(spriteBatch, gameTime);
         }
         
-        private Vector2 Target(PositionProvider positionProvider)
+        private Vector2? Target(PositionProvider positionProvider)
         {
-            var target = Vector2.Zero;
+            var target = (Vector2?) null;
             var minDistance = 1000;
             foreach (var entity in positionProvider.NearEntities<Unit>(this, mRadius))
             {
@@ -123,17 +123,22 @@ namespace KernelPanic.Entities
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             base.Update(positionProvider, gameTime, inputManager);
-            // Turn window coordinates into world coordinates.
-            // var relativeMouseVector = inputManager.TranslatedMousePosition;
-            var a = 0;
-            var relativeMouseVector = Target(positionProvider);
-            var distance = Vector2.Distance(relativeMouseVector, Sprite.Position);
-            mInRange = distance <= mRadius;
 
-            // If the cursor is in range we rotate the tower in its direction, otherwise we let the tower rotate continuously. 
-            Sprite.Rotation = mInRange
-                ? (float) (Math.Atan2(Sprite.Y - relativeMouseVector.Y, Sprite.X - relativeMouseVector.X) - Math.PI / 2)
-                : (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
+            mInRange = false;
+            if (Target(positionProvider) is Vector2 target)
+            {
+                if (Vector2.Distance(target, Sprite.Position) <= mRadius)
+                {
+                    mInRange = true;
+                    Sprite.Rotation = (float) (Math.Atan2(Sprite.Y - target.Y, Sprite.X - target.X) - Math.PI / 2);
+                }
+            }
+
+            if (!mInRange)
+            {
+                // If no unit is in range we wiggle the tower.
+                Sprite.Rotation = (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
+            }
 
             mFireTimer.Update(gameTime);
             foreach (var projectile in new List<Projectile>(mProjectiles))
