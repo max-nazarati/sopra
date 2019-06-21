@@ -25,47 +25,16 @@ namespace KernelPanic.PathPlanning
             mGoalPoints = goalPoints.ToList();
         }
 
-        private List<Node> CreateNeighbours(Node node)
+        private IEnumerable<Node> CreateNeighbours(Node node)
         {
-            var neighbours = new List<Node>();
-            var x = node.Position.X;
-            var y = node.Position.Y;
-            var up = new Point(x, y - 1);
-            var left = new Point(x - 1, y);
-            var down = new Point(x, y + 1);
-            var right = new Point(x + 1, y);
-            var cost = node.Cost + 1; // if we put an higher value as summand we get a 'dumb' search
-
-            if (mMap.IsWalkable(up))
-            {
-                Node nodeUp = new Node(up, node, cost, 0, false, false);
-                neighbours.Add(nodeUp);
-            }
-
-            if (mMap.IsWalkable(down))
-            {
-                Node nodeDown = new Node(down, node, cost, 0, false, false);
-                neighbours.Add(nodeDown);
-            }
-
-            if (mMap.IsWalkable(left))
-            {
-                Node nodeLeft = new Node(left, node, cost, 0, false, false);
-                neighbours.Add(nodeLeft);
-            }
-
-            if (mMap.IsWalkable(right))
-            {
-                Node nodeRight = new Node(right, node, cost, 0, false, false);
-                neighbours.Add(nodeRight);
-            }
-            return neighbours;
+            return node.EnumerateNeighbours(1, null).Where(n => mMap.IsWalkable(n.Position));
         }
+
         private void ExpandNode(Node node)
         {
-            if (mExplored[node.Position.Y, node.Position.X]) return;
-            List<Node> neighbours = CreateNeighbours(node);
-            foreach (var neighbour in neighbours)
+            if (mExplored[node.Position.Y, node.Position.X])
+                return;
+            foreach (var neighbour in CreateNeighbours(node))
             {
                 if (!(mExplored[node.Position.Y, node.Position.X])) mQueue.Insert(neighbour);
             }
@@ -78,7 +47,7 @@ namespace KernelPanic.PathPlanning
         {
             foreach (var goalNode in mGoalPoints)
             {
-                mQueue.Insert(new Node(goalNode, null, 0, 0, false, false));
+                mQueue.Insert(new Node(goalNode, null, 0, 0));
             }
 
             while (!mQueue.IsEmpty())

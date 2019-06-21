@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -42,33 +43,13 @@ namespace KernelPanic.PathPlanning
 
         private IEnumerable<Node> CreateNeighbours(Node node)
         {
-            var cost = node.Cost + 0.5; // if we put an higher value as summand we get a 'dumb' search
-
-            Node CreateNode(int xOffset, int yOffset)
-            {
-                var point = node.Position + new Point(xOffset, yOffset);
-                if (mObstacles[point])
-                    return null;
-
-                var estimatedCost = EuclidHeuristic(point);
-                var isStartNode = IsStartPosition(point);
-                var isGoalNode = IsTargetPosition(point);
-                return new Node(point, node, cost, estimatedCost, isStartNode, isGoalNode);
-            }
-
-            if (CreateNode(0, -1) is Node up)
-                yield return up;
-            if (CreateNode(0, 1) is Node down)
-                yield return down;
-            if (CreateNode(-1, 0) is Node left)
-                yield return left;
-            if (CreateNode(1, 0) is Node right)
-                yield return right;
+            return node.EnumerateNeighbours(0.5, EuclidHeuristic).Where(n => !mObstacles[n.Position]);
         }
 
         private void ExpandNode(Node node)
         {
-            if (mExploredNodes.Contains(node.Position)) return;
+            if (mExploredNodes.Contains(node.Position))
+                return;
             foreach (var neighbour in CreateNeighbours(node))
             {
                 if (!mExploredNodes.Contains(neighbour.Position)) mHeap.Insert(neighbour);
@@ -84,7 +65,7 @@ namespace KernelPanic.PathPlanning
         private Node FindTarget()
         {
             Reset();
-            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart), true);
+            var startNode = new Node(mStart, null, 0, EuclidHeuristic(mStart));
             // double heuristicValue = startNode.Key;
             mHeap.Insert(startNode);
 

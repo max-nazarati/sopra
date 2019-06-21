@@ -192,6 +192,9 @@
     <Compile Include="..\KernelPanic\PathPlanning\ObstacleMatrix.cs">
       <Link>PathPlanning\ObstacleMatrix.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\PathPlanning\PathPlanner.cs">
+      <Link>PathPlanning\PathPlanner.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\Visualizer.cs">
       <Link>PathPlanning\Visualizer.cs</Link>
     </Compile>
