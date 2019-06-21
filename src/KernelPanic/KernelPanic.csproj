@@ -117,6 +117,7 @@
     <Compile Include="Table\Board.cs" />
     <Compile Include="Table\Grid.cs" />
     <Compile Include="Table\Lane.cs" />
+    <Compile Include="Table\Owner.cs" />
     <Compile Include="Table\TileIndex.cs" />
     <Compile Include="UnitBuyingMenu.cs" />
   </ItemGroup>

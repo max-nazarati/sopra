@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.PathPlanning;
@@ -16,15 +15,17 @@ namespace KernelPanic
         private readonly Grid mGrid;
         private readonly EntityGraph mEntities;
         private readonly VectorField mVectorField;
-        private Base mTarget;
 
-        internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager spriteManager, VectorField vectorField, Base target)
+        internal Owner Owner { get; }
+
+        internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager spriteManager, VectorField vectorField, Base target, Owner owner)
         {
             mGrid = grid;
             mEntities = entities;
             mSpriteManager = spriteManager;
             mVectorField = vectorField;
-            mTarget = target;
+            Target = target;
+            Owner = owner;
         }
 
         internal Vector2? GridCoordinate(Vector2 position, int subTileCount = 1)
@@ -83,7 +84,8 @@ namespace KernelPanic
             return mVectorField.Vector(point);
         }
 
-        public Base Target => mTarget;
-        public void DamageBase(int damage) => mTarget.Power = Math.Max(0, mTarget.Power - damage);
+        public Base Target { get; }
+
+        public void DamageBase(int damage) => Target.Power = Math.Max(0, Target.Power - damage);
     }
 }

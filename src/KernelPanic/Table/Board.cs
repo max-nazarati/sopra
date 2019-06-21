@@ -43,8 +43,8 @@ namespace KernelPanic.Table
 
         internal void Update(GameTime gameTime, InputManager inputManager)
         {
-            LeftLane.Update(gameTime, inputManager);
-            RightLane.Update(gameTime, inputManager);
+            PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
+            PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)

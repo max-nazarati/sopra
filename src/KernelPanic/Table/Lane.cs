@@ -96,7 +96,7 @@ namespace KernelPanic.Table
 
         internal bool Contains(Vector2 point) => mGrid.Contains(point);
 
-        public void Update(GameTime gameTime, InputManager inputManager)
+        internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
         {
             var mouse = inputManager.TranslatedMousePosition;
             if (inputManager.KeyPressed(Keys.T))
@@ -116,8 +116,7 @@ namespace KernelPanic.Table
                 }
             }
 
-
-            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target);
+            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
         }
 
