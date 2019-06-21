@@ -13,19 +13,19 @@ namespace KernelPanic.Data
     {
         public const int Blocked = -1;
 
-        private bool[,] mExplored;
+        private readonly bool[,] mExplored;
         private HeatMap mMap;
         private VectorField mVectorField;
         private PriorityQueue mQueue;
-        private List<Point> mGoalPoints;
+        private readonly List<Point> mGoalPoints;
 
-        public BreadthFirstSearch(HeatMap map, List<Point> goalPoints)
+        public BreadthFirstSearch(HeatMap map, IEnumerable<Point> goalPoints)
         {
             mMap = map;
             mExplored = new bool[map.Height, map.Width];
             mVectorField = new VectorField(map.Width, map.Height);
             mQueue = new PriorityQueue();
-            mGoalPoints = goalPoints;
+            mGoalPoints = goalPoints.ToList();
         }
 
         private List<Node> CreateNeighbours(Node node)

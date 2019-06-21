@@ -32,9 +32,10 @@ namespace KernelPanic.Table
             Right
         }
 
+        #region Properties
+
         private readonly SpriteManager mSpriteManager;
         private readonly SoundManager mSounds;
-
 
         [JsonProperty]
         internal Base Target { get; }
@@ -51,6 +52,10 @@ namespace KernelPanic.Table
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
+        #endregion
+
+        #region Size, position and bound functions
+
         private static Rectangle LaneBoundsInTiles(Side laneSide) =>
             new Rectangle(laneSide == Side.Left ? 0 : 32, 0, 16, 42);
 
@@ -64,8 +69,25 @@ namespace KernelPanic.Table
             return bounds;
         }
 
+        private static Point BasePosition(Side laneSide)
+        {
+            if (laneSide == Side.Right)
+                return new Point(1);
+
+            var position = LaneBoundsInTiles(laneSide).Size;
+            position.X -= 2;
+            position.Y -= 2;
+            return position;
+        }
+
         internal static Rectangle LeftBounds => LaneBoundsInPixel(Side.Left);
         internal static Rectangle RightBounds => LaneBoundsInPixel(Side.Right);
+
+        internal bool Contains(Vector2 point) => mGrid.Contains(point);
+
+        #endregion
+
+        #region Constructors
 
         public Lane(Side laneSide, SpriteManager sprites, SoundManager sounds)
         {
@@ -73,15 +95,7 @@ namespace KernelPanic.Table
             mLaneSide = laneSide;
             mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), sprites);
-            switch (mGrid.LaneSide)
-            {
-                case Side.Left:
-                    Target = new Base(new Vector2(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 2));
-                    break;
-                case Side.Right:
-                    Target = new Base(new Vector2(1, 1));
-                    break;
-            }
+            Target = new Base(BasePosition(laneSide));
             mSpriteManager = sprites;
             InitHeatMap();
             UpdateHeatMap();
@@ -89,12 +103,13 @@ namespace KernelPanic.Table
 
         internal Lane(SpriteManager sprites, SoundManager sounds)
         {
-            Target = new Base();
             mSpriteManager = sprites;
             mSounds = sounds;
         }
 
-        internal bool Contains(Vector2 point) => mGrid.Contains(point);
+        #endregion
+
+        #region Update
 
         internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
         {
@@ -120,6 +135,10 @@ namespace KernelPanic.Table
             EntityGraph.Update(positionProvider, gameTime, inputManager);
         }
 
+        #endregion
+
+        #region Drawing
+
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mGrid.Draw(spriteBatch, gameTime);
@@ -131,9 +150,12 @@ namespace KernelPanic.Table
         {    
             throw new NotImplementedException();
         }
-        
 
-        public void InitHeatMap()
+        #endregion
+
+        #region Heat Map Handling
+
+        private void InitHeatMap()
         {
             mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
 
@@ -160,15 +182,9 @@ namespace KernelPanic.Table
             }
         }
 
-        public void UpdateHeatMap()
+        private void UpdateHeatMap()
         {
-            List<Point> basePoints = new List<Point>();
-            foreach (var basePoint in Target.GetHitBox())
-                {
-                basePoints.Add(new Point((int)basePoint.X, (int)basePoint.Y));
-                }
-            
-            BreadthFirstSearch bfs = new BreadthFirstSearch(mHeatMap, basePoints);
+            var bfs = new BreadthFirstSearch(mHeatMap, Target.HitBox);
             bfs.UpdateVectorField();
             mHeatMap = bfs.HeatMap;
             mVectorField = bfs.VectorField;
@@ -182,6 +198,8 @@ namespace KernelPanic.Table
             var visualizer = mHeatMap.CreateVisualization(mGrid, mSpriteManager, false);
             visualizer.Draw(spriteBatch, gameTime);
         }
+
+        #endregion
 
         #region Serialization
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Autofac.Core.Lifetime;
 using KernelPanic.Input;
@@ -32,13 +33,7 @@ namespace KernelPanic.Entities
             }
             MoveTarget = Sprite.Position + movementDirection;
 
-            List<Point> baseHitBox = new List<Point>();
-            foreach (var baseGrid in positionProvider.Target.GetHitBox())
-            {
-                baseHitBox.Add(baseGrid.ToPoint());
-            }
-
-            if (baseHitBox.Contains(Grid.CoordinatePositionFromScreen(Sprite.Position)))
+            if (positionProvider.Target.HitBox.Contains(Grid.CoordinatePositionFromScreen(Sprite.Position)))
             {
                 DidDie();
                 positionProvider.DamageBase(5);
