@@ -99,6 +99,9 @@
     <Compile Include="..\KernelPanic\Data\RelativePosition.cs">
       <Link>Data\RelativePosition.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\DebugSettings.cs">
+      <Link>DebugSettings.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Building.cs">
       <Link>Entities\Building.cs</Link>
     </Compile>

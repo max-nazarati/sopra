@@ -308,7 +308,7 @@ namespace KernelPanic.Entities
         
         private void DrawAStarPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (Selected)
+            if (Selected && DebugSettings.VisualizeAStar)
             {
                 mPathVisualizer?.Draw(spriteBatch, gameTime);
             }
