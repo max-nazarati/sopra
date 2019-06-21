@@ -258,7 +258,7 @@ namespace KernelPanic.Entities
         
         protected virtual void ContinueAbility(GameTime gameTime)
         {
-            Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
+            // Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
             AbilityStatus = AbilityState.Finished;
         }
         

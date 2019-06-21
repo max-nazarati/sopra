@@ -16,6 +16,8 @@ namespace KernelPanic.Entities
         private Stack<Vector2> mAbility = new Stack<Vector2>();
         private Vector2 mAbilityTarget;
         private readonly ImageSprite mIndicator;
+        private const int JumpDuration = 10;
+        private const int JumpSegmentLength = 30;
 
         internal Firefox(SpriteManager spriteManager)
             : base(50, 6, 30, 10, spriteManager.CreateFirefox(), spriteManager)
@@ -38,22 +40,19 @@ namespace KernelPanic.Entities
             // debug
             base.StartAbility(positionProvider, inputManager);
 
-            var jumpDuration = 10;
-            var jumpSegmentLength = 30;
-            
             // calculate the jump direction
             var mouse = inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
-            var jumpSegment = direction * jumpSegmentLength;
+            var jumpSegment = direction * JumpSegmentLength;
 
 
-            for (var _ = 0; _ < jumpDuration; _++)
+            for (var _ = 0; _ < JumpDuration; _++)
             {
                 mAbility.Push(jumpSegment);
             }
 
-            CorrectJump(direction, jumpDuration, positionProvider);
+            CorrectJump(direction, JumpDuration, positionProvider);
         }
 
         
@@ -77,7 +76,7 @@ namespace KernelPanic.Entities
             {
                 
                 count += 1;
-                Console.WriteLine("Me and the bois stealing from  your stack.");
+                // Console.WriteLine("Me and the bois stealing from  your stack.");
                 goal -= jumpSegment;
             } 
 
@@ -86,7 +85,7 @@ namespace KernelPanic.Entities
                 // mAbility.Clear();
                 mAbility.Pop();
             }
-            Console.WriteLine("Stack size of jump: " + mAbility.Count +'\n');
+            // Console.WriteLine("Stack size of jump: " + mAbility.Count +'\n');
             // jump was too short
             // goal += direction;
 
@@ -98,7 +97,7 @@ namespace KernelPanic.Entities
             {
                 AbilityStatus = AbilityState.Finished;
                 ShouldMove = true;
-                Console.WriteLine(this + " JUST USED HIS ABILITY! (method of class Firefox)  [TIME:] " + gameTime.TotalGameTime);
+                // Console.WriteLine(this + " JUST USED HIS ABILITY! (method of class Firefox)  [TIME:] " + gameTime.TotalGameTime);
                 return;
             }
 
@@ -132,8 +131,8 @@ namespace KernelPanic.Entities
             mIndicator.Position = Sprite.Position;
             mIndicator.Rotation = rotation;
             mIndicator.Draw(spriteBatch, gameTime);
+            mIndicator.ScaleToHeight(JumpDuration * JumpSegmentLength);
             
-
         }
         
         #endregion

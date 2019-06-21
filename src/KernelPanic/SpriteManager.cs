@@ -339,7 +339,6 @@ namespace KernelPanic
         internal ImageSprite CreateJumpIndicator()
         {
             var sprite = new ImageSprite(Lookup(Image.Arrow));
-            sprite.ScaleToHeight(300);
             sprite.SetOrigin(RelativePosition.CenterBottom);
             return sprite;
         }
