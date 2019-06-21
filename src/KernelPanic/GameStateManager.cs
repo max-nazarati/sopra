@@ -6,6 +6,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -89,13 +90,7 @@ namespace KernelPanic
                 var newClickTargets = new List<ClickTarget>();
                 var input = new InputManager(newClickTargets, state.Camera, rawInput);
 
-                if (!rawInput.IsClaimed(InputManager.MouseButton.Left))
-                {
-                    var possibleTargets = info.ClickTargets.EntitiesAt(input.TranslatedMousePosition);
-                    var maybeTarget = possibleTargets.FirstOrDefault();
-                    if (maybeTarget != null && input.MousePressed(InputManager.MouseButton.Left))
-                        maybeTarget.Action(input);
-                }
+                InvokeClickTargets(input, info.ClickTargets);
 
                 // Do the actual update.
                 state.Update(input, gameTime, soundManager);
@@ -103,6 +98,16 @@ namespace KernelPanic
                 // The call to Update filled newClickTargets via the reference in the InputManager.
                 info.ClickTargets = QuadTree<ClickTarget>.Create(newClickTargets);
             }
+        }
+
+        private static void InvokeClickTargets(InputManager inputManager, QuadTree<ClickTarget> targets)
+        {
+            if (inputManager.IsClaimed(InputManager.MouseButton.Left))
+                return;
+
+            var maybeTarget = targets.EntitiesAt(inputManager.TranslatedMousePosition).FirstOrDefault();
+            if (maybeTarget != null && inputManager.MousePressed(InputManager.MouseButton.Left))
+                maybeTarget.Action(inputManager);
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
