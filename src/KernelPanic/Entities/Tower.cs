@@ -124,19 +124,16 @@ namespace KernelPanic.Entities
         {
             base.Update(positionProvider, gameTime, inputManager);
 
-            mInRange = false;
-            if (Target(positionProvider) is Vector2 target)
+            if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= mRadius)
             {
-                if (Vector2.Distance(target, Sprite.Position) <= mRadius)
-                {
-                    mInRange = true;
-                    Sprite.Rotation = (float) (Math.Atan2(Sprite.Y - target.Y, Sprite.X - target.X) - Math.PI / 2);
-                }
+                // Turn into the direction of the target.
+                mInRange = true;
+                Sprite.Rotation = (float) (Math.Atan2(Sprite.Y - target.Y, Sprite.X - target.X) - Math.PI / 2);
             }
-
-            if (!mInRange)
+            else
             {
                 // If no unit is in range we wiggle the tower.
+                mInRange = false;
                 Sprite.Rotation = (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
             }
 
