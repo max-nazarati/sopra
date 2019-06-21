@@ -60,26 +60,18 @@ namespace KernelPanic.Entities
             var jumpFrame = direction * JumpSegmentLength;
             var goal = Sprite.Position + jumpFrame * duration;
             
-            if (positionProvider.Contains(goal) && !positionProvider.HasEntityAt(goal)) // goal of jump is on the lane?
-            {
-                return;
-            }
-            
+            // jump was too short
             while (positionProvider.HasEntityAt(goal))
             {
                 mAbility.Push(jumpFrame);
                 goal += jumpFrame;
             }
+            
             // jump was too long
             while (!positionProvider.Contains(goal) || positionProvider.HasEntityAt(goal))
             {
                 goal -= mAbility.Pop();
             }
-            mAbility.Pop();
-            
-            // jump was too short
-            // goal += direction;
-
         }
 
         protected override void ContinueAbility(GameTime gameTime)
