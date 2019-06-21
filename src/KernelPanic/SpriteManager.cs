@@ -22,6 +22,7 @@ namespace KernelPanic
             LaneBorder,
             Tower,
             Projectile,
+            Arrow,
             Trojan,
             SelectionBorder,
             Firefox,
@@ -71,6 +72,7 @@ namespace KernelPanic
                 Texture(Image.LaneBorder, "LaneTileBorder"),
                 Texture(Image.Tower, "tower"),
                 Texture(Image.Projectile, "Projectile"),
+                Texture(Image.Arrow, "Arrow"),
                 Texture(Image.Trojan, "troupes/trojan"),
                 Texture(Image.Firefox, "heroes/firefox"),
                 Texture(Image.FoxJump, "heroes/firefox_jumping"),
@@ -338,6 +340,14 @@ namespace KernelPanic
 
             texture.SetData(data);
             return texture;
+        }
+
+        internal ImageSprite CreateJumpIndicator()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Arrow));
+            sprite.ScaleToHeight(300);
+            sprite.SetOrigin(RelativePosition.CenterBottom);
+            return sprite;
         }
         
         internal ImageSprite CreateSelectionBorder()

@@ -14,11 +14,14 @@ namespace KernelPanic.Entities
     internal sealed class Firefox : Hero
     {
         private Stack<Vector2> mAbility = new Stack<Vector2>();
+        private Vector2 mAbilityTarget;
+        private readonly ImageSprite mIndicator;
 
         private Firefox(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
             Cooldown.Reset(new TimeSpan(0, 0, 5));
+            mIndicator = spriteManager.CreateJumpIndicator();
         }
 
         internal Firefox(SpriteManager spriteManager) : this(0, 0, 0, 0, spriteManager.CreateFirefox(), spriteManager)
@@ -37,7 +40,14 @@ namespace KernelPanic.Entities
 
 
         #region Ability 
-        
+
+        protected override void IndicateAbility(InputManager inputManager)
+        {
+            mAbilityTarget = inputManager.TranslatedMousePosition;
+            base.IndicateAbility(inputManager);
+            
+        }
+
         protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // debug
@@ -117,7 +127,6 @@ namespace KernelPanic.Entities
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
-            // DrawIndicator(spriteBatch, gameTime);
         }
         
         protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
@@ -131,12 +140,15 @@ namespace KernelPanic.Entities
         
         private void DrawIndicator(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            /*
-            var mousePosition = mInputManager.TranslatedMousePosition;
-            var direction = (mousePosition - Sprite.Position);
+            var direction = (mAbilityTarget - Sprite.Position);
             direction.Normalize();
-            // var rotation = Math.Cos(direction);
-            */
+            var rotation = -(float)(Math.Atan2(direction.X, direction.Y) + Math.PI);
+
+            mIndicator.Position = Sprite.Position;
+            mIndicator.Rotation = rotation;
+            mIndicator.Draw(spriteBatch, gameTime);
+            
+
         }
         
         #endregion
