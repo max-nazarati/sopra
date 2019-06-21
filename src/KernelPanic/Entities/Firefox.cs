@@ -56,18 +56,16 @@ namespace KernelPanic.Entities
         }
 
         
-        private void CorrectJump(Vector2 jumpSegment, int duration, PositionProvider positionProvider)
+        private void CorrectJump(Vector2 direction, int duration, PositionProvider positionProvider)
         {
-            var jump = jumpSegment * duration;
+            var jump = direction * JumpSegmentLength * duration;
             var goal = Sprite.Position + jump;
             if (positionProvider.Contains(goal)) // goal of jump is on the lane?
             {
-                /*
-                if (true) // goal of jump is a turret
+                if (false) // goal is on turret
                 {
                     return;
                 }
-                */
             }
 
             // jump was too long
@@ -76,8 +74,8 @@ namespace KernelPanic.Entities
             {
                 
                 count += 1;
-                // Console.WriteLine("Me and the bois stealing from  your stack.");
-                goal -= jumpSegment;
+                
+                goal -= JumpSegmentLength * direction;
             } 
 
             for (var _ = 0; _ <= count; _++)
@@ -130,8 +128,8 @@ namespace KernelPanic.Entities
 
             mIndicator.Position = Sprite.Position;
             mIndicator.Rotation = rotation;
-            mIndicator.Draw(spriteBatch, gameTime);
             mIndicator.ScaleToHeight(JumpDuration * JumpSegmentLength);
+            mIndicator.Draw(spriteBatch, gameTime);
             
         }
         

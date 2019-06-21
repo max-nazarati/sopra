@@ -175,6 +175,10 @@ namespace KernelPanic.Entities
                 case AbilityState.Ready:
                     // Here we should check if we should start to indicate the ability
                     TryActivateAbility(inputManager);
+                    if (AbilityStatus == AbilityState.Indicating)
+                    {
+                        goto case AbilityState.Indicating;
+                    }
                     break;
                 
                 case AbilityState.Indicating:
@@ -313,7 +317,7 @@ namespace KernelPanic.Entities
         {
             internal AbilityAction(Hero hero, SpriteManager sprites) : base(new TextButton(sprites) {Title = "Fähigkeit"})
             {
-                Provider.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager);
+                Provider.Clicked += (button, inputManager) => hero.IndicateAbility(inputManager);
             }
 
             public override void MoveTo(Vector2 position)
