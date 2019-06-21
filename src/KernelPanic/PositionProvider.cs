@@ -83,8 +83,7 @@ namespace KernelPanic
         {
             var matrixObstacles = new ObstacleMatrix(mGrid);
             matrixObstacles.Rasterize(mEntities, mGrid.Bounds, e => e != entity);
-            var aStar = new AStar(mGrid.CoordSystem, start, target, matrixObstacles);
-            aStar.ChangeObstacleEnvironment(1);
+            var aStar = new AStar(start, target, matrixObstacles, mGrid.CoordSystem.Count);
             aStar.CalculatePath();
             return aStar;
         }
