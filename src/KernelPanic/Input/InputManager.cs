@@ -158,17 +158,15 @@ namespace KernelPanic.Input
             return MouseChanged(mouseButtons, ButtonState.Pressed);
         }
 
-        /* TODO uncomment this
         /// <summary>
         /// checks if any of the MouseButtons has been released (at this exact moment)
         /// </summary>
         /// <param name="mouseButtons"></param>
         /// <returns></returns>
-        public bool MouseReleased(params MouseButton[] mouseButtons)
+        internal bool MouseReleased(params MouseButton[] mouseButtons)
         {
             return MouseChanged(mouseButtons, ButtonState.Released);
         }
-        */
 
         private bool MouseChanged(IEnumerable<MouseButton> mouseButtons, ButtonState expectedCurrent)
         {

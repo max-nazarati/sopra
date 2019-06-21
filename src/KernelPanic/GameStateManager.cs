@@ -90,7 +90,8 @@ namespace KernelPanic
                 var newClickTargets = new List<ClickTarget>();
                 var input = new InputManager(newClickTargets, state.Camera, rawInput);
 
-                InvokeClickTargets(input, info.ClickTargets);
+                if (InvokeClickTargets(input, info.ClickTargets) is object requiredClaim)
+                    rawInput.Claim(requiredClaim);
 
                 // Do the actual update.
                 state.Update(input, gameTime, soundManager);
@@ -100,14 +101,18 @@ namespace KernelPanic
             }
         }
 
-        private static void InvokeClickTargets(InputManager inputManager, QuadTree<ClickTarget> targets)
+        private static object InvokeClickTargets(InputManager inputManager, QuadTree<ClickTarget> targets)
         {
             if (inputManager.IsClaimed(InputManager.MouseButton.Left))
-                return;
+                return null;
 
             var maybeTarget = targets.EntitiesAt(inputManager.TranslatedMousePosition).FirstOrDefault();
-            if (maybeTarget != null && inputManager.MousePressed(InputManager.MouseButton.Left))
+            if (maybeTarget == null)
+                return null;
+
+            if (inputManager.MouseReleased(InputManager.MouseButton.Left))
                 maybeTarget.Action(inputManager);
+            return InputManager.MouseButton.Left;
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
