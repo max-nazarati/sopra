@@ -40,7 +40,6 @@ namespace KernelPanic.Table
 
         private Grid mGrid;
         private readonly SpriteManager mSpriteManager;
-        private static bool VISUAL_DEBUG;
         private SoundManager mSounds;
         [DataMember]
         private Side mLaneSide;
