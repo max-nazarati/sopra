@@ -12,7 +12,9 @@ namespace KernelPanic.Entities
 {
     internal class Tower : Building
     {
+        [DataMember]
         private readonly float mRadius;
+        [DataMember]
         private readonly CooldownComponent mFireTimer;
         [JsonIgnore]
         private readonly List<Projectile> mProjectiles = new List<Projectile>();
