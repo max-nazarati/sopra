@@ -40,20 +40,6 @@ namespace KernelPanic.Entities
 
         #region Konstruktor / Create
 
-        /// <summary>
-        /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
-        /// </summary>
-        /// <param name="position">The point where to position this troupe.</param>
-        /// <param name="sprite">The sprite to display.</param>
-        /// <param name="spriteManager"></param>
-        /// <returns>A new Troupe</returns>
-        private static Hero Create(Point position, Sprite sprite, SpriteManager spriteManager)
-        {
-            sprite.Position = position.ToVector2();
-            sprite.ScaleToWidth(Grid.KachelSize);
-            return new Hero(10, 1, 100, 1, sprite, spriteManager);
-        }
-
         protected Hero(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
