@@ -36,23 +36,66 @@ namespace KernelPanic.Entities
             Create(position, spriteManager.CreateFirefox(), spriteManager);
 
 
-        protected override void StartAbility(InputManager inputManager)
+        #region Ability 
+        
+        protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // debug
-            base.StartAbility(inputManager);
+            base.StartAbility(positionProvider, inputManager);
 
+            var jumpDuration = 10;
+            var jumpSegmentLength = 30;
+            
             // calculate the jump direction
             var mouse = inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
-            direction *= 30;
-            
-            for (var _ = 0; _ < 10; _++)
+            var jumpSegment = direction * jumpSegmentLength;
+
+
+            for (var _ = 0; _ < jumpDuration; _++)
             {
-                mAbility.Push(direction);
+                mAbility.Push(jumpSegment);
             }
+
+            CorrectJump(direction, jumpDuration, positionProvider);
         }
 
+        
+        private void CorrectJump(Vector2 jumpSegment, int duration, PositionProvider positionProvider)
+        {
+            var jump = jumpSegment * duration;
+            var goal = Sprite.Position + jump;
+            if (positionProvider.Contains(goal)) // goal of jump is on the lane?
+            {
+                /*
+                if (true) // goal of jump is a turret
+                {
+                    return;
+                }
+                */
+            }
+
+            // jump was too long
+            var count = 0;
+            while (!positionProvider.Contains(goal)) // this if is not working atm, bois aint stealing
+            {
+                
+                count += 1;
+                Console.WriteLine("Me and the bois stealing from  your stack.");
+                goal -= jumpSegment;
+            } 
+
+            for (var _ = 0; _ <= count; _++)
+            {
+                // mAbility.Clear();
+                mAbility.Pop();
+            }
+            Console.WriteLine("Stack size of jump: " + mAbility.Count +'\n');
+            // jump was too short
+            // goal += direction;
+
+        }
 
         protected override void ContinueAbility(GameTime gameTime)
         {
@@ -67,7 +110,8 @@ namespace KernelPanic.Entities
             var jumpDistance = mAbility.Pop();
             Sprite.Position += jumpDistance;
         }
-
+        #endregion Ability
+        
         #region Draw
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
