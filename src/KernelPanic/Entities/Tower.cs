@@ -76,7 +76,7 @@ namespace KernelPanic.Entities
             sprite.Position = position;
             sprite.ScaleToHeight(size);
             sprite.SetOrigin(RelativePosition.Center);
-            return new Tower(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+            return new Tower(15, 300, new TimeSpan(0, 0, 1), sprite, sprites, sounds);
         }
 
         // Only for demonstration purposes.
