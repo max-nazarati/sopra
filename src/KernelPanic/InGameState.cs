@@ -56,7 +56,7 @@ namespace KernelPanic
             var nextPosition = new Vector2(50, 150);
 
             mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(mPlayerB,
-                new PurchasableAction<Unit>(Firefox.CreateFirefox(Point.Zero, sprites)),
+                new PurchasableAction<Unit>(new Firefox(sprites)),
                 new TextButton(sprites))
             {
                 Button = { Title = "Firefox" }
@@ -87,7 +87,7 @@ namespace KernelPanic
                 resource.Sprite.Position = nextPosition;
                 entityGraph.Add(resource);
                 nextPosition.Y += 100;
-                mPurchaseDemoButton1.Action.ResetResource(Firefox.CreateFirefox(Point.Zero, sprites));
+                mPurchaseDemoButton1.Action.ResetResource(new Firefox(sprites));
             }
 
             mPurchaseDemoButton1.Action.Purchased += OnPurchase;

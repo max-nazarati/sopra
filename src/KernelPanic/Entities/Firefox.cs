@@ -17,27 +17,12 @@ namespace KernelPanic.Entities
         private Vector2 mAbilityTarget;
         private readonly ImageSprite mIndicator;
 
-        private Firefox(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
-            : base(price, speed, life, attackStrength, sprite, spriteManager)
+        internal Firefox(SpriteManager spriteManager)
+            : base(50, 6, 30, 10, spriteManager.CreateFirefox(), spriteManager)
         {
             Cooldown.Reset(new TimeSpan(0, 0, 5));
             mIndicator = spriteManager.CreateJumpIndicator();
         }
-
-        internal Firefox(SpriteManager spriteManager) : this(0, 0, 0, 0, spriteManager.CreateFirefox(), spriteManager)
-        {
-            
-        }
-
-        private static Firefox Create(Point position, Sprite sprite, SpriteManager spriteManager)
-        {
-            sprite.Position = position.ToVector2();
-            return new Firefox(10, 2, 100, 1, sprite, spriteManager);
-        }
-
-        internal static Firefox CreateFirefox(Point position, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateFirefox(), spriteManager);
-
 
         #region Ability 
 

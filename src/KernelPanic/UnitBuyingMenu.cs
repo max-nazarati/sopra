@@ -34,7 +34,7 @@ namespace KernelPanic
             {
                 resource.Sprite.Position = new Vector2(50 * 30, 150 * 3);
                 buyer.AttackingLane.EntityGraph.Add(resource);
-                firefoxButton.Action.ResetResource(Firefox.CreateFirefox(Point.Zero, spriteManager));
+                firefoxButton.Action.ResetResource(new Firefox(spriteManager));
                 IncrementCount(mChoices.FindIndex(el => el.Item2.GetType() == firefoxButton.GetType()));
             };
 

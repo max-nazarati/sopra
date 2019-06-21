@@ -18,9 +18,9 @@ namespace KernelPanic
 
         protected PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>> CreateTrojanPurchaseButton(SpriteManager spriteManager, Player player)
         {
-            var sprite = (AnimatedSprite)new Trojan(spriteManager).Sprite;
+            var sprite = spriteManager.CreateTrojan();
             var btn = new PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>>(player,
-                new PurchasableAction<Unit>((Unit)new Trojan(spriteManager)), new ImageButton(spriteManager, 
+                new PurchasableAction<Unit>(new Trojan(spriteManager)), new ImageButton(spriteManager, 
                 sprite.getSingleFrame(spriteManager), 70, 70));
             {
                 
@@ -31,9 +31,9 @@ namespace KernelPanic
         }
         protected PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>> CreateFirefoxPurchaseButton(SpriteManager spriteManager, Player player)
         {
-            var sprite = (AnimatedSprite)Firefox.CreateFirefox(Point.Zero, spriteManager).Sprite;
+            var sprite = spriteManager.CreateFirefox();
             var firefoxButton = new PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>>(player,
-                new PurchasableAction<Unit>(Firefox.CreateFirefox(Point.Zero, spriteManager)),
+                new PurchasableAction<Unit>(new Firefox(spriteManager)),
                 new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70));
             var tmpsprite = firefoxButton.Button.Sprite;
             tmpsprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpsprite.Width, 90);
