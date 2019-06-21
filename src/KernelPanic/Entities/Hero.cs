@@ -34,8 +34,8 @@ namespace KernelPanic.Entities
         private AStar mAStar; // save the AStar for path-drawing
         private Point mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
-        protected AbilityState AbilityStatus;
-        
+        protected AbilityState AbilityStatus { get; set; }
+
         #endregion
 
         #region Konstruktor / Create
