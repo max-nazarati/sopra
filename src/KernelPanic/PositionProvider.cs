@@ -17,6 +17,7 @@ namespace KernelPanic
         private readonly VectorField mVectorField;
 
         internal Owner Owner { get; }
+        internal Base Target { get; }
 
         internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager spriteManager, VectorField vectorField, Base target, Owner owner)
         {
@@ -28,19 +29,11 @@ namespace KernelPanic
             Owner = owner;
         }
 
+        #region Position Calculations
+
         internal Vector2? GridCoordinate(Vector2 position, int subTileCount = 1)
         {
             return mGrid.GridPointFromWorldPoint(position, subTileCount)?.Position;
-        }
-
-        internal AStar MakePathFinding(Entity entity, Point start, Point target)
-        {
-            var matrixObstacles = new ObstacleMatrix(mGrid);
-            matrixObstacles.Rasterize(mEntities, mGrid.Bounds, e => e != entity);
-            var aStar = new AStar(mGrid.CoordSystem, start, target, matrixObstacles);
-            aStar.ChangeObstacleEnvironment(1);
-            aStar.CalculatePath();
-            return aStar;
         }
 
         internal bool Contains(Vector2 point)
@@ -48,10 +41,9 @@ namespace KernelPanic
             return mGrid.Contains(point);
         }
 
-        internal Visualizer Visualize(AStar pathPlanner)
-        {
-            return pathPlanner.CreateVisualization(mGrid, mSpriteManager);
-        }
+        #endregion
+
+        #region Querying Entities
 
         internal IEnumerable<T> NearEntities<T>(Entity entity, float radius) where T : Entity
         {
@@ -66,25 +58,41 @@ namespace KernelPanic
                 .NearEntities(position, radius)
                 .OfType<T>();
         }
-        
-        internal IEnumerable<T> NearObjects<T>(Entity entity, float radius) where T : Entity
-        {
-            return mEntities.QuadTree
-                .NearObjects(entity)
-                .OfType<T>();
-        }
-        
+
         internal bool HasEntityAt(Vector2 point)
         {
             return mEntities.HasEntityAt(point);
         }
+
+        #endregion
+
+        #region Path Finding
 
         public Vector2 GetVector(Point point)
         {
             return mVectorField.Vector(point);
         }
 
-        public Base Target { get; }
+        internal AStar MakePathFinding(Entity entity, Point start, Point target)
+        {
+            var matrixObstacles = new ObstacleMatrix(mGrid);
+            matrixObstacles.Rasterize(mEntities, mGrid.Bounds, e => e != entity);
+            var aStar = new AStar(mGrid.CoordSystem, start, target, matrixObstacles);
+            aStar.ChangeObstacleEnvironment(1);
+            aStar.CalculatePath();
+            return aStar;
+        }
+
+        #endregion
+
+        #region Visualization
+
+        internal Visualizer Visualize(AStar pathPlanner)
+        {
+            return pathPlanner.CreateVisualization(mGrid, mSpriteManager);
+        }
+
+        #endregion
 
         public void DamageBase(int damage) => Target.Power = Math.Max(0, Target.Power - damage);
     }
