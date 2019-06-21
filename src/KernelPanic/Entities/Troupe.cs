@@ -32,12 +32,6 @@ namespace KernelPanic.Entities
                 mLastMovement = movementDirection;
             }
             MoveTarget = Sprite.Position + movementDirection;
-
-            if (positionProvider.Target.HitBox.Contains(Grid.CoordinatePositionFromScreen(Sprite.Position)))
-            {
-                DidDie();
-                positionProvider.DamageBase(5);
-            }
         }
     }
 }

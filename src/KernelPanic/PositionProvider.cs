@@ -41,6 +41,12 @@ namespace KernelPanic
             return mGrid.Contains(point);
         }
 
+        internal Rectangle TileBounds(Point tile)
+        {
+            var (position, size) = mGrid.GetTile(new TileIndex(tile, 1));
+            return Bounds.ContainingRectangle(position, new Vector2(size));
+        }
+
         #endregion
 
         #region Querying Entities

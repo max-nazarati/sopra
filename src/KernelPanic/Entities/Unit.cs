@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -100,35 +101,32 @@ namespace KernelPanic.Entities
             base.Update(positionProvider, gameTime, inputManager);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
-            if (Sprite is AnimatedSprite animation)
+
+            if (ShouldMove && MoveVector is Vector2 moveVector)
             {
-                // children - classes want to know if movement is allowed(mShouldMove)
-                if (ShouldMove && MoveVector is Vector2 movement)
+                // Update the position.
+                Sprite.Position += moveVector;
+                
+                // Maybe we reached the base which gets damaged and we die.
+                if (positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
                 {
-                    Sprite.Position += movement;
-                    // choose correct movement animation
-                    if (movement.X > 0)
-                    {
-                        animation.mMovement = AnimatedSprite.Movement.Right;
-                    }
-                    else
-                    {
-                        animation.mMovement = AnimatedSprite.Movement.Left;
-                    }
+                    DidDie();
+                    positionProvider.DamageBase(AttackStrength);
+                    return;
                 }
-                else
+
+                // If the sprite is animated, update the animation direction.
+                if (Sprite is AnimatedSprite animatedSprite)
                 {
-                    animation.mMovement = AnimatedSprite.Movement.Standing;
+                    animatedSprite.mMovement =
+                        moveVector.X > 0 ? AnimatedSprite.Movement.Right : AnimatedSprite.Movement.Left;
                 }
             }
-
-            // children-classes want to know if movement is allowed (mShouldMove) 
-            /*if (ShouldMove && MoveVector is Vector2 movement)
+            else if (Sprite is AnimatedSprite animatedSprite)
             {
-                Sprite.Position += movement;
-            }*/
-
+                // If there is no movement we'll switch to the animation for "standing".
+                animatedSprite.mMovement = AnimatedSprite.Movement.Standing;
+            }
         }
-        
     }
 }
