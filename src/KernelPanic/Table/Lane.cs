@@ -13,7 +13,6 @@ using Newtonsoft.Json.Converters;
 
 namespace KernelPanic.Table
 {
-    [DataContract]
     internal sealed class Lane
     {
         /// <summary>
@@ -33,19 +32,22 @@ namespace KernelPanic.Table
             Right
         }
 
-        internal EntityGraph EntityGraph { get; set; }
+        private readonly SpriteManager mSpriteManager;
+        private readonly SoundManager mSounds;
+
 
         [JsonProperty]
         internal Base Target { get; }
 
-        private Grid mGrid;
-        private readonly SpriteManager mSpriteManager;
-        private SoundManager mSounds;
-        [DataMember]
+        [JsonProperty]
         private Side mLaneSide;
 
+        private Grid mGrid;
         private HeatMap mHeatMap;
         private VectorField mVectorField;
+
+        internal EntityGraph EntityGraph { get; private set; }
+
         // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
