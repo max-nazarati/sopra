@@ -21,7 +21,7 @@ namespace KernelPanic
 
         internal Base Base => DefendingLane.Target;
 
-        internal Player(Lane defendingLane, Lane attackingLane) : this(50, defendingLane, attackingLane)
+        internal Player(Lane defendingLane, Lane attackingLane) : this(9999, defendingLane, attackingLane)
         {
         }
 

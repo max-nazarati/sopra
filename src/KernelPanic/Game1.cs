@@ -1,4 +1,6 @@
-﻿using KernelPanic.Input;
+﻿using System.Collections.Generic;
+using KernelPanic.Camera;
+using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -76,6 +78,7 @@ namespace KernelPanic
         {
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
             mGameStateManager.Update(mInputState, gameTime, mSoundManager);
+            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
             base.Update(gameTime);
         }
 

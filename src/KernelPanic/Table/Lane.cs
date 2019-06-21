@@ -173,8 +173,11 @@ namespace KernelPanic.Table
             mVectorField = bfs.VectorField;
         }
 
-        internal void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
+        private void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            if (!DebugSettings.VisualizeHeatMap)
+                return;
+
             var visualizer = mHeatMap.CreateVisualization(mGrid, mSpriteManager, false);
             visualizer.Draw(spriteBatch, gameTime);
         }
