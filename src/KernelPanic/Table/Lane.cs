@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
+using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -207,6 +208,13 @@ namespace KernelPanic.Table
             }
             
             InitHeatMap();
+
+            var obstacles = new ObstacleMatrix(mGrid);
+            obstacles.Rasterize(EntityGraph, mGrid.Bounds, entity => entity is Building);
+            foreach (var obstacle in obstacles.Obstacles)
+            {
+                mHeatMap.Set(obstacle.ToPoint(), HeatMap.Blocked);
+            }
             UpdateHeatMap();
         }
 
