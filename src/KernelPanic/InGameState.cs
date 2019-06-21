@@ -9,15 +9,12 @@ using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using KernelPanic.Sprites;
 
 namespace KernelPanic
 {
     internal sealed class InGameState : AGameState
     {
         private readonly Board mBoard;
-        private readonly Player mPlayerA;
-        private readonly Player mPlayerB;
         private readonly SelectionManager mSelectionManager;
 
         private PurchaseButton<TextButton, Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
@@ -34,9 +31,7 @@ namespace KernelPanic
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
-            mPlayerA = storage?.PlayerA ?? new Player(mBoard.LeftLane, mBoard.RightLane);
-            mPlayerB = storage?.PlayerB ?? new Player(mBoard.RightLane, mBoard.LeftLane);
-            mSelectionManager = new SelectionManager(mPlayerA.AttackingLane, mPlayerA.DefendingLane);
+            mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
             SaveSlot = saveSlot;
 
             var entityGraph = mBoard.LeftLane.EntityGraph;
@@ -46,23 +41,24 @@ namespace KernelPanic
         internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)
         {
             var game = new InGameState(storage, saveSlot, gameStateManager);
-            var hud = new InGameOverlay(game.mPlayerA, game.mPlayerB, game.mSelectionManager, gameStateManager);
+            var hud = new InGameOverlay(game.mBoard.PlayerA, game.mBoard.PlayerB, game.mSelectionManager, gameStateManager);
             gameStateManager.Restart(game);
             gameStateManager.Push(hud);
         }
 
         private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites, SoundManager sounds)
         {
+            var player = mBoard.PlayerB;
             var nextPosition = new Vector2(50, 150);
 
-            mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(mPlayerB,
+            mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(player,
                 new PurchasableAction<Unit>(new Firefox(sprites)),
                 new TextButton(sprites))
             {
                 Button = { Title = "Firefox" }
             };
 
-            mPurchaseDemoButton2 = new PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>>(mPlayerB,
+            mPurchaseDemoButton2 = new PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>>(player,
                 new SinglePurchasableAction<Tower>(Tower.CreateStrategic(Vector2.Zero, Grid.KachelSize, sprites, sounds)),
                 new TextButton(sprites))
             {
@@ -72,13 +68,13 @@ namespace KernelPanic
             mPurchaseDemoReset = new TextButton(sprites);
             mPurchaseDemoReset.Clicked += (button, input) =>
             {
-                mPlayerB.Bitcoins = 9999;
+                player.Bitcoins = 9999;
                 UpdateResetTitle();
             };
 
             void UpdateResetTitle()
             {
-                mPurchaseDemoReset.Title = mPlayerB.Bitcoins.ToString();
+                mPurchaseDemoReset.Title = player.Bitcoins.ToString();
             }
 
             void OnPurchase(Player buyer, Entity resource)
@@ -136,8 +132,6 @@ namespace KernelPanic
 
         internal Storage Data => new Storage
         {
-            PlayerA = mPlayerA,
-            PlayerB = mPlayerB,
             Board = mBoard
         };
 

@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,13 +5,15 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.Table
 {
-    [DataContract]
     internal sealed class Board
     {
-        [DataMember]
-        internal Lane LeftLane { get; private set; }
-        [DataMember]
-        internal Lane RightLane { get; private set; }
+        internal Lane LeftLane => PlayerA.DefendingLane;
+        internal Lane RightLane => PlayerA.AttackingLane;
+
+        [JsonProperty]
+        internal Player PlayerA { get; }
+        [JsonProperty]
+        internal Player PlayerB { get; }
 
         internal static Rectangle Bounds
         {
@@ -26,15 +27,18 @@ namespace KernelPanic.Table
 
         internal Board(SpriteManager content, SoundManager sounds)
         {
-            LeftLane = new Lane(Lane.Side.Left, content, sounds);
-            RightLane = new Lane(Lane.Side.Right, content, sounds);
+            var leftLane = new Lane(Lane.Side.Left, content, sounds);
+            var rightLane = new Lane(Lane.Side.Right, content, sounds);
+            
+            PlayerA = new Player(leftLane, rightLane);
+            PlayerB = new Player(rightLane, leftLane);
         }
 
         [JsonConstructor]
-        internal Board(Lane leftLane, Lane rightLane)
+        private Board(Player playerA, Player playerB)
         {
-            LeftLane = leftLane;
-            RightLane = rightLane;
+            PlayerA = playerA;
+            PlayerB = playerB;
         }
 
         internal void Update(GameTime gameTime, InputManager inputManager)
