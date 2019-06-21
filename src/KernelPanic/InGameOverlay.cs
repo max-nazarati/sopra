@@ -29,7 +29,7 @@ namespace KernelPanic
             mUnitBuyingMenu = new UnitBuyingMenu(gameStateManager.Sprite, player2);    // Fixme: This should become player1.
         }
 
-        public override void Update(InputManager inputManager, GameTime gameTime)
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
         {
             mScoreOverlay.Update(gameTime);
             mUnitBuyingMenu.Update(inputManager, gameTime);

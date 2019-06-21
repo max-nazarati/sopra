@@ -25,13 +25,13 @@ namespace KernelPanic
             mEscapeAction = escapeAction;
         }
 
-        private static MenuState CreateMainMenu(GameStateManager stateManager)
+        private static MenuState CreateMainMenu(GameStateManager stateManager, SoundManager soundManager)
         {
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
             playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
             
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 200);
-            optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager));
+            optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager, soundManager));
             
             var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 300);
             instructionsButton.Clicked += (button, input) => stateManager.Push(CreateInstructionsMenu(stateManager));
@@ -141,17 +141,17 @@ namespace KernelPanic
             };
         }
 
-        private static Button TurnSoundsOnOff(TextButton soundOnOffButton)
+        private static Button TurnSoundsOnOff(TextButton soundOnOffButton, SoundManager soundManager)
         {
             switch (soundOnOffButton.Title) // TODO: when SoundManager is updated: Interaction with SoundManager
             {
                 case "an":
-                    soundOnOffButton.Title = "aus";
-                    // sounds.StopMusic();
+                    soundOnOffButton.Title = "aus"; 
+                    soundManager.StopMusic();
                     break;
                 case "aus":
                     soundOnOffButton.Title = "an";
-                    // sounds.PlaySong(SoundManager.Music.BackgroundMusic1);
+                    soundManager.PlaySong(SoundManager.Music.BackgroundMusic1);
                     // TODO implement updated SoundManager
                     break;
                 default:
@@ -162,15 +162,15 @@ namespace KernelPanic
             return soundOnOffButton;
         }
 
-        private static MenuState CreateOptionsMenu(GameStateManager stateManager)
+        private static MenuState CreateOptionsMenu(GameStateManager stateManager, SoundManager soundManager)
         {
             var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
             var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
-            musicOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(musicOnOffButton);
+            musicOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(musicOnOffButton, soundManager);
             
             var effectsButton = CreateButton(stateManager.Sprite, "Soundeffekte", 325, 150);
             var effectsOnOffButton = CreateButton(stateManager.Sprite, "aus", 325, -150);
-            effectsOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(effectsOnOffButton);
+            effectsOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(effectsOnOffButton, soundManager);
 
             var volumeButton = CreateButton(stateManager.Sprite, "Lautstärke", 450, 150);
             var volumeRegulatorButton = CreateButton(stateManager.Sprite, "Mittel",450, -150);
@@ -291,19 +291,19 @@ namespace KernelPanic
         } 
         
        
-       public static MenuState CreatePauseMenu(GameStateManager stateManager, InGameState inGameState) 
+       public static MenuState CreatePauseMenu(GameStateManager stateManager, InGameState inGameState, SoundManager soundManager) 
        {
            var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
            backButton.Clicked += (button, input) => stateManager.Pop();
 
            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
-           optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager));
+           optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager, soundManager));
 
            var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
            saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);
 
            var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
-           mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager));
+           mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager, soundManager));
            
            return new MenuState(stateManager)
            {
@@ -333,7 +333,7 @@ namespace KernelPanic
             return button;
         }
 
-        public override void Update(InputManager inputManager, GameTime gameTime)
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
         {
             foreach(var component in mComponents)
             {

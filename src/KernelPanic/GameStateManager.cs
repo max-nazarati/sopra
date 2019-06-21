@@ -81,7 +81,7 @@ namespace KernelPanic
             Push(newGameState);
         }
 
-        public void Update(RawInputState rawInput, GameTime gameTime)
+        public void Update(RawInputState rawInput, GameTime gameTime, SoundManager soundManager)
         {
             foreach (var info in ActiveStates())
             {
@@ -98,7 +98,7 @@ namespace KernelPanic
                 }
 
                 // Do the actual update.
-                state.Update(input, gameTime);
+                state.Update(input, gameTime, soundManager);
 
                 // The call to Update filled newClickTargets via the reference in the InputManager.
                 info.ClickTargets = QuadTree<ClickTarget>.Create(newClickTargets);

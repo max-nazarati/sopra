@@ -13,6 +13,7 @@ namespace KernelPanic
         private SpriteBatch mSpriteBatch;
         private GameStateManager mGameStateManager;
         private readonly RawInputState mInputState;
+        private SoundManager mSoundManager;
 
         public Game1()
         {
@@ -40,6 +41,7 @@ namespace KernelPanic
         {
             // TODO: Add your initialization logic here
             IsMouseVisible = true;
+            mSoundManager = new SoundManager(Content);
             base.Initialize();
         }
 
@@ -51,7 +53,7 @@ namespace KernelPanic
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
-            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), new SoundManager(Content));
+            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mSoundManager);
             InGameState.PushGameStack(0, mGameStateManager);
             // SoundManager.Instance.PlayBackgroundMusic();
         }
@@ -73,7 +75,7 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
-            mGameStateManager.Update(mInputState, gameTime);
+            mGameStateManager.Update(mInputState, gameTime, mSoundManager);
             base.Update(gameTime);
         }
 
