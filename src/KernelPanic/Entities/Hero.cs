@@ -40,14 +40,14 @@ namespace KernelPanic.Entities
 
         #region Konstruktor / Create
 
-        protected Hero(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
+        protected Hero(int price, int speed, int life, int attackStrength, TimeSpan coolDown, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
             // TODO set mTarget to the position itself so heroes spawn non moving
             // Kind of done... Hero starts moving when the first target command is set... :)
             // mTarget = Sprite.Position;
             ShouldMove = false;
-            Cooldown = new CooldownComponent(new TimeSpan(0, 0, 0)) {Enabled = false};
+            Cooldown = new CooldownComponent(coolDown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
@@ -195,15 +195,15 @@ namespace KernelPanic.Entities
             }
         }
 
-        private void TryActivateAbility(InputManager inputManager)
+        private void TryActivateAbility(InputManager inputManager, bool button = false)
         {
-            if (CheckAbilityStart(inputManager))
+            if (CheckAbilityStart(inputManager, button))
                 AbilityStatus = AbilityState.Indicating;
         }
 
-        protected virtual bool CheckAbilityStart(InputManager inputManager)
+        protected virtual bool CheckAbilityStart(InputManager inputManager, bool button = false)
         {
-            return Selected  && (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle));
+            return Selected  && Cooldown.Ready && (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle) || button);
         }
 
         protected virtual void IndicateAbility(InputManager inputManager)
@@ -300,7 +300,7 @@ namespace KernelPanic.Entities
         {
             internal AbilityAction(Hero hero, SpriteManager sprites) : base(new TextButton(sprites) {Title = "Fähigkeit"})
             {
-                Provider.Clicked += (button, inputManager) => hero.IndicateAbility(inputManager);
+                Provider.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager, true);
             }
 
             public override void MoveTo(Vector2 position)

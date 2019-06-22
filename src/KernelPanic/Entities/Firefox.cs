@@ -20,9 +20,8 @@ namespace KernelPanic.Entities
         private const int JumpSegmentLength = 30;
 
         internal Firefox(SpriteManager spriteManager)
-            : base(50, 6, 30, 10, spriteManager.CreateFirefox(), spriteManager)
+            : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), spriteManager.CreateFirefox(), spriteManager)
         {
-            Cooldown.Reset(new TimeSpan(0, 0, 5));
             mIndicator = spriteManager.CreateJumpIndicator();
         }
 

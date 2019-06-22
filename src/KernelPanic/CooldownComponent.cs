@@ -19,17 +19,19 @@ namespace KernelPanic
             set => mReady = value;
         }
         
-        internal CooldownComponent(TimeSpan time)
+        internal CooldownComponent(TimeSpan time, bool isHot = true)
         {
             mCooldown = time;
-            mRemainingCooldown = time;
+            mRemainingCooldown = isHot ? time : TimeSpan.Zero;
+            Enabled = isHot;
+            Ready = !isHot;
         }
 
         internal delegate void CooledDownDelegate(CooldownComponent cooldownComponent);
 
         internal event CooledDownDelegate CooledDown;
 
-        internal bool Enabled { get; set; } = true;
+        internal bool Enabled { get; set; }
         
         internal void Reset()
         {
