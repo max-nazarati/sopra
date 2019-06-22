@@ -142,7 +142,7 @@ namespace KernelPanic.Data
         {
             if (!mBounds.Contains(entity.Bounds))
                 throw new InvalidOperationException(
-                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}");
+                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}: {entity}");
 
             Count++;
 
