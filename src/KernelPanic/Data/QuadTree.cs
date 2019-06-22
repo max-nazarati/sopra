@@ -179,7 +179,7 @@ namespace KernelPanic.Data
             }
         }
 
-        public void remove(T entity)
+        public void Remove(T entity)
         {
             if (mObjects.Contains(entity))
             {
@@ -189,7 +189,7 @@ namespace KernelPanic.Data
             {
                 if (mChilds == null) return;
                 var index = CalculatePosition(entity);
-                mChilds[(int) index].remove(entity);
+                mChilds[(int) index].Remove(entity);
             }
         }
 

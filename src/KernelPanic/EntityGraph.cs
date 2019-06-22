@@ -67,7 +67,7 @@ namespace KernelPanic
                 if (entity is Unit)
                 {
                     if (entity.mDidDie)
-                        QuadTree.remove(entity);
+                        QuadTree.Remove(entity);
                     else
                         entity.Update(positionProvider, gameTime, inputManager);
                 }
