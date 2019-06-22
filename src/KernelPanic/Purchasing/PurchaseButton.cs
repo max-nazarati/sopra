@@ -8,7 +8,7 @@ using KernelPanic.Sprites;
 
 namespace KernelPanic.Purchasing
 {
-    internal sealed class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded
+    internal class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded
         where TResource: class, IPriced
         where TAction: PurchasableAction<TResource>
         where TButton: Button
@@ -45,7 +45,7 @@ namespace KernelPanic.Purchasing
         /// </summary>
         /// <param name="player">The player who purchases the action.</param>
         /// <param name="action">The action which can be purchased.</param>
-        /// <param name="spriteManager">The sprite manager.</param>
+        /// <param name="button"></param>
         internal PurchaseButton(Player player, TAction action, TButton button)
         {
             Player = player;
@@ -70,6 +70,23 @@ namespace KernelPanic.Purchasing
         {
             if (!Action.TryPurchase(Player))
                 throw new InvalidOperationException($"Player {Player} was not able to purchase {Action}");
+        }
+    }
+
+    internal sealed class PurchaseButton<TButton, TResource> : PurchaseButton<TButton, TResource, PurchasableAction<TResource>>
+        where TResource : class, IPriced
+        where TButton : Button
+    {
+        /// <summary>
+        /// Creates a <code>PurchaseButton</code> so that a click on it purchases
+        /// <paramref name="action"/> for <paramref name="player"/>.
+        /// </summary>
+        /// <param name="player">The player who purchases the action.</param>
+        /// <param name="action">The action which can be purchased.</param>
+        /// <param name="button"></param>
+        internal PurchaseButton(Player player, PurchasableAction<TResource> action, TButton button)
+            : base(player, action, button)
+        {
         }
     }
 }

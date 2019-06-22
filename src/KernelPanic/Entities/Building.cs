@@ -51,7 +51,7 @@ namespace KernelPanic.Entities
         protected override IEnumerable<IAction> Actions =>
             base.Actions.Extend(new SellAction(this, SpriteManager));
 
-        private sealed class SellAction : BaseAction<PurchaseButton<TextButton, SellAction, PurchasableAction<SellAction>>>, IPriced
+        private sealed class SellAction : BaseAction<PurchaseButton<TextButton, SellAction>>, IPriced
         {
             private readonly Building mBuilding;
 
@@ -62,10 +62,10 @@ namespace KernelPanic.Entities
                 Provider.Action.Purchased += (player, action) => Console.WriteLine("Sold building " + building);
             }
 
-            private static PurchaseButton<TextButton, SellAction, PurchasableAction<SellAction>> CreateButton(SpriteManager spriteManager)
+            private static PurchaseButton<TextButton, SellAction> CreateButton(SpriteManager spriteManager)
             {
                 var action = new PurchasableAction<SellAction>();
-                var button = new PurchaseButton<TextButton, SellAction, PurchasableAction<SellAction>>(null, action, new TextButton(spriteManager))
+                var button = new PurchaseButton<TextButton, SellAction>(null, action, new TextButton(spriteManager))
                 {
                     Button = { Title = "Verkaufen" },
                     PossiblyEnabled = false // We don't have enough information to actually do something.
