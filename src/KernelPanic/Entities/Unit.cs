@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace KernelPanic.Entities
@@ -26,20 +27,9 @@ namespace KernelPanic.Entities
         private int RemainingLife { get; set; }
 
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
-        
-        private bool ShouldReallyMove => ShouldMove && MoveTarget is Vector2 target && Vector2.Distance(target, Sprite.Position) > 0.1;
-        
-        protected virtual Vector2? MoveVector
-        {
-            get
-            {
-                if (!(MoveTarget is Vector2 target))
-                    return null;
 
-                return Vector2.Normalize(target - Sprite.Position) *
-                       Math.Min(Speed, Vector2.Distance(target, Sprite.Position));
-            }
-        }
+        protected delegate void MoveTargetReachedDelegate(Vector2 target);
+        protected event MoveTargetReachedDelegate MoveTargetReached;
 
         protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, sprite, spriteManager)
@@ -105,31 +95,40 @@ namespace KernelPanic.Entities
 
             CalculateMovement(positionProvider, gameTime, inputManager);
 
-            if (ShouldReallyMove && MoveVector is Vector2 moveVector)
+            var move = (Vector2?) null;
+            if (ShouldMove && MoveTarget is Vector2 target)
             {
-                // Update the position.
-                Sprite.Position += moveVector;
-                
-                // Maybe we reached the base which gets damaged and we die.
-                if (positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
+                var remainingDistance = Vector2.Distance(Sprite.Position, target);
+                if (remainingDistance < 0.1)
                 {
-                    DidDie();
-                    positionProvider.DamageBase(AttackStrength);
-                    return;
+                    MoveTargetReached?.Invoke(target);
+                    MoveTarget = null;
                 }
+                else
+                {
+                    var theMove = Vector2.Normalize(target - Sprite.Position) * Math.Min(Speed, remainingDistance);
+                    Sprite.Position += theMove;
+                    CheckBaseReached(positionProvider);
+                    move = theMove;
+                }
+            }
+            
+            if (!(Sprite is AnimatedSprite animatedSprite))
+                return;
 
-                // If the sprite is animated, update the animation direction.
-                if (Sprite is AnimatedSprite animatedSprite)
-                {
-                    animatedSprite.mMovement =
-                        moveVector.X > 0 ? AnimatedSprite.Movement.Right : AnimatedSprite.Movement.Left;
-                }
-            }
-            else if (Sprite is AnimatedSprite animatedSprite)
-            {
-                // If there is no movement we'll switch to the animation for "standing".
+            if (move?.X is float x)
+                animatedSprite.mMovement = x > 0 ? AnimatedSprite.Movement.Right : AnimatedSprite.Movement.Left;
+            else
                 animatedSprite.mMovement = AnimatedSprite.Movement.Standing;
-            }
+        }
+
+        private void CheckBaseReached(PositionProvider positionProvider)
+        {
+            if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
+                return;
+                
+            DidDie();
+            positionProvider.DamageBase(AttackStrength);
         }
     }
 }
