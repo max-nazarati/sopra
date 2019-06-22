@@ -25,7 +25,9 @@ namespace KernelPanic.Entities
         [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }
 
-        protected bool ShouldMove; // should the basic movement take place this cycle? 
+        protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
+        
+        private bool ShouldReallyMove => ShouldMove && MoveTarget is Vector2 target && Vector2.Distance(target, Sprite.Position) > 0.1;
 
         protected virtual Vector2? MoveVector
         {
@@ -34,7 +36,8 @@ namespace KernelPanic.Entities
                 if (!(MoveTarget is Vector2 target))
                     return null;
 
-                return Vector2.Normalize(target - Sprite.Position) * Speed;
+                return Vector2.Normalize(target - Sprite.Position) *
+                       Math.Min(Speed, Vector2.Distance(target, Sprite.Position));
             }
         }
 
@@ -102,7 +105,7 @@ namespace KernelPanic.Entities
 
             CalculateMovement(positionProvider, gameTime, inputManager);
 
-            if (ShouldMove && MoveVector is Vector2 moveVector)
+            if (ShouldReallyMove && MoveVector is Vector2 moveVector)
             {
                 // Update the position.
                 Sprite.Position += moveVector;

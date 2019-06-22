@@ -77,26 +77,9 @@ namespace KernelPanic.Entities
                 mPathVisualizer = positionProvider.Visualize(mAStar);
                 path = mAStar.Path;
             }
-            
-            // TODO get the next position of the path (should be at path[0]; something is ****ed up tho)...
-            // ... setting it to 0 makes the firefox disappear (thus making me cry T_T) ...
-            // ... firefox walks to neighboured field for now
 
-            Vector2? movement = Sprite.Position * 100;
-            if (path.Count > 1)
-            {
-                var x = path[1].X;
-                var y = path[1].Y;
-                // + (100, 100) translates the target to the point it should be
-                movement = positionProvider.GridCoordinate(new Vector2(x * 100, y * 100) + new Vector2(100, 100));
-            }
-            else // stop moving if target is reached;
-            {
-                ShouldMove = false;
-            }
-            
             // MoveTarget will be used by the Update Function (of the base class 'unit') to move the object
-            MoveTarget = movement;
+            MoveTarget = positionProvider.TilePoint(path.Count > 2 ? path[1] : target);
         }
 
         /// <summary>
