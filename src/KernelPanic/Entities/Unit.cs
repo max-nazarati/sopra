@@ -117,9 +117,10 @@ namespace KernelPanic.Entities
                 return;
 
             if (move?.X is float x)
-                animatedSprite.mMovement = x > 0 ? AnimatedSprite.Movement.Right : AnimatedSprite.Movement.Left;
+                animatedSprite.MovementDirection =
+                    x > 0 ? AnimatedSprite.Direction.Right : AnimatedSprite.Direction.Left;
             else
-                animatedSprite.mMovement = AnimatedSprite.Movement.Standing;
+                animatedSprite.MovementDirection = AnimatedSprite.Direction.Standing;
         }
 
         private void CheckBaseReached(PositionProvider positionProvider)

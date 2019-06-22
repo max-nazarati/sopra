@@ -15,7 +15,7 @@ namespace KernelPanic.Sprites
         private int mRow;
 
         // specifies row of the sprite sheet
-        internal enum Movement
+        internal enum Direction
         {
             Standing,
             Left,
@@ -23,7 +23,8 @@ namespace KernelPanic.Sprites
             /*Up,
             Down*/
         }
-        internal Movement mMovement;
+
+        internal Direction MovementDirection { get; set; }
 
         /// <summary>
         /// The duration for which each frame is displayed.
@@ -48,7 +49,7 @@ namespace KernelPanic.Sprites
             mTexture = texture;
             mFrameCount = 1;
             mFrameDuration = frameDuration;
-            mMovement = Movement.Standing;
+            MovementDirection = Direction.Standing;
             mEffect = SpriteEffects.None;
         }
 
@@ -58,29 +59,29 @@ namespace KernelPanic.Sprites
             float rotation,
             float scale)
         {
-            switch (mMovement)
+            switch (MovementDirection)
             {
-                case Movement.Standing:
+                case Direction.Standing:
                     mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 0;
                     break;
-                case Movement.Left:
+                case Direction.Left:
                     mFrameCount = 8;
                     mEffect = SpriteEffects.None;
                     mRow = 1;
                     break;
-                case Movement.Right:
+                case Direction.Right:
                     mFrameCount = 8;
                     mEffect = SpriteEffects.FlipHorizontally;
                     mRow = 1;
                     break;
-                /*case Movement.Up:
+                /*case Direction.Up:
                     mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 2;
                     break;
-                case Movement.Down:
+                case Direction.Down:
                     mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 3;
