@@ -32,7 +32,7 @@ namespace KernelPanic.Entities
         [DataMember]
         protected CooldownComponent Cooldown { get; }
         private AStar mAStar; // save the AStar for path-drawing
-        private Point mTarget; // the target we wish to move to
+        private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
         protected AbilityState AbilityStatus { get; set; }
 
@@ -57,13 +57,18 @@ namespace KernelPanic.Entities
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             UpdateTarget(positionProvider, gameTime, inputManager);
+
+            if (!(mTarget?.ToVector2() is Vector2 targetVector))
+            {
+                return;
+            }
             
             // set the start Position for the AStar (something like the current position should do great)
             var start = Sprite.Position;
             var startPoint = Grid.CoordinatePositionFromScreen(start);
             
             // set the target Position for the AStar (latest updated target should be saved in mTarget
-            var target = Grid.CoordinatePositionFromScreen(mTarget.ToVector2());
+            var target = Grid.CoordinatePositionFromScreen(targetVector);
 
             // calculate the path
             mAStar = positionProvider.MakePathFinding(this, startPoint, target);

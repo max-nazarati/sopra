@@ -28,7 +28,7 @@ namespace KernelPanic.Entities
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
         
         private bool ShouldReallyMove => ShouldMove && MoveTarget is Vector2 target && Vector2.Distance(target, Sprite.Position) > 0.1;
-
+        
         protected virtual Vector2? MoveVector
         {
             get
