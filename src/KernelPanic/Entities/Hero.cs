@@ -54,6 +54,7 @@ namespace KernelPanic.Entities
         #endregion
 
         #region Movement
+
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             UpdateTarget(positionProvider, gameTime, inputManager);
@@ -83,8 +84,23 @@ namespace KernelPanic.Entities
                 path = mAStar.Path;
             }
 
-            // MoveTarget will be used by the Update Function (of the base class 'unit') to move the object
-            MoveTarget = positionProvider.TilePoint(path.Count > 2 ? path[1] : target);
+            if (path.Count > 2)
+            {
+                MoveTarget = positionProvider.TilePoint(path[1]);
+            }
+            else
+            {
+                MoveTarget = positionProvider.TilePoint(target);
+                MoveTargetReached += MoveTargetReachedHandler;
+            }
+        }
+
+        private void MoveTargetReachedHandler(Vector2 target)
+        {
+            mAStar = null;
+            mTarget = null;
+            mPathVisualizer = null;
+            MoveTargetReached -= MoveTargetReachedHandler;
         }
 
         /// <summary>
@@ -104,9 +120,10 @@ namespace KernelPanic.Entities
             if (positionProvider.GridCoordinate(mouse) == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
             ShouldMove = true;
+            MoveTargetReached -= MoveTargetReachedHandler;
         }
-        
-        protected Point FindNearestWalkableField(Point target)
+
+        private Point FindNearestWalkableField(Point target)
         {
             var result = mAStar.FindNearestField();
             return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);
