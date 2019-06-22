@@ -5,6 +5,7 @@ using KernelPanic.Data;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using KernelPanic.Interface;
+using KernelPanic.Purchasing;
 
 namespace KernelPanic.Entities
 {

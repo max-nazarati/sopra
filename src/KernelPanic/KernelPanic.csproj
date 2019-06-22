@@ -87,7 +87,6 @@
     <Compile Include="PlayTime.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PositionProvider.cs" />
-    <Compile Include="PurchasableAction.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameStateManager.cs" />
     <Compile Include="IDrawable.cs" />
@@ -96,13 +95,14 @@
     <Compile Include="MenuState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PurchaseButton.cs" />
+    <Compile Include="Purchasing\PurchasableAction.cs" />
+    <Compile Include="Purchasing\PurchaseButton.cs" />
+    <Compile Include="Purchasing\SinglePurchasableAction.cs" />
     <Compile Include="ScoreOverlay.cs" />
     <Compile Include="Selection\SelectionManager.cs" />
     <Compile Include="Serialization\AutofacContractResolver.cs" />
     <Compile Include="Serialization\Storage.cs" />
     <Compile Include="Serialization\StorageManager.cs" />
-    <Compile Include="SinglePurchasableAction.cs" />
     <Compile Include="SoundManager.cs" />
     <Compile Include="SpriteManager.cs" />
     <Compile Include="Sprites\CompositeSprite.cs" />

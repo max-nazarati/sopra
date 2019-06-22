@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Sprites;
 
-namespace KernelPanic
+namespace KernelPanic.Purchasing
 {
     internal sealed class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded
         where TResource: class, IPriced

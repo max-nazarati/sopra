@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using KernelPanic.Entities;
 using KernelPanic.Sprites;
 using KernelPanic.Interface;
+using KernelPanic.Purchasing;
 
 namespace KernelPanic
 {

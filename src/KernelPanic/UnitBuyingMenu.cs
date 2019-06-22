@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Entities;
 using KernelPanic.Interface;
+using KernelPanic.Purchasing;
 
 namespace KernelPanic
 {

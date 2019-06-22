@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KernelPanic
+namespace KernelPanic.Purchasing
 {
     internal class PurchasableAction<TResource> where TResource : class, IPriced
     {

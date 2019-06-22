@@ -210,11 +210,14 @@
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\PurchasableAction.cs">
-      <Link>PurchasableAction.cs</Link>
+    <Compile Include="..\KernelPanic\Purchasing\PurchasableAction.cs">
+      <Link>Purchasing\PurchasableAction.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\PurchaseButton.cs">
-      <Link>PurchaseButton.cs</Link>
+    <Compile Include="..\KernelPanic\Purchasing\PurchaseButton.cs">
+      <Link>Purchasing\PurchaseButton.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Purchasing\SinglePurchasableAction.cs">
+      <Link>Purchasing\SinglePurchasableAction.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\ScoreOverlay.cs">
       <Link>ScoreOverlay.cs</Link>
@@ -230,9 +233,6 @@
     </Compile>
     <Compile Include="..\KernelPanic\Serialization\StorageManager.cs">
       <Link>Serialization\StorageManager.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\SinglePurchasableAction.cs">
-      <Link>SinglePurchasableAction.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\SoundManager.cs">
       <Link>SoundManager.cs</Link>
