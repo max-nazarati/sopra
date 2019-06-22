@@ -181,16 +181,11 @@ namespace KernelPanic.Data
 
         public void Remove(T entity)
         {
-            if (mObjects.Contains(entity))
-            {
-                mObjects.Remove(entity);
-            }
-            else
-            {
-                if (mChilds == null) return;
-                var index = CalculatePosition(entity);
+            if (mObjects.Remove(entity))
+                return;
+            
+            if (CalculatePosition(entity) is SquareIndex index)
                 mChilds[(int) index].Remove(entity);
-            }
         }
 
         /*internal*/ private void Add(IEnumerable<T> elements)
