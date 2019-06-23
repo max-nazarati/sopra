@@ -15,6 +15,8 @@ namespace KernelPanic.Table
         [JsonProperty]
         internal Player PlayerB { get; }
 
+        private Sprites.CompositeSprite mBase;
+
         internal static Rectangle Bounds
         {
             get
@@ -32,6 +34,19 @@ namespace KernelPanic.Table
             
             PlayerA = new Player(leftLane, rightLane);
             PlayerB = new Player(rightLane, leftLane);
+
+            var leftBase = content.CreateLeftBase();
+            var rightBase =  content.CreateRightBase();
+            leftBase.ScaleToWidth(Lane.RightBounds.Left - Lane.LeftBounds.Right);
+            rightBase.ScaleToWidth(Lane.RightBounds.Left - Lane.LeftBounds.Right);
+            leftBase.Position = new Vector2(0, 0);
+            rightBase.Position = new Vector2(0, Lane.LeftBounds.Bottom);
+            mBase = new Sprites.CompositeSprite
+            {
+                X = Lane.LeftBounds.Right,
+                Children = { leftBase, rightBase}
+            };
+
         }
 
         [JsonConstructor]
@@ -51,6 +66,7 @@ namespace KernelPanic.Table
         {
             LeftLane.Draw(spriteBatch, gameTime);
             RightLane.Draw(spriteBatch, gameTime);
+            mBase.Draw(spriteBatch, gameTime);
         }
 
         /*    

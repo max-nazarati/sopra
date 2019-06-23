@@ -70,21 +70,15 @@ namespace KernelPanic.Table
             var bottomPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
             bottomPart.Y = mainPart.Height - bottomPart.Height;
 
-            var baseBuilding = (laneSide == Lane.Side.Left) ? sprites.CreateLeftBase() : sprites.CreateRightBase();
-            baseBuilding.ScaleToHeight(Lane.RightBounds.Left - Lane.LeftBounds.Right);
-            baseBuilding.ScaleToWidth(Lane.RightBounds.Left - Lane.LeftBounds.Right);
-
             switch (laneSide)
             {
                 case Lane.Side.Left:
                     topPart.X = mainPart.Width;
                     bottomPart.X = mainPart.Width;
-                    baseBuilding.Position = new Vector2(Lane.LeftBounds.Right, 0);
                     break;
 
                 case Lane.Side.Right:
                     mainPart.X = topPart.Width;
-                    baseBuilding.Position = new Vector2(0, Lane.LeftBounds.Bottom);
                     break;
 
                 default:
@@ -95,7 +89,7 @@ namespace KernelPanic.Table
             {
                 X = TileCountPixelSize(LaneRectangle.X),
                 Y = TileCountPixelSize(LaneRectangle.Y),
-                Children = {mainPart, bottomPart, topPart, baseBuilding}
+                Children = {mainPart, bottomPart, topPart}
             };
         }
 

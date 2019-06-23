@@ -378,7 +378,7 @@ namespace KernelPanic
         internal ImageSprite CreateRightBase()
         {
             var sprite = new ImageSprite(Lookup(Image.Base2));
-            sprite.SetOrigin(RelativePosition.BottomRight);
+            sprite.SetOrigin(RelativePosition.BottomLeft);
             return sprite;
         }
         
