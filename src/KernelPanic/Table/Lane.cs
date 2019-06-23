@@ -57,7 +57,7 @@ namespace KernelPanic.Table
         #region Size, position and bound functions
 
         private static Rectangle LaneBoundsInTiles(Side laneSide) =>
-            new Rectangle(laneSide == Side.Left ? 0 : 32, 0, 16, 42);
+            new Rectangle(laneSide == Side.Left ? 0 : 30, 0, 18, 42);
 
         private static Rectangle LaneBoundsInPixel(Side laneSide)
         {

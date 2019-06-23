@@ -342,7 +342,21 @@ namespace KernelPanic
             sprite.SetOrigin(RelativePosition.CenterBottom);
             return sprite;
         }
-        
+
+        internal ImageSprite CreateLeftBase()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Base1));
+            sprite.SetOrigin(RelativePosition.TopLeft);
+            return sprite;
+        }
+
+        internal ImageSprite CreateRightBase()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Base2));
+            sprite.SetOrigin(RelativePosition.BottomRight);
+            return sprite;
+        }
+
         internal ImageSprite CreateSelectionBorder()
         {
             var sprite = new ImageSprite(Lookup(Image.SelectionBorder));
