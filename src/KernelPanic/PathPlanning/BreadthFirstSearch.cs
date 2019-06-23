@@ -23,7 +23,7 @@ namespace KernelPanic.PathPlanning
         {
             foreach (var node in Run(mGoalPoints))
             {
-                HeatMap.SetCost(node.Position, node.Cost);
+                HeatMap.SetCost(node.Position, (float) node.Cost);
             }
 
             VectorField.Update(HeatMap);

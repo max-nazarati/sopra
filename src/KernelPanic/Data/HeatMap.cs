@@ -1,5 +1,4 @@
-﻿using System;
-using KernelPanic.PathPlanning;
+﻿using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
@@ -7,7 +6,7 @@ namespace KernelPanic.Data
 {
     internal sealed class HeatMap
     {
-        private readonly double[,] mMap;
+        private readonly float[,] mMap;
 
         public int Width => mMap.GetLength(1);
         public int Height => mMap.GetLength(0);
@@ -58,13 +57,13 @@ namespace KernelPanic.Data
         /// <returns></returns>
         private Vector2 Gradient(Point point)
         {
-            if (!(this[point] is double hereHeat))
+            if (!(this[point] is float hereHeat))
                 return new Vector2(float.NaN);
 
-            double LookupHeat(int xOffset, int yOffset)
+            float LookupHeat(int xOffset, int yOffset)
             {
                 var maybeHeat = this[point + new Point(xOffset, yOffset)];
-                return maybeHeat is double heat2 && heat2 >= 0 ? heat2 : hereHeat;
+                return maybeHeat is float heat2 && heat2 >= 0 ? heat2 : hereHeat;
             }
 
             var heatUp = LookupHeat(0, -1);
@@ -72,7 +71,7 @@ namespace KernelPanic.Data
             var heatLeft = LookupHeat(-1, 0);
             var heatRight = LookupHeat(1, 0);
 
-            var gradient = new Vector2((float) (heatLeft - heatRight), (float) (heatUp - heatDown));
+            var gradient = new Vector2(heatLeft - heatRight, heatUp - heatDown);
             return AdjustGradientToWalls(point, gradient);
         }
 
@@ -96,14 +95,14 @@ namespace KernelPanic.Data
 
         internal void Block(Point point) => this[point] = -1;
 
-        internal void SetCost(Point point, double cost) => this[point] = cost;
+        internal void SetCost(Point point, float cost) => this[point] = cost;
 
-        private double? this[Point point]
+        private float? this[Point point]
         {
-            get => Contains(point) ? (double?) mMap[point.Y, point.X] : null;
+            get => Contains(point) ? (float?) mMap[point.Y, point.X] : null;
             set
             {
-                if (Contains(point) && value is double val)
+                if (Contains(point) && value is float val)
                     mMap[point.Y, point.X] = val;
             }
         }
@@ -168,7 +167,7 @@ namespace KernelPanic.Data
 
     internal sealed class VectorField
     {
-        private Vector2[,] mVectorField;
+        private readonly Vector2[,] mVectorField;
         private int Height => mVectorField.GetLength(0);
         private int Width => mVectorField.GetLength(1);
 
