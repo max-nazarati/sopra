@@ -121,7 +121,7 @@ namespace KernelPanic.Table
             }
 
             foreach (var tileIndex in obstacleMatrix.Obstacles)
-                mHeatMap.Set(tileIndex.ToPoint(), HeatMap.Blocked);
+                mHeatMap.Block(tileIndex.ToPoint());
 
             UpdateHeatMap();
         }
@@ -139,10 +139,10 @@ namespace KernelPanic.Table
                 var (position, size) = gridPoint.Value;
                 if (!EntityGraph.HasEntityAt(position))
                 {
-                    EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
-                    mHeatMap.Set(Grid.CoordinatePositionFromScreen(position), HeatMap.Blocked);
-                    UpdateHeatMap();
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
+                    EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
+                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
+                    UpdateHeatMap();
                 }
             }
 

@@ -7,11 +7,10 @@ namespace KernelPanic.Data
 {
     internal sealed class HeatMap
     {
-        public const int Blocked = -1;
+        private readonly double[,] mMap;
 
-        public double[,] mMap;
-        private int mWidth;
-        private int mHeight;
+        public int Width { get; }
+        public int Height { get; }
 
         /// <summary>
         /// Heatmap which displays the distance of each grid to
@@ -34,8 +33,8 @@ namespace KernelPanic.Data
         public HeatMap(int width, int height)
         {
             mMap = new double[height, width];
-            mWidth = width;
-            mHeight = height;
+            Width = width;
+            Height = height;
         }
 
         /// <summary>
@@ -43,12 +42,8 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="point">the point (x, y)</param>
         /// <returns>true if heatMap[y, x] != -1 (blocked)</returns>
-        public bool IsWalkable(Point point)
-        {
-            if (point.X >= mWidth || point.Y >= mHeight) return false;
-            if (point.X < 0 || point.Y < 0) return false;
-            return mMap[point.Y, point.X] != Blocked;
-        }
+        public bool IsWalkable(Point point) => !IsBlocked(point);
+        
 
         /// <summary>
         /// Calculates the gradient, given point (x, y) i,e.:
@@ -112,27 +107,30 @@ namespace KernelPanic.Data
             return grad;
         }
 
-        public void Set(Point point, int value)
+        internal void Block(Point point) => this[point] = -1;
+        private bool IsBlocked(Point point) => this[point] < 0;
+
+        internal void SetCost(Point point, double cost) => this[point] = cost;
+
+        private double? this[Point point]
         {
-            if (point.X < 0 || point.X >= mWidth) return;
-            if (point.Y < 0 || point.Y >= mHeight) return;
-            mMap[point.Y, point.X] = value;
+            get => Contains(point) ? (double?) mMap[point.Y, point.X] : null;
+            set
+            {
+                if (Contains(point) && value is double val)
+                    mMap[point.Y, point.X] = val;
+            }
         }
 
-        public double Get(Point point)
-        {
-            if (point.X < 0 || point.X >= mWidth) return double.NaN;
-            if (point.Y < 0 || point.Y >= mHeight) return double.NaN;
-            return mMap[point.Y, point.X];
-        }
+        private bool Contains(Point point) =>
+            0 <= point.X && point.X <= Width && 0 <= point.Y && point.Y <= Height;
 
-
-        public String ToString()
+        public override string ToString()
         {
             string result = "";
-            for (int y=0; y < mHeight; y++)
+            for (int y=0; y < Height; y++)
             {
-                for (int x = 0; x < mWidth; x++)
+                for (int x = 0; x < Width; x++)
                 {
                     result += mMap[y, x].ToString();
                     switch (mMap[y, x].ToString().Length)
@@ -149,21 +147,18 @@ namespace KernelPanic.Data
                         default: break;
                     }
                 }
-                if (y != mHeight - 1) result += "\n";
+                if (y != Height - 1) result += "\n";
             }
 
             return result;
         }
 
-        public int Width { get => mWidth;}
-        public int Height { get => mHeight;}
-
         internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager, bool drawBorderOnly=true)
         {
             var visualization = new Visualizer(grid, spriteManager, drawBorderOnly);
-            for (int x = 0; x < mWidth; x++)
+            for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < mHeight; y++)
+                for (int y = 0; y < Height; y++)
                 {
                     Color color;
                     if ((int)mMap[y, x] == 0)
