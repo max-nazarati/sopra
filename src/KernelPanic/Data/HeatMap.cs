@@ -58,38 +58,27 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="point">(x, y) point of the gradient to be computed</param>
         /// <returns></returns>
-        public Vector2 Gradient(Point point)
+        private Vector2 Gradient(Point point)
         {
-            Vector2 grad;
-            Point up = new Point(point.X, point.Y - 1);
-            Point down = new Point(point.X, point.Y + 1);
-            Point left = new Point(point.X - 1, point.Y);
-            Point right = new Point(point.X + 1, point.Y);
-            double heatUp = 0;
-            double heatDown = 0;
-            double heatLeft = 0;
-            double heatRight = 0;
+            if (!(this[point] is double hereHeat))
+                return new Vector2(float.NaN);
 
-            if (!IsWalkable(point)) return new Vector2(Single.NaN, Single.NaN);
+            double LookupHeat(int xOffset, int yOffset)
+            {
+                var maybeHeat = this[point + new Point(xOffset, yOffset)];
+                return maybeHeat is double heat2 && heat2 >= 0 ? heat2 : hereHeat;
+            }
 
-            if (IsWalkable(up)) heatUp = mMap[point.Y - 1, point.X];
-            else heatUp = mMap[point.Y, point.X];
+            var heatUp = LookupHeat(0, -1);
+            var heatDown = LookupHeat(0, 1);
+            var heatLeft = LookupHeat(-1, 0);
+            var heatRight = LookupHeat(1, 0);
 
-            if (IsWalkable(down)) heatDown = mMap[point.Y + 1, point.X];
-            else heatDown = mMap[point.Y, point.X];
-
-            if (IsWalkable(left)) heatLeft = mMap[point.Y, point.X - 1];
-            else heatLeft = mMap[point.Y, point.X];
-
-            if (IsWalkable(right)) heatRight = mMap[point.Y, point.X + 1];
-            else heatRight = mMap[point.Y, point.X];
-
-            grad = new Vector2((float)(heatLeft - heatRight), (float)(heatUp - heatDown));
-            grad = AdjustGradientToWalls(point, grad);
-            return grad;
+            var gradient = new Vector2((float) (heatLeft - heatRight), (float) (heatUp - heatDown));
+            return AdjustGradientToWalls(point, gradient);
         }
 
-        public Vector2 AdjustGradientToWalls(Point point, Vector2 grad)
+        private Vector2 AdjustGradientToWalls(Point point, Vector2 grad)
         {
             Vector2 adjustedGrad = grad;
             if (grad.X > 0 && !IsWalkable(new Point(point.X + 1, point.Y))) adjustedGrad = new Vector2(0, grad.Y);
