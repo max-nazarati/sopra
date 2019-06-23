@@ -5,60 +5,32 @@ using Microsoft.Xna.Framework;
 
 namespace KernelPanic.PathPlanning
 {
-    internal sealed class BreadthFirstSearch
+    internal sealed class BreadthFirstSearch : PathPlanner
     {
-        private readonly bool[,] mExplored;
-        private readonly PriorityQueue mQueue;
-        private readonly List<Point> mGoalPoints;
-
         public VectorField VectorField { get; }
         public HeatMap HeatMap { get; }
+
+        private readonly Point[] mGoalPoints;
 
         public BreadthFirstSearch(HeatMap map, IEnumerable<Point> goalPoints)
         {
             HeatMap = map;
-            mExplored = new bool[map.Height, map.Width];
             VectorField = new VectorField(map.Width, map.Height);
-            mQueue = new PriorityQueue();
-            mGoalPoints = goalPoints.ToList();
-        }
-
-        private IEnumerable<Node> CreateNeighbours(Node node) =>
-            node.EnumerateNeighbours(1, null).Where(n => HeatMap.IsWalkable(n.Position));
-
-        private void ExpandNode(Node node)
-        {
-            if (mExplored[node.Position.Y, node.Position.X])
-                return;
-            foreach (var neighbour in CreateNeighbours(node))
-            {
-                if (!(mExplored[node.Position.Y, node.Position.X])) mQueue.Insert(neighbour);
-            }
-
-            HeatMap.SetCost(node.Position, node.Cost);
-            mExplored[node.Position.Y, node.Position.X] = true;
-        }
-
-        private void UpdateHeatMap()
-        {
-            foreach (var goalNode in mGoalPoints)
-            {
-                mQueue.Insert(new Node(goalNode, null, 0, 0));
-            }
-
-            while (!mQueue.IsEmpty())
-            {
-                var heapNode = mQueue.RemoveMin();
-                ExpandNode(heapNode);
-                // Console.Write("I am currently expanding: ");
-                // Console.WriteLine(heapNode.Position);
-            }
+            mGoalPoints = goalPoints.ToArray();
         }
 
         public void UpdateVectorField()
         {
-            UpdateHeatMap();
+            foreach (var node in Run(mGoalPoints))
+            {
+                HeatMap.SetCost(node.Position, node.Cost);
+            }
+
             VectorField.Update(HeatMap);
         }
+
+        protected override bool IsWalkable(Point point) => HeatMap.IsWalkable(point);
+        protected override double EstimateCost(Point point) => 0;
+        protected override double CostIncrease => 1;
     }
 }

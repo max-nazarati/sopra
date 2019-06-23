@@ -38,12 +38,12 @@ namespace KernelPanic.Data
         }
 
         /// <summary>
-        /// check if a grid of the heat map is blocked (= -1) or not
+        /// Checks if this grid point is not blocked and therefore walkable.
+        /// Blocked grid points have a value of less than one.
         /// </summary>
         /// <param name="point">the point (x, y)</param>
-        /// <returns>true if heatMap[y, x] != -1 (blocked)</returns>
-        public bool IsWalkable(Point point) => !IsBlocked(point);
-        
+        /// <returns><c>false</c> if it is blocked, <c>true</c> otherwise.</returns>
+        public bool IsWalkable(Point point) => 0 <= this[point];
 
         /// <summary>
         /// Calculates the gradient, given point (x, y) i,e.:
@@ -108,7 +108,6 @@ namespace KernelPanic.Data
         }
 
         internal void Block(Point point) => this[point] = -1;
-        private bool IsBlocked(Point point) => this[point] < 0;
 
         internal void SetCost(Point point, double cost) => this[point] = cost;
 
@@ -123,7 +122,7 @@ namespace KernelPanic.Data
         }
 
         private bool Contains(Point point) =>
-            0 <= point.X && point.X <= Width && 0 <= point.Y && point.Y <= Height;
+            0 <= point.X && point.X < Width && 0 <= point.Y && point.Y < Height;
 
         public override string ToString()
         {

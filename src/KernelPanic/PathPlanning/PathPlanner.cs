@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
@@ -6,36 +5,59 @@ using Microsoft.Xna.Framework;
 
 namespace KernelPanic.PathPlanning
 {
-    /// <summary>
-    /// Supporting functions shared between <see cref="AStar"/> and <see cref="BreadthFirstSearch"/>.
-    /// </summary>
-    internal static class PathPlanner
+    internal abstract class PathPlanner
     {
+        private readonly PriorityQueue mQueue = new PriorityQueue();
+        protected readonly HashSet<Point> mExplored = new HashSet<Point>();
+
+        protected abstract bool IsWalkable(Point point);
+        protected abstract double EstimateCost(Point point);
+        protected abstract double CostIncrease { get; }
+
         /// <summary>
-        /// Enumerates through the neighbours of a node. The resulting nodes can be further filtered using
-        /// <see cref="Enumerable.Where{Node}(System.Collections.Generic.IEnumerable{Node},System.Func{Node,bool})"/>.
+        /// Enumerates through the neighbours of a node. Only walkable nodes (see <see cref="IsWalkable"/>) are yielded.
         /// </summary>
         /// <param name="node">The neighbours of this node are returned.</param>
-        /// <param name="costIncrease">The value by which the cost of the new nodes is higher than the cost of <paramref name="node"/>.</param>
-        /// <param name="costEstimation">Used to perform an estimation based on the new nodes point. If it is <c>null</c>, zero is used.</param>
-        /// <returns></returns>
-        internal static IEnumerable<Node> EnumerateNeighbours(this Node node,
-            double costIncrease,
-            Func<Point, double> costEstimation)
+        /// <returns>An enumeration of all walkable neighbour nodes.</returns>
+        private IEnumerable<Node> EnumerateNeighbours(Node node)
         {
-            var cost = node.Cost + costIncrease;
+            var cost = node.Cost + CostIncrease;
 
             Node CreateNode(int xOffset, int yOffset)
             {
                 var point = node.Position + new Point(xOffset, yOffset);
-                var estimatedCost = costEstimation?.Invoke(point) ?? 0;
-                return new Node(point, node, cost, estimatedCost);
+                return IsWalkable(point) ? new Node(point, node, cost, EstimateCost(point)) : null;
             }
 
-            yield return CreateNode(0, -1);
-            yield return CreateNode(0, 1);
-            yield return CreateNode(-1, 0);
-            yield return CreateNode(1, 0);
+            if (CreateNode(0, -1) is Node up) yield return up;
+            if (CreateNode(0, 1) is Node down) yield return down;
+            if (CreateNode(-1, 0) is Node left) yield return left;
+            if (CreateNode(1, 0) is Node right) yield return right;
+        }
+
+        private void ExpandNode(Node node)
+        {
+            if (!mExplored.Add(node.Position))
+                return;
+
+            foreach (var neighbour in EnumerateNeighbours(node))
+                mQueue.Insert(neighbour);
+        }
+
+        protected IEnumerable<Node> Run(IEnumerable<Point> start)
+        {
+            mQueue.Clear();
+            mExplored.Clear();
+
+            foreach (var point in start)
+                mQueue.Insert(new Node(point, null, 0, EstimateCost(point)));
+
+            while (!mQueue.IsEmpty())
+            {
+                var node = mQueue.RemoveMin();
+                yield return node;
+                ExpandNode(node);
+            }
         }
     }
 }

@@ -32,11 +32,17 @@ namespace KernelPanic.Data
 
     sealed class PriorityQueue
     {
-        private List<Node> mItems;
+        private readonly List<Node> mItems;
         private int mCount;
         public PriorityQueue()
         {
             mItems = new List<Node>();
+        }
+
+        public void Clear()
+        {
+            mItems.Clear();
+            mCount = 0;
         }
 
         /// <summary>
