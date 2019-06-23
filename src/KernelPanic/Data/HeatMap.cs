@@ -9,8 +9,8 @@ namespace KernelPanic.Data
     {
         private readonly double[,] mMap;
 
-        public int Width { get; }
-        public int Height { get; }
+        public int Width => mMap.GetLength(1);
+        public int Height => mMap.GetLength(0);
 
         /// <summary>
         /// Heatmap which displays the distance of each grid to
@@ -32,9 +32,7 @@ namespace KernelPanic.Data
         /// <param name="height">number of rows</param>
         public HeatMap(int width, int height)
         {
-            mMap = new double[height, width];
-            Width = width;
-            Height = height;
+            mMap = new float[height, width];
         }
 
         /// <summary>
@@ -132,7 +130,6 @@ namespace KernelPanic.Data
                         case 3:
                             result += " ";
                             break;
-                        default: break;
                     }
                 }
                 if (y != Height - 1) result += "\n";
@@ -169,16 +166,15 @@ namespace KernelPanic.Data
         }
     }
 
-    class VectorField
+    internal sealed class VectorField
     {
         private Vector2[,] mVectorField;
-        private int mHeight;
-        private int mWidth;
+        private int Height => mVectorField.GetLength(0);
+        private int Width => mVectorField.GetLength(1);
+
         public VectorField(int width, int height)
         {
             mVectorField = new Vector2[height, width];
-            mHeight = height;
-            mWidth = width;
         }
 
         /// <summary>
@@ -198,7 +194,7 @@ namespace KernelPanic.Data
         /// <param name="map"></param>
         public void Update(HeatMap map)
         {
-            if (map.Width > mWidth || map.Height > mHeight) return;
+            if (map.Width > Width || map.Height > Height) return;
             for (int i = 0; i < map.Width; i++)
             {
                 for (int j = 0; j < map.Height; j++)
@@ -208,11 +204,14 @@ namespace KernelPanic.Data
             }
         }
 
-        public Vector2 Vector(Point point)
+        public Vector2 this[Point point]
         {
-            if (point.X >= mWidth || point.Y >= mHeight) return new Vector2(Single.NaN, Single.NaN);
-            if (point.X < 0 || point.Y < 0) return new Vector2(Single.NaN, Single.NaN);
-            return mVectorField[point.Y, point.X];
+            get
+            {
+                if (point.X >= Width || point.Y >= Height) return new Vector2(float.NaN);
+                if (point.X < 0 || point.Y < 0) return new Vector2(float.NaN);
+                return mVectorField[point.Y, point.X];
+            }
         }
     }
 }

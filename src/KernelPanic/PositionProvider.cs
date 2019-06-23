@@ -81,7 +81,7 @@ namespace KernelPanic
 
         public Vector2 GetVector(Point point)
         {
-            return mVectorField.Vector(point);
+            return mVectorField[point];
         }
 
         internal AStar MakePathFinding(Entity entity, Point start, Point target)
