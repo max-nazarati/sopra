@@ -280,8 +280,26 @@ namespace KernelPanic
             return (sprite, leftText, rightText, clockText);
         }
 
+        #region Troupes
+
         internal AnimatedSprite CreateTrojan() =>
             new AnimatedSprite(Lookup(Image.Trojan), new TimeSpan(0, 0, 0, 0, 300));
+        
+        internal AnimatedSprite CreateNokia() =>
+            new AnimatedSprite(Lookup(Image.Nokia), new TimeSpan(0, 0, 0, 0, 300));
+        
+        internal AnimatedSprite CreateThunderbird() =>
+            new AnimatedSprite(Lookup(Image.Thunderbird), new TimeSpan(0, 0, 0, 0, 300));
+        
+        internal AnimatedSprite CreateVirus() =>
+            new AnimatedSprite(Lookup(Image.Virus), new TimeSpan(0, 0, 0, 0, 300));
+
+        internal AnimatedSprite CreateBug() =>
+            new AnimatedSprite(Lookup(Image.Bug), new TimeSpan(0, 0, 0, 0, 300));
+        
+        #endregion
+
+        #region Heroes
 
         internal AnimatedSprite CreateFirefox() =>
             new AnimatedSprite(Lookup(Image.Firefox), new TimeSpan(0, 0, 0, 0, 100));
@@ -289,13 +307,16 @@ namespace KernelPanic
         internal AnimatedSprite CreateFirefoxJump() =>
             new AnimatedSprite(Lookup(Image.FoxJump), new TimeSpan(0, 0, 0, 0, 100));
 
-        internal ImageSprite CreateColoredSquare(Color color)
-        {
-            var texture = new Texture2D(GraphicsDevice, 1, 1);
-            texture.SetData(new[] {color});
-            return new ImageSprite(texture);
-        }
+        internal AnimatedSprite CreateSettings() =>
+            new AnimatedSprite(Lookup(Image.Settings), new TimeSpan(0, 0, 0, 0, 100));
 
+        internal AnimatedSprite CreateBluescreen() =>
+            new AnimatedSprite(Lookup(Image.Bluescreen), new TimeSpan(0, 0, 0, 0, 100));
+        
+        #endregion
+
+        #region Selection
+        
         private const int SelectionBorderThickness = 12;
         private Texture2D CreateSelectionBorderTexture(Color color)
         {
@@ -336,13 +357,17 @@ namespace KernelPanic
             return texture;
         }
 
-        internal ImageSprite CreateJumpIndicator()
+        internal ImageSprite CreateSelectionBorder()
         {
-            var sprite = new ImageSprite(Lookup(Image.Arrow));
-            sprite.SetOrigin(RelativePosition.CenterBottom);
+            var sprite = new ImageSprite(Lookup(Image.SelectionBorder));
+            sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
-
+        
+        #endregion
+        
+        #region Base
+        
         internal ImageSprite CreateLeftBase()
         {
             var sprite = new ImageSprite(Lookup(Image.Base1));
@@ -356,14 +381,13 @@ namespace KernelPanic
             sprite.SetOrigin(RelativePosition.BottomRight);
             return sprite;
         }
+        
+        #endregion
+        
+        #region Indicator
 
-        internal ImageSprite CreateSelectionBorder()
-        {
-            var sprite = new ImageSprite(Lookup(Image.SelectionBorder));
-            sprite.SetOrigin(RelativePosition.Center);
-            return sprite;
-        }
-
+        #region Tower
+        
         private Texture2D CreateCircleTexture(int radius, Color color)
         {
             var radiusSquared = radius * radius;
@@ -424,7 +448,45 @@ namespace KernelPanic
             sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
+        
+        #endregion
 
+        #region Hero Abilities
+        
+        internal ImageSprite CreateJumpIndicator()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Arrow));
+            sprite.SetOrigin(RelativePosition.CenterBottom);
+            return sprite;
+        }
+
+        internal ImageSprite CreateEmpIndicator(float radius)
+        {
+            if (Math.Abs(radius) < 0.00001)
+                return null;
+            var sprite = new ImageSprite(CreateCircleTexture((int) radius, Color.Blue));
+            return sprite;
+        }
+        
+        internal ImageSprite CreateHealIndicator(float radius)
+        {
+            if (Math.Abs(radius) < 0.00001)
+                return null;
+            var sprite = new ImageSprite(CreateCircleTexture((int) radius, Color.YellowGreen));
+            return sprite;
+        }
+        
+        #endregion
+        
+        #endregion
+        
+        internal ImageSprite CreateColoredSquare(Color color)
+        {
+            var texture = new Texture2D(GraphicsDevice, 1, 1);
+            texture.SetData(new[] {color});
+            return new ImageSprite(texture);
+        }
+        
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
 
         /// <summary>
