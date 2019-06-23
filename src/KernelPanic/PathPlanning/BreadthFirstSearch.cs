@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 
@@ -7,26 +8,19 @@ namespace KernelPanic.PathPlanning
 {
     internal sealed class BreadthFirstSearch : PathPlanner
     {
-        public VectorField VectorField { get; }
         public HeatMap HeatMap { get; }
 
-        private readonly Point[] mGoalPoints;
-
-        public BreadthFirstSearch(HeatMap map, IEnumerable<Point> goalPoints)
+        private BreadthFirstSearch(HeatMap map)
         {
             HeatMap = map;
-            VectorField = new VectorField(map.Width, map.Height);
-            mGoalPoints = goalPoints.ToArray();
         }
 
-        public void UpdateVectorField()
+        internal static void UpdateHeatMap(HeatMap map, IEnumerable<Point> goalPoints)
         {
-            foreach (var node in Run(mGoalPoints))
+            foreach (var node in new BreadthFirstSearch(map).Run(goalPoints))
             {
-                HeatMap.SetCost(node.Position, (float) node.Cost);
+                map.SetCost(node.Position, (float) node.Cost);
             }
-
-            VectorField.Update(HeatMap);
         }
 
         protected override bool IsWalkable(Point point) => HeatMap.IsWalkable(point);

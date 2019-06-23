@@ -172,10 +172,8 @@ namespace KernelPanic.Table
 
         private void UpdateHeatMap()
         {
-            var bfs = new BreadthFirstSearch(mHeatMap, Target.HitBox);
-            bfs.UpdateVectorField();
-            mHeatMap = bfs.HeatMap;
-            mVectorField = bfs.VectorField;
+            BreadthFirstSearch.UpdateHeatMap(mHeatMap, Target.HitBox);
+            mVectorField = new VectorField(mHeatMap);
         }
 
         private void Visualize(SpriteBatch spriteBatch, GameTime gameTime)

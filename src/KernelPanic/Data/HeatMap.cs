@@ -171,34 +171,35 @@ namespace KernelPanic.Data
         private int Height => mVectorField.GetLength(0);
         private int Width => mVectorField.GetLength(1);
 
-        public VectorField(int width, int height)
-        {
-            mVectorField = new Vector2[height, width];
-        }
-
         /// <summary>
-        /// Update vector field given a heat map, e.g.:
+        /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
+        /// </summary>
+        /// <example>
         /// Let
+        /// <code>
         /// [ 4][ 3][ 2][ 2]
         /// [ 3][-1][ 1][ 1]
         /// [ 2][ 1][ 0][ 0]
         /// [ 2][ 1][ 0][ 0]
-        /// denote the heat map, then the updated vector field is
+        /// </code>
+        /// denote the heat map, the the resulting vector field is
+        /// <code>
         /// [(1,1)][(1,0)][(0,1)][(0,1)]
         /// [(0,1)][ None][(0,1)][(0,1)]
         /// [(1, 0)][(1, 0)][ None][ None]
         /// [(1, 0)][(1, 0)][ None][ None]
-        /// with each square additionally normalized
-        /// </summary>
-        /// <param name="map"></param>
-        public void Update(HeatMap map)
+        /// </code>
+        /// with each square additionally normalized.
+        /// </example>
+        /// <param name="heatMap">The heat map.</param>
+        internal VectorField(HeatMap heatMap)
         {
-            if (map.Width > Width || map.Height > Height) return;
-            for (int i = 0; i < map.Width; i++)
+            mVectorField = new Vector2[heatMap.Height, heatMap.Width];
+            for (var row = 0; row < heatMap.Height; ++row)
             {
-                for (int j = 0; j < map.Height; j++)
+                for (var col = 0; col < heatMap.Width; ++col)
                 {
-                    mVectorField[j, i] = map.NormalizedGradient(new Point(i, j));
+                    mVectorField[row, col] = heatMap.NormalizedGradient(new Point(col, row));
                 }
             }
         }
