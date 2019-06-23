@@ -9,7 +9,7 @@ namespace KernelPanic.Sprites
     [DataContract]
     [KnownType(typeof(AnimatedSprite))]
     [KnownType(typeof(ImageSprite))]
-    public abstract class Sprite: IBounded
+    public abstract class Sprite: IBounded, IPositioned
     {
         #region Properties
 
@@ -28,10 +28,10 @@ namespace KernelPanic.Sprites
 
         internal float Width => Scale * UnscaledWidth;
         internal float Height => Scale * UnscaledHeight;
-        /*internal*/ protected Vector2 Size => Scale * UnscaledSize; 
-        
-        public float X { get; set; }
-        public float Y { get; set; }
+        public Vector2 Size => Scale * UnscaledSize;
+
+        internal float X { get; set; }
+        internal float Y { get; set; }
 
         public Vector2 Position
         {

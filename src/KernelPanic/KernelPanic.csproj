@@ -85,6 +85,7 @@
     <Compile Include="Interface\InterfaceComponent.cs" />
     <Compile Include="Interface\StaticComponent.cs" />
     <Compile Include="Interface\TextButton.cs" />
+    <Compile Include="IPositioned.cs" />
     <Compile Include="PathPlanning\AStar.cs" />
     <Compile Include="PathPlanning\BreadthFirstSearch.cs" />
     <Compile Include="PathPlanning\ObstacleMatrix.cs" />
