@@ -204,6 +204,9 @@
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\MinimapOverlay.cs">
+      <Link>MinimapOverlay.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\AStar.cs">
       <Link>PathPlanning\AStar.cs</Link>
     </Compile>

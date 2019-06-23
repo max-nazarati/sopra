@@ -12,6 +12,7 @@ namespace KernelPanic
         private Entity mSelection;
         private readonly ScoreOverlay mScoreOverlay;
         private readonly UnitBuyingMenu mUnitBuyingMenu;
+        private readonly MinimapOverlay mMinimapOverlay;
         // public BuildingBuyingMenu BuildingMenu { get; set; }
         // public UnitBuyingMenu UnitMenu { get; set; }
 
@@ -27,18 +28,21 @@ namespace KernelPanic
             
             mScoreOverlay = new ScoreOverlay(player1, player2, gameStateManager.Sprite);
             mUnitBuyingMenu = UnitBuyingMenu.Create(player2, gameStateManager.Sprite);    // Fixme: This should become player1.
+            mMinimapOverlay = new MinimapOverlay();
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
         {
             mScoreOverlay.Update(gameTime);
             mUnitBuyingMenu.Update(inputManager, gameTime);
+            mMinimapOverlay.Update(inputManager, gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mScoreOverlay.Draw(spriteBatch, gameTime);
             mUnitBuyingMenu.Draw(spriteBatch, gameTime);
+            mMinimapOverlay.Draw(spriteBatch, gameTime);
         }
     }
 }
