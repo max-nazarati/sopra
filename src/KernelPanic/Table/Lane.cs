@@ -38,10 +38,10 @@ namespace KernelPanic.Table
         private readonly SoundManager mSounds;
 
         [JsonProperty]
-        internal Base Target { get; }
+        internal Base Target { get; /* required for deserialization */ private set; }
 
         [JsonProperty]
-        private Side mLaneSide;
+        private readonly Side mLaneSide;
 
         private Grid mGrid;
         private HeatMap mHeatMap;
