@@ -29,6 +29,8 @@ namespace KernelPanic
 
         internal UnitBuyingMenu(SpriteManager spriteManager, Player player)
         {
+            #region Heroes
+            
             var firefoxButton = CreateFirefoxPurchaseButton(spriteManager, player);
             mChoices.Add(new Tuple<int, PurchaseButton<ImageButton, Unit>>(0, firefoxButton));
             firefoxButton.Action.Purchased += (buyer, resource) =>
@@ -38,7 +40,11 @@ namespace KernelPanic
                 firefoxButton.Action.ResetResource(new Firefox(spriteManager));
                 IncrementCount(mChoices.FindIndex(el => el.Item2.GetType() == firefoxButton.GetType()));
             };
+            
+            #endregion
 
+            #region Troupes
+            
             var trojanButton = CreateTrojanPurchaseButton(spriteManager, player);
             mChoices.Add(new Tuple<int, PurchaseButton<ImageButton, Unit>>(0, trojanButton));
             trojanButton.Action.Purchased += (buyer, resource) =>
@@ -48,6 +54,18 @@ namespace KernelPanic
                 trojanButton.Action.ResetResource(new Trojan(spriteManager));
                 IncrementCount(mChoices.Count - 1);
             };
+
+            var bugButton = CreateBugPurchaseButton(spriteManager, player);
+            mChoices.Add(new Tuple<int, PurchaseButton<ImageButton, Unit>>(0, bugButton));
+            bugButton.Action.Purchased += (buyer, resource) =>
+            {
+                resource.Sprite.Position = new Vector2(50 * 30, 150 * 3);
+                buyer.AttackingLane.EntityGraph.Add(resource);
+                bugButton.Action.ResetResource(new Bug(spriteManager));
+                IncrementCount(mChoices.Count - 1);
+            };
+
+            #endregion
         }        
         
         internal void Update(Input.InputManager input, GameTime gameTime)

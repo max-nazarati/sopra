@@ -32,6 +32,17 @@ namespace KernelPanic
             trojanSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*trojanSprite.Width, 90 + trojanSprite.Height);
             return btn;
         }
+        
+        protected PurchaseButton<ImageButton, Unit> CreateBugPurchaseButton(SpriteManager spriteManager, Player player)
+        {
+            var sprite = spriteManager.CreateBug();
+            var bugButton = new PurchaseButton<ImageButton, Unit>(player,
+                new PurchasableAction<Unit>(new Bug(spriteManager)),
+                new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70));
+            var tmpSprite = bugButton.Button.Sprite;
+            tmpSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpSprite.Width, 90 + 2*tmpSprite.Height);
+            return bugButton;
+        }
 
         #endregion
         
@@ -43,8 +54,8 @@ namespace KernelPanic
             var firefoxButton = new PurchaseButton<ImageButton, Unit>(player,
                 new PurchasableAction<Unit>(new Firefox(spriteManager)),
                 new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70));
-            var tmpsprite = firefoxButton.Button.Sprite;
-            tmpsprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpsprite.Width, 90);
+            var tmpSprite = firefoxButton.Button.Sprite;
+            tmpSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpSprite.Width, 90);
             return firefoxButton;
         }
         
