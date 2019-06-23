@@ -89,22 +89,40 @@ namespace KernelPanic.Table
 
         #region Constructors
 
-        public Lane(Side laneSide, SpriteManager sprites, SoundManager sounds)
+        public Lane(Side laneSide, SpriteManager sprites, SoundManager sounds) : this(sprites, sounds)
         {
-            mSounds = sounds;
             mLaneSide = laneSide;
-            mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), sprites);
             Target = new Base(BasePosition(laneSide));
-            mSpriteManager = sprites;
-            InitHeatMap();
-            UpdateHeatMap();
+            Initialize();
         }
 
         internal Lane(SpriteManager sprites, SoundManager sounds)
         {
             mSpriteManager = sprites;
             mSounds = sounds;
+        }
+
+        /// <summary>
+        /// Performs the initialization common to deserialized lanes and lanes created at runtime.
+        /// </summary>
+        /// <param name="entities">Entities to be added to the <see cref="EntityGraph"/> and the <see cref="mHeatMap"/>.</param>
+        private void Initialize(IReadOnlyCollection<Entity> entities = null)
+        {
+            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
+            mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
+            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
+            var obstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
+
+            if (entities?.Count > 0)
+            {
+                EntityGraph.Add(entities);
+                obstacleMatrix.Rasterize(entities, mGrid.Bounds, entity => entity is Building);
+            }
+
+            foreach (var tileIndex in obstacleMatrix.Obstacles)
+                mHeatMap.Set(tileIndex.ToPoint(), HeatMap.Blocked);
+
+            UpdateHeatMap();
         }
 
         #endregion
@@ -151,33 +169,6 @@ namespace KernelPanic.Table
 
         #region Heat Map Handling
 
-        private void InitHeatMap()
-        {
-            mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
-
-            switch (mGrid.LaneSide)
-            {
-                case Side.Left:
-                    for (int y = Grid.LaneWidthInTiles; y < mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles; y++)
-                    {
-                        for (int x = Grid.LaneWidthInTiles; x < mGrid.LaneRectangle.Width; x++)
-                        {
-                            mHeatMap.mMap[y, x] = HeatMap.Blocked;
-                        }
-                    }
-                    break;
-                case Side.Right:
-                    for (int y = Grid.LaneWidthInTiles; y < mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles; y++)
-                    {
-                        for (int x = 0; x < mGrid.LaneRectangle.Width - Grid.LaneWidthInTiles; x++)
-                        {
-                            mHeatMap.mMap[y, x] = HeatMap.Blocked;
-                        }
-                    }
-                    break;
-            }
-        }
-
         private void UpdateHeatMap()
         {
             var bfs = new BreadthFirstSearch(mHeatMap, Target.HitBox);
@@ -208,28 +199,22 @@ namespace KernelPanic.Table
         [OnSerializing]
         private void BeforeSerialization(StreamingContext context)
         {
+            // Store the current entities.
             mEntitiesSerializing = new List<Entity>(EntityGraph);
+        }
+
+        [OnSerialized]
+        private void AfterSerialization(StreamingContext context)
+        {
+            // Reset this secondary storage.
+            mEntitiesSerializing = null;
         }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
-            foreach (var entity in mEntitiesSerializing)
-            {
-                EntityGraph.Add(entity);
-            }
-            
-            InitHeatMap();
-
-            var obstacles = new ObstacleMatrix(mGrid);
-            obstacles.Rasterize(EntityGraph, mGrid.Bounds, entity => entity is Building);
-            foreach (var obstacle in obstacles.Obstacles)
-            {
-                mHeatMap.Set(obstacle.ToPoint(), HeatMap.Blocked);
-            }
-            UpdateHeatMap();
+            Initialize(mEntitiesSerializing);
+            mEntitiesSerializing = null;
         }
 
         #endregion

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -37,9 +36,17 @@ namespace KernelPanic
 
         #region Modifying
 
-        public void Add(Entity entity)
+        internal void Add(Entity entity)
         {
             QuadTree.Add(entity);
+        }
+
+        internal void Add(IEnumerable<Entity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                Add(entity);
+            }
         }
         
         #endregion
