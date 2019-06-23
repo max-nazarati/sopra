@@ -1,64 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using KernelPanic.Entities;
-using KernelPanic.Sprites;
-using KernelPanic.Interface;
-using KernelPanic.Purchasing;
+using KernelPanic.Input;
 
 namespace KernelPanic
 {
-    class BuyingMenuOverlay
+    internal class BuyingMenuOverlay<TElement> where TElement : IDrawable, IUpdatable
     {
-        internal IEnumerable<IDrawable> Drawables{ get; private set; }
-        internal IEnumerable<IUpdatable> Updatables { get; private set; }
+        internal Player Player { get; }
+        internal TElement[] Elements { get; }
 
-        #region Troupes
-        
-        protected PurchaseButton<ImageButton, Unit> CreateTrojanPurchaseButton(SpriteManager spriteManager, Player player)
+        protected BuyingMenuOverlay(Player player, TElement[] elements)
         {
-            var sprite = spriteManager.CreateTrojan();
-            var btn = new PurchaseButton<ImageButton, Unit>(player,
-                new PurchasableAction<Unit>(new Trojan(spriteManager)), new ImageButton(spriteManager, 
-                sprite.getSingleFrame(spriteManager), 70, 70));
+            Player = player;
+            Elements = elements;
+        }
+
+        internal void Update(InputManager inputManager, GameTime gameTime)
+        {
+            foreach (var element in Elements)
             {
-                
-            };
-            var trojanSprite = btn.Button.Sprite;
-            trojanSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*trojanSprite.Width, 90 + trojanSprite.Height);
-            return btn;
-        }
-        
-        protected PurchaseButton<ImageButton, Unit> CreateBugPurchaseButton(SpriteManager spriteManager, Player player)
-        {
-            var sprite = spriteManager.CreateBug();
-            var bugButton = new PurchaseButton<ImageButton, Unit>(player,
-                new PurchasableAction<Unit>(new Bug(spriteManager)),
-                new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70));
-            var tmpSprite = bugButton.Button.Sprite;
-            tmpSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpSprite.Width, 90 + 2*tmpSprite.Height);
-            return bugButton;
+                element.Update(inputManager, gameTime);
+            }
         }
 
-        #endregion
-        
-        #region Heroes
-        
-        protected PurchaseButton<ImageButton, Unit> CreateFirefoxPurchaseButton(SpriteManager spriteManager, Player player)
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            var sprite = spriteManager.CreateFirefox();
-            var firefoxButton = new PurchaseButton<ImageButton, Unit>(player,
-                new PurchasableAction<Unit>(new Firefox(spriteManager)),
-                new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70));
-            var tmpSprite = firefoxButton.Button.Sprite;
-            tmpSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpSprite.Width, 90);
-            return firefoxButton;
+            foreach (var element in Elements)
+            {
+                element.Draw(spriteBatch, gameTime);
+            }
         }
-        
-        #endregion
     }
 }

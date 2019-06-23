@@ -134,9 +134,9 @@ namespace KernelPanic
             return new ImageSprite(texture);
         }
 
-        internal TextSprite CreateText()
+        internal TextSprite CreateText(string text = "")
         {
-            return new TextSprite(Lookup(Font.Button));
+            return new TextSprite(Lookup(Font.Button), text);
         }
 
         internal Sprite CreateMenuBackground()

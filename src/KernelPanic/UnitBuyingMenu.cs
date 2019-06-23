@@ -1,87 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Entities;
+using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Purchasing;
+using KernelPanic.Sprites;
 
 namespace KernelPanic
 {
-    sealed class UnitBuyingMenu : BuyingMenuOverlay
+    internal sealed class UnitBuyingMenu : BuyingMenuOverlay<UnitBuyingMenu.Element>
     {
-        private readonly List<Tuple<int, PurchaseButton<ImageButton, Unit>>> mChoices =
-            new List<Tuple<int, PurchaseButton<ImageButton, Unit>>>();
-        
-        private void IncrementCount(int index)
+        internal sealed class Element : IDrawable, IUpdatable
         {
-            var x = mChoices[index];
-            mChoices[index] = new Tuple<int, PurchaseButton<ImageButton, Unit>>(x.Item1 + 1, x.Item2);
-        }
+            private readonly PurchaseButton<ImageButton, Unit> mButton;
+            private readonly TextSprite mCounterSprite;
+            private int mCounter;
 
-        private void ResetCounts()
-        {
-            for (int i = 0; i < mChoices.Count; i++)
+            internal Element(PurchaseButton<ImageButton, Unit> button, SpriteManager spriteManager)
             {
-                mChoices[i] = new Tuple<int, PurchaseButton<ImageButton, Unit>>(0, mChoices[i].Item2);
+                // TODO: Set position of mCounterSprite.
+                mCounterSprite = spriteManager.CreateText("0");
+
+                // When a unit is purchased, increase its counter.
+                mButton = button;
+                mButton.Action.Purchased += (buyer, resource) => mCounterSprite.Text = (++mCounter).ToString();
+            }
+
+            internal void Reset()
+            {
+                mCounter = 0;
+                mCounterSprite.Text = "0";
+            }
+
+            public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+            {
+                mButton.Draw(spriteBatch, gameTime);
+            }
+
+            public void Update(InputManager inputManager, GameTime gameTime)
+            {
+                mButton.Update(inputManager, gameTime);
             }
         }
 
-        internal UnitBuyingMenu(SpriteManager spriteManager, Player player)
+        private UnitBuyingMenu(Player player, SpriteManager spriteManager, params PurchaseButton<ImageButton, Unit>[] buttons)
+            : base(player, buttons.Select(b => new Element(b, spriteManager)).ToArray())
         {
-            #region Heroes
-            
-            var firefoxButton = CreateFirefoxPurchaseButton(spriteManager, player);
-            mChoices.Add(new Tuple<int, PurchaseButton<ImageButton, Unit>>(0, firefoxButton));
-            firefoxButton.Action.Purchased += (buyer, resource) =>
-            {
-                resource.Sprite.Position = new Vector2(50 * 30, 150 * 3);
-                buyer.AttackingLane.EntityGraph.Add(resource);
-                firefoxButton.Action.ResetResource(new Firefox(spriteManager));
-                IncrementCount(mChoices.FindIndex(el => el.Item2.GetType() == firefoxButton.GetType()));
-            };
-            
-            #endregion
-
-            #region Troupes
-            
-            var trojanButton = CreateTrojanPurchaseButton(spriteManager, player);
-            mChoices.Add(new Tuple<int, PurchaseButton<ImageButton, Unit>>(0, trojanButton));
-            trojanButton.Action.Purchased += (buyer, resource) =>
-            {
-                resource.Sprite.Position = new Vector2(50 * 30, 150 * 3);
-                buyer.AttackingLane.EntityGraph.Add(resource);
-                trojanButton.Action.ResetResource(new Trojan(spriteManager));
-                IncrementCount(mChoices.Count - 1);
-            };
-
-            var bugButton = CreateBugPurchaseButton(spriteManager, player);
-            mChoices.Add(new Tuple<int, PurchaseButton<ImageButton, Unit>>(0, bugButton));
-            bugButton.Action.Purchased += (buyer, resource) =>
-            {
-                resource.Sprite.Position = new Vector2(50 * 30, 150 * 3);
-                buyer.AttackingLane.EntityGraph.Add(resource);
-                bugButton.Action.ResetResource(new Bug(spriteManager));
-                IncrementCount(mChoices.Count - 1);
-            };
-
-            #endregion
-        }        
-        
-        internal void Update(Input.InputManager input, GameTime gameTime)
-        {
-            foreach (var element in mChoices)
-            {
-                element.Item2.Update(input, gameTime);
-            }
         }
-        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+
+        internal static UnitBuyingMenu Create(Player player, SpriteManager spriteManager)
         {
-            foreach(var element in mChoices)
+            PurchaseButton<ImageButton, Unit> CreateButton(Unit unit, AnimatedSprite sprite)
             {
-                element.Item2.Draw(spriteBatch, gameTime);
+                var action = new PurchasableAction<Unit>(unit);
+                var button = new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70);
+                return new PurchaseButton<ImageButton, Unit>(player, action, button);
             }
 
+            var bug = CreateButton(new Bug(spriteManager), spriteManager.CreateBug());
+            var trojan = CreateButton(new Trojan(spriteManager), spriteManager.CreateTrojan());
+            var firefox = CreateButton(new Firefox(spriteManager), spriteManager.CreateFirefox());
+            return new UnitBuyingMenu(player, spriteManager, bug, trojan, firefox);
+        }
+
+        /// <summary>
+        /// Resets the counter of each element to zero.
+        /// </summary>
+        internal void ResetCounts()
+        {
+            foreach (var element in Elements)
+            {
+                element.Reset();
+            }
         }
     }
 }
