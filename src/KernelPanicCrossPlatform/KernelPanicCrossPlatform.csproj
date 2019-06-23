@@ -294,6 +294,9 @@
     <Compile Include="..\KernelPanic\Table\TileIndex.cs">
       <Link>Table\TileIndex.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Table\UnitSpawner.cs">
+      <Link>Table\UnitSpawner.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\UnitBuyingMenu.cs">
       <Link>UnitBuyingMenu.cs</Link>
     </Compile>

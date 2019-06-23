@@ -48,8 +48,8 @@ namespace KernelPanic.Table
         private VectorField mVectorField;
 
         internal EntityGraph EntityGraph { get; private set; }
+        internal UnitSpawner UnitSpawner { get; private set; }
 
-        // private UnitSpawner mUnitSpawner;
         // private BuildingSpawner mBuildingSpawner;
 
         #endregion
@@ -111,6 +111,7 @@ namespace KernelPanic.Table
             mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
+            UnitSpawner = new UnitSpawner(mGrid, EntityGraph.Add);
             var obstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
 
             if (entities?.Count > 0)

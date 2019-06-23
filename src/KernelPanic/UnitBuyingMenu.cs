@@ -70,9 +70,15 @@ namespace KernelPanic
 
         internal static UnitBuyingMenu Create(Player player, SpriteManager spriteManager)
         {
+            void UnitBought(Player buyer, Unit unit)
+            {
+                buyer.AttackingLane.UnitSpawner.Register(unit.Clone());
+            }
+
             PurchaseButton<ImageButton, Unit> CreateButton(Unit unit, AnimatedSprite sprite)
             {
                 var action = new PurchasableAction<Unit>(unit);
+                action.Purchased += UnitBought;
                 var button = new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70);
                 return new PurchaseButton<ImageButton, Unit>(player, action, button);
             }
