@@ -17,6 +17,8 @@ namespace KernelPanic
         internal IEnumerable<IDrawable> Drawables{ get; private set; }
         internal IEnumerable<IUpdatable> Updatables { get; private set; }
 
+        #region Troupes
+        
         protected PurchaseButton<ImageButton, Unit> CreateTrojanPurchaseButton(SpriteManager spriteManager, Player player)
         {
             var sprite = spriteManager.CreateTrojan();
@@ -30,6 +32,11 @@ namespace KernelPanic
             trojanSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*trojanSprite.Width, 90 + trojanSprite.Height);
             return btn;
         }
+
+        #endregion
+        
+        #region Heroes
+        
         protected PurchaseButton<ImageButton, Unit> CreateFirefoxPurchaseButton(SpriteManager spriteManager, Player player)
         {
             var sprite = spriteManager.CreateFirefox();
@@ -40,5 +47,7 @@ namespace KernelPanic
             tmpsprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpsprite.Width, 90);
             return firefoxButton;
         }
+        
+        #endregion
     }
 }
