@@ -15,10 +15,9 @@ namespace KernelPanic.Entities
     [DataContract]
     [KnownType(typeof(Unit))]
     [KnownType(typeof(Building))]
-
     internal abstract class Entity : IPriced, IBounded
     {
-        internal Sprite Sprite { get; }
+        internal Sprite Sprite { get; private set; }
 
         protected SpriteManager SpriteManager { get; }
 
@@ -31,6 +30,33 @@ namespace KernelPanic.Entities
             Sprite.SetOrigin(RelativePosition.Center);
             SpriteManager = spriteManager;
         }
+
+        /// <summary>
+        /// Can be overridden by subclasses to perform a deeper copy on selected properties.
+        /// </summary>
+        protected virtual void CompleteClone()
+        {
+            Sprite = Sprite.Clone();
+        }
+
+        /// <summary>
+        /// Creates a new object from this object. <see cref="CompleteClone"/> is called before returning it.
+        /// </summary>
+        /// <example>
+        /// When creating a clone function for a new subclass called <c>TheSubclass</c> use it like this
+        /// <code>
+        /// internal TheSubclass Clone() => Clone&lt;TheSubclass&gt;();
+        /// </code>
+        /// </example>
+        /// <typeparam name="T">Should be the type of <c>this</c>.</typeparam>
+        /// <returns>A copy of the object.</returns>
+        protected T Clone<T>() where T: Entity
+        {
+            var copy = (T) MemberwiseClone();
+            copy.CompleteClone();
+            return copy;
+        }
+
         public bool Selected { get; set; }
 
         public Rectangle Bounds => Sprite.Bounds;

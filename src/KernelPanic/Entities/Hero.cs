@@ -19,7 +19,7 @@ namespace KernelPanic.Entities
 {
     [DataContract]
     [KnownType(typeof(Firefox))]
-    internal class Hero : Unit
+    internal abstract class Hero : Unit
     {
         #region MemberVariables
         

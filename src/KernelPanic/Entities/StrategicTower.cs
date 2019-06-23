@@ -10,7 +10,6 @@ namespace KernelPanic.Entities
     internal class StrategicTower : Tower
     {
         private TowerStrategy mStrategy = TowerStrategy.First;
-        private readonly Sprite mRadiusSprite;
 
         /*internal*/ private TowerStrategy Strategy
         {

@@ -25,6 +25,11 @@ namespace KernelPanic.Entities
             mIndicator = spriteManager.CreateJumpIndicator();
         }
 
+        protected override void CompleteClone()
+        {
+            mAbility = new Stack<Vector2>(mAbility);
+        }
+
         #region Ability 
 
         protected override void IndicateAbility(InputManager inputManager)

@@ -42,6 +42,8 @@ namespace KernelPanic.Entities
             mDidDie = false;
         }
 
+        internal Unit Clone() => Clone<Unit>();
+
         /// <summary>
         /// <para>
         /// Subtracts the damage from the remaining life and calls <see cref="DidDie"/> if the result is zero or less.

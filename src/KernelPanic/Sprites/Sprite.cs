@@ -127,5 +127,21 @@ namespace KernelPanic.Sprites
         }
 
         #endregion
+
+        #region Cloneing
+
+        protected virtual void CompleteClone()
+        {
+            // Does nothing by default.
+        }
+
+        internal Sprite Clone()
+        {
+            var clone = (Sprite) MemberwiseClone();
+            clone.CompleteClone();
+            return clone;
+        }
+
+        #endregion
     }
 }

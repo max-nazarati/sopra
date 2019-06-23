@@ -17,9 +17,8 @@ namespace KernelPanic.Entities
         [DataMember]
         private readonly CooldownComponent mFireTimer;
         [JsonIgnore]
-        private readonly List<Projectile> mProjectiles = new List<Projectile>();
+        private List<Projectile> mProjectiles = new List<Projectile>();
         private Sprite mRadiusSprite;
-        private SoundManager mSounds;
         private bool mInRange;
 
         internal Tower(SpriteManager sprites, SoundManager sounds)
@@ -32,7 +31,6 @@ namespace KernelPanic.Entities
         {
             mFireTimer = new CooldownComponent(cooldown);
             mRadius = radius;
-            mSounds = sounds;
 
             mFireTimer.CooledDown += timer =>
             {
@@ -48,7 +46,7 @@ namespace KernelPanic.Entities
                     (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
                 mProjectiles.Add(new Projectile(direction, Sprite.Position, mRadius, sprites));
-                mSounds.PlaySound(SoundManager.Sound.Shoot1);
+                sounds.PlaySound(SoundManager.Sound.Shoot1);
 
                 // SoundManager.Instance.PlaySound("shoot");
                 // TODO implement updated SoundManager
@@ -87,6 +85,12 @@ namespace KernelPanic.Entities
             sprite.ScaleToHeight(size);
             sprite.SetOrigin(RelativePosition.Center);
             return new StrategicTower(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+        }
+
+        protected override void CompleteClone()
+        {
+            mRadiusSprite = mRadiusSprite.Clone();
+            mProjectiles = new List<Projectile>(mProjectiles);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
