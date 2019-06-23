@@ -62,6 +62,8 @@ namespace KernelPanic.PathPlanning
         {
             foreach (var node in mNodes)
             {
+                if (!mGrid.Contains(node.Position))
+                    continue;
                 mTile.TintColor = node.Color;
                 mTile.ScaleToWidth(node.Size);
                 mTile.Position = node.Position;
