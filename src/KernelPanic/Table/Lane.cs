@@ -27,7 +27,7 @@ namespace KernelPanic.Table
             Left,
 
             /// <summary>
-            /// Describes the lane which is shaped like an opening bracket ›]‹.
+            /// Describes the lane which is shaped like an closing bracket ›]‹.
             /// </summary>
             Right
         }
@@ -50,6 +50,9 @@ namespace KernelPanic.Table
         internal EntityGraph EntityGraph { get; private set; }
         internal UnitSpawner UnitSpawner { get; private set; }
 
+        internal Rectangle GridRectangle() => mGrid.LaneRectangle;
+        internal int LaneWidthInTiles() => Grid.LaneWidthInTiles;
+        
         // private BuildingSpawner mBuildingSpawner;
 
         #endregion
