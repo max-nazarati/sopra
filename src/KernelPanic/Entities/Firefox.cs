@@ -114,7 +114,7 @@ namespace KernelPanic.Entities
         {
             var direction = mAbilityTarget - Sprite.Position;
             direction.Normalize();
-            var rotation = direction.Angle(-1);
+            var rotation = direction.Angle(0.5);
 
             mIndicator.Position = Sprite.Position;
             mIndicator.Rotation = rotation;
