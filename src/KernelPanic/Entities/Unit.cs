@@ -78,18 +78,7 @@ namespace KernelPanic.Entities
         {
         }
 
-        protected virtual void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
-        {
-            if (Selected)
-            {
-                if (inputManager.MousePressed(InputManager.MouseButton.Right))
-                {
-                    var mouse = inputManager.TranslatedMousePosition;
-                    if (positionProvider.GridCoordinate(mouse) != null)
-                        MoveTarget = mouse;
-                }
-            }
-        }
+        protected abstract void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager);
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {

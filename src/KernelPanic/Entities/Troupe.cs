@@ -21,7 +21,6 @@ namespace KernelPanic.Entities
 
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            base.CalculateMovement(positionProvider, gameTime, inputManager);
             Vector2 movementDirection = positionProvider.GetVector(Grid.CoordinatePositionFromScreen(Sprite.Position));
             if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
             {
