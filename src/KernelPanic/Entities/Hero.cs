@@ -75,8 +75,7 @@ namespace KernelPanic.Entities
             mAStar = positionProvider.MakePathFinding(this, startPoint, target);
             mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
-
-            if (path.Count == 0) // there is no path to be found
+            if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
                 mAStar = positionProvider.MakePathFinding(this, startPoint, target);
