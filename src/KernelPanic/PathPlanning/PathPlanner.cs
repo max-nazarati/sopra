@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 
@@ -35,13 +34,14 @@ namespace KernelPanic.PathPlanning
             if (CreateNode(1, 0) is Node right) yield return right;
         }
 
-        private void ExpandNode(Node node)
+        private bool ExpandNode(Node node)
         {
             if (!mExplored.Add(node.Position))
-                return;
+                return false;
 
             foreach (var neighbour in EnumerateNeighbours(node))
                 mQueue.Insert(neighbour);
+            return true;
         }
 
         protected IEnumerable<Node> Run(IEnumerable<Point> start)
@@ -55,8 +55,8 @@ namespace KernelPanic.PathPlanning
             while (!mQueue.IsEmpty())
             {
                 var node = mQueue.RemoveMin();
-                yield return node;
-                ExpandNode(node);
+                if (ExpandNode(node))
+                    yield return node;
             }
         }
     }
