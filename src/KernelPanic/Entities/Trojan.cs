@@ -13,12 +13,16 @@ namespace KernelPanic.Entities
             : base(20, 3, 30, 6, spriteManager.CreateTrojan(), spriteManager)
         {
         }
+
         public void Kill()
         {
-
+            // TODO: Spawn children.
         }
-        public void WillSpawn(Action<Unit> unit)
+
+        /// <inheritdoc />
+        public override void WillSpawn(Action<Unit> spawnAction)
         {
+            mSpawnChildrenAction = spawnAction;
         }
     }
 }
