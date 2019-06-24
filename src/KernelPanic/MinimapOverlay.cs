@@ -11,6 +11,8 @@ namespace KernelPanic
 {
     internal sealed class MinimapOverlay
     {
+        #region Member Variables
+        
         private Sprite mSprite;
         private readonly Player mPlayerA;
         private readonly Player mPlayerB;
@@ -19,7 +21,7 @@ namespace KernelPanic
         private int mSize;
         private readonly Vector2 mPosition;
         private bool mSizeShouldChange;
-        private int mScale;
+        private float mScale;
 
         #region Colors
         
@@ -33,9 +35,11 @@ namespace KernelPanic
         
         private readonly Color[] mData;
         private readonly Color[] mInitializedData;
+        
+        #endregion
 
-
-
+        #region Konstruktor
+        
         internal MinimapOverlay(Player player1, Player player2, SpriteManager spriteManager, float relativeSize = 0.3f)
         {
             var screenSizeX = spriteManager.ScreenSize.X;
@@ -56,7 +60,37 @@ namespace KernelPanic
             InitializeScale();
             InitializeLaneData();
         }
+        
+        #endregion
 
+        #region Translate Function
+
+        /// <summary>
+        /// returns the index for data, which needs to be set for a world position
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        int CalculateMapIndexPosition(Vector2 point)
+        {
+            return (int)( ((point.Y * (mSize)) / mScale) + (point.X / mScale) );
+        }
+        
+        /// <summary>
+        /// calculates the world position of a minimap color index
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        private Point CalculateWorldPosition(int i)
+        {
+            var x = (i % mSize) * mScale;
+            var y = (i / (float)mSize) * mScale;
+            return new Point((int)x, (int)y);
+        }
+        
+        #endregion
+        
+        #region Initialize
+        
         private void SetBackground()
         {
             for (var i = 0; i < mSize * mSize; i++)
@@ -64,13 +98,6 @@ namespace KernelPanic
                 mData[i] = mColorBackground;
             }
         }
-        
-        private Vector2 MinimapPositionFromWorldPosition(Vector2 worldPoint)
-        {
-            return worldPoint / new Vector2(200, 200);
-        }
-
-        #region Initialize
         
         private void InitializeScale()
         {
@@ -84,9 +111,10 @@ namespace KernelPanic
             var maxY = laneRectangleB.Y + laneRectangleB.Height;
             
             var bottomRight = Grid.ScreenPositionFromCoordinate(new Point(maxX-minX, maxY-minY));
-
-            mScale = Math.Max(bottomRight.X, bottomRight.Y) / mSize;
+            
+            mScale = Math.Max(bottomRight.X, bottomRight.Y) / (float)mSize;
             Console.WriteLine("There will be " + mScale + " x " + mScale + " Pixel represented by 1 minimap Pixel");
+            // Console.WriteLine("There are a total of " + mSize * mSize + " Pixel.");
         }
 
         private void InitializeLaneData()
@@ -118,13 +146,13 @@ namespace KernelPanic
 
         private void UpdateData()
         {
-            SetBackground();
-            
             for (int i = 0; i < mData.Length; i++)
             {
                 // mData[i] = CalculateColor(i);
                 mData[i] = mInitializedData[i];
             }
+            
+            SetEntityColor();
         }
 
         private Color LaneColor(int i)
@@ -141,17 +169,32 @@ namespace KernelPanic
             }
 
             return mColorBackground;
-
         }
 
-        private Point CalculateWorldPosition(int i)
+        private void SetEntityColor()
         {
-            var x = (i % mSize) * mScale;
-            var y = (i / mSize) * mScale;
-            return new Point(x, y);
-            
+            var entities = mPlayerB.AttackingLane.EntityGraph.QuadTree.GetObjects();
+            foreach (var entity in entities)
+            {
+                mData[CalculateMapIndexPosition(entity.Sprite.Position)] = mColorPlayerA;
+                
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 1] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 2] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 3] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 1] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 2] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 3] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) +     mSize] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 2 * mSize] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 3 * mSize] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) -     mSize] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 2 * mSize] = mColorPlayerA;
+                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 3 * mSize] = mColorPlayerA;
+                
+                Console.WriteLine(CalculateMapIndexPosition(entity.Sprite.Position));
+            }
         }
-
+        
         private void DebugInformation()
         {
             var sizePerLane = mSize / 2;
@@ -190,6 +233,5 @@ namespace KernelPanic
         }
 
         #endregion
-        
     }
 }
