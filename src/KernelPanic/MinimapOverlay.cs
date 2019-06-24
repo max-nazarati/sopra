@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Net;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -19,14 +20,22 @@ namespace KernelPanic
         private readonly Vector2 mPosition;
         private bool mSizeShouldChange;
         private int mScale;
+
+        #region Colors
         
-        private readonly Color mBackground = Color.DimGray;
+        private readonly Color mColorBackground = Color.DimGray;
         private readonly Color mColorPlayerA = Color.Lime;
         private readonly Color mColorPlayerB = Color.Red;
+        private readonly Color mColorLaneA = Color.SlateGray;
+        private readonly Color mColorLaneB = Color.LightGray;
+        
+        #endregion
         
         private readonly Color[] mData;
-        
-        
+        private readonly Color[] mInitializedData;
+
+
+
         internal MinimapOverlay(Player player1, Player player2, SpriteManager spriteManager, float relativeSize = 0.3f)
         {
             var screenSizeX = spriteManager.ScreenSize.X;
@@ -38,19 +47,21 @@ namespace KernelPanic
             mPlayerB = player2;
             mSpriteManager = spriteManager;
 
-            InitializeScale();
-            
             // filling the minimap with background color
             mData = new Color[mSize * mSize];
+            mInitializedData = new Color[mSize * mSize];
             SetBackground();
             UpdateTexture();
+            
+            InitializeScale();
+            InitializeLaneData();
         }
 
         private void SetBackground()
         {
             for (var i = 0; i < mSize * mSize; i++)
             {
-                mData[i] = mBackground;
+                mData[i] = mColorBackground;
             }
         }
         
@@ -59,6 +70,8 @@ namespace KernelPanic
             return worldPoint / new Vector2(200, 200);
         }
 
+        #region Initialize
+        
         private void InitializeScale()
         {
             // we should not assume that minX = 0 and minY = 0 although it will probably be
@@ -75,6 +88,16 @@ namespace KernelPanic
             mScale = Math.Max(bottomRight.X, bottomRight.Y) / mSize;
             Console.WriteLine("There will be " + mScale + " x " + mScale + " Pixel represented by 1 minimap Pixel");
         }
+
+        private void InitializeLaneData()
+        {
+            for (int i = 0; i < mData.Length; i++)
+            {
+                mInitializedData[i] = LaneColor(i);
+            }
+        }
+        
+        #endregion
 
         #region Update
 
@@ -96,13 +119,37 @@ namespace KernelPanic
         private void UpdateData()
         {
             SetBackground();
-            // DebugInformation();
-            
             
             for (int i = 0; i < mData.Length; i++)
             {
-                mData[i] = mBackground;
+                // mData[i] = CalculateColor(i);
+                mData[i] = mInitializedData[i];
             }
+        }
+
+        private Color LaneColor(int i)
+        {
+            Point point = CalculateWorldPosition(i);
+            // Console.WriteLine(point);
+            if (mPlayerA.DefendingLane.Contains(new Vector2(point.X, point.Y)))
+            {
+                return mColorLaneA;
+            }
+            if (mPlayerB.DefendingLane.Contains(new Vector2(point.X, point.Y)))
+            {
+                return mColorLaneB;
+            }
+
+            return mColorBackground;
+
+        }
+
+        private Point CalculateWorldPosition(int i)
+        {
+            var x = (i % mSize) * mScale;
+            var y = (i / mSize) * mScale;
+            return new Point(x, y);
+            
         }
 
         private void DebugInformation()
