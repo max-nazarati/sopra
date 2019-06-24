@@ -72,7 +72,7 @@ namespace KernelPanic
         /// <returns></returns>
         int CalculateMapIndexPosition(Vector2 point)
         {
-            return (int)( ((point.Y * (mSize)) / mScale) + (point.X / mScale) );
+            return (int)( ( (int)( point.Y / mScale) * mSize) + (point.X / mScale) );
         }
         
         /// <summary>
@@ -194,6 +194,14 @@ namespace KernelPanic
                 Console.WriteLine(CalculateMapIndexPosition(entity.Sprite.Position));
             }
         }
+
+        private void UpdateTexture()
+        {
+            mSprite = mSpriteManager.CreateColoredRectangle(mSize, mSize, mData);
+            mSprite.Position = mPosition;
+        }
+
+        #region Debug
         
         private void DebugInformation()
         {
@@ -216,13 +224,9 @@ namespace KernelPanic
             var bottomRight = Grid.ScreenPositionFromCoordinate(new Point(laneGridB.X + laneGridB.Width, laneGridB.Y + laneGridB.Height));
             Console.WriteLine("bottomRight: " + bottomRight);
         }
-
-        private void UpdateTexture()
-        {
-            mSprite = mSpriteManager.CreateColoredRectangle(mSize, mSize, mData);
-            mSprite.Position = mPosition;
-        }
-
+        
+        #endregion
+        
         #endregion
 
         #region Draw
