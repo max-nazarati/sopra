@@ -57,6 +57,7 @@
     <Compile Include="Data\PriorityQueue.cs" />
     <Compile Include="Data\QuadTree.cs" />
     <Compile Include="Data\RelativePosition.cs" />
+    <Compile Include="Data\VectorField.cs" />
     <Compile Include="DebugSettings.cs" />
     <Compile Include="Entities\Bluescreen.cs" />
     <Compile Include="Entities\Bug.cs" />

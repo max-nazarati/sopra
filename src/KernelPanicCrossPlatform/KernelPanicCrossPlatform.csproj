@@ -96,6 +96,9 @@
     <Compile Include="..\KernelPanic\Data\RelativePosition.cs">
       <Link>Data\RelativePosition.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Data\VectorField.cs">
+      <Link>Data\VectorField.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\DebugSettings.cs">
       <Link>DebugSettings.cs</Link>
     </Compile>
