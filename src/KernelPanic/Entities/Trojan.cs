@@ -10,7 +10,7 @@ namespace KernelPanic.Entities
         private Action<Unit> mSpawnChildrenAction;
 
         internal Trojan(SpriteManager spriteManager)
-            : base(20, 3, 500, 6, spriteManager.CreateTrojan(), spriteManager)
+            : base(20, 3, 30, 6, spriteManager.CreateTrojan(), spriteManager)
         {
         }
         public void Kill()

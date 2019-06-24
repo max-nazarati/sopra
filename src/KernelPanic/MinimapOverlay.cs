@@ -10,28 +10,30 @@ namespace KernelPanic
     internal sealed class MinimapOverlay
     {
         private SpriteManager mSpriteManager;
-        private readonly Sprite mSprite;
-        private readonly float RelativeSize; // how much of the screen should be the minimap [0, 1]
-        private int Size;
+        private Sprite mSprite;
+        private readonly float mRelativeSize; // how much of the screen should be the minimap [0, 1]
+        private int mSize;
+        private readonly Vector2 mPosition;
         private bool mSizeShouldChange;
-        private Color[] mMinimapData;
+        private readonly Color mBackground = Color.DimGray;
+        private Color[] mData;
         
         
         internal MinimapOverlay(SpriteManager spriteManager, float relativeSize = 0.3f)
         {
             var screenSizeX = spriteManager.ScreenSize.X;
             var screenSizeY = spriteManager.ScreenSize.Y;
-            RelativeSize = relativeSize;
-            Size = (int)(Math.Min(screenSizeX, screenSizeY) * RelativeSize);
-            
-            mSprite = spriteManager.CreateColoredRectangle(Size, Size, Color.DimGray);
-            mSprite.Position = new Vector2(screenSizeX - Size, screenSizeY - Size);
+            mRelativeSize = relativeSize;
+            mSize = (int)(Math.Min(screenSizeX, screenSizeY) * mRelativeSize);
+            mPosition = new Vector2(screenSizeX - mSize, screenSizeY - mSize);
+            mSprite = spriteManager.CreateColoredRectangle(mSize, mSize, mBackground);
+            mSprite.Position = mPosition;
             mSpriteManager = spriteManager;
 
-            mMinimapData = new Color[Size * Size];
-            for (int i = 0; i < Size * Size; i++)
+            mData = new Color[mSize * mSize];
+            for (int i = 0; i < mSize * mSize; i++)
             {
-                mMinimapData[i] = Color.DimGray;
+                mData[i] = Color.DimGray;
             }
         }
         
@@ -39,6 +41,7 @@ namespace KernelPanic
         {
             UpdateSize();
             UpdateData();
+            UpdateTexture();
         }
 
         private void UpdateSize()
@@ -46,17 +49,23 @@ namespace KernelPanic
             if (!mSizeShouldChange) { return; }
             var screenSizeX = mSpriteManager.ScreenSize.X;
             var screenSizeY = mSpriteManager.ScreenSize.Y;
-            Size = (int)(Math.Min(screenSizeX, screenSizeY) * RelativeSize);
+            mSize = (int)(Math.Min(screenSizeX, screenSizeY) * mRelativeSize);
         }
         
         private void UpdateData()
         {
-            // mData
+            /*
+            for (int i = 0; i < mData.Length; i++)
+            {
+                mData[i] = Color.DimGray;
+            }
+            */
         }
 
         private void UpdateTexture()
         {
-            
+            mSprite = mSpriteManager.CreateColoredRectangle(mSize, mSize, mData);
+            mSprite.Position = mPosition;
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
