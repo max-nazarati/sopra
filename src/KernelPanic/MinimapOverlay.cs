@@ -26,15 +26,15 @@ namespace KernelPanic
             mRelativeSize = relativeSize;
             mSize = (int)(Math.Min(screenSizeX, screenSizeY) * mRelativeSize);
             mPosition = new Vector2(screenSizeX - mSize, screenSizeY - mSize);
-            mSprite = spriteManager.CreateColoredRectangle(mSize, mSize, mBackground);
-            mSprite.Position = mPosition;
             mSpriteManager = spriteManager;
 
+            // filling the minimap with background color
             mData = new Color[mSize * mSize];
             for (int i = 0; i < mSize * mSize; i++)
             {
-                mData[i] = Color.DimGray;
+                mData[i] = mBackground;
             }
+            UpdateTexture();
         }
         
         public void Update(InputManager inputManager, GameTime gameTime)
