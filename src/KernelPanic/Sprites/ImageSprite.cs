@@ -18,6 +18,8 @@ namespace KernelPanic.Sprites
 
         public Color TintColor { /*internal*/ private get; set; } = Color.White;
 
+        public SpriteEffects SpriteEffect { private get; set; } = SpriteEffects.None;
+
         public ImageSprite(Texture2D texture)
         {
             Texture = texture;
@@ -43,7 +45,7 @@ namespace KernelPanic.Sprites
                     TintColor,
                     rotation,
                     Origin,
-                    SpriteEffects.None,
+                    SpriteEffect,
                     1.0f);
             }
             else
@@ -55,7 +57,7 @@ namespace KernelPanic.Sprites
                     rotation,
                     Origin,
                     scale,
-                    SpriteEffects.None,
+                    SpriteEffect,
                     1.0f);
             }
         }
