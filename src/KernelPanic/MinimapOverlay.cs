@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Net;
+using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -30,12 +31,13 @@ namespace KernelPanic
         private readonly Color mColorPlayerB = Color.Red;
         private readonly Color mColorLaneA = Color.SlateGray;
         private readonly Color mColorLaneB = Color.LightGray;
+        private readonly Color mColorSelected = Color.Coral;
         
         #endregion
         
         private readonly Color[] mData;
         private readonly Color[] mInitializedData;
-        
+
         #endregion
 
         #region Konstruktor
@@ -176,22 +178,33 @@ namespace KernelPanic
             var entities = mPlayerB.AttackingLane.EntityGraph.QuadTree.GetObjects();
             foreach (var entity in entities)
             {
-                mData[CalculateMapIndexPosition(entity.Sprite.Position)] = mColorPlayerA;
+                var index = CalculateMapIndexPosition(entity.Sprite.Position);
+                var color = mColorBackground;
                 
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 1] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 2] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 3] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 1] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 2] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 3] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) +     mSize] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 2 * mSize] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) + 3 * mSize] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) -     mSize] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 2 * mSize] = mColorPlayerA;
-                mData[CalculateMapIndexPosition(entity.Sprite.Position) - 3 * mSize] = mColorPlayerA;
-                
-                Console.WriteLine(CalculateMapIndexPosition(entity.Sprite.Position));
+                if (entity.Selected)
+                {
+                    color = mColorSelected;
+                }
+                else if (entity is Unit)
+                {
+                    color = mColorPlayerA;
+                }
+                else if (entity is Tower)
+                {
+                    color = mColorPlayerB;
+                }
+                SetPixelSquare(index, 3, color);
+            }
+        }
+
+        private void SetPixelSquare(int dataIndex, int radius, Color color)
+        {
+            for (int i = -radius; i < radius; i++)
+            {
+                for (int j = -radius; j < radius; j++)
+                {
+                    mData[dataIndex + i + mSize * j] = color;
+                }
             }
         }
 
