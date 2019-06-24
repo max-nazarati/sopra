@@ -1,3 +1,4 @@
+using System;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework.Input;
 
@@ -5,16 +6,25 @@ namespace KernelPanic
 {
     internal static class DebugSettings
     {
-        internal static bool VisualizeAStar { get; private set; }
-        internal static bool VisualizeHeatMap { get; private set; }
+        private static bool sVisualizeAStar;
+        private static bool sVisualizeHeatMap;
+        private static bool sVisualizeVectors;
+
+        internal static bool VisualizeAStar => sVisualizeAStar;
+        internal static bool VisualizeHeatMap => sVisualizeHeatMap;
+        internal static bool VisualizeVectors => sVisualizeVectors;
 
         internal static void Update(InputManager inputManager)
         {
-            if (inputManager.KeyPressed(Keys.H))
-                VisualizeHeatMap = !VisualizeHeatMap;
+            void Toggles(Keys key, ref bool b)
+            {
+                if (inputManager.KeyPressed(key))
+                    b = !b;
+            }
 
-            if (inputManager.KeyPressed(Keys.G))
-                VisualizeAStar = !VisualizeAStar;
+            Toggles(Keys.H, ref sVisualizeHeatMap);
+            Toggles(Keys.G, ref sVisualizeAStar);
+            Toggles(Keys.V, ref sVisualizeVectors);
         }
     }
 }

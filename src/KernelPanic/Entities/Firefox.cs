@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
@@ -111,9 +112,9 @@ namespace KernelPanic.Entities
         
         private void DrawIndicator(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            var direction = (mAbilityTarget - Sprite.Position);
+            var direction = mAbilityTarget - Sprite.Position;
             direction.Normalize();
-            var rotation = -(float)(Math.Atan2(direction.X, direction.Y) + Math.PI);
+            var rotation = direction.Angle(-1);
 
             mIndicator.Position = Sprite.Position;
             mIndicator.Rotation = rotation;

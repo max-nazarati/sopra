@@ -45,7 +45,8 @@ namespace KernelPanic
             Nokia,
             Thunderbird,
             Virus,
-            StandingFox
+            StandingFox,
+            VectorArrow
         }
 
         private enum Font
@@ -95,6 +96,7 @@ namespace KernelPanic
                 Texture(Image.Thunderbird, "troupes/thunderbird"),
                 Texture(Image.Virus, "troupes/virus"),
                 Texture(Image.StandingFox, "heroes/firefox_standing"),
+                Texture(Image.VectorArrow, "vector_arrow"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -224,6 +226,13 @@ namespace KernelPanic
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower));
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile));
+        internal ImageSprite CreateVectorArrow()
+        {
+            var sprite = new ImageSprite(Lookup(Image.VectorArrow));
+            sprite.ScaleToHeight(0.4f * Grid.KachelSize);
+            sprite.SetOrigin(RelativePosition.CenterBottom);
+            return sprite;
+        }
 
         internal (Sprite Main, TextSprite Left, TextSprite Right, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
         {

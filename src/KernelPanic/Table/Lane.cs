@@ -181,11 +181,26 @@ namespace KernelPanic.Table
 
         private void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (!DebugSettings.VisualizeHeatMap)
+            Visualizer visualizer;
+
+            if (DebugSettings.VisualizeHeatMap)
+            {
+                visualizer = mHeatMap.Visualize(mGrid, mSpriteManager);
+                visualizer.Draw(spriteBatch, gameTime);
+            }
+
+            if (DebugSettings.VisualizeVectors)
+            {
+                visualizer = mVectorField.Visualize(mGrid, mSpriteManager);
+                visualizer.Draw(spriteBatch, gameTime);
+            }
+
+            if (!DebugSettings.VisualizeHeatMap && !DebugSettings.VisualizeVectors)
                 return;
 
-            var visualizer = mHeatMap.CreateVisualization(mGrid, mSpriteManager, false);
-            visualizer.Draw(spriteBatch, gameTime);
+            var tileVisualizer = TileVisualizer.Border(mGrid, mSpriteManager);
+            tileVisualizer.Append(Target.HitBox, Color.Blue);
+            tileVisualizer.Draw(spriteBatch, gameTime);
         }
 
         #endregion
