@@ -25,8 +25,8 @@ namespace KernelPanic.Data
         /// <code>
         /// [(1,1)][(1,0)][(0,1)][(0,1)]
         /// [(0,1)][ None][(0,1)][(0,1)]
-        /// [(1, 0)][(1, 0)][ None][ None]
-        /// [(1, 0)][(1, 0)][ None][ None]
+        /// [(1,0)][(1,0)][ None][ None]
+        /// [(1,0)][(1,0)][ None][ None]
         /// </code>
         /// with each square additionally normalized.
         /// </example>
