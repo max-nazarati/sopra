@@ -499,6 +499,22 @@ namespace KernelPanic
             return new ImageSprite(texture);
         }
         
+        internal ImageSprite CreateColoredRectangle(int width, int height, Color[] color)
+        {
+            if (color.Length != width * height)
+            {
+                throw new Exception("not enough colors to fill the rectangle");
+            }
+            var texture = new Texture2D(GraphicsDevice, width, height);
+            var data = new Color[width * height];
+            for(var pixel=0; pixel<data.Count();pixel++)
+            {
+                data[pixel] = color[pixel];
+            }
+            texture.SetData(data);
+            return new ImageSprite(texture);
+        }
+        
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
 
         /// <summary>
