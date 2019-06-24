@@ -189,11 +189,18 @@ namespace KernelPanic.Table
                 visualizer.Draw(spriteBatch, gameTime);
             }
 
-            if (!DebugSettings.VisualizeVectors)
+            if (DebugSettings.VisualizeVectors)
+            {
+                visualizer = mVectorField.Visualize(mGrid, mSpriteManager);
+                visualizer.Draw(spriteBatch, gameTime);
+            }
+
+            if (!DebugSettings.VisualizeHeatMap && !DebugSettings.VisualizeVectors)
                 return;
 
-            visualizer = mVectorField.Visualize(mGrid, mSpriteManager);
-            visualizer.Draw(spriteBatch, gameTime);
+            var tileVisualizer = TileVisualizer.Border(mGrid, mSpriteManager);
+            tileVisualizer.Append(Target.HitBox, Color.Blue);
+            tileVisualizer.Draw(spriteBatch, gameTime);
         }
 
         #endregion
