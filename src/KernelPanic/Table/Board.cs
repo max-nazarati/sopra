@@ -1,4 +1,6 @@
+using KernelPanic.Data;
 using KernelPanic.Input;
+using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -11,11 +13,11 @@ namespace KernelPanic.Table
         internal Lane RightLane => PlayerA.AttackingLane;
 
         [JsonProperty]
-        internal Player PlayerA { get; }
+        internal Player PlayerA { get; /* required for deserialization */ private set; }
         [JsonProperty]
-        internal Player PlayerB { get; }
+        internal Player PlayerB { get; /* required for deserialization */ private set; }
 
-        private Sprites.CompositeSprite mBase;
+        private readonly Sprite mBase;
 
         internal static Rectangle Bounds
         {
@@ -27,34 +29,32 @@ namespace KernelPanic.Table
             }
         }
 
-        internal Board(SpriteManager content, SoundManager sounds)
+        #region Constructing a Board
+
+        internal Board(SpriteManager content, SoundManager sounds, bool deserializing = false)
         {
+            mBase = CreateBase(content);
+            if (deserializing)
+            {
+                // If this is object is deserialized the other properties are set automatically later.
+                return;
+            }
+
             var leftLane = new Lane(Lane.Side.Left, content, sounds);
             var rightLane = new Lane(Lane.Side.Right, content, sounds);
             
             PlayerA = new Player(leftLane, rightLane);
             PlayerB = new Player(rightLane, leftLane);
-
-            var leftBase = content.CreateLeftBase();
-            var rightBase =  content.CreateRightBase();
-            leftBase.ScaleToWidth(Lane.RightBounds.Left - Lane.LeftBounds.Right);
-            rightBase.ScaleToWidth(Lane.RightBounds.Left - Lane.LeftBounds.Right);
-            leftBase.Position = new Vector2(0, 0);
-            rightBase.Position = new Vector2(0, Lane.LeftBounds.Bottom);
-            mBase = new Sprites.CompositeSprite
-            {
-                X = Lane.LeftBounds.Right,
-                Children = { leftBase, rightBase}
-            };
-
         }
 
-        [JsonConstructor]
-        private Board(Player playerA, Player playerB)
+        private static Sprite CreateBase(SpriteManager spriteManager)
         {
-            PlayerA = playerA;
-            PlayerB = playerB;
+            var position = Lane.LeftBounds.At(RelativePosition.TopRight);
+            var size = new Vector2(Lane.RightBounds.Left - Lane.LeftBounds.Right, Lane.LeftBounds.Height);
+            return spriteManager.CreateBases(position, size);
         }
+
+        #endregion
 
         internal void Update(GameTime gameTime, InputManager inputManager)
         {

@@ -381,6 +381,23 @@ namespace KernelPanic
             sprite.SetOrigin(RelativePosition.BottomLeft);
             return sprite;
         }
+
+        internal Sprite CreateBases(Vector2 upperLeft, Vector2 size)
+        {
+            var base1 = new ImageSprite(Lookup(Image.Base1)) { Y = 0 };
+            var base2 = new ImageSprite(Lookup(Image.Base2)) { Y = size.Y };
+            
+            base1.ScaleToWidth(size.X);
+            base2.ScaleToWidth(size.X);
+            base1.SetOrigin(RelativePosition.TopLeft);
+            base2.SetOrigin(RelativePosition.BottomLeft);
+
+            return new CompositeSprite
+            {
+                Position = upperLeft,
+                Children = {base1, base2}
+            };
+        }
         
         #endregion
         

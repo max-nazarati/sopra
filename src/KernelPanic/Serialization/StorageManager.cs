@@ -65,6 +65,7 @@ namespace KernelPanic.Serialization
         private static AutofacContractResolver CreateContractResolver(GameStateManager manager)
         {
             var builder = new ContainerBuilder();
+            builder.Register(c => new Board(manager.Sprite, manager.Sound, true));
             builder.Register(c => new Lane(manager.Sprite, manager.Sound));
             builder.Register(c => new Firefox(manager.Sprite));
             builder.Register(c => new Tower(manager.Sprite, manager.Sound));
