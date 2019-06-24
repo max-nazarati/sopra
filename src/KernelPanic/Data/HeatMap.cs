@@ -137,9 +137,9 @@ namespace KernelPanic.Data
             return result;
         }
 
-        internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager, bool drawBorderOnly=true)
+        internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager)
         {
-            var visualization = new Visualizer(grid, spriteManager, drawBorderOnly);
+            var visualization = TileVisualizer.FullTile(grid, spriteManager);
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
@@ -212,6 +212,13 @@ namespace KernelPanic.Data
                 if (point.X < 0 || point.Y < 0) return new Vector2(float.NaN);
                 return mVectorField[point.Y, point.X];
             }
+        }
+
+        internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
+        {
+            var visualizer = new ArrowVisualizer(grid, spriteManager);
+            visualizer.Append(mVectorField);
+            return visualizer;
         }
     }
 }
