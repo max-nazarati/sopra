@@ -12,7 +12,7 @@ namespace KernelPanic
 {
     internal sealed class SpriteManager
     {
-        private GraphicsDevice GraphicsDevice { get; }
+        public GraphicsDevice GraphicsDevice { get; }
 
         private enum Image
         {
@@ -479,11 +479,23 @@ namespace KernelPanic
         #endregion
         
         #endregion
-        
-        internal ImageSprite CreateColoredSquare(Color color)
+
+        internal ImageSprite CreateColoredPixel(Color color)
         {
             var texture = new Texture2D(GraphicsDevice, 1, 1);
-            texture.SetData(new[] {color});
+            texture.SetData(new [] { color });
+            return new ImageSprite(texture);
+        }
+
+        internal ImageSprite CreateColoredRectangle(int width, int height, Color color)
+        {
+            var texture = new Texture2D(GraphicsDevice, width, height);
+            var data = new Color[width * height];
+            for(var pixel=0; pixel<data.Count();pixel++)
+            {
+                data[pixel] = color;
+            }
+            texture.SetData(data);
             return new ImageSprite(texture);
         }
         
