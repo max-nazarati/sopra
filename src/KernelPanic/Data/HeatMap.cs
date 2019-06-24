@@ -102,20 +102,37 @@ namespace KernelPanic.Data
             bool Blocked(int xOffset, int yOffset) =>
                 !IsWalkable(new Point(point.X + xOffset, point.Y + yOffset));
 
-            var blockedX = gradient.X < 0 && Blocked(-1, 0) || gradient.X > 0 && Blocked(1, 0);
-            var blockedY = gradient.Y < 0 && Blocked(0, -1) || gradient.Y > 0 && Blocked(0, 1);
-
+            var blockedX =
+                    gradient.X < 0 && Blocked(-1, 0) ||
+                    gradient.X > 0 && Blocked(1, 0);
             if (blockedX)
             {
                 gradient.X = 0;
                 if (Math.Abs(gradient.Y) < 0.0001)
                     gradient.Y = 1;
+                return;
             } 
-            else if (blockedY)
+            
+            var blockedY =
+                    gradient.Y < 0 && Blocked(0, -1) ||
+                    gradient.Y > 0 && Blocked(0, 1);
+            if (blockedY)
             {
                 gradient.Y = 0;
                 if (Math.Abs(gradient.X) < 0.0001)
                     gradient.X = 1;
+                return;
+            }
+
+            var blockedDiagonal =
+                    gradient.X < 0 && gradient.Y < 0 && Blocked(-1, -1) ||
+                    gradient.X < 0 && gradient.Y > 0 && Blocked(-1, 1) ||
+                    gradient.X > 0 && gradient.Y < 0 && Blocked(1, -1) ||
+                    gradient.X > 0 && gradient.Y > 0 && Blocked(1, 1);
+            if (blockedDiagonal)
+            {
+                // Set one coordinate to zero. Which one doesn't matter (at least I think so).
+                gradient.X = 0;
             }
         }
 
