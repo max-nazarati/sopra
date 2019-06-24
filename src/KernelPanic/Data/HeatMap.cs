@@ -57,13 +57,13 @@ namespace KernelPanic.Data
         /// <returns></returns>
         private Vector2 Gradient(Point point)
         {
-            if (!(this[point] is float hereHeat))
+            if (!(this[point] is float heatHere) || heatHere < 0)
                 return new Vector2(float.NaN);
 
             float LookupHeat(int xOffset, int yOffset)
             {
                 var maybeHeat = this[point + new Point(xOffset, yOffset)];
-                return maybeHeat is float heat2 && heat2 >= 0 ? heat2 : hereHeat;
+                return maybeHeat is float heat2 && heat2 >= 0 ? heat2 : heatHere;
             }
 
             var heatUp = LookupHeat(0, -1);
