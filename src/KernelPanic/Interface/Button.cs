@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Interface
 {
-    internal abstract class Button : InterfaceComponent
+    internal abstract class Button : InterfaceComponent, IButtonLike
     {
         internal delegate void Delegate(Button sender, InputManager inputManager);
 
@@ -33,6 +33,12 @@ namespace KernelPanic.Interface
             mBackground.TintColor = ViewEnabled ? Color.White : Color.Gray;
             base.Draw(spriteBatch, gameTime);
         }
+
+        Button IButtonLike.Button => this;
     }
 
+    internal interface IButtonLike : IUpdatable, IDrawable
+    {
+        Button Button { get; }
+    }
 }

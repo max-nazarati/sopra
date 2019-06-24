@@ -8,7 +8,7 @@ using KernelPanic.Sprites;
 
 namespace KernelPanic.Purchasing
 {
-    internal class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded
+    internal class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded, IButtonLike
         where TResource: class, IPriced
         where TAction: PurchasableAction<TResource>
         where TButton: Button
@@ -71,6 +71,8 @@ namespace KernelPanic.Purchasing
             if (!Action.TryPurchase(Player))
                 throw new InvalidOperationException($"Player {Player} was not able to purchase {Action}");
         }
+
+        Button IButtonLike.Button => ((IButtonLike) Button).Button;
     }
 
     internal sealed class PurchaseButton<TButton, TResource> : PurchaseButton<TButton, TResource, PurchasableAction<TResource>>
