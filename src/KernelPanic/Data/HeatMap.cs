@@ -171,29 +171,26 @@ namespace KernelPanic.Data
 
         public override string ToString()
         {
-            string result = "";
-            for (int y=0; y < Height; y++)
+            var result = new StringBuilder();
+            for (var y=0; y < Height; y++)
             {
-                for (int x = 0; x < Width; x++)
+                result.Append($"[{y:D2}]  ");
+                for (var x = 0; x < Width; x++)
                 {
-                    result += mMap[y, x].ToString();
-                    switch (mMap[y, x].ToString().Length)
-                    {
-                        case 1:
-                            result += "   ";
-                            break;
-                        case 2:
-                            result += "  ";
-                            break;
-                        case 3:
-                            result += " ";
-                            break;
-                    }
+                    var value = (int) mMap[y, x];
+                    result.Append(value);
+                    if (value < 100 && value >= 0)
+                        result.Append(' ');
+                    if (value < 10)
+                        result.Append(' ');
+                    result.Append(' ');
                 }
-                if (y != Height - 1) result += "\n";
+
+                if (y != Height - 1)
+                    result.AppendLine();
             }
 
-            return result;
+            return result.ToString();
         }
 
         internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager)
