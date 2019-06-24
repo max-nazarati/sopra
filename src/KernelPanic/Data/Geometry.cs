@@ -30,5 +30,16 @@ namespace KernelPanic.Data
                    DistancePointToLine(center, radius, p3, p4) ||
                    DistancePointToLine(center, radius, p3, p1);
         }
+
+        /// <summary>
+        /// Calculates the angle of <paramref name="vector"/> in radians. <paramref name="piMul"/> times π is added.
+        /// </summary>
+        /// <param name="vector">The vector to calculate the angle of.</param>
+        /// <param name="piMul">The number of times to add π to the result.</param>
+        /// <returns>The angle in radians.</returns>
+        internal static float Angle(this Vector2 vector, double piMul = 0)
+        {
+            return (float) (Math.Atan2(vector.Y, vector.X) + piMul * Math.PI);
+        }
     }
 }

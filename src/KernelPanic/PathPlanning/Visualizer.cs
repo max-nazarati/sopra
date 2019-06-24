@@ -103,7 +103,7 @@ namespace KernelPanic.PathPlanning
                     // coordinate system where the y axis grows upwards we would have the subtract 0.5π, but because in
                     // XNA the Y axis grows downwards we have to add 0.5π.
                     mPosition = position,
-                    mRotation = (float) (Math.Atan2(direction.Y, direction.X) + Math.PI / 2)
+                    mRotation = direction.Angle(0.5)
                 };
             }
 

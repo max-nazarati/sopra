@@ -132,7 +132,7 @@ namespace KernelPanic.Entities
             {
                 // Turn into the direction of the target.
                 mInRange = true;
-                Sprite.Rotation = (float) (Math.Atan2(Sprite.Y - target.Y, Sprite.X - target.X) - Math.PI / 2);
+                Sprite.Rotation = (Sprite.Position - target).Angle(-0.5);
             }
             else
             {
