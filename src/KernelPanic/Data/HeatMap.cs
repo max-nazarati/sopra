@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -169,55 +172,54 @@ namespace KernelPanic.Data
         private bool Contains(Point point) =>
             0 <= point.X && point.X < Width && 0 <= point.Y && point.Y < Height;
 
+        #region Visualization
+
         public override string ToString()
         {
-            var result = new StringBuilder();
-            for (var y=0; y < Height; y++)
+            var builder = new StringBuilder();
+            foreach (var ((col, row), value) in AllPoints)
             {
-                result.Append($"[{y:D2}]  ");
-                for (var x = 0; x < Width; x++)
-                {
-                    var value = (int) mMap[y, x];
-                    result.Append(value);
-                    if (value < 100 && value >= 0)
-                        result.Append(' ');
-                    if (value < 10)
-                        result.Append(' ');
-                    result.Append(' ');
-                }
-
-                if (y != Height - 1)
-                    result.AppendLine();
+                if (col == 0 && row > 0)
+                    builder.AppendLine();
+                if (col == 0)
+                    builder.Append($"[{row:D2}]  ");
+                if (value < 100 && value >= 0)
+                    builder.Append(' ');
+                if (value < 10)
+                    builder.Append(' ');
+                builder.Append(value).Append(' ');
             }
-
-            return result.ToString();
+            return builder.ToString();
         }
 
-        internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager)
+        internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
         {
             var visualization = TileVisualizer.FullTile(grid, spriteManager);
-            for (int x = 0; x < Width; x++)
+            foreach (var (point, value) in AllPoints)
             {
-                for (int y = 0; y < Height; y++)
-                {
-                    Color color;
-                    if ((int)mMap[y, x] == 0)
-                    {
-                        color = Color.Red;
-                    }
-                    else if (IsWalkable(new Point(x, y)))
-                    {
-                        color = new Color(255 - 4*(int)mMap[y, x], 255 - 4 * (int)mMap[y, x], 0);
-                    }
-                    else
-                    {
-                        color = Color.White;
-                    }
-                    visualization.Append(new Point[] {new Point(x, y)}, color);
-                }
+                Color color;
+                if (value == 0)
+                    color = Color.Red;
+                else if (IsWalkable(point))
+                    color = new Color(255 - 4 * value, 255 - 4 * value, 0);
+                else
+                    color = Color.White;
+                    
+                visualization.Append(new [] {point}, color);
             }
-
             return visualization;
         }
+
+        private IEnumerable<(Point Point, int Value)> AllPoints
+        {
+            get
+            {
+                var width = Width;
+                return Enumerable.Range(0, Height).SelectMany(row =>
+                    Enumerable.Range(0, width).Select(col => (new Point(col, row), (int) mMap[row, col])));
+            }
+        }
+
+        #endregion
     }
 }

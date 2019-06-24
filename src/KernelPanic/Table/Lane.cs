@@ -185,7 +185,7 @@ namespace KernelPanic.Table
 
             if (DebugSettings.VisualizeHeatMap)
             {
-                visualizer = mHeatMap.CreateVisualization(mGrid, mSpriteManager);
+                visualizer = mHeatMap.Visualize(mGrid, mSpriteManager);
                 visualizer.Draw(spriteBatch, gameTime);
             }
 
