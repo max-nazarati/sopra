@@ -367,20 +367,6 @@ namespace KernelPanic
         #endregion
         
         #region Base
-        
-        internal ImageSprite CreateLeftBase()
-        {
-            var sprite = new ImageSprite(Lookup(Image.Base1));
-            sprite.SetOrigin(RelativePosition.TopLeft);
-            return sprite;
-        }
-
-        internal ImageSprite CreateRightBase()
-        {
-            var sprite = new ImageSprite(Lookup(Image.Base2));
-            sprite.SetOrigin(RelativePosition.BottomLeft);
-            return sprite;
-        }
 
         internal Sprite CreateBases(Vector2 upperLeft, Vector2 size)
         {
@@ -391,6 +377,7 @@ namespace KernelPanic
             base2.ScaleToWidth(size.X);
             base1.SetOrigin(RelativePosition.TopLeft);
             base2.SetOrigin(RelativePosition.BottomLeft);
+            base2.SpriteEffect = SpriteEffects.FlipHorizontally;
 
             return new CompositeSprite
             {
