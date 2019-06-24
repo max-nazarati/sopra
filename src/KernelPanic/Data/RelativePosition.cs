@@ -75,5 +75,16 @@ namespace KernelPanic.Data
                     throw new InvalidEnumArgumentException(nameof(position), (int) position, typeof(RelativePosition));
             }
         }
+
+        /// <summary>
+        /// Calculates the point on the border of <paramref name="rectangle"/> indicated by <paramref name="position"/>.
+        /// </summary>
+        /// <param name="rectangle">The rectangle.</param>
+        /// <param name="position">The position of the point.</param>
+        /// <returns>Returns the point as a <see cref="Vector2"/> because centers might lie between points.</returns>
+        internal static Vector2 At(this Rectangle rectangle, RelativePosition position)
+        {
+            return rectangle.Location.ToVector2() + position.RectangleOrigin(rectangle.Size.ToVector2());
+        }
     }
 }
