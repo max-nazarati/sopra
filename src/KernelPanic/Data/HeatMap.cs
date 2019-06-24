@@ -59,7 +59,7 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="point">(x, y) point of the gradient to be computed</param>
         /// <returns></returns>
-        private Vector2 Gradient(Point point)
+        internal Vector2 Gradient(Point point)
         {
             if (!(this[point] is float heatHere) || heatHere < 0)
                 return new Vector2(float.NaN);
@@ -146,13 +146,6 @@ namespace KernelPanic.Data
             angle = index * octant;
             gradient.X = (float) Math.Cos(angle);
             gradient.Y = (float) Math.Sin(angle);
-        }
-
-        public Vector2 NormalizedGradient(Point point)
-        {
-            Vector2 grad = Gradient(point);
-            if (grad != Vector2.Zero) grad.Normalize();
-            return grad;
         }
 
         internal void Block(Point point) => this[point] = -1;

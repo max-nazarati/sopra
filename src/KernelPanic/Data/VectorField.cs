@@ -38,7 +38,7 @@ namespace KernelPanic.Data
             {
                 for (var col = 0; col < heatMap.Width; ++col)
                 {
-                    mVectorField[row, col] = heatMap.NormalizedGradient(new Point(col, row));
+                    mVectorField[row, col] = heatMap.Gradient(new Point(col, row));
                 }
             }
         }
