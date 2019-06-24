@@ -28,7 +28,7 @@ namespace KernelPanic
             
             mScoreOverlay = new ScoreOverlay(player1, player2, gameStateManager.Sprite);
             mUnitBuyingMenu = UnitBuyingMenu.Create(player2, gameStateManager.Sprite);    // Fixme: This should become player1.
-            mMinimapOverlay = new MinimapOverlay(gameStateManager.Sprite);
+            mMinimapOverlay = new MinimapOverlay(player1, player2, gameStateManager.Sprite);
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)

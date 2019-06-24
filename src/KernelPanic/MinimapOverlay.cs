@@ -9,23 +9,31 @@ namespace KernelPanic
 {
     internal sealed class MinimapOverlay
     {
-        private SpriteManager mSpriteManager;
         private Sprite mSprite;
+        private readonly Player mPlayerA;
+        private readonly Player mPlayerB;
+        private readonly SpriteManager mSpriteManager;
         private readonly float mRelativeSize; // how much of the screen should be the minimap [0, 1]
         private int mSize;
         private readonly Vector2 mPosition;
         private bool mSizeShouldChange;
+        
         private readonly Color mBackground = Color.DimGray;
+        private readonly Color mColorPlayerA = Color.Lime;
+        private readonly Color mColorPlayerB = Color.Red;
+        
         private Color[] mData;
         
         
-        internal MinimapOverlay(SpriteManager spriteManager, float relativeSize = 0.3f)
+        internal MinimapOverlay(Player player1, Player player2, SpriteManager spriteManager, float relativeSize = 0.3f)
         {
             var screenSizeX = spriteManager.ScreenSize.X;
             var screenSizeY = spriteManager.ScreenSize.Y;
             mRelativeSize = relativeSize;
             mSize = (int)(Math.Min(screenSizeX, screenSizeY) * mRelativeSize);
             mPosition = new Vector2(screenSizeX - mSize, screenSizeY - mSize);
+            mPlayerA = player1;
+            mPlayerB = player2;
             mSpriteManager = spriteManager;
 
             // filling the minimap with background color
@@ -54,12 +62,10 @@ namespace KernelPanic
         
         private void UpdateData()
         {
-            /*
             for (int i = 0; i < mData.Length; i++)
             {
                 mData[i] = Color.DimGray;
             }
-            */
         }
 
         private void UpdateTexture()
