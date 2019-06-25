@@ -60,6 +60,7 @@ namespace KernelPanic.Entities
             public Button Button => mButton.Button;
 
             private readonly PurchaseButton<TextButton, SellAction> mButton;
+            private readonly Building mBuilding;
 
             public SellAction(Building building, Player owner, SpriteManager spriteManager)
             {
@@ -67,13 +68,13 @@ namespace KernelPanic.Entities
                 var button = new TextButton(spriteManager) {Title = "Verkaufen"};
                 mButton = new PurchaseButton<TextButton, SellAction>(owner, action, button);
                 action.Purchased += (player, theAction) => building.SetWantsRemoval();
-
-                // You get 80% of the buildings worth back when selling.
-                Price = (int) (building.BitcoinWorth * -0.8);
+                mBuilding = building;
             }
 
-            public int Price { get; }
             public Currency Currency => Currency.Bitcoin;
+
+            // You get 80% of the buildings worth back when selling.
+            public int Price => (int) (mBuilding.BitcoinWorth * -0.8);
 
             void IUpdatable.Update(InputManager inputManager, GameTime gameTime) =>
                 mButton.Update(inputManager, gameTime);
