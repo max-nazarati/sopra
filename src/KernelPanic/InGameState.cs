@@ -124,6 +124,7 @@ namespace KernelPanic
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mBoard.Draw(spriteBatch, gameTime);
+            mSelectionManager.Selection?.DrawActions(spriteBatch, gameTime);
             mPurchaseDemoButton1.Draw(spriteBatch, gameTime);
             mPurchaseDemoButton2.Draw(spriteBatch, gameTime);
             mPurchaseDemoReset.Draw(spriteBatch, gameTime);

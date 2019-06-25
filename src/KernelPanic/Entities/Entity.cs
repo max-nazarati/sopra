@@ -78,10 +78,10 @@ namespace KernelPanic.Entities
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Sprite.Draw(spriteBatch, gameTime);
+        }
 
-            if (!Selected)
-                return;
-
+        internal void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
+        {
             foreach (var action in mStoredActions)
             {
                 action.Draw(spriteBatch, gameTime);
