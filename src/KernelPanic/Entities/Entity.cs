@@ -31,6 +31,8 @@ namespace KernelPanic.Entities
             SpriteManager = spriteManager;
         }
 
+        #region Cloning
+
         /// <summary>
         /// Can be overridden by subclasses to perform a deeper copy on selected properties.
         /// </summary>
@@ -57,6 +59,8 @@ namespace KernelPanic.Entities
             return copy;
         }
 
+        #endregion
+
         public bool Selected { get; set; }
 
         public Rectangle Bounds => Sprite.Bounds;
@@ -79,8 +83,12 @@ namespace KernelPanic.Entities
             }
         }
 
+        #region IPriced
+
         public int Price { get; }
         public Currency Currency => Currency.Bitcoin;
+
+        #endregion
 
         #region Actions
 
