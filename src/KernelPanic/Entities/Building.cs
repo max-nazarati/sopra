@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using KernelPanic.Interface;
 using KernelPanic.Purchasing;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Entities
 {
@@ -48,40 +50,36 @@ namespace KernelPanic.Entities
 
         #region Actions
 
-        protected override IEnumerable<IAction> Actions =>
-            base.Actions.Extend(new SellAction(this, SpriteManager));
+        protected override IEnumerable<IAction> Actions(Player owner) =>
+            base.Actions(owner).Extend(
+                new SellAction(this, owner, SpriteManager)
+            );
 
-        private sealed class SellAction : BaseAction<PurchaseButton<TextButton, SellAction>>, IPriced
+        private sealed class SellAction : IAction, IPriced
         {
-            private readonly Building mBuilding;
+            public Button Button => mButton.Button;
 
-            public SellAction(Building building, SpriteManager spriteManager) : base(CreateButton(spriteManager))
+            private readonly PurchaseButton<TextButton, SellAction> mButton;
+
+            public SellAction(Building building, Player owner, SpriteManager spriteManager)
             {
-                mBuilding = building;
-                Provider.Action.ResetResource(this);
-                Provider.Action.Purchased += (player, action) => Console.WriteLine("Sold building " + building);
-            }
+                var action = new PurchasableAction<SellAction>(this);
+                var button = new TextButton(spriteManager) {Title = "Verkaufen"};
+                mButton = new PurchaseButton<TextButton, SellAction>(owner, action, button);
+                action.Purchased += (player, theAction) => Console.WriteLine("Sold building " + building);
 
-            private static PurchaseButton<TextButton, SellAction> CreateButton(SpriteManager spriteManager)
-            {
-                var action = new PurchasableAction<SellAction>();
-                var button = new PurchaseButton<TextButton, SellAction>(null, action, new TextButton(spriteManager))
-                {
-                    Button = { Title = "Verkaufen" },
-                    PossiblyEnabled = false // We don't have enough information to actually do something.
-                };
-                return button;
-            }
-
-            public Currency Currency => Currency.Bitcoin;
-            public int Price =>
                 // You get 80% of the buildings worth back when selling.
-                (int) (mBuilding.BitcoinWorth * -0.8);
-
-            public override void MoveTo(Vector2 position)
-            {
-                Provider.Button.Sprite.Position = position;
+                Price = (int) (building.BitcoinWorth * -0.8);
             }
+
+            public int Price { get; }
+            public Currency Currency => Currency.Bitcoin;
+
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) =>
+                mButton.Update(inputManager, gameTime);
+
+            void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
+                mButton.Draw(spriteBatch, gameTime);
         }
 
         #endregion

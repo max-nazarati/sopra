@@ -4,11 +4,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Input;
+using KernelPanic.Interface;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-
 
 namespace KernelPanic.Entities
 {
@@ -67,19 +66,25 @@ namespace KernelPanic.Entities
 
         internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            if (Selected)
-            {
-                PositionActions(action => action.Update(inputManager, gameTime));
-            }
+            if (!Selected)
+                return;
+
+            if (mStoredActions == null)
+                mStoredActions = Actions(positionProvider.Owner[this]).ToArray();
+
+            PositionActions(action => action.Update(inputManager, gameTime));
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Sprite.Draw(spriteBatch, gameTime);
 
-            if (Selected)
+            if (!Selected)
+                return;
+
+            foreach (var action in mStoredActions)
             {
-                PositionActions(action => action.Draw(spriteBatch, gameTime));
+                action.Draw(spriteBatch, gameTime);
             }
         }
 
@@ -92,40 +97,41 @@ namespace KernelPanic.Entities
 
         #region Actions
 
+        private IAction[] mStoredActions;
+
+        /// <summary>
+        /// Enumerates through all actions supported by this entity. Defaults to no actions.
+        /// <para>
+        /// Can be overriden in subclasses to add additional actions e.g. using
+        /// <see cref="EnumerableExtensions.Extend{IAction}"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <returns></returns>
+        protected virtual IEnumerable<IAction> Actions(Player owner) =>
+            Enumerable.Empty<IAction>();
+
+        protected interface IAction : IButtonLike
+        {
+        }
+
+        /// <summary>
+        /// Modifies the actions in <see cref="mStoredActions"/> to be stacked vertically aligned with this entity's
+        /// bounds. To avoid a second loop, <paramref name="body"/> is called with each action after positioning.
+        /// </summary>
+        /// <param name="body">Called with each action in <see cref="mStoredActions"/>.</param>
         private void PositionActions(Action<IAction> body)
         {
-            const int actionSpacer = 15;
+            const int padding = 15;
             var bounds = Sprite.Bounds;
-            var position = bounds.Location + new Point(bounds.Width + actionSpacer, -actionSpacer);
-            foreach (var action in Actions)
+            var position = (bounds.Location + new Point(bounds.Width + padding, -padding)).ToVector2();
+            foreach (var action in mStoredActions)
             {
-                position.Y += actionSpacer;
-                action.MoveTo(position.ToVector2());
+                position.Y += padding;
+                action.Button.Sprite.Position = position;
                 body(action);
-                position.Y += action.Bounds.Height;
+                position.Y += action.Button.Sprite.Height;
             }
-        }
-        
-        protected virtual IEnumerable<IAction> Actions => Enumerable.Empty<IAction>();
-
-        protected interface IAction : IBounded, IDrawable, IUpdatable
-        {
-            void MoveTo(Vector2 position);
-        }
-
-        protected abstract class BaseAction<T> : IAction where T: IBounded, IDrawable, IUpdatable
-        {
-            protected T Provider { get; }
-
-            protected BaseAction(T provider)
-            {
-                Provider = provider;
-            }
-
-            public Rectangle Bounds => Provider.Bounds;
-            public abstract void MoveTo(Vector2 position);
-            public void Draw(SpriteBatch spriteBatch, GameTime gameTime) => Provider.Draw(spriteBatch, gameTime);
-            public void Update(InputManager inputManager, GameTime gameTime) => Provider.Update(inputManager, gameTime);
         }
 
         #endregion

@@ -314,20 +314,24 @@ namespace KernelPanic.Entities
 
         #region Actions
 
-        protected override IEnumerable<IAction> Actions =>
-            base.Actions.Extend(new AbilityAction(this, SpriteManager));
+        protected override IEnumerable<IAction> Actions(Player owner) =>
+            base.Actions(owner).Extend(new AbilityAction(this, SpriteManager));
 
-        private sealed class AbilityAction : BaseAction<TextButton>
+        private sealed class AbilityAction : IAction
         {
-            internal AbilityAction(Hero hero, SpriteManager sprites) : base(new TextButton(sprites) {Title = "Fähigkeit"})
+            public Button Button { get; }
+
+            internal AbilityAction(Hero hero, SpriteManager sprites)
             {
-                Provider.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager, true);
+                Button = new TextButton(sprites) {Title = "Fähigkeit"};
+                Button.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager, true);
             }
 
-            public override void MoveTo(Vector2 position)
-            {
-                Provider.Sprite.Position = position;
-            }
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) =>
+                Button.Update(inputManager, gameTime);
+
+            void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
+                Button.Draw(spriteBatch, gameTime);
         }
 
         #endregion
