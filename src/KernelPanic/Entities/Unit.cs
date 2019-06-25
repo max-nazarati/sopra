@@ -121,9 +121,9 @@ namespace KernelPanic.Entities
         {
             if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
                 return;
-                
-            DidDie();
+
             positionProvider.DamageBase(AttackStrength);
+            SetWantsRemoval();
         }
     }
 }

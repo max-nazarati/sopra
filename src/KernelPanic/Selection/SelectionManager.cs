@@ -38,10 +38,17 @@ namespace KernelPanic.Selection
             private set
             {
                 if (mSelection != null)
+                {
                     mSelection.Selected = false;
+                    mSelection.Removed -= SelectedEntityRemoved;
+                }
+
                 if (value != null)
+                {
                     value.Selected = true;
-                    
+                    value.Removed += SelectedEntityRemoved;
+                }
+
                 SelectionChanged?.Invoke(mSelection, value);
                 mSelection = value;
             }
@@ -80,6 +87,11 @@ namespace KernelPanic.Selection
                 // The click was inside a lane but not on an entity => deselect any selected entities.
                 Selection = null;
             }
+        }
+
+        private void SelectedEntityRemoved(Entity entity)
+        {
+            Selection = null;
         }
     }
 }

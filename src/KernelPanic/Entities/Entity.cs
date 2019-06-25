@@ -60,6 +60,10 @@ namespace KernelPanic.Entities
 
         #region Removal
 
+        internal delegate void RemovalDelegate(Entity entity);
+
+        internal event RemovalDelegate Removed;
+
         /// <summary>
         /// If this flag is <c>true</c> this entity should be removed from the <see cref="EntityGraph"/>.
         /// </summary>
@@ -68,7 +72,11 @@ namespace KernelPanic.Entities
         /// <summary>
         /// Flags this entity for removal.
         /// </summary>
-        protected void SetWantsRemoval() => WantsRemoval = true;
+        protected void SetWantsRemoval()
+        {
+            WantsRemoval = true;
+            Removed?.Invoke(this);
+        }
 
         #endregion
 
