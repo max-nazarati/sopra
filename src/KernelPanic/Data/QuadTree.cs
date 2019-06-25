@@ -184,7 +184,7 @@ namespace KernelPanic.Data
             }
         }
 
-        /*internal*/ private void Add(IEnumerable<T> elements)
+        internal void Add(IEnumerable<T> elements)
         {
             foreach (var element in elements)
             {

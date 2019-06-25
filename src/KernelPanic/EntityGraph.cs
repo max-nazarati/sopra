@@ -43,10 +43,7 @@ namespace KernelPanic
 
         internal void Add(IEnumerable<Entity> entities)
         {
-            foreach (var entity in entities)
-            {
-                Add(entity);
-            }
+            QuadTree.Add(entities);
         }
         
         #endregion
