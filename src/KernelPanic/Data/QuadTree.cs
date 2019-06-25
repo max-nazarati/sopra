@@ -184,15 +184,6 @@ namespace KernelPanic.Data
             }
         }
 
-        public void Remove(T entity)
-        {
-            if (mObjects.Remove(entity))
-                return;
-            
-            if (CalculatePosition(entity) is SquareIndex index)
-                mChilds[(int) index].Remove(entity);
-        }
-
         /*internal*/ private void Add(IEnumerable<T> elements)
         {
             foreach (var element in elements)
@@ -201,9 +192,14 @@ namespace KernelPanic.Data
             }
         }
         
-        internal void Rebuild()
+        /// <summary>
+        /// Rebuilds this <see cref="QuadTree{T}"/> using the updated bounds. If <paramref name="predicate"/> is given,
+        /// only the objects are kept for which <c>true</c> is returned.
+        /// </summary>
+        /// <param name="predicate">Used to filter the objects.</param>
+        internal void Rebuild(Func<T, bool> predicate = null)
         {
-            var allEntities = new List<T>(this);
+            var allEntities = new List<T>(predicate == null ? this : this.Where(predicate));
             Clear();
             Add(allEntities);
         }

@@ -20,8 +20,6 @@ namespace KernelPanic.Entities
 
         protected SpriteManager SpriteManager { get; }
 
-        public bool mDidDie;
-
         protected Entity(int price, Sprite sprite, SpriteManager spriteManager)
         {
             Price = price;
@@ -57,6 +55,20 @@ namespace KernelPanic.Entities
             copy.CompleteClone();
             return copy;
         }
+
+        #endregion
+
+        #region Removal
+
+        /// <summary>
+        /// If this flag is <c>true</c> this entity should be removed from the <see cref="EntityGraph"/>.
+        /// </summary>
+        internal bool WantsRemoval { get; private set; }
+
+        /// <summary>
+        /// Flags this entity for removal.
+        /// </summary>
+        protected void SetWantsRemoval() => WantsRemoval = true;
 
         #endregion
 

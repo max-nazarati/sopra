@@ -39,10 +39,11 @@ namespace KernelPanic.Entities
             RemainingLife = life;
             AttackStrength = attackStrength;
             ShouldMove = true;
-            mDidDie = false;
         }
 
         internal Unit Clone() => Clone<Unit>();
+
+        #region Taking damage
 
         /// <summary>
         /// <para>
@@ -66,8 +67,10 @@ namespace KernelPanic.Entities
         /// </summary>
         protected virtual void DidDie()
         {
-            mDidDie = true;
+            SetWantsRemoval();
         }
+
+        #endregion
 
         /// <summary>
         /// Called when this unit is spawned, the passed action can be used to spawn further units when something

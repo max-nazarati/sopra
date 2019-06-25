@@ -69,19 +69,9 @@ namespace KernelPanic
 
         public void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            foreach (var entity in new List<Entity>(QuadTree))
+            foreach (var entity in QuadTree)
             {
-                if (entity is Unit)
-                {
-                    if (entity.mDidDie)
-                        QuadTree.Remove(entity);
-                    else
-                        entity.Update(positionProvider, gameTime, inputManager);
-                }
-                else
-                {
-                    entity.Update(positionProvider, gameTime, inputManager);
-                }
+                entity.Update(positionProvider, gameTime, inputManager);
             }
 
             /*
@@ -91,7 +81,7 @@ namespace KernelPanic
                     $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime} [BOUNDS:] {a.Bounds} {b.Bounds}");
             }
             */
-            QuadTree.Rebuild();
+            QuadTree.Rebuild(entity => !entity.WantsRemoval);
         }
 
         #endregion
