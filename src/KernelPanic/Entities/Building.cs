@@ -66,7 +66,7 @@ namespace KernelPanic.Entities
                 var action = new PurchasableAction<SellAction>(this);
                 var button = new TextButton(spriteManager) {Title = "Verkaufen"};
                 mButton = new PurchaseButton<TextButton, SellAction>(owner, action, button);
-                action.Purchased += (player, theAction) => Console.WriteLine("Sold building " + building);
+                action.Purchased += (player, theAction) => building.SetWantsRemoval();
 
                 // You get 80% of the buildings worth back when selling.
                 Price = (int) (building.BitcoinWorth * -0.8);
