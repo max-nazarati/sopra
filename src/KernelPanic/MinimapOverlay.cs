@@ -23,6 +23,7 @@ namespace KernelPanic
         private readonly Vector2 mPosition;
         private bool mSizeShouldChange;
         private float mScale;
+        private int mRadius;
 
         #region Colors
         
@@ -59,7 +60,7 @@ namespace KernelPanic
             SetBackground();
             UpdateTexture();
             
-            InitializeScale();
+            InitializeScale(); // mRadius is init here
             InitializeLaneData();
         }
         
@@ -117,6 +118,9 @@ namespace KernelPanic
             mScale = Math.Max(bottomRight.X, bottomRight.Y) / (float)mSize;
             Console.WriteLine("There will be " + mScale + " x " + mScale + " Pixel represented by 1 minimap Pixel");
             // Console.WriteLine("There are a total of " + mSize * mSize + " Pixel.");
+            
+            mRadius = (int)(Grid.KachelSize / (mScale * 2)); // InitializeScale before mRadius
+            Console.WriteLine("Kachelsize is: " + Grid.KachelSize + " and mScale is: " + mScale);
         }
 
         private void InitializeLaneData()
@@ -193,12 +197,18 @@ namespace KernelPanic
                 {
                     color = mColorPlayerB;
                 }
-                SetPixelSquare(index, 3, color);
+                SetPixelSquare(index, color);
             }
         }
 
-        private void SetPixelSquare(int dataIndex, int radius, Color color)
+        private void SetPixelSquare(int dataIndex, Color color, int radius = -1)
         {
+            // dEfAuLt PaRaMeTeR vAlUe FoR 'rAdIuS' mUsT bE a CoMpIlE-tImE cOnStAnT
+            if (radius == -1)
+            {
+                radius = mRadius;
+            }
+            
             for (int i = -radius; i < radius; i++)
             {
                 for (int j = -radius; j < radius; j++)
