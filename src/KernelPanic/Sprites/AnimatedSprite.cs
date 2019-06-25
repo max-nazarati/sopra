@@ -11,7 +11,6 @@ namespace KernelPanic.Sprites
         private const int DefaultFrameSize = 64;
         private readonly Texture2D mTexture;
         private int mFrameCount;
-        private SpriteEffects mEffect;
         private int mRow;
 
         // specifies row of the sprite sheet
@@ -25,6 +24,7 @@ namespace KernelPanic.Sprites
         }
 
         internal Direction MovementDirection { get; set; }
+        internal SpriteEffects Effect { get; set; }
 
         /// <summary>
         /// The duration for which each frame is displayed.
@@ -50,7 +50,7 @@ namespace KernelPanic.Sprites
             mFrameCount = 1;
             mFrameDuration = frameDuration;
             MovementDirection = Direction.Standing;
-            mEffect = SpriteEffects.None;
+            Effect = SpriteEffects.None;
         }
 
         protected override void Draw(SpriteBatch spriteBatch,
@@ -63,17 +63,16 @@ namespace KernelPanic.Sprites
             {
                 case Direction.Standing:
                     mFrameCount = 1;
-                    mEffect = SpriteEffects.None;
                     mRow = 0;
                     break;
                 case Direction.Left:
                     mFrameCount = 8;
-                    mEffect = SpriteEffects.None;
+                    Effect = SpriteEffects.None;
                     mRow = 1;
                     break;
                 case Direction.Right:
                     mFrameCount = 8;
-                    mEffect = SpriteEffects.FlipHorizontally;
+                    Effect = SpriteEffects.FlipHorizontally;
                     mRow = 1;
                     break;
                 /*case Direction.Up:
@@ -98,7 +97,7 @@ namespace KernelPanic.Sprites
                 rotation,
                 Origin,
                 scale,
-                mEffect,
+                Effect,
                 1f);
         }
     }

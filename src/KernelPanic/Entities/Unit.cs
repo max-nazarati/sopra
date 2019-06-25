@@ -107,14 +107,18 @@ namespace KernelPanic.Entities
                 }
             }
             
-            if (!(Sprite is AnimatedSprite animatedSprite))
+            if (!(Sprite is AnimatedSprite animated))
                 return;
 
             if (move?.X is float x)
-                animatedSprite.MovementDirection =
-                    x > 0 ? AnimatedSprite.Direction.Right : AnimatedSprite.Direction.Left;
+            {
+                // choose correct movement direction baseed on x value or direction of idle animation
+                animated.MovementDirection = (animated.Effect == SpriteEffects.None && (int)x == 0) || x < 0
+                    ? AnimatedSprite.Direction.Left
+                    : AnimatedSprite.Direction.Right;
+            }
             else
-                animatedSprite.MovementDirection = AnimatedSprite.Direction.Standing;
+                animated.MovementDirection = AnimatedSprite.Direction.Standing;
         }
 
         private void CheckBaseReached(PositionProvider positionProvider)
