@@ -46,7 +46,8 @@ namespace KernelPanic
             Thunderbird,
             Virus,
             StandingFox,
-            VectorArrow
+            VectorArrow,
+            Pause
         }
 
         private enum Font
@@ -97,6 +98,7 @@ namespace KernelPanic
                 Texture(Image.Virus, "troupes/virus"),
                 Texture(Image.StandingFox, "heroes/firefox_standing"),
                 Texture(Image.VectorArrow, "vector_arrow"),
+                Texture(Image.Pause, "pause"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -133,6 +135,12 @@ namespace KernelPanic
         internal ImageSprite CreateStandingFox()
         {
             var texture  = Lookup(Image.StandingFox);
+            return new ImageSprite(texture);
+        }
+
+        internal ImageSprite CreatePause()
+        {
+            var texture = Lookup(Image.Pause);
             return new ImageSprite(texture);
         }
 
