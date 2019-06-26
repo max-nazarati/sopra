@@ -10,10 +10,12 @@ namespace KernelPanic
         private readonly Player mPlayerA;
         private readonly Player mPlayerB;
         private readonly PlayTime mPlayTime;
-        
+
         private readonly Sprite mSprite;
         private readonly TextSprite mTextA;
+        private readonly TextSprite mTextAMoney;
         private readonly TextSprite mTextB;
+        private readonly TextSprite mTextBMoney;
         private readonly TextSprite mTextTime;
 
         private static Point PowerIndicatorSize => new Point(100, 30);
@@ -25,7 +27,7 @@ namespace KernelPanic
             mPlayerB = player2;
             mPlayTime = new PlayTime();
 
-            (mSprite, mTextA, mTextB, mTextTime) =
+            (mSprite, mTextA, mTextAMoney, mTextB, mTextBMoney, mTextTime) =
                 spriteManager.CreateScoreDisplay(PowerIndicatorSize, ClockSize);
             mTextTime.Text = mPlayTime.Time;
         }
@@ -36,7 +38,9 @@ namespace KernelPanic
         {
             mPlayTime.Update(gameTime);
             mTextA.Text = "A: " + mPlayerA.Base.Power + "%";
+            mTextAMoney.Text = mPlayerA.Bitcoins + "$";
             mTextB.Text = "B: " + mPlayerB.Base.Power + "%";
+            mTextBMoney.Text = mPlayerB.Bitcoins + "$";
             mTextTime.Text = mPlayTime.Time;
         }
 

@@ -242,20 +242,30 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal (Sprite Main, TextSprite Left, TextSprite Right, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
+        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite Right, TextSprite RightMoney, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
         {
             var texture = Lookup(Image.ButtonBackground);
             var font = Lookup(Font.Hud);
+            var pauseTexture = Lookup(Image.Pause);
+            var secondLine = new Point(0, powerIndicatorSize.Y);
 
             var leftBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
                 TintColor = Color.LightBlue
             };
+            var leftMoneyBackground = new ImageSprite(texture)
+            {
+                DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
+            };
             var rightBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
                 TintColor = Color.LightSalmon
+            };
+            var rightMoneyBackground = new ImageSprite(texture)
+            {
+                DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
             };
             var clockBackground = new ImageSprite(texture)
             {
@@ -263,14 +273,18 @@ namespace KernelPanic
             };
 
             var leftText = AutoCenteredTextSprite(font, leftBackground);
+            var leftMoneyText = AutoCenteredTextSprite(font, leftMoneyBackground);
+            leftMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
             var rightText = AutoCenteredTextSprite(font, rightBackground);
+            var rightMoneyText = AutoCenteredTextSprite(font, rightMoneyBackground);
+            rightMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
             var clockText = AutoCenteredTextSprite(font, clockBackground);
 
             var left = new CompositeSprite
             {
                 X = (ScreenSize.X - clockSize.X) / 2f,
                 Y = 0,
-                Children = {leftBackground, leftText}
+                Children = { leftBackground, leftText, leftMoneyBackground, leftMoneyText }
             };
             left.SetOrigin(RelativePosition.TopRight);
 
@@ -278,23 +292,23 @@ namespace KernelPanic
             {
                 X = (ScreenSize.X + clockSize.X) / 2f,
                 Y = 0,
-                Children = {rightBackground, rightText}
+                Children = { rightBackground, rightText, rightMoneyBackground, rightMoneyText }
             };
             right.SetOrigin(RelativePosition.TopLeft);
-            
-            var clock = new CompositeSprite
+
+            var middle = new CompositeSprite
             {
                 X = ScreenSize.X / 2f,
                 Y = 0,
-                Children = {clockBackground, clockText}
+                Children = { clockBackground, clockText }
             };
-            clock.SetOrigin(RelativePosition.CenterTop);
+            middle.SetOrigin(RelativePosition.CenterTop);
 
             var sprite = new CompositeSprite
             {
-                Children = {left, right, clock}
+                Children = { left, right, middle }
             };
-            return (sprite, leftText, rightText, clockText);
+            return (sprite, leftText, leftMoneyText, rightText, rightMoneyText, clockText);
         }
 
         #region Troupes
