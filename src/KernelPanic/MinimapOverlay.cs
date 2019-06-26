@@ -179,7 +179,7 @@ namespace KernelPanic
 
         private void SetEntityColor()
         {
-            var entities = mPlayerB.AttackingLane.EntityGraph.QuadTree.GetObjects();
+            var entities = mPlayerB.AttackingLane.EntityGraph.QuadTree;
             foreach (var entity in entities)
             {
                 var index = CalculateMapIndexPosition(entity.Sprite.Position);

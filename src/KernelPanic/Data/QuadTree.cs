@@ -26,12 +26,7 @@ namespace KernelPanic.Data
 
         [DataMember(Name = "Objects")]
         private readonly List<T> mObjects;
-
-        internal List<T> GetObjects()
-        {
-            return mObjects;
-        }
-    
+        
         [DataMember(Name = "Childs")]
         private QuadTree<T>[] mChilds;
 
