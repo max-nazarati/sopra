@@ -179,6 +179,9 @@ namespace KernelPanic
 
         private void SetEntityColor()
         {
+            var drawSelected = false;
+            var selectedIndex = 0;
+            
             var entities = mPlayerB.AttackingLane.EntityGraph.QuadTree;
             foreach (var entity in entities)
             {
@@ -187,7 +190,11 @@ namespace KernelPanic
                 
                 if (entity.Selected)
                 {
-                    color = mColorSelected;
+                    // dont draw it yet
+                    // TODO needs to be adapted if we can select multiple entities at a given point
+                    drawSelected = true;
+                    selectedIndex = index;
+                    continue;
                 }
                 else if (entity is Unit)
                 {
@@ -198,6 +205,12 @@ namespace KernelPanic
                     color = mColorPlayerB;
                 }
                 SetPixelSquare(index, color);
+
+                // draw the selected one on top
+                if (drawSelected)
+                {
+                    SetPixelSquare(selectedIndex, mColorSelected);
+                }
             }
         }
 
