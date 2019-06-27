@@ -49,6 +49,7 @@ namespace KernelPanic.Table
 
         internal EntityGraph EntityGraph { get; private set; }
         internal UnitSpawner UnitSpawner { get; private set; }
+        internal BuildingSpawner BuildingSpawner { get; private set; }
 
         internal Rectangle GridRectangle() => mGrid.LaneRectangle;
         internal int LaneWidthInTiles() => Grid.LaneWidthInTiles;
@@ -113,10 +114,11 @@ namespace KernelPanic.Table
         {
             mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
+            var obstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
             UnitSpawner = new UnitSpawner(mGrid, EntityGraph.Add);
-            var obstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
-
+            BuildingSpawner = new BuildingSpawner(mGrid, mHeatMap, EntityGraph.Add);
+            
             if (entities?.Count > 0)
             {
                 EntityGraph.Add(entities);

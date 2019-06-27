@@ -45,6 +45,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AGameState.cs" />
+    <Compile Include="BuildingBuyingMenu.cs" />
     <Compile Include="BuyingMenuOverlay.cs" />
     <Compile Include="Camera\Camera2D.cs" />
     <Compile Include="Camera\Change.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Sprites\AnimatedSprite.cs" />
     <Compile Include="Table\Base.cs" />
     <Compile Include="Table\Board.cs" />
+    <Compile Include="Table\BuildingSpawner.cs" />
     <Compile Include="Table\Grid.cs" />
     <Compile Include="Table\Lane.cs" />
     <Compile Include="Table\Owner.cs" />

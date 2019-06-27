@@ -9,9 +9,10 @@ namespace KernelPanic
 {
     internal sealed class InGameOverlay: AGameState
     {
-        private Entity mSelection;
+        internal Entity mSelection;
         private readonly ScoreOverlay mScoreOverlay;
         private readonly UnitBuyingMenu mUnitBuyingMenu;
+        private readonly BuildingBuyingMenu mBuildingBuyingMenu;
         private readonly MinimapOverlay mMinimapOverlay;
         // public BuildingBuyingMenu BuildingMenu { get; set; }
         // public UnitBuyingMenu UnitMenu { get; set; }
@@ -22,12 +23,12 @@ namespace KernelPanic
             : base(new StaticCamera(), gameStateManager)
         {
             // TODO: Add Button parameters
-
             mSelection = selectionManager.Selection;
             selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
             
             mScoreOverlay = new ScoreOverlay(player1, player2, gameStateManager.Sprite);
             mUnitBuyingMenu = UnitBuyingMenu.Create(player2, gameStateManager.Sprite);    // Fixme: This should become player1.
+            mBuildingBuyingMenu = BuildingBuyingMenu.Create(player2, gameStateManager.Sprite, mSelection, gameStateManager.Sound);
             mMinimapOverlay = new MinimapOverlay(player1, player2, gameStateManager.Sprite);
         }
 
@@ -36,6 +37,7 @@ namespace KernelPanic
         {
             mScoreOverlay.Update(gameTime);
             mUnitBuyingMenu.Update(inputManager, gameTime);
+            mBuildingBuyingMenu.Update(inputManager, gameTime);
             mMinimapOverlay.Update(inputManager, gameTime);
         }
 
@@ -43,6 +45,7 @@ namespace KernelPanic
         {
             mScoreOverlay.Draw(spriteBatch, gameTime);
             mUnitBuyingMenu.Draw(spriteBatch, gameTime);
+            mBuildingBuyingMenu.Draw(spriteBatch, gameTime);
             mMinimapOverlay.Draw(spriteBatch, gameTime);
         }
     }

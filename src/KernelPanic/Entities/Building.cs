@@ -24,7 +24,9 @@ namespace KernelPanic.Entities
         private int BitcoinWorth { get; set; }
 
         internal State StateProperty { get; set; }
-        
+
+        internal Building Clone() => Clone<Building>();
+
         internal enum State
         {
             /// <summary>
