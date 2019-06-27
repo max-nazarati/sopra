@@ -25,15 +25,15 @@ namespace KernelPanic
             mEscapeAction = escapeAction;
         }
 
-        private static MenuState CreateMainMenu(GameStateManager stateManager, SoundManager soundManager
-            , GraphicsDeviceManager mGraphics)
+        internal static MenuState CreateMainMenu(GameStateManager stateManager, SoundManager soundManager
+            , GraphicsDeviceManager graphics)
         {
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
             playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
             
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 200);
             optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager
-                , soundManager, mGraphics));
+                , soundManager, graphics));
             
             var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 300);
             instructionsButton.Clicked += (button, input) => stateManager
@@ -168,17 +168,17 @@ namespace KernelPanic
             return soundOnOffButton;
         }
         
-        private static Button changeScreenSize(TextButton fullScreenButton, GraphicsDeviceManager mGraphics)
+        private static Button ChangeScreenSize(TextButton fullScreenButton, GraphicsDeviceManager graphics)
         {
             switch (fullScreenButton.Title)
             {
                 case "an":
                     fullScreenButton.Title = "aus";
-                    mGraphics.ToggleFullScreen();
+                    graphics.ToggleFullScreen();
                     break;
                 case "aus":
                     fullScreenButton.Title = "an";
-                    mGraphics.ToggleFullScreen();
+                    graphics.ToggleFullScreen();
                     break;
                 default:
                     Console.WriteLine("Some Error");
@@ -189,7 +189,7 @@ namespace KernelPanic
         }
 
         private static MenuState CreateOptionsMenu(GameStateManager stateManager, SoundManager soundManager
-            , GraphicsDeviceManager mGraphics)
+            , GraphicsDeviceManager graphics)
         {
             var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
             var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
@@ -204,7 +204,7 @@ namespace KernelPanic
             
             var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 575, 150);
             var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus",575, -150);
-            fullScreenWindowButton.Clicked += (button, input) => changeScreenSize(fullScreenWindowButton, mGraphics);
+            fullScreenWindowButton.Clicked += (button, input) => ChangeScreenSize(fullScreenWindowButton, graphics);
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
 
@@ -321,25 +321,56 @@ namespace KernelPanic
                     backButton
                 }
             };
-        } 
-        
-       
-       public static MenuState CreatePauseMenu(GameStateManager stateManager, InGameState inGameState
-           , SoundManager soundManager, GraphicsDeviceManager mGraphics) 
+        }
+
+        public static MenuState CreateGameOverScreen(GameStateManager stateManager, Table.Board.GameState result
+           , SoundManager soundManager, GraphicsDeviceManager graphics)
+        {
+            var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
+            mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager
+                , soundManager, graphics));
+
+            Sprites.TextSprite text;
+            if (result == Table.Board.GameState.AWon)
+            {
+                text = stateManager.Sprite.CreateText("Du hast gewonnen!");
+            }
+            else
+            {
+                text = stateManager.Sprite.CreateText("Game over!");
+            }
+            text.ScaleToWidth(400);
+            text.Position = new Vector2(10, 10);
+
+
+            return new MenuState(stateManager)
+            {
+                mComponents = new InterfaceComponent[]
+                {
+                    CreateBackground(stateManager.Sprite),
+                    mainMenuButton,
+                    new StaticComponent(text)
+                }
+            };
+        }
+
+
+        public static MenuState CreatePauseMenu(GameStateManager stateManager, InGameState inGameState
+           , SoundManager soundManager, GraphicsDeviceManager graphics) 
        {
            var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
            backButton.Clicked += (button, input) => stateManager.Pop();
 
            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
            optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager
-               , soundManager, mGraphics));
+               , soundManager, graphics));
 
            var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
            saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);
 
            var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
            mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager
-               , soundManager, mGraphics));
+               , soundManager, graphics));
            
            return new MenuState(stateManager)
            {
@@ -370,7 +401,7 @@ namespace KernelPanic
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
-            , GraphicsDeviceManager mGraphics)
+            , GraphicsDeviceManager graphics)
         {
             foreach(var component in mComponents)
             {

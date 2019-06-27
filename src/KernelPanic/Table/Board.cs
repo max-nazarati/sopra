@@ -19,6 +19,13 @@ namespace KernelPanic.Table
 
         private readonly Sprite mBase;
 
+        internal enum GameState
+        {
+            Playing,
+            AWon,
+            BWon
+        }
+
         internal static Rectangle Bounds
         {
             get
@@ -60,6 +67,19 @@ namespace KernelPanic.Table
         {
             PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
             PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
+        }
+
+        internal GameState CheckGameState()
+        {
+            if (PlayerB.Base.Power <= 0)
+            {
+                return GameState.AWon;
+            }
+            if (PlayerA.Base.Power <= 0)
+            {
+                return GameState.BWon;
+            }
+            return GameState.Playing;
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
