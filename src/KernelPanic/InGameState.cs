@@ -105,11 +105,12 @@ namespace KernelPanic
             sprite3.Position = sprite2.Position + new Vector2(sprite2.Width, 0);
         }
 
-        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
+            , GraphicsDeviceManager mGraphics)
         {
             if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive)
             {
-                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager));
+                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, mGraphics));
                 return;
             }
 

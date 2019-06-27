@@ -47,6 +47,7 @@ namespace KernelPanic
         {
             var screenSizeX = spriteManager.ScreenSize.X;
             var screenSizeY = spriteManager.ScreenSize.Y;
+            Console.WriteLine(screenSizeX);
             mRelativeSize = relativeSize;
             mSize = (int)(Math.Min(screenSizeX, screenSizeY) * mRelativeSize);
             mPosition = new Vector2(screenSizeX - mSize, screenSizeY - mSize);

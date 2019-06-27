@@ -31,7 +31,8 @@ namespace KernelPanic
             mMinimapOverlay = new MinimapOverlay(player1, player2, gameStateManager.Sprite);
         }
 
-        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
+            , GraphicsDeviceManager mGraphics)
         {
             mScoreOverlay.Update(gameTime);
             mUnitBuyingMenu.Update(inputManager, gameTime);
