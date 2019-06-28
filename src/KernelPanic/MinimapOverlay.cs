@@ -228,7 +228,7 @@ namespace KernelPanic
                 for (int j = -radius; j < radius; j++)
                 {
                     var pos = dataIndex + i + mSize * j;
-                    var clampedPos = Math.Min(Math.Max(pos, mSize), 0);
+                    var clampedPos = Math.Max(Math.Min(pos, mSize * mSize), 0);
                     mData[clampedPos] = color;
                     // mData[dataIndex + i + mSize * j] = color;
                 }
