@@ -76,7 +76,7 @@ namespace KernelPanic
         /// <returns></returns>
         int CalculateMapIndexPosition(Vector2 point)
         {
-            return (int)( ( (int)( point.Y / mScale) * mSize) + (point.X / mScale) );
+            return (int)( ( (int)( point.Y / mScale) * mSize) + (point.X / mScale));
         }
         
         /// <summary>
@@ -227,7 +227,10 @@ namespace KernelPanic
             {
                 for (int j = -radius; j < radius; j++)
                 {
-                    mData[dataIndex + i + mSize * j] = color;
+                    var pos = dataIndex + i + mSize * j;
+                    var clampedPos = Math.Min(Math.Max(pos, mSize), 0);
+                    mData[clampedPos] = color;
+                    // mData[dataIndex + i + mSize * j] = color;
                 }
             }
         }
