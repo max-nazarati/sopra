@@ -86,6 +86,24 @@ namespace KernelPanic.Entities
             sprite.SetOrigin(RelativePosition.Center);
             return new StrategicTower(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
         }
+        
+        internal static Tower CreateCdThrower(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
+        {
+            var sprite = sprites.CreateCDThrower();
+            sprite.Position = position;
+            sprite.ScaleToHeight(size);
+            sprite.SetOrigin(RelativePosition.Center);
+            return new CdThrower(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+        }
+        
+        internal static Tower CreateAntivirus(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
+        {
+            var sprite = sprites.CreateAntivirus();
+            sprite.Position = position;
+            sprite.ScaleToHeight(size);
+            sprite.SetOrigin(RelativePosition.Center);
+            return new Antivirus(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+        }
 
         protected override void CompleteClone()
         {
