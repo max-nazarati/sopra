@@ -40,13 +40,13 @@ namespace KernelPanic.Entities
             
         }
 
-        protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
+        protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager, Vector2? jumpTarget)
         {
             // debug
-            base.StartAbility(positionProvider, inputManager);
+            base.StartAbility(positionProvider, inputManager, jumpTarget);
 
             // calculate the jump direction
-            var mouse = inputManager.TranslatedMousePosition;
+            var mouse = jumpTarget ?? inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
             var jumpSegment = direction * JumpSegmentLength;
@@ -93,6 +93,29 @@ namespace KernelPanic.Entities
             Sprite.Position += jumpDistance;
         }
         #endregion Ability
+
+        #region KI
+
+        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
+        {
+            // moving
+            base.AttackBase(inputManager, positionProvider, basePosition);
+            // jump if possible
+            if (MoveTarget != null && Cooldown.Ready)
+            {
+                // target is on the way
+                if (AStar.Path is List<Point> path && path.Count >= 2)
+                {
+                    var jumpTarget = path[2].ToVector2();
+                    TryActivateAbility(inputManager, true);
+                    Console.WriteLine("starting");
+                    StartAbility(positionProvider, inputManager, jumpTarget);
+                }
+            }
+            
+        }
+
+        #endregion
         
         #region Draw
 
