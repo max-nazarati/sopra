@@ -25,8 +25,6 @@ namespace KernelPanic.Entities
 
         internal State StateProperty { get; set; }
 
-        internal Building Clone() => Clone<Building>();
-
         internal enum State
         {
             /// <summary>

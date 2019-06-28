@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Purchasing;
@@ -26,14 +27,13 @@ namespace KernelPanic
                 {
                     var buttonSprite = mButton.Button.Sprite;
                     buttonSprite.Position = value;
-                    mCounterSprite.X = 0/* padding between text and button */;
+                    mCounterSprite.X = buttonSprite.Position.X + 72 /* padding between text and button */;
                     mCounterSprite.Y = value.Y + buttonSprite.Height / 2;
                 }
             }
             Vector2 IPositioned.Size {
                 get
                 {
-                    mButton.Button.Sprite.ScaleToWidth(64);
                     return mButton.Button.Sprite.Size;
                 }
             }
@@ -41,13 +41,19 @@ namespace KernelPanic
             internal Element(PurchaseButton<ImageButton, Building> button, SpriteManager spriteManager)
             {
                 mCounterSprite = spriteManager.CreateText();
-                mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.TopLeft);
+                mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterLeft);
                 Reset();
 
                 // When a unit is purchased, increase its counter.
                 mButton = button;
-                mButton.Action.Purchased += (buyer, resource) => mCounterSprite.Text = (++mCounter).ToString();
-                mButton.Button.Sprite.ScaleToWidth(64);
+                mButton.Action.Purchased += (buyer, resource) =>
+                {
+                    if (true)
+                    {
+                        mCounterSprite.Text = (++mCounter).ToString();
+                    }
+                };
+                //mButton.Button.Sprite.ScaleToWidth(64);
                 mButton.Button.Sprite.SetOrigin(RelativePosition.TopLeft);
             }
 
@@ -69,7 +75,7 @@ namespace KernelPanic
             }
         }
 
-        private BuildingBuyingMenu(Player player, SpriteManager spriteManager, Entity selection, SoundManager sounds, params PurchaseButton<ImageButton, Building>[] buttons)
+        private BuildingBuyingMenu(Player player, SpriteManager spriteManager, params PurchaseButton<ImageButton, Building>[] buttons)
                 : base(MenuPosition(Lane.Side.Left, spriteManager), player, buttons.Select(b => new Element(b, spriteManager)))
         {
         }
@@ -78,27 +84,26 @@ namespace KernelPanic
         {
             void BuildingBought(Player buyer, Building building)
             {
-                if (!buyer.AttackingLane.EntityGraph.HasEntityAt(building.Sprite.Position))
+                if (true)
                 {
                     sounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    buyer.AttackingLane.BuildingSpawner.Register(building.Clone());
-                } else
-                {
-                    return;
+                    buyer.AttackingLane.BuildingSpawner.Register(building);
                 }
             }
 
-            PurchaseButton<ImageButton, Building> CreateButton(Building unit, ImageSprite sprite)
+            PurchaseButton<ImageButton, Building> CreateButton(Building building, ImageSprite sprite)
             {
-                var action = new PurchasableAction<Building>(unit);
+                var action = new PurchasableAction<Building>(building);
                 action.Purchased += BuildingBought;
-                var button = new ImageButton(spriteManager, sprite, 0, 70);
+                var button = new ImageButton(spriteManager, sprite, 70, 70);
                 return new PurchaseButton<ImageButton, Building>(player, action, button);
             }
 
-            var bug = CreateButton(Tower.Create(new Vector2(0, 0), 64, spriteManager, sounds), spriteManager.CreateTower());
+            var scaledSprite = spriteManager.CreateTower();
+            scaledSprite.ScaleToWidth(64);
+            var tower = CreateButton(Tower.Create(new Vector2(0, 0), 64, spriteManager, sounds), scaledSprite);
             
-            return new BuildingBuyingMenu(player, spriteManager, selection, sounds, bug);
+            return new BuildingBuyingMenu(player, spriteManager, tower);
         }
 
         /// <summary>

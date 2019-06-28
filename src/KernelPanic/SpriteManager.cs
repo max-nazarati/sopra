@@ -222,7 +222,7 @@ namespace KernelPanic
         {
             var background = new ImageSprite(Lookup(Image.ButtonBackground))
             {
-                DestinationRectangle = new Rectangle(0, 0, width, height)
+                DestinationRectangle = new Rectangle(-width + (int)image.Width +2, -height + (int)image.Height, width, height)
             };
             return (
                 new CompositeSprite {Children = {background, image}},
