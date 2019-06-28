@@ -103,12 +103,11 @@ namespace KernelPanic.Entities
             // jump if possible
             if (MoveTarget != null && Cooldown.Ready)
             {
-                // target is on the way
+                // just jump the next steps
                 if (AStar.Path is List<Point> path && path.Count >= 2)
                 {
                     var jumpTarget = Grid.ScreenPositionFromCoordinate(path[2]).ToVector2();
                     TryActivateAbility(inputManager, true);
-                    Console.WriteLine("starting");
                     StartAbility(positionProvider, inputManager, jumpTarget);
                 }
             }

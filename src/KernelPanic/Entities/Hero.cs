@@ -29,12 +29,19 @@ namespace KernelPanic.Entities
             Indicating, Starting, Active, Finished, CoolingDown
         }
 
+        protected enum Strategy
+        {
+            Human = 0,
+            Attack
+        }
+
         [DataMember]
         protected CooldownComponent Cooldown { get; }
         internal AStar AStar; // save the AStar for path-drawing
         private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
         protected AbilityState AbilityStatus { get; set; }
+        protected Strategy StrategyStatus { get; set; }
 
         #endregion
 
@@ -111,6 +118,10 @@ namespace KernelPanic.Entities
         /// <param name="inputManager"></param>
         private void UpdateTarget(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            if (StrategyStatus == Strategy.Attack)
+            {
+                AttackBase(inputManager, positionProvider, positionProvider.Target.Position);
+            }
             // only check for new target of selected and Right Mouse Button was pressed
             if (!Selected) return;
             if (!inputManager.MousePressed(InputManager.MouseButton.Right)) return;
@@ -280,7 +291,7 @@ namespace KernelPanic.Entities
             //var target = Grid.CoordinatePositionFromScreen(basePosition.ToVector2());
             var target = Grid.CoordinatePositionFromScreen(basePosition.ToVector2());
             mTarget = target;
-            AStar = positionProvider.MakePathFinding(this, startPoint, target);// ?? new Point(1, 1));
+            AStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
             ShouldMove = true;
         }
 
@@ -290,14 +301,16 @@ namespace KernelPanic.Entities
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            if (inputManager.KeyPressed(Keys.Space))
+            {
+                StrategyStatus = StrategyStatus == Strategy.Attack ? Strategy.Human : Strategy.Attack;
+            }
             // also updates the cooldown
             UpdateAbility(positionProvider, gameTime, inputManager);
             
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
-            
-            AttackBase(inputManager, positionProvider, positionProvider.Target.Position);
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, gameTime, inputManager);
