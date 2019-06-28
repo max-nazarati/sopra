@@ -291,6 +291,9 @@
     <Compile Include="..\KernelPanic\Table\Board.cs">
       <Link>Table\Board.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Table\BuildingSpawner.cs">
+      <Link>Table\BuildingSpawner.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Table\Grid.cs">
       <Link>Table\Grid.cs</Link>
     </Compile>
