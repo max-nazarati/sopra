@@ -60,6 +60,9 @@
     <Compile Include="..\KernelPanic\AGameState.cs">
       <Link>AGameState.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\BuildingBuyingMenu.cs">
+      <Link>BuildingBuyingMenu.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\BuyingMenuOverlay.cs">
       <Link>BuyingMenuOverlay.cs</Link>
     </Compile>
