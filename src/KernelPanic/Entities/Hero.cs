@@ -22,6 +22,8 @@ namespace KernelPanic.Entities
     internal abstract class Hero : Unit
     {
         #region MemberVariables
+
+        #region Enums
         
         protected enum AbilityState
         {
@@ -29,12 +31,21 @@ namespace KernelPanic.Entities
             Indicating, Starting, Active, Finished, CoolingDown
         }
 
+        protected enum Strategy
+        {
+            Human = 0,
+            Attack
+        }
+        
+        #endregion
+
         [DataMember]
         protected CooldownComponent Cooldown { get; }
-        private AStar mAStar; // save the AStar for path-drawing
+        internal AStar AStar; // save the AStar for path-drawing
         private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
         protected AbilityState AbilityStatus { get; set; }
+        protected Strategy StrategyStatus { get; set; }
 
         #endregion
 
@@ -72,15 +83,15 @@ namespace KernelPanic.Entities
             var target = Grid.CoordinatePositionFromScreen(targetVector);
 
             // calculate the path
-            mAStar = positionProvider.MakePathFinding(this, startPoint, target);
-            mPathVisualizer = positionProvider.Visualize(mAStar);
-            var path = mAStar.Path;
+            AStar = positionProvider.MakePathFinding(this, startPoint, target);
+            mPathVisualizer = positionProvider.Visualize(AStar);
+            var path = AStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
-                mAStar = positionProvider.MakePathFinding(this, startPoint, target);
-                mPathVisualizer = positionProvider.Visualize(mAStar);
-                path = mAStar.Path;
+                AStar = positionProvider.MakePathFinding(this, startPoint, target);
+                mPathVisualizer = positionProvider.Visualize(AStar);
+                path = AStar.Path;
             }
 
             if (path.Count > 2)
@@ -96,7 +107,7 @@ namespace KernelPanic.Entities
 
         private void MoveTargetReachedHandler(Vector2 target)
         {
-            mAStar = null;
+            AStar = null;
             mTarget = null;
             mPathVisualizer = null;
             MoveTargetReached -= MoveTargetReachedHandler;
@@ -111,6 +122,11 @@ namespace KernelPanic.Entities
         /// <param name="inputManager"></param>
         private void UpdateTarget(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            if (StrategyStatus == Strategy.Attack)
+            {
+                AttackBase(inputManager, positionProvider, positionProvider.Target.Position);
+                return;
+            }
             // only check for new target of selected and Right Mouse Button was pressed
             if (!Selected) return;
             if (!inputManager.MousePressed(InputManager.MouseButton.Right)) return;
@@ -124,7 +140,7 @@ namespace KernelPanic.Entities
 
         private Point FindNearestWalkableField(Point target)
         {
-            var result = mAStar.FindNearestField();
+            var result = AStar.FindNearestField();
             return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);
         }
         
@@ -216,7 +232,7 @@ namespace KernelPanic.Entities
             }
         }
 
-        private void TryActivateAbility(InputManager inputManager, bool button = false)
+        protected void TryActivateAbility(InputManager inputManager, bool button = false)
         {
             if (CheckAbilityStart(inputManager, button))
                 AbilityStatus = AbilityState.Indicating;
@@ -251,7 +267,7 @@ namespace KernelPanic.Entities
             }
         }
 
-        protected virtual void StartAbility(PositionProvider positionProvider, InputManager inputManager)
+        protected virtual void StartAbility(PositionProvider positionProvider, InputManager inputManager, Vector2? jumpTarget=null)
         {
             #region DEBUG
 #if DEBUG
@@ -272,10 +288,27 @@ namespace KernelPanic.Entities
         
         #endregion Ability
 
+        #region KI
+
+        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
+        {
+            var startPoint = Grid.CoordinatePositionFromScreen(Sprite.Position);
+            var target = Grid.ScreenPositionFromCoordinate(basePosition);
+            mTarget = target;
+            AStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
+            ShouldMove = true;
+        }
+
+        #endregion
+        
         #region Update
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            if (inputManager.KeyPressed(Keys.Space))
+            {
+                StrategyStatus = StrategyStatus == Strategy.Attack ? Strategy.Human : Strategy.Attack;
+            }
             // also updates the cooldown
             UpdateAbility(positionProvider, gameTime, inputManager);
             
@@ -285,6 +318,7 @@ namespace KernelPanic.Entities
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, gameTime, inputManager);
+            
         }
         
         #endregion

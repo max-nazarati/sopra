@@ -84,6 +84,11 @@ namespace KernelPanic.Entities
 
         public Rectangle Bounds => Sprite.Bounds;
 
+        internal virtual void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
+        {
+            // do nothing (Troupes walk to the base anyways
+        }
+            
         internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             if (!Selected)

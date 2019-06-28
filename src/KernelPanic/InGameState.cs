@@ -106,16 +106,23 @@ namespace KernelPanic
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
-            , GraphicsDeviceManager mGraphics)
+            , GraphicsDeviceManager graphics)
         {
             if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive)
             {
-                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, mGraphics));
+                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, graphics));
                 return;
             }
 
             mSelectionManager.Update(inputManager);
             mBoard.Update(gameTime, inputManager);
+            var gameState = mBoard.CheckGameState();
+            if (gameState != Board.GameState.Playing)
+            {
+                GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager, graphics));
+                GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager, graphics));
+                return;
+            }
 
             mPurchaseDemoButton1.Update(inputManager, gameTime);
             mPurchaseDemoButton2.Update(inputManager, gameTime);
