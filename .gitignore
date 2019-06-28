@@ -29,4 +29,7 @@ thumbs.db
 # Files created by the Rider IDE
 .idea
 
+
+# NuGet packages
 src/packages
+src/*/packages

@@ -6,6 +6,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
@@ -40,12 +41,14 @@ namespace KernelPanic
         }
 
         public SpriteManager Sprite { get; }
+        
         public SoundManager Sound { get; }
         private readonly Stack<GameStateInfo> mGameStates = new Stack<GameStateInfo>();
 
         internal Action ExitAction { get; }
 
-        public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds)
+        public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds
+            , GraphicsDeviceManager mGraphics)
         {
             Sprite = sprites;
             Sound = sounds;
@@ -81,7 +84,8 @@ namespace KernelPanic
             Push(newGameState);
         }
 
-        public void Update(RawInputState rawInput, GameTime gameTime, SoundManager soundManager)
+        public void Update(RawInputState rawInput, GameTime gameTime, SoundManager soundManager
+            , GraphicsDeviceManager mGraphics)
         {
             foreach (var info in ActiveStates())
             {
@@ -89,20 +93,29 @@ namespace KernelPanic
                 var newClickTargets = new List<ClickTarget>();
                 var input = new InputManager(newClickTargets, state.Camera, rawInput);
 
-                if (!rawInput.IsClaimed(InputManager.MouseButton.Left))
-                {
-                    var possibleTargets = info.ClickTargets.EntitiesAt(input.TranslatedMousePosition);
-                    var maybeTarget = possibleTargets.FirstOrDefault();
-                    if (maybeTarget != null && input.MousePressed(InputManager.MouseButton.Left))
-                        maybeTarget.Action(input);
-                }
+                if (InvokeClickTargets(input, info.ClickTargets) is object requiredClaim)
+                    rawInput.Claim(requiredClaim);
 
                 // Do the actual update.
-                state.Update(input, gameTime, soundManager);
+                state.Update(input, gameTime, soundManager, mGraphics);
 
                 // The call to Update filled newClickTargets via the reference in the InputManager.
                 info.ClickTargets = QuadTree<ClickTarget>.Create(newClickTargets);
             }
+        }
+
+        private static object InvokeClickTargets(InputManager inputManager, QuadTree<ClickTarget> targets)
+        {
+            if (inputManager.IsClaimed(InputManager.MouseButton.Left))
+                return null;
+
+            var maybeTarget = targets.EntitiesAt(inputManager.TranslatedMousePosition).FirstOrDefault();
+            if (maybeTarget == null)
+                return null;
+
+            if (inputManager.MouseReleased(InputManager.MouseButton.Left))
+                maybeTarget.Action(inputManager);
+            return InputManager.MouseButton.Left;
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)

@@ -1,5 +1,5 @@
-﻿#define DEBUG
-// #undef DEBUG
+﻿// #define DEBUG
+#undef DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace KernelPanic.Entities
 {
     [DataContract]
     [KnownType(typeof(Firefox))]
-    internal class Hero : Unit
+    internal abstract class Hero : Unit
     {
         #region MemberVariables
         
@@ -32,86 +32,74 @@ namespace KernelPanic.Entities
         [DataMember]
         protected CooldownComponent Cooldown { get; }
         private AStar mAStar; // save the AStar for path-drawing
-        private Point mTarget; // the target we wish to move to
+        private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
-        protected AbilityState AbilityStatus;
-        
+        protected AbilityState AbilityStatus { get; set; }
+
         #endregion
 
         #region Konstruktor / Create
 
-        /// <summary>
-        /// Convenience function for creating a Hero. The sprite is automatically scaled to the size of one tile.
-        /// </summary>
-        /// <param name="position">The point where to position this troupe.</param>
-        /// <param name="sprite">The sprite to display.</param>
-        /// <param name="spriteManager"></param>
-        /// <returns>A new Troupe</returns>
-        private static Hero Create(Point position, Sprite sprite, SpriteManager spriteManager)
-        {
-            sprite.Position = position.ToVector2();
-            sprite.ScaleToWidth(Grid.KachelSize);
-            return new Hero(10, 1, 100, 1, sprite, spriteManager);
-        }
-
-        protected Hero(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
+        protected Hero(int price, int speed, int life, int attackStrength, TimeSpan coolDown, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
             // TODO set mTarget to the position itself so heroes spawn non moving
             // Kind of done... Hero starts moving when the first target command is set... :)
             // mTarget = Sprite.Position;
             ShouldMove = false;
-            Cooldown = new CooldownComponent(new TimeSpan(0, 0, 0)) {Enabled = false};
+            Cooldown = new CooldownComponent(coolDown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
         #endregion
 
         #region Movement
+
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             UpdateTarget(positionProvider, gameTime, inputManager);
+
+            if (!(mTarget?.ToVector2() is Vector2 targetVector))
+            {
+                return;
+            }
             
             // set the start Position for the AStar (something like the current position should do great)
             var start = Sprite.Position;
-            var startPoint = new Point((int)start.X, (int)start.Y) / new Point(100, 100);
+            var startPoint = Grid.CoordinatePositionFromScreen(start);
             
             // set the target Position for the AStar (latest updated target should be saved in mTarget
-            var target = mTarget / new Point(100, 100);
+            var target = Grid.CoordinatePositionFromScreen(targetVector);
 
             // calculate the path
             mAStar = positionProvider.MakePathFinding(this, startPoint, target);
             mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
-
-            if (path.Count == 0) // there is no path to be found
+            if (path == null || path.Count == 0) // there is no path to be found
             {
-                target = FindNearestWalkableField(target); // new Point(100, 100);
-                // Console.WriteLine("This is the debug message you are looking for" + mTarget);
+                target = FindNearestWalkableField(target);
                 mAStar = positionProvider.MakePathFinding(this, startPoint, target);
                 mPathVisualizer = positionProvider.Visualize(mAStar);
                 path = mAStar.Path;
             }
-            
-            // TODO get the next position of the path (should be at path[0]; something is ****ed up tho)...
-            // ... setting it to 0 makes the firefox disappear (thus making me cry T_T) ...
-            // ... firefox walks to neighboured field for now
 
-            Vector2? movement = Sprite.Position * 100;
-            if (path.Count > 1)
+            if (path.Count > 2)
             {
-                var x = path[1].X;
-                var y = path[1].Y;
-                // + (100, 100) translates the target to the point it should be
-                movement = positionProvider.GridCoordinate(new Vector2(x * 100, y * 100) + new Vector2(100, 100));
+                MoveTarget = positionProvider.TilePoint(path[1]);
             }
-            else // stop moving if target is reached;
+            else
             {
-                ShouldMove = false;
+                MoveTarget = positionProvider.TilePoint(target);
+                MoveTargetReached += MoveTargetReachedHandler;
             }
-            
-            // MoveTarget will be used by the Update Function (of the base class 'unit') to move the object
-            MoveTarget = movement;
+        }
+
+        private void MoveTargetReachedHandler(Vector2 target)
+        {
+            mAStar = null;
+            mTarget = null;
+            mPathVisualizer = null;
+            MoveTargetReached -= MoveTargetReachedHandler;
         }
 
         /// <summary>
@@ -131,9 +119,10 @@ namespace KernelPanic.Entities
             if (positionProvider.GridCoordinate(mouse) == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
             ShouldMove = true;
+            MoveTargetReached -= MoveTargetReachedHandler;
         }
-        
-        protected Point FindNearestWalkableField(Point target)
+
+        private Point FindNearestWalkableField(Point target)
         {
             var result = mAStar.FindNearestField();
             return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);
@@ -189,10 +178,10 @@ namespace KernelPanic.Entities
             {
                 case AbilityState.Ready:
                     // Here we should check if we should start to indicate the ability
-
-                    if (CheckAbilityStart(inputManager))
+                    TryActivateAbility(inputManager);
+                    if (AbilityStatus == AbilityState.Indicating)
                     {
-                        AbilityStatus = AbilityState.Indicating;
+                        goto case AbilityState.Indicating;
                     }
                     break;
                 
@@ -203,7 +192,7 @@ namespace KernelPanic.Entities
 
                 case AbilityState.Starting:
                     // initialize the ability
-                    StartAbility(inputManager);
+                    StartAbility(positionProvider, inputManager);
                     break;
                 
                 case AbilityState.Active:
@@ -227,9 +216,15 @@ namespace KernelPanic.Entities
             }
         }
 
-        protected virtual bool CheckAbilityStart(InputManager inputManager)
+        private void TryActivateAbility(InputManager inputManager, bool button = false)
         {
-            return Selected  && (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle));
+            if (CheckAbilityStart(inputManager, button))
+                AbilityStatus = AbilityState.Indicating;
+        }
+
+        protected virtual bool CheckAbilityStart(InputManager inputManager, bool button = false)
+        {
+            return Selected  && Cooldown.Ready && (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle) || button);
         }
 
         protected virtual void IndicateAbility(InputManager inputManager)
@@ -256,7 +251,7 @@ namespace KernelPanic.Entities
             }
         }
 
-        protected virtual void StartAbility(InputManager inputManager)
+        protected virtual void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             #region DEBUG
 #if DEBUG
@@ -271,7 +266,7 @@ namespace KernelPanic.Entities
         
         protected virtual void ContinueAbility(GameTime gameTime)
         {
-            Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
+            // Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
             AbilityStatus = AbilityState.Finished;
         }
         
@@ -309,7 +304,7 @@ namespace KernelPanic.Entities
         
         private void DrawAStarPath(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (Selected)
+            if (Selected && DebugSettings.VisualizeAStar)
             {
                 mPathVisualizer?.Draw(spriteBatch, gameTime);
             }
@@ -319,20 +314,24 @@ namespace KernelPanic.Entities
 
         #region Actions
 
-        protected override IEnumerable<IAction> Actions =>
-            base.Actions.Extend(new AbilityAction(this, SpriteManager));
+        protected override IEnumerable<IAction> Actions(Player owner) =>
+            base.Actions(owner).Extend(new AbilityAction(this, SpriteManager));
 
-        private sealed class AbilityAction : BaseAction<TextButton>
+        private sealed class AbilityAction : IAction
         {
-            internal AbilityAction(Hero hero, SpriteManager sprites) : base(new TextButton(sprites) {Title = "Fähigkeit"})
+            public Button Button { get; }
+
+            internal AbilityAction(Hero hero, SpriteManager sprites)
             {
-                Provider.Clicked += (button, inputManager) => hero.IndicateAbility(inputManager);
+                Button = new TextButton(sprites) {Title = "Fähigkeit"};
+                Button.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager, true);
             }
 
-            public override void MoveTo(Vector2 position)
-            {
-                Provider.Sprite.Position = position;
-            }
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) =>
+                Button.Update(inputManager, gameTime);
+
+            void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
+                Button.Draw(spriteBatch, gameTime);
         }
 
         #endregion

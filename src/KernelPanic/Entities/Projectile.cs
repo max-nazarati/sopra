@@ -40,7 +40,7 @@ namespace KernelPanic.Entities
             {
                 if (!entity.Bounds.Intersects(mSprite.Bounds)) continue;
                 mHasHit = true;
-                entity.DealDamage(20);
+                entity.DealDamage(2);
                 break;
             }
         }

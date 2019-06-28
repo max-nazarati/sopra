@@ -26,7 +26,7 @@ namespace KernelPanic.Data
 
         [DataMember(Name = "Objects")]
         private readonly List<T> mObjects;
-
+        
         [DataMember(Name = "Childs")]
         private QuadTree<T>[] mChilds;
 
@@ -142,7 +142,7 @@ namespace KernelPanic.Data
         {
             if (!mBounds.Contains(entity.Bounds))
                 throw new InvalidOperationException(
-                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}");
+                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}: {entity}");
 
             Count++;
 
@@ -179,21 +179,7 @@ namespace KernelPanic.Data
             }
         }
 
-        public void remove(T entity)
-        {
-            if (mObjects.Contains(entity))
-            {
-                mObjects.Remove(entity);
-            }
-            else
-            {
-                if (mChilds == null) return;
-                var index = CalculatePosition(entity);
-                mChilds[(int) index].remove(entity);
-            }
-        }
-
-        /*internal*/ private void Add(IEnumerable<T> elements)
+        internal void Add(IEnumerable<T> elements)
         {
             foreach (var element in elements)
             {
@@ -201,9 +187,14 @@ namespace KernelPanic.Data
             }
         }
         
-        internal void Rebuild()
+        /// <summary>
+        /// Rebuilds this <see cref="QuadTree{T}"/> using the updated bounds. If <paramref name="predicate"/> is given,
+        /// only the objects are kept for which <c>true</c> is returned.
+        /// </summary>
+        /// <param name="predicate">Used to filter the objects.</param>
+        internal void Rebuild(Func<T, bool> predicate = null)
         {
-            var allEntities = new List<T>(this);
+            var allEntities = new List<T>(predicate == null ? this : this.Where(predicate));
             Clear();
             Add(allEntities);
         }

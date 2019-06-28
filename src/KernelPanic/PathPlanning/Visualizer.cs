@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
@@ -8,64 +9,129 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.PathPlanning
 {
-    internal sealed class Visualizer
+    internal abstract class Visualizer
     {
-        private readonly Grid mGrid;
-        private readonly ImageSprite mTile;
+        private readonly ImageSprite mImage;
+        protected Grid Grid { get; }
+        protected List<ISpriteSettings> Nodes { get; } = new List<ISpriteSettings>();
 
-        private struct Node
+        protected interface ISpriteSettings
         {
-            internal Color Color { get; }
-            internal float Size { get; }
-            internal Vector2 Position { get; }
-
-            internal Node(Color color, Vector2 position, float size)
-            {
-                Color = color;
-                Position = position;
-                Size = size;
-            }
+            void Apply(ImageSprite sprite);
         }
 
-        private readonly List<Node> mNodes = new List<Node>();
-
-        internal Visualizer(Grid grid, SpriteManager spriteManager, bool drawBorderOnly=true)
+        protected Visualizer(Grid grid, ImageSprite image)
         {
-            mGrid = grid;
-            mTile = drawBorderOnly ? Grid.CreateTileBorder(spriteManager) : Grid.CreateTile(spriteManager);
-        }
-
-        internal void Append(ObstacleMatrix obstacleMatrix)
-        {
-            mNodes.AddRange(obstacleMatrix.Obstacles.Select(obstacle =>
-            {
-                var (position, size) = mGrid.GetTile(obstacle, RelativePosition.TopLeft);
-                return new Node(Color.Red, position, size);
-            }));
-        }
-
-        internal void Append(IEnumerable<Point> points, Color color, float tileSize = Grid.KachelSize)
-        {
-            if (points == null)
-            {
-                return;
-                
-            }
-            mNodes.AddRange(points.Select(point =>
-            {
-                var position = Grid.ScreenPositionFromCoordinate(point).ToVector2();
-                return new Node(color, position, tileSize);
-            }));
+            Grid = grid;
+            mImage = image;
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var node in mNodes)
+            foreach (var node in Nodes)
             {
-                mTile.TintColor = node.Color;
-                mTile.ScaleToWidth(node.Size);
-                mTile.Position = node.Position;
-                mTile.Draw(spriteBatch, gameTime);
+                node.Apply(mImage);
+                //if (Grid.Contains(mImage.Position))
+                    mImage.Draw(spriteBatch, gameTime);
+            }
+        }
+    }
+
+    internal sealed class TileVisualizer : Visualizer
+    {
+        private struct Node : ISpriteSettings
+        {
+            private Color mColor;
+            private float mSize;
+            private Vector2 mPosition;
+
+            internal static ISpriteSettings New(Color color, Vector2 position, float size) =>
+                new Node { mColor = color, mPosition = position, mSize = size };
+
+            void ISpriteSettings.Apply(ImageSprite sprite)
+            {
+                sprite.Position = mPosition;
+                sprite.TintColor = mColor;
+                sprite.ScaleToWidth(mSize);
+            }
+        }
+
+        private TileVisualizer(Grid grid, ImageSprite tile) : base(grid, tile)
+        {
+            tile.SetOrigin(RelativePosition.Center);
+        }
+
+        internal static TileVisualizer Border(Grid grid, SpriteManager spriteManager) =>
+            new TileVisualizer(grid, Grid.CreateTileBorder(spriteManager));
+
+        internal static TileVisualizer FullTile(Grid grid, SpriteManager spriteManager) =>
+            new TileVisualizer(grid, Grid.CreateTile(spriteManager));
+
+        internal void Append(ObstacleMatrix obstacleMatrix)
+        {
+            Append(obstacleMatrix.Obstacles, Color.Red);
+        }
+
+        internal void Append(IEnumerable<Point> points, Color color)
+        {
+            if (points != null)
+                Append(points.Select(point => new TileIndex(point, 1)), color);
+        }
+
+        private void Append(IEnumerable<TileIndex> points, Color color)
+        {
+            Nodes.AddRange(points.Select(point =>
+            {
+                var (position, size) = Grid.GetTile(point);
+                return Node.New(color, position, size);
+            }));
+        }
+    }
+
+    internal sealed class ArrowVisualizer : Visualizer
+    {
+        private struct Node : ISpriteSettings
+        {
+            private Vector2 mPosition;
+            private float mRotation;
+
+            internal static ISpriteSettings New(Vector2 position, Vector2 direction)
+            {
+                return new Node
+                {
+                    // The arrow from SpriteManager.CreateVectorArrow() points upwards by default. In a normal
+                    // coordinate system where the y axis grows upwards we would have the subtract 0.5π, but because in
+                    // XNA the Y axis grows downwards we have to add 0.5π.
+                    mPosition = position,
+                    mRotation = direction.Angle(0.5)
+                };
+            }
+
+            void ISpriteSettings.Apply(ImageSprite sprite)
+            {
+                sprite.Position = mPosition;
+                sprite.Rotation = mRotation;
+            }
+        }
+
+        internal ArrowVisualizer(Grid grid, SpriteManager spriteManager)
+            : base(grid, spriteManager.CreateVectorArrow())
+        {
+        }
+
+        internal void Append(Vector2[,] vectors)
+        {
+            for (var row = 0; row < vectors.GetLength(0); ++row)
+            {
+                for (var col = 0; col < vectors.GetLength(1); ++col)
+                {
+                    var vec = vectors[row, col];
+                    if (vec.X is float.NaN || vec.Y is float.NaN || vec.LengthSquared() < 0.01)
+                        continue;
+
+                    var position = Grid.GetTile(new TileIndex(row, col, 1)).Position;
+                    Nodes.Add(Node.New(position, vec));
+                }
             }
         }
     }

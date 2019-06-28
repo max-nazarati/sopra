@@ -1,24 +1,19 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
 {
-    class HeatMap
+    internal sealed class HeatMap
     {
-        public const int Blocked = -1;
+        private readonly float[,] mMap;
 
-        public double[,] mMap;
-        private int mWidth;
-        private int mHeight;
+        public int Width => mMap.GetLength(1);
+        public int Height => mMap.GetLength(0);
 
         /// <summary>
         /// Heatmap which displays the distance of each grid to
@@ -40,22 +35,16 @@ namespace KernelPanic.Data
         /// <param name="height">number of rows</param>
         public HeatMap(int width, int height)
         {
-            mMap = new double[height, width];
-            mWidth = width;
-            mHeight = height;
+            mMap = new float[height, width];
         }
 
         /// <summary>
-        /// check if a grid of the heat map is blocked (= -1) or not
+        /// Checks if this grid point is not blocked and therefore walkable.
+        /// Blocked grid points have a value of less than one.
         /// </summary>
         /// <param name="point">the point (x, y)</param>
-        /// <returns>true if heatMap[y, x] != -1 (blocked)</returns>
-        public bool IsWalkable(Point point)
-        {
-            if (point.X >= mWidth || point.Y >= mHeight) return false;
-            if (point.X < 0 || point.Y < 0) return false;
-            return mMap[point.Y, point.X] != Blocked;
-        }
+        /// <returns><c>false</c> if it is blocked, <c>true</c> otherwise.</returns>
+        public bool IsWalkable(Point point) => 0 <= this[point];
 
         /// <summary>
         /// Calculates the gradient, given point (x, y) i,e.:
@@ -70,173 +59,177 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="point">(x, y) point of the gradient to be computed</param>
         /// <returns></returns>
-        public Vector2 Gradient(Point point)
+        internal Vector2 Gradient(Point point)
         {
-            Vector2 grad;
-            Point up = new Point(point.X, point.Y - 1);
-            Point down = new Point(point.X, point.Y + 1);
-            Point left = new Point(point.X - 1, point.Y);
-            Point right = new Point(point.X + 1, point.Y);
-            double heatUp = 0;
-            double heatDown = 0;
-            double heatLeft = 0;
-            double heatRight = 0;
+            if (!(this[point] is float heatHere) || heatHere < 0)
+                return new Vector2(float.NaN);
 
-            if (!IsWalkable(point)) return new Vector2(Single.NaN, Single.NaN);
-
-            if (IsWalkable(up)) heatUp = mMap[point.Y - 1, point.X];
-            else heatUp = mMap[point.Y, point.X];
-
-            if (IsWalkable(down)) heatDown = mMap[point.Y + 1, point.X];
-            else heatDown = mMap[point.Y, point.X];
-
-            if (IsWalkable(left)) heatLeft = mMap[point.Y, point.X - 1];
-            else heatLeft = mMap[point.Y, point.X];
-
-            if (IsWalkable(right)) heatRight = mMap[point.Y, point.X + 1];
-            else heatRight = mMap[point.Y, point.X];
-
-            grad = new Vector2((float)(heatLeft - heatRight), (float)(heatUp - heatDown));
-            grad = AdjustGradientToWalls(point, grad);
-            return grad;
-        }
-
-        public Vector2 AdjustGradientToWalls(Point point, Vector2 grad)
-        {
-            Vector2 adjustedGrad = grad;
-            if (grad.X > 0 && !IsWalkable(new Point(point.X + 1, point.Y))) adjustedGrad = new Vector2(0, grad.Y);
-            if (grad.X < 0 && !IsWalkable(new Point(point.X - 1, point.Y))) adjustedGrad = new Vector2(0, grad.Y);
-            if (grad.Y > 0 && !IsWalkable(new Point(point.X, point.Y + 1))) adjustedGrad = new Vector2(grad.X, 0);
-            if (grad.Y < 0 && !IsWalkable(new Point(point.X, point.Y - 1))) adjustedGrad = new Vector2(grad.X, 0);
-             
-            return adjustedGrad;
-        }
-
-        public Vector2 NormalizedGradient(Point point)
-        {
-            Vector2 grad = Gradient(point);
-            if (grad != Vector2.Zero) grad.Normalize();
-            return grad;
-        }
-
-        public void Set(Point point, int value)
-        {
-            if (point.X < 0 || point.X >= mWidth) return;
-            if (point.Y < 0 || point.Y >= mHeight) return;
-            mMap[point.Y, point.X] = value;
-        }
-
-        public double Get(Point point)
-        {
-            if (point.X < 0 || point.X >= mWidth) return double.NaN;
-            if (point.Y < 0 || point.Y >= mHeight) return double.NaN;
-            return mMap[point.Y, point.X];
-        }
-
-
-        public String ToString()
-        {
-            string result = "";
-            for (int y=0; y < mHeight; y++)
+            float LookupHeat(int xOffset, int yOffset)
             {
-                for (int x = 0; x < mWidth; x++)
-                {
-                    result += mMap[y, x].ToString();
-                    switch (mMap[y, x].ToString().Length)
-                    {
-                        case 1:
-                            result += "   ";
-                            break;
-                        case 2:
-                            result += "  ";
-                            break;
-                        case 3:
-                            result += " ";
-                            break;
-                        default: break;
-                    }
-                }
-                if (y != mHeight - 1) result += "\n";
+                var maybeHeat = this[point + new Point(xOffset, yOffset)];
+                return maybeHeat is float heat2 && heat2 >= 0 ? heat2 : heatHere;
             }
 
-            return result;
-        }
+            var heatUp = LookupHeat(0, -1);
+            var heatDown = LookupHeat(0, 1);
+            var heatLeft = LookupHeat(-1, 0);
+            var heatRight = LookupHeat(1, 0);
 
-        public int Width { get => mWidth;}
-        public int Height { get => mHeight;}
-
-        internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager, bool drawBorderOnly=true)
-        {
-            var visualization = new Visualizer(grid, spriteManager, drawBorderOnly);
-            for (int x = 0; x < mWidth; x++)
-            {
-                for (int y = 0; y < mHeight; y++)
-                {
-                    Color color;
-                    if ((int)mMap[y, x] == 0)
-                    {
-                        color = Color.Red;
-                    }
-                    else if (IsWalkable(new Point(x, y)))
-                    {
-                        color = new Color(255 - 4*(int)mMap[y, x], 255 - 4 * (int)mMap[y, x], 0);
-                    }
-                    else
-                    {
-                        color = Color.White;
-                    }
-                    visualization.Append(new Point[] {new Point(x, y)}, color);
-                }
-            }
-
-            return visualization;
-        }
-    }
-
-    class VectorField
-    {
-        private Vector2[,] mVectorField;
-        private int mHeight;
-        private int mWidth;
-        public VectorField(int width, int height)
-        {
-            mVectorField = new Vector2[height, width];
-            mHeight = height;
-            mWidth = width;
+            var gradient = new Vector2(heatLeft - heatRight, heatUp - heatDown);
+            RoundToOctant(ref gradient);
+            AdjustGradientToWalls(point, ref gradient);
+            return gradient;
         }
 
         /// <summary>
-        /// Update vector field given a heat map, e.g.:
-        /// Let
-        /// [ 4][ 3][ 2][ 2]
-        /// [ 3][-1][ 1][ 1]
-        /// [ 2][ 1][ 0][ 0]
-        /// [ 2][ 1][ 0][ 0]
-        /// denote the heat map, then the updated vector field is
-        /// [(1,1)][(1,0)][(0,1)][(0,1)]
-        /// [(0,1)][ None][(0,1)][(0,1)]
-        /// [(1, 0)][(1, 0)][ None][ None]
-        /// [(1, 0)][(1, 0)][ None][ None]
-        /// with each square additionally normalized
+        /// Adjusts <paramref name="gradient"/> so that
+        /// <list type="number">
+        /// <item>
+        /// <description>it doesn't point in the direction of a blocked tile</description>
+        /// </item>
+        /// <item>
+        /// <description>we don't get zero-vectors after ensuring 1).</description>
+        /// </item>
+        /// </list>
+        /// The second point can occur when placing a tower and both ways around it have the same distance. This is
+        /// detected by making a change because of 1) in one dimension and the other dimension already being zero. To
+        /// handle this case we just set the second dimension to one.
         /// </summary>
-        /// <param name="map"></param>
-        public void Update(HeatMap map)
+        /// <param name="point">The tile at which <paramref name="gradient"/> is.</param>
+        /// <param name="gradient">The gradient to adjust.</param>
+        private void AdjustGradientToWalls(Point point, ref Vector2 gradient)
         {
-            if (map.Width > mWidth || map.Height > mHeight) return;
-            for (int i = 0; i < map.Width; i++)
+            bool Blocked(int xOffset, int yOffset) =>
+                !IsWalkable(new Point(point.X + xOffset, point.Y + yOffset));
+
+            var blockedX =
+                    gradient.X < 0 && Blocked(-1, 0) ||
+                    gradient.X > 0 && Blocked(1, 0);
+            if (blockedX)
             {
-                for (int j = 0; j < map.Height; j++)
-                {
-                    mVectorField[j, i] = map.NormalizedGradient(new Point(i, j));
-                }
+                gradient.X = 0;
+                if (Math.Abs(gradient.Y) < 0.0001)
+                    gradient.Y = 1;
+                return;
+            } 
+            
+            var blockedY =
+                    gradient.Y < 0 && Blocked(0, -1) ||
+                    gradient.Y > 0 && Blocked(0, 1);
+            if (blockedY)
+            {
+                gradient.Y = 0;
+                if (Math.Abs(gradient.X) < 0.0001)
+                    gradient.X = 1;
+                return;
+            }
+
+            var blockedDiagonal =
+                    gradient.X < 0 && gradient.Y < 0 && Blocked(-1, -1) ||
+                    gradient.X < 0 && gradient.Y > 0 && Blocked(-1, 1) ||
+                    gradient.X > 0 && gradient.Y < 0 && Blocked(1, -1) ||
+                    gradient.X > 0 && gradient.Y > 0 && Blocked(1, 1);
+            if (blockedDiagonal)
+            {
+                // Set one coordinate to zero. Which one doesn't matter (at least I think so).
+                gradient.X = 0;
             }
         }
 
-        public Vector2 Vector(Point point)
+        /// <summary>
+        /// Modifies <paramref name="gradient"/> so that it points at an angle which is a multiple of 45° (π/4).
+        /// </summary>
+        /// <param name="gradient">The gradient to adjust.</param>
+        private static void RoundToOctant(ref Vector2 gradient)
         {
-            if (point.X >= mWidth || point.Y >= mHeight) return new Vector2(Single.NaN, Single.NaN);
-            if (point.X < 0 || point.Y < 0) return new Vector2(Single.NaN, Single.NaN);
-            return mVectorField[point.Y, point.X];
+            const float octant = (float) (2 * Math.PI / 8);
+            var index = 0;
+            var angle = gradient.Angle();
+
+            if (angle < 0)
+                angle += 2 * (float) Math.PI;
+
+            angle -= octant / 2;
+            if (angle > 0)
+            {
+                ++index;
+                while (angle > octant)
+                {
+                    angle -= octant;
+                    index++;
+                }
+            }
+
+            angle = index * octant;
+            gradient.X = (float) Math.Cos(angle);
+            gradient.Y = (float) Math.Sin(angle);
         }
+
+        internal void Block(Point point) => this[point] = -1;
+
+        internal void SetCost(Point point, float cost) => this[point] = cost;
+
+        private float? this[Point point]
+        {
+            get => Contains(point) ? (float?) mMap[point.Y, point.X] : null;
+            set
+            {
+                if (Contains(point) && value is float val)
+                    mMap[point.Y, point.X] = val;
+            }
+        }
+
+        private bool Contains(Point point) =>
+            0 <= point.X && point.X < Width && 0 <= point.Y && point.Y < Height;
+
+        #region Visualization
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            foreach (var ((col, row), value) in AllPoints)
+            {
+                if (col == 0 && row > 0)
+                    builder.AppendLine();
+                if (col == 0)
+                    builder.Append($"[{row:D2}]  ");
+                if (value < 100 && value >= 0)
+                    builder.Append(' ');
+                if (value < 10)
+                    builder.Append(' ');
+                builder.Append(value).Append(' ');
+            }
+            return builder.ToString();
+        }
+
+        internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
+        {
+            var visualization = TileVisualizer.FullTile(grid, spriteManager);
+            foreach (var (point, value) in AllPoints)
+            {
+                Color color;
+                if (value == 0)
+                    color = Color.Red;
+                else if (IsWalkable(point))
+                    color = new Color(255 - 4 * value, 255 - 4 * value, 0);
+                else
+                    color = Color.White;
+                    
+                visualization.Append(new [] {point}, color);
+            }
+            return visualization;
+        }
+
+        private IEnumerable<(Point Point, int Value)> AllPoints
+        {
+            get
+            {
+                var width = Width;
+                return Enumerable.Range(0, Height).SelectMany(row =>
+                    Enumerable.Range(0, width).Select(col => (new Point(col, row), (int) mMap[row, col])));
+            }
+        }
+
+        #endregion
     }
 }

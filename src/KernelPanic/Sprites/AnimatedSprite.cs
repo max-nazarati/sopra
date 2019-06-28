@@ -11,11 +11,10 @@ namespace KernelPanic.Sprites
         private const int DefaultFrameSize = 64;
         private readonly Texture2D mTexture;
         private int mFrameCount;
-        private SpriteEffects mEffect;
         private int mRow;
 
         // specifies row of the sprite sheet
-        internal enum Movement
+        internal enum Direction
         {
             Standing,
             Left,
@@ -23,7 +22,9 @@ namespace KernelPanic.Sprites
             /*Up,
             Down*/
         }
-        internal Movement mMovement;
+
+        internal Direction MovementDirection { get; set; }
+        internal SpriteEffects Effect { get; set; }
 
         /// <summary>
         /// The duration for which each frame is displayed.
@@ -48,8 +49,8 @@ namespace KernelPanic.Sprites
             mTexture = texture;
             mFrameCount = 1;
             mFrameDuration = frameDuration;
-            mMovement = Movement.Standing;
-            mEffect = SpriteEffects.None;
+            MovementDirection = Direction.Standing;
+            Effect = SpriteEffects.None;
         }
 
         protected override void Draw(SpriteBatch spriteBatch,
@@ -58,29 +59,28 @@ namespace KernelPanic.Sprites
             float rotation,
             float scale)
         {
-            switch (mMovement)
+            switch (MovementDirection)
             {
-                case Movement.Standing:
+                case Direction.Standing:
                     mFrameCount = 1;
-                    mEffect = SpriteEffects.None;
                     mRow = 0;
                     break;
-                case Movement.Left:
+                case Direction.Left:
                     mFrameCount = 8;
-                    mEffect = SpriteEffects.None;
+                    Effect = SpriteEffects.None;
                     mRow = 1;
                     break;
-                case Movement.Right:
+                case Direction.Right:
                     mFrameCount = 8;
-                    mEffect = SpriteEffects.FlipHorizontally;
+                    Effect = SpriteEffects.FlipHorizontally;
                     mRow = 1;
                     break;
-                /*case Movement.Up:
+                /*case Direction.Up:
                     mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 2;
                     break;
-                case Movement.Down:
+                case Direction.Down:
                     mFrameCount = 1;
                     mEffect = SpriteEffects.None;
                     mRow = 3;
@@ -97,7 +97,7 @@ namespace KernelPanic.Sprites
                 rotation,
                 Origin,
                 scale,
-                mEffect,
+                Effect,
                 1f);
         }
     }

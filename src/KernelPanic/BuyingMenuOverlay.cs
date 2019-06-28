@@ -1,43 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using KernelPanic.Entities;
-using KernelPanic.Sprites;
-using KernelPanic.Interface;
+using KernelPanic.Input;
+using KernelPanic.Table;
 
 namespace KernelPanic
 {
-    class BuyingMenuOverlay
+    internal class BuyingMenuOverlay<TElement> where TElement : class, IPositioned, IUpdatable, IDrawable
     {
-        internal IEnumerable<IDrawable> Drawables{ get; private set; }
-        internal IEnumerable<IUpdatable> Updatables { get; private set; }
+        internal Player Player { get; }
+        internal TElement[] Elements { get; }
 
-        protected PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>> CreateTrojanPurchaseButton(SpriteManager spriteManager, Player player)
+        protected BuyingMenuOverlay(Vector2 startPosition, Player player, IEnumerable<TElement> elements)
         {
-            var sprite = (AnimatedSprite)new Trojan(spriteManager).Sprite;
-            var btn = new PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>>(player,
-                new PurchasableAction<Unit>((Unit)new Trojan(spriteManager)), new ImageButton(spriteManager, 
-                sprite.getSingleFrame(spriteManager), 70, 70));
+            Player = player;
+            Elements = elements.ToArray();
+
+            foreach (var element in Elements)
             {
-                
-            };
-            var trojanSprite = btn.Button.Sprite;
-            trojanSprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*trojanSprite.Width, 90 + trojanSprite.Height);
-            return btn;
+                element.Position = startPosition;
+                startPosition.Y += element.Size.Y;
+            }
         }
-        protected PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>> CreateFirefoxPurchaseButton(SpriteManager spriteManager, Player player)
+
+        protected static Vector2 MenuPosition(Lane.Side side, SpriteManager spriteManager) =>
+            new Vector2(
+                side == Lane.Side.Left
+                    ? InputManager.ScreenBorderDistance
+                    : spriteManager.ScreenSize.X - InputManager.ScreenBorderDistance,
+                InputManager.ScreenBorderDistance);
+
+        internal void Update(InputManager inputManager, GameTime gameTime)
         {
-            var sprite = (AnimatedSprite)Firefox.CreateFirefox(Point.Zero, spriteManager).Sprite;
-            var firefoxButton = new PurchaseButton<ImageButton, Unit, PurchasableAction<Unit>>(player,
-                new PurchasableAction<Unit>(Firefox.CreateFirefox(Point.Zero, spriteManager)),
-                new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70));
-            var tmpsprite = firefoxButton.Button.Sprite;
-            tmpsprite.Position = new Vector2(spriteManager.ScreenSize.X - 2*tmpsprite.Width, 90);
-            return firefoxButton;
+            foreach (var element in Elements)
+            {
+                element.Update(inputManager, gameTime);
+            }
+        }
+
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            foreach (var element in Elements)
+            {
+                element.Draw(spriteBatch, gameTime);
+            }
         }
     }
 }

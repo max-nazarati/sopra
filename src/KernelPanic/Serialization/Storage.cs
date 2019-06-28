@@ -11,12 +11,6 @@ namespace KernelPanic.Serialization
         internal Board Board { get; set; }
 
         [JsonProperty]
-        internal Player PlayerA { get; set; }
-
-        [JsonProperty]
-        internal Player PlayerB { get; set; }
-
-        [JsonProperty]
         internal TimeSpan GameTime { get; set; }
         
         internal struct Info

@@ -1,4 +1,6 @@
-﻿using KernelPanic.Input;
+﻿using System.Collections.Generic;
+using KernelPanic.Camera;
+using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -21,10 +23,10 @@ namespace KernelPanic
 
             mGraphics = new GraphicsDeviceManager(this)
             {
-                PreferredBackBufferWidth = 1920,
-                PreferredBackBufferHeight = 1080
+                PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width,
+                PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height
             };
-
+            
             // No mGraphics.ApplyChanges() required as explained here:
             // https://stackoverflow.com/a/11287316/1592765
 
@@ -53,7 +55,7 @@ namespace KernelPanic
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
-            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mSoundManager);
+            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mSoundManager, mGraphics);
             InGameState.PushGameStack(0, mGameStateManager);
             // SoundManager.Instance.PlayBackgroundMusic();
         }
@@ -75,7 +77,8 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
-            mGameStateManager.Update(mInputState, gameTime, mSoundManager);
+            mGameStateManager.Update(mInputState, gameTime, mSoundManager, mGraphics);
+            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
             base.Update(gameTime);
         }
 

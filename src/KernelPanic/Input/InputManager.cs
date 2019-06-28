@@ -15,7 +15,11 @@ namespace KernelPanic.Input
         // private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
         // private double mTimeLastClick = MaximumDoubleClickDelay; // Left MouseButton (init is for 'reset')
         // private int mDoubleClickFrameCount; 
-        private const int ScreenBorderDistance = 100;
+        
+        /// <summary>
+        /// The width/height of the stripe around the screen border in which the camera is moved.
+        /// </summary>
+        internal const int ScreenBorderDistance = 100;
 
         private readonly RawInputState mInputState;
         private readonly ICamera mCamera;
@@ -158,17 +162,15 @@ namespace KernelPanic.Input
             return MouseChanged(mouseButtons, ButtonState.Pressed);
         }
 
-        /* TODO uncomment this
         /// <summary>
         /// checks if any of the MouseButtons has been released (at this exact moment)
         /// </summary>
         /// <param name="mouseButtons"></param>
         /// <returns></returns>
-        public bool MouseReleased(params MouseButton[] mouseButtons)
+        internal bool MouseReleased(params MouseButton[] mouseButtons)
         {
             return MouseChanged(mouseButtons, ButtonState.Released);
         }
-        */
 
         private bool MouseChanged(IEnumerable<MouseButton> mouseButtons, ButtonState expectedCurrent)
         {

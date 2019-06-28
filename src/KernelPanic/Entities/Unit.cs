@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace KernelPanic.Entities
@@ -24,18 +26,10 @@ namespace KernelPanic.Entities
         [DataMember(Name = "HP")]
         private int RemainingLife { get; set; }
 
-        protected bool ShouldMove; // should the basic movement take place this cycle? 
+        protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
-        protected virtual Vector2? MoveVector
-        {
-            get
-            {
-                if (!(MoveTarget is Vector2 target))
-                    return null;
-
-                return Vector2.Normalize(target - Sprite.Position) * Speed;
-            }
-        }
+        protected delegate void MoveTargetReachedDelegate(Vector2 target);
+        protected event MoveTargetReachedDelegate MoveTargetReached;
 
         protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, sprite, spriteManager)
@@ -45,8 +39,11 @@ namespace KernelPanic.Entities
             RemainingLife = life;
             AttackStrength = attackStrength;
             ShouldMove = true;
-            mDidDie = false;
         }
+
+        internal Unit Clone() => Clone<Unit>();
+
+        #region Taking damage
 
         /// <summary>
         /// <para>
@@ -70,8 +67,10 @@ namespace KernelPanic.Entities
         /// </summary>
         protected virtual void DidDie()
         {
-            mDidDie = true;
+            SetWantsRemoval();
         }
+
+        #endregion
 
         /// <summary>
         /// Called when this unit is spawned, the passed action can be used to spawn further units when something
@@ -82,53 +81,53 @@ namespace KernelPanic.Entities
         {
         }
 
-        protected virtual void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
-        {
-            if (Selected)
-            {
-                if (inputManager.MousePressed(InputManager.MouseButton.Right))
-                {
-                    var mouse = inputManager.TranslatedMousePosition;
-                    if (positionProvider.GridCoordinate(mouse) != null)
-                        MoveTarget = mouse;
-                }
-            }
-        }
+        protected abstract void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager);
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             base.Update(positionProvider, gameTime, inputManager);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
-            if (Sprite is AnimatedSprite animation)
+
+            var move = (Vector2?) null;
+            if (ShouldMove && MoveTarget is Vector2 target)
             {
-                // children - classes want to know if movement is allowed(mShouldMove)
-                if (ShouldMove && MoveVector is Vector2 movement)
+                var remainingDistance = Vector2.Distance(Sprite.Position, target);
+                if (remainingDistance < 0.1)
                 {
-                    Sprite.Position += movement;
-                    // choose correct movement animation
-                    if (movement.X > 0)
-                    {
-                        animation.mMovement = AnimatedSprite.Movement.Right;
-                    }
-                    else
-                    {
-                        animation.mMovement = AnimatedSprite.Movement.Left;
-                    }
+                    MoveTargetReached?.Invoke(target);
+                    MoveTarget = null;
                 }
                 else
                 {
-                    animation.mMovement = AnimatedSprite.Movement.Standing;
+                    var theMove = Vector2.Normalize(target - Sprite.Position) * Math.Min(Speed, remainingDistance);
+                    Sprite.Position += theMove;
+                    CheckBaseReached(positionProvider);
+                    move = theMove;
                 }
             }
+            
+            if (!(Sprite is AnimatedSprite animated))
+                return;
 
-            // children-classes want to know if movement is allowed (mShouldMove) 
-            /*if (ShouldMove && MoveVector is Vector2 movement)
+            if (move?.X is float x)
             {
-                Sprite.Position += movement;
-            }*/
-
+                // choose correct movement direction baseed on x value or direction of idle animation
+                animated.MovementDirection = (animated.Effect == SpriteEffects.None && (int)x == 0) || x < 0
+                    ? AnimatedSprite.Direction.Left
+                    : AnimatedSprite.Direction.Right;
+            }
+            else
+                animated.MovementDirection = AnimatedSprite.Direction.Standing;
         }
-        
+
+        private void CheckBaseReached(PositionProvider positionProvider)
+        {
+            if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
+                return;
+
+            positionProvider.DamageBase(AttackStrength);
+            SetWantsRemoval();
+        }
     }
 }

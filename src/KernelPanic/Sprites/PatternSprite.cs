@@ -42,5 +42,11 @@ namespace KernelPanic.Sprites
                 }
             }
         }
+
+        protected override void CompleteClone()
+        {
+            base.CompleteClone();
+            Sprite = Sprite.Clone();
+        }
     }
 }

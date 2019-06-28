@@ -46,5 +46,15 @@ namespace KernelPanic.Sprites
                 DrawChild(child, spriteBatch, gameTime, position, rotation, scale);
             }
         }
+
+        protected override void CompleteClone()
+        {
+            base.CompleteClone();
+
+            for (var i = 0; i < Children.Count; ++i)
+            {
+                Children[i] = Children[i].Clone();
+            }
+        }
     }
 }

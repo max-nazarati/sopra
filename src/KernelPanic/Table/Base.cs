@@ -10,27 +10,19 @@ namespace KernelPanic.Table
         public int Power { get; set; }
 
         [JsonProperty]
-        private Vector2 mPosition;
+        public Point Position { get; set; }
 
-        public Base(Vector2 position = new Vector2())
+        public Base(Point position)
         {
             Power = 50;
-            mPosition = position;
+            Position = position;
         }
 
-        // for testing purposes
-        public List<Vector2> GetHitBox()
+        internal IEnumerable<Point> HitBox => new[]
         {
-            List<Vector2> hitBox = new List<Vector2>();
-            hitBox.Add(Position);
-            hitBox.Add(new Vector2(Position.X + 1, Position.Y));
-            hitBox.Add(new Vector2(Position.X - 1, Position.Y));
-            hitBox.Add(new Vector2(Position.X, Position.Y + 1));
-            hitBox.Add(new Vector2(Position.X, Position.Y - 1));
-
-            return hitBox;
-        }
-
-        public Vector2 Position { get => mPosition; set => mPosition = value;}
+            Position,
+            new Point(Position.X + 1, Position.Y), new Point(Position.X - 1, Position.Y),
+            new Point(Position.X, Position.Y + 1), new Point(Position.X, Position.Y - 1)
+        };
     }
 }

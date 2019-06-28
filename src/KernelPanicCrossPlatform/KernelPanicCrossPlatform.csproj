@@ -75,9 +75,6 @@
     <Compile Include="..\KernelPanic\Camera\StaticCamera.cs">
       <Link>Camera\StaticCamera.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Data\BreadthFirstSearch.cs">
-      <Link>Data\BreadthFirstSearch.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Data\EnumerableExtensions.cs">
       <Link>Data\EnumerableExtensions.cs</Link>
     </Compile>
@@ -99,6 +96,18 @@
     <Compile Include="..\KernelPanic\Data\RelativePosition.cs">
       <Link>Data\RelativePosition.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Data\VectorField.cs">
+      <Link>Data\VectorField.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\DebugSettings.cs">
+      <Link>DebugSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Bluescreen.cs">
+      <Link>Entities\Bluescreen.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Bug.cs">
+      <Link>Entities\Bug.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Building.cs">
       <Link>Entities\Building.cs</Link>
     </Compile>
@@ -111,14 +120,23 @@
     <Compile Include="..\KernelPanic\Entities\Hero.cs">
       <Link>Entities\Hero.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Entities\Nokia.cs">
+      <Link>Entities\Nokia.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Projectile.cs">
       <Link>Entities\Projectile.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Settings.cs">
+      <Link>Entities\Settings.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\ShockField.cs">
       <Link>Entities\ShockField.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\StrategicTower.cs">
       <Link>Entities\StrategicTower.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Thunderbird.cs">
+      <Link>Entities\Thunderbird.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Tower.cs">
       <Link>Entities\Tower.cs</Link>
@@ -131,6 +149,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Unit.cs">
       <Link>Entities\Unit.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Virus.cs">
+      <Link>Entities\Virus.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\EntityGraph.cs">
       <Link>EntityGraph.cs</Link>
@@ -174,6 +195,9 @@
     <Compile Include="..\KernelPanic\Interface\TextButton.cs">
       <Link>Interface\TextButton.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\IPositioned.cs">
+      <Link>IPositioned.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\IPriced.cs">
       <Link>IPriced.cs</Link>
     </Compile>
@@ -183,11 +207,20 @@
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\MinimapOverlay.cs">
+      <Link>MinimapOverlay.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\AStar.cs">
       <Link>PathPlanning\AStar.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\PathPlanning\BreadthFirstSearch.cs">
+      <Link>PathPlanning\BreadthFirstSearch.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\ObstacleMatrix.cs">
       <Link>PathPlanning\ObstacleMatrix.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\PathPlanning\PathPlanner.cs">
+      <Link>PathPlanning\PathPlanner.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\Visualizer.cs">
       <Link>PathPlanning\Visualizer.cs</Link>
@@ -204,11 +237,14 @@
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\PurchasableAction.cs">
-      <Link>PurchasableAction.cs</Link>
+    <Compile Include="..\KernelPanic\Purchasing\PurchasableAction.cs">
+      <Link>Purchasing\PurchasableAction.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\PurchaseButton.cs">
-      <Link>PurchaseButton.cs</Link>
+    <Compile Include="..\KernelPanic\Purchasing\PurchaseButton.cs">
+      <Link>Purchasing\PurchaseButton.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Purchasing\SinglePurchasableAction.cs">
+      <Link>Purchasing\SinglePurchasableAction.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\ScoreOverlay.cs">
       <Link>ScoreOverlay.cs</Link>
@@ -224,9 +260,6 @@
     </Compile>
     <Compile Include="..\KernelPanic\Serialization\StorageManager.cs">
       <Link>Serialization\StorageManager.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\SinglePurchasableAction.cs">
-      <Link>SinglePurchasableAction.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\SoundManager.cs">
       <Link>SoundManager.cs</Link>
@@ -261,8 +294,14 @@
     <Compile Include="..\KernelPanic\Table\Lane.cs">
       <Link>Table\Lane.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Table\Owner.cs">
+      <Link>Table\Owner.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Table\TileIndex.cs">
       <Link>Table\TileIndex.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Table\UnitSpawner.cs">
+      <Link>Table\UnitSpawner.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\UnitBuyingMenu.cs">
       <Link>UnitBuyingMenu.cs</Link>

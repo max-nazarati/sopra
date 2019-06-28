@@ -16,7 +16,7 @@ namespace KernelPanic.Interface
 
         public abstract void Update(InputManager inputManager, GameTime gameTime);
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Sprite.Draw(spriteBatch, gameTime);
         }

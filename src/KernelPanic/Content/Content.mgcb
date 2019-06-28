@@ -291,6 +291,18 @@
 /processorParam:TextureFormat=Color
 /build:Papier.jpg
 
+#begin pause.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:pause.png
+
 #begin placement.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
@@ -531,4 +543,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:troupes/virus.png
+
+#begin vector_arrow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:vector_arrow.png
 

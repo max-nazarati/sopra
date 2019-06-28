@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Autofac.Core.Lifetime;
 using KernelPanic.Input;
@@ -20,7 +21,6 @@ namespace KernelPanic.Entities
 
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            base.CalculateMovement(positionProvider, gameTime, inputManager);
             Vector2 movementDirection = positionProvider.GetVector(Grid.CoordinatePositionFromScreen(Sprite.Position));
             if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
             {
@@ -31,18 +31,6 @@ namespace KernelPanic.Entities
                 mLastMovement = movementDirection;
             }
             MoveTarget = Sprite.Position + movementDirection;
-
-            List<Point> baseHitBox = new List<Point>();
-            foreach (var baseGrid in positionProvider.Target.GetHitBox())
-            {
-                baseHitBox.Add(baseGrid.ToPoint());
-            }
-
-            if (baseHitBox.Contains(Grid.CoordinatePositionFromScreen(Sprite.Position)))
-            {
-                DidDie();
-                positionProvider.DamageBase(5);
-            }
         }
     }
 }

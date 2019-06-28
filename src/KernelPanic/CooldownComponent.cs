@@ -11,22 +11,33 @@ namespace KernelPanic
         [JsonProperty]
         private TimeSpan mRemainingCooldown;
 
-        internal CooldownComponent(TimeSpan time)
+        private bool mReady;
+
+        internal bool Ready
+        {
+            get => mReady;
+            set => mReady = value;
+        }
+        
+        internal CooldownComponent(TimeSpan time, bool isHot = true)
         {
             mCooldown = time;
-            mRemainingCooldown = time;
+            mRemainingCooldown = isHot ? time : TimeSpan.Zero;
+            Enabled = isHot;
+            Ready = !isHot;
         }
 
         internal delegate void CooledDownDelegate(CooldownComponent cooldownComponent);
 
         internal event CooledDownDelegate CooledDown;
 
-        internal bool Enabled { get; set; } = true;
-
+        internal bool Enabled { get; set; }
+        
         internal void Reset()
         {
             Enabled = true;
             mRemainingCooldown = mCooldown;
+            Ready = false;
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -35,6 +46,7 @@ namespace KernelPanic
             Enabled = true;
             mCooldown = time;
             mRemainingCooldown = time;
+            Ready = false;
         }
 
         internal void Update(GameTime time)
@@ -45,6 +57,7 @@ namespace KernelPanic
             if (mRemainingCooldown > TimeSpan.Zero) return;
             mRemainingCooldown = TimeSpan.Zero;
             Enabled = false;
+            Ready = true;
             CooledDown?.Invoke(this);
         }
     }

@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
+using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,7 +13,6 @@ using Newtonsoft.Json.Converters;
 
 namespace KernelPanic.Table
 {
-    [DataContract]
     internal sealed class Lane
     {
         /// <summary>
@@ -27,30 +27,40 @@ namespace KernelPanic.Table
             Left,
 
             /// <summary>
-            /// Describes the lane which is shaped like an opening bracket ›]‹.
+            /// Describes the lane which is shaped like an closing bracket ›]‹.
             /// </summary>
             Right
         }
 
-        internal EntityGraph EntityGraph { get; set; }
+        #region Properties
+
+        private readonly SpriteManager mSpriteManager;
+        private readonly SoundManager mSounds;
 
         [JsonProperty]
-        internal Base Target { get; }
+        internal Base Target { get; /* required for deserialization */ private set; }
+
+        [JsonProperty]
+        private readonly Side mLaneSide;
 
         private Grid mGrid;
-        private readonly SpriteManager mSpriteManager;
-        private static bool VISUAL_DEBUG;
-        private SoundManager mSounds;
-        [DataMember]
-        private Side mLaneSide;
-
         private HeatMap mHeatMap;
         private VectorField mVectorField;
-        // private UnitSpawner mUnitSpawner;
+
+        internal EntityGraph EntityGraph { get; private set; }
+        internal UnitSpawner UnitSpawner { get; private set; }
+
+        internal Rectangle GridRectangle() => mGrid.LaneRectangle;
+        internal int LaneWidthInTiles() => Grid.LaneWidthInTiles;
+        
         // private BuildingSpawner mBuildingSpawner;
 
+        #endregion
+
+        #region Size, position and bound functions
+
         private static Rectangle LaneBoundsInTiles(Side laneSide) =>
-            new Rectangle(laneSide == Side.Left ? 0 : 32, 0, 16, 42);
+            new Rectangle(laneSide == Side.Left ? 0 : 30, 0, 18, 42);
 
         private static Rectangle LaneBoundsInPixel(Side laneSide)
         {
@@ -62,62 +72,90 @@ namespace KernelPanic.Table
             return bounds;
         }
 
+        private static Point BasePosition(Side laneSide)
+        {
+            if (laneSide == Side.Right)
+                return new Point(1);
+
+            var position = LaneBoundsInTiles(laneSide).Size;
+            position.X -= 2;
+            position.Y -= 2;
+            return position;
+        }
+
         internal static Rectangle LeftBounds => LaneBoundsInPixel(Side.Left);
         internal static Rectangle RightBounds => LaneBoundsInPixel(Side.Right);
 
-        public Lane(Side laneSide, SpriteManager sprites, SoundManager sounds)
+        internal bool Contains(Vector2 point) => mGrid.Contains(point);
+
+        #endregion
+
+        #region Constructors
+
+        public Lane(Side laneSide, SpriteManager sprites, SoundManager sounds) : this(sprites, sounds)
         {
-            mSounds = sounds;
             mLaneSide = laneSide;
-            mGrid = new Grid(LaneBoundsInTiles(laneSide), sprites, laneSide);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(laneSide), sprites);
-            switch (mGrid.LaneSide)
-            {
-                case Side.Left:
-                    Target = new Base(new Vector2(mGrid.LaneRectangle.Width - 2, mGrid.LaneRectangle.Height - 2));
-                    break;
-                case Side.Right:
-                    Target = new Base(new Vector2(1, 1));
-                    break;
-            }
-            mSpriteManager = sprites;
-            InitHeatMap();
-            UpdateHeatMap();
+            Target = new Base(BasePosition(laneSide));
+            Initialize();
         }
 
         internal Lane(SpriteManager sprites, SoundManager sounds)
         {
-            Target = new Base();
             mSpriteManager = sprites;
             mSounds = sounds;
         }
 
-        internal bool Contains(Vector2 point) => mGrid.Contains(point);
-
-        public void Update(GameTime gameTime, InputManager inputManager)
+        /// <summary>
+        /// Performs the initialization common to deserialized lanes and lanes created at runtime.
+        /// </summary>
+        /// <param name="entities">Entities to be added to the <see cref="EntityGraph"/> and the <see cref="mHeatMap"/>.</param>
+        private void Initialize(IReadOnlyCollection<Entity> entities = null)
         {
-            var mouse = inputManager.TranslatedMousePosition;
-            if (inputManager.KeyPressed(Keys.T))
+            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
+            mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
+            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
+            UnitSpawner = new UnitSpawner(mGrid, EntityGraph.Add);
+            var obstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
+
+            if (entities?.Count > 0)
             {
-                // It seems we can't use pattern matching here because of compiler-limitations.
-                var gridPoint = mGrid.GridPointFromWorldPoint(mouse);
-                if (gridPoint != null)
+                EntityGraph.Add(entities);
+                obstacleMatrix.Rasterize(entities, mGrid.Bounds, entity => entity is Building);
+            }
+
+            foreach (var tileIndex in obstacleMatrix.Obstacles)
+                mHeatMap.Block(tileIndex.ToPoint());
+
+            UpdateHeatMap();
+        }
+
+        #endregion
+
+        #region Update
+
+        internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
+        {
+            // It seems we can't use pattern matching here because of compiler-limitations.
+            var gridPoint = mGrid.GridPointFromWorldPoint(inputManager.TranslatedMousePosition);
+            if (gridPoint != null && inputManager.KeyPressed(Keys.T))
+            {
+                var (position, size) = gridPoint.Value;
+                if (!EntityGraph.HasEntityAt(position))
                 {
-                    var (position, size) = gridPoint.Value;
-                    if (!EntityGraph.HasEntityAt(position))
-                    {
-                        EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
-                        mHeatMap.Set(Grid.CoordinatePositionFromScreen(position), HeatMap.Blocked);
-                        UpdateHeatMap();
-                        mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    }
+                    mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
+                    EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
+                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
+                    UpdateHeatMap();
                 }
             }
 
-
-            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target);
+            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
         }
+
+        #endregion
+
+        #region Drawing
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
@@ -130,54 +168,42 @@ namespace KernelPanic.Table
         {    
             throw new NotImplementedException();
         }
-        
 
-        public void InitHeatMap()
+        #endregion
+
+        #region Heat Map Handling
+
+        private void UpdateHeatMap()
         {
-            mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
+            BreadthFirstSearch.UpdateHeatMap(mHeatMap, Target.HitBox);
+            mVectorField = new VectorField(mHeatMap);
+        }
 
-            switch (mGrid.LaneSide)
+        private void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            Visualizer visualizer;
+
+            if (DebugSettings.VisualizeHeatMap)
             {
-                case Side.Left:
-                    for (int y = Grid.LaneWidthInTiles; y < mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles; y++)
-                    {
-                        for (int x = Grid.LaneWidthInTiles; x < mGrid.LaneRectangle.Width; x++)
-                        {
-                            mHeatMap.mMap[y, x] = HeatMap.Blocked;
-                        }
-                    }
-                    break;
-                case Side.Right:
-                    for (int y = Grid.LaneWidthInTiles; y < mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles; y++)
-                    {
-                        for (int x = 0; x < mGrid.LaneRectangle.Width - Grid.LaneWidthInTiles; x++)
-                        {
-                            mHeatMap.mMap[y, x] = HeatMap.Blocked;
-                        }
-                    }
-                    break;
+                visualizer = mHeatMap.Visualize(mGrid, mSpriteManager);
+                visualizer.Draw(spriteBatch, gameTime);
             }
+
+            if (DebugSettings.VisualizeVectors)
+            {
+                visualizer = mVectorField.Visualize(mGrid, mSpriteManager);
+                visualizer.Draw(spriteBatch, gameTime);
+            }
+
+            if (!DebugSettings.VisualizeHeatMap && !DebugSettings.VisualizeVectors)
+                return;
+
+            var tileVisualizer = TileVisualizer.Border(mGrid, mSpriteManager);
+            tileVisualizer.Append(Target.HitBox, Color.Blue);
+            tileVisualizer.Draw(spriteBatch, gameTime);
         }
 
-        public void UpdateHeatMap()
-        {
-            List<Point> basePoints = new List<Point>();
-            foreach (var basePoint in Target.GetHitBox())
-                {
-                basePoints.Add(new Point((int)basePoint.X, (int)basePoint.Y));
-                }
-            
-            BreadthFirstSearch bfs = new BreadthFirstSearch(mHeatMap, basePoints);
-            bfs.UpdateVectorField();
-            mHeatMap = bfs.HeatMap;
-            mVectorField = bfs.VectorField;
-        }
-
-        internal void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            var visualizer = mHeatMap.CreateVisualization(mGrid, mSpriteManager, false);
-            visualizer.Draw(spriteBatch, gameTime);
-        }
+        #endregion
 
         #region Serialization
 
@@ -190,21 +216,22 @@ namespace KernelPanic.Table
         [OnSerializing]
         private void BeforeSerialization(StreamingContext context)
         {
+            // Store the current entities.
             mEntitiesSerializing = new List<Entity>(EntityGraph);
+        }
+
+        [OnSerialized]
+        private void AfterSerialization(StreamingContext context)
+        {
+            // Reset this secondary storage.
+            mEntitiesSerializing = null;
         }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
-            foreach (var entity in mEntitiesSerializing)
-            {
-                EntityGraph.Add(entity);
-            }
-            
-            InitHeatMap();
-            UpdateHeatMap();
+            Initialize(mEntitiesSerializing);
+            mEntitiesSerializing = null;
         }
 
         #endregion

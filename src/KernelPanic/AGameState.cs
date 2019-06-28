@@ -22,6 +22,7 @@ namespace KernelPanic
         }
         
         public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
-        public abstract void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager);
+        public abstract void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
+            , GraphicsDeviceManager mGraphics);
     }
 }

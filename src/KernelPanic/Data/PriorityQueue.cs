@@ -9,13 +9,8 @@ namespace KernelPanic.Data
     /// The left child of i is 2i+1 and the right one 2i+2.
     /// The parent of i is (i-1)//2
     /// </summary>
-    public sealed class Node
+    internal sealed class Node
     {
-        // private List<Point> mNeighbours;
-        private bool mIsStart;
-        private bool mIsGoal;
-
-
         internal Point Position { get; } // set; }
 
         internal Node Parent { get; } // set => mParent = value; }
@@ -25,28 +20,29 @@ namespace KernelPanic.Data
 
         internal double Key { get; }
 
-        internal Node(Point coordinate, Node parent, double cost, double estimatedCost,
-        bool start=false, bool goal=false)
+        internal Node(Point coordinate, Node parent, double cost, double estimatedCost)
         {
             Position = coordinate;
             Parent = parent;
             Cost = cost;
             EstimatedCost = estimatedCost;
             Key = cost + estimatedCost;
-            mIsStart = start;
-            mIsGoal = goal;
-            // mNeighbours = neighbours;
         }
-
     }
 
     sealed class PriorityQueue
     {
-        private List<Node> mItems;
+        private readonly List<Node> mItems;
         private int mCount;
         public PriorityQueue()
         {
             mItems = new List<Node>();
+        }
+
+        public void Clear()
+        {
+            mItems.Clear();
+            mCount = 0;
         }
 
         /// <summary>

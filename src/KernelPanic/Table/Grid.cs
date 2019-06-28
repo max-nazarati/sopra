@@ -1,6 +1,5 @@
 using System.Runtime.Serialization;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using KernelPanic.Data;
 using KernelPanic.Sprites;
@@ -12,14 +11,28 @@ namespace KernelPanic.Table
     [DataContract]
     internal sealed class Grid : IBounded
     {
-        private int mRelativeX, mRelativeY;
-
         internal const int LaneWidthInTiles = 10;
         internal Lane.Side LaneSide { get; }
         internal Rectangle LaneRectangle { get; }
 
-        private readonly List<Point> mCoordinateSystem = new List<Point>(); // coordinates are saved absolute/globaly
-        public List<Point> CoordSystem => mCoordinateSystem;
+        private Rectangle TileCutout => new Rectangle(
+            LaneSide == Lane.Side.Left ? LaneWidthInTiles : 0,
+            LaneWidthInTiles,
+            LaneRectangle.Width - LaneWidthInTiles,
+            LaneRectangle.Height - 2 * LaneWidthInTiles);
+
+        private Rectangle PixelCutout
+        {
+            get
+            {
+                var cutout = TileCutout;
+                cutout.X *= KachelSize;
+                cutout.Y *= KachelSize;
+                cutout.Width *= KachelSize;
+                cutout.Height *= KachelSize;
+                return cutout;
+            }
+        }
 
         /// <summary>
         /// The size of a single tile in pixels.
@@ -34,6 +47,16 @@ namespace KernelPanic.Table
         private readonly Sprite mSprite;
 
         public Rectangle Bounds => mSprite.Bounds;
+
+        internal int TileCount
+        {
+            get
+            {
+                var rectangle = LaneRectangle;
+                var cutout = TileCutout;
+                return rectangle.Width * rectangle.Height - cutout.Width * cutout.Height;
+            }
+        }
 
         internal Grid(Rectangle laneBounds, SpriteManager sprites, Lane.Side laneSide)
         {
@@ -68,8 +91,6 @@ namespace KernelPanic.Table
                 Y = TileCountPixelSize(LaneRectangle.Y),
                 Children = {mainPart, bottomPart, topPart}
             };
-
-            CreateCoordinateSystem();
         }
 
         internal static ImageSprite CreateTile(SpriteManager spriteManager)
@@ -131,129 +152,6 @@ namespace KernelPanic.Table
 
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// In this example:
-        ///  * lane width = 3
-        ///  * height = 11
-        ///  * width = 6
-        /// [ ][ ][ ][ ][ ][ ]    \
-        /// [ ][ ][ ][ ][ ][ ]     > 1st for loop: top part
-        /// [ ][ ][ ][ ][ ][ ]    /
-        /// [ ][ ][ ]            \
-        /// [ ][ ][ ]             \
-        /// [ ][ ][ ]              > 2nd for loop: middle part
-        /// [ ][ ][ ]             /
-        /// [ ][ ][ ]            /
-        /// [ ][ ][ ][ ][ ][ ]    \
-        /// [ ][ ][ ][ ][ ][ ]     > 3rd for loop: bottom part
-        /// [ ][ ][ ][ ][ ][ ]    /
-        private void CreateCoordinateSystemLeft()
-        {
-            // calculate new Values depending on the Size of the sprite
-            var laneWidth = LaneWidthInTiles / TilesPerSprite;
-            var rectangleWidth = LaneRectangle.Width / TilesPerSprite;
-            var rectangleHeight = LaneRectangle.Height / TilesPerSprite;
-
-            // adding the top part
-            for (var y = 0; y < laneWidth; y++)
-            {
-                for (var x = 0; x < rectangleWidth; x++)
-                {
-                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
-                }
-            }
-
-            // adding the middle part
-            for (var y = laneWidth; y < rectangleHeight - laneWidth; y++)
-            {
-                for (var x = 0; x < laneWidth; x++)
-                {
-                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
-                }
-            }
-
-            // adding the bottom part
-            for (var y = rectangleHeight - laneWidth; y < rectangleHeight; y++)
-            {
-                for (var x = 0; x < rectangleWidth; x++)
-                {
-                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
-                }
-            }
-        }
-
-        /// <summary>
-        /// TODO 1st and 3rd loop can be put in one function and be called by left and right (4times ~same code)
-        /// </summary>
-        /// In this example:
-        ///  * lane width = 3
-        ///  * height = 11
-        ///  * width = 6
-        /// [ ][ ][ ][ ][ ][ ]    \
-        /// [ ][ ][ ][ ][ ][ ]     > 1st for loop: top part
-        /// [ ][ ][ ][ ][ ][ ]    /
-        ///          [ ][ ][ ]   \
-        ///          [ ][ ][ ]    \
-        ///          [ ][ ][ ]     > 2nd for loop: middle part
-        ///          [ ][ ][ ]    /
-        ///          [ ][ ][ ]   /
-        /// [ ][ ][ ][ ][ ][ ]    \
-        /// [ ][ ][ ][ ][ ][ ]     > 3rd for loop: bottom part
-        /// [ ][ ][ ][ ][ ][ ]    /
-        private void CreateCoordinateSystemRight()
-        {
-            // calculate new Values depending on the Size of the sprite
-            var laneWidth = LaneWidthInTiles / TilesPerSprite;
-            var rectangleWidth = LaneRectangle.Width / TilesPerSprite;
-            var rectangleHeight = LaneRectangle.Height / TilesPerSprite;
-
-            // adding the top part
-            for (var y = 0; y < laneWidth; y++)
-            {
-                for (var x = 0; x < rectangleWidth; x++)
-                {
-                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
-                }
-            }
-
-            // adding the middle part
-            for (var y = laneWidth; y < rectangleHeight - laneWidth; y++)
-            {
-                for (var x = rectangleWidth - laneWidth; x < rectangleWidth; x++)
-                {
-                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
-                }
-            }
-
-            // adding the bottom part
-            for (var y = rectangleHeight - laneWidth; y < rectangleHeight; y++)
-            {
-                for (var x = 0; x < rectangleWidth; x++)
-                {
-                    mCoordinateSystem.Add(new Point(x + LaneRectangle.X, y + LaneRectangle.Y));
-                }
-            }
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        private void CreateCoordinateSystem()
-        {
-            switch (LaneSide)
-            {
-                case Lane.Side.Left:
-                    CreateCoordinateSystemLeft();
-                    break;
-                case Lane.Side.Right:
-                    CreateCoordinateSystemRight();
-                    break;
-            }
-        }
-
         /// <summary>
         /// Tests if the given point lies on this lane and if successful returns information about the hit tile.
         /// </summary>
@@ -302,13 +200,7 @@ namespace KernelPanic.Table
         /// <returns><c>true</c> if the point is inside, <c>false</c> otherwise.</returns>
         internal bool Contains(Vector2 point)
         {
-            var cutout = new Rectangle(
-                (int) mSprite.X + (LaneSide == Lane.Side.Left ? TileCountPixelSize(LaneWidthInTiles) : 0),
-                TileCountPixelSize(LaneWidthInTiles),
-                TileCountPixelSize(LaneRectangle.Width - LaneWidthInTiles),
-                TileCountPixelSize(LaneRectangle.Height - 2 * LaneWidthInTiles));
-
-            return Bounds.Contains(point) && !cutout.Contains(point);
+            return Bounds.Contains(point) && !PixelCutout.Contains(point);
         }
 
         /// <summary>

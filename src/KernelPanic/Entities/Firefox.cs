@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,45 +15,69 @@ namespace KernelPanic.Entities
     internal sealed class Firefox : Hero
     {
         private Stack<Vector2> mAbility = new Stack<Vector2>();
+        private Vector2 mAbilityTarget;
+        private readonly ImageSprite mIndicator;
+        private const int JumpDuration = 10;
+        private const int JumpSegmentLength = 30;
 
-        private Firefox(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
-            : base(price, speed, life, attackStrength, sprite, spriteManager)
+        internal Firefox(SpriteManager spriteManager)
+            : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), spriteManager.CreateFirefox(), spriteManager)
         {
-            Cooldown.Reset(new TimeSpan(0, 0, 5));
+            mIndicator = spriteManager.CreateJumpIndicator();
         }
 
-        internal Firefox(SpriteManager spriteManager) : this(0, 0, 0, 0, spriteManager.CreateFirefox(), spriteManager)
+        protected override void CompleteClone()
         {
+            mAbility = new Stack<Vector2>(mAbility);
+        }
+
+        #region Ability 
+
+        protected override void IndicateAbility(InputManager inputManager)
+        {
+            mAbilityTarget = inputManager.TranslatedMousePosition;
+            base.IndicateAbility(inputManager);
             
         }
 
-        private static Firefox Create(Point position, Sprite sprite, SpriteManager spriteManager)
-        {
-            sprite.Position = position.ToVector2();
-            return new Firefox(10, 2, 100, 1, sprite, spriteManager);
-        }
-
-        internal static Firefox CreateFirefox(Point position, SpriteManager spriteManager) =>
-            Create(position, spriteManager.CreateFirefox(), spriteManager);
-
-
-        protected override void StartAbility(InputManager inputManager)
+        protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // debug
-            base.StartAbility(inputManager);
+            base.StartAbility(positionProvider, inputManager);
 
             // calculate the jump direction
             var mouse = inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
-            direction *= 30;
-            
-            for (var _ = 0; _ < 10; _++)
+            var jumpSegment = direction * JumpSegmentLength;
+
+            for (var _ = 0; _ < JumpDuration; _++)
             {
-                mAbility.Push(direction);
+                mAbility.Push(jumpSegment);
             }
+
+            CorrectJump(direction, JumpDuration, positionProvider);
         }
 
+        
+        private void CorrectJump(Vector2 direction, int duration, PositionProvider positionProvider)
+        {
+            var jumpFrame = direction * JumpSegmentLength;
+            var goal = Sprite.Position + jumpFrame * duration;
+            
+            // jump was too short
+            while (positionProvider.HasEntityAt(goal))
+            {
+                mAbility.Push(jumpFrame);
+                goal += jumpFrame;
+            }
+            
+            // jump was too long
+            while (!positionProvider.Contains(goal) || positionProvider.HasEntityAt(goal))
+            {
+                goal -= mAbility.Pop();
+            }
+        }
 
         protected override void ContinueAbility(GameTime gameTime)
         {
@@ -60,20 +85,20 @@ namespace KernelPanic.Entities
             {
                 AbilityStatus = AbilityState.Finished;
                 ShouldMove = true;
-                Console.WriteLine(this + " JUST USED HIS ABILITY! (method of class Firefox)  [TIME:] " + gameTime.TotalGameTime);
+                // Console.WriteLine(this + " JUST USED HIS ABILITY! (method of class Firefox)  [TIME:] " + gameTime.TotalGameTime);
                 return;
             }
 
             var jumpDistance = mAbility.Pop();
             Sprite.Position += jumpDistance;
         }
-
+        #endregion Ability
+        
         #region Draw
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
-            // DrawIndicator(spriteBatch, gameTime);
         }
         
         protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
@@ -87,12 +112,15 @@ namespace KernelPanic.Entities
         
         private void DrawIndicator(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            /*
-            var mousePosition = mInputManager.TranslatedMousePosition;
-            var direction = (mousePosition - Sprite.Position);
+            var direction = mAbilityTarget - Sprite.Position;
             direction.Normalize();
-            // var rotation = Math.Cos(direction);
-            */
+            var rotation = direction.Angle(0.5);
+
+            mIndicator.Position = Sprite.Position;
+            mIndicator.Rotation = rotation;
+            mIndicator.ScaleToHeight(JumpDuration * JumpSegmentLength);
+            mIndicator.Draw(spriteBatch, gameTime);
+            
         }
         
         #endregion

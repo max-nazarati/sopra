@@ -9,7 +9,7 @@ namespace KernelPanic.Sprites
     [DataContract]
     [KnownType(typeof(AnimatedSprite))]
     [KnownType(typeof(ImageSprite))]
-    public abstract class Sprite: IBounded
+    public abstract class Sprite: IBounded, IPositioned
     {
         #region Properties
 
@@ -28,10 +28,10 @@ namespace KernelPanic.Sprites
 
         internal float Width => Scale * UnscaledWidth;
         internal float Height => Scale * UnscaledHeight;
-        /*internal*/ protected Vector2 Size => Scale * UnscaledSize; 
-        
-        public float X { get; set; }
-        public float Y { get; set; }
+        public Vector2 Size => Scale * UnscaledSize;
+
+        internal float X { get; set; }
+        internal float Y { get; set; }
 
         public Vector2 Position
         {
@@ -81,20 +81,6 @@ namespace KernelPanic.Sprites
 
         #endregion
 
-        #region Querying
-
-        /// <summary>
-        /// Checks if a given point lies where this sprite is drawn.
-        /// </summary>
-        /// <param name="point">The point to check for</param>
-        /// <returns><c>true</c> if the point is in the drawn area, <c>false</c> otherwise.</returns>
-        internal bool Contains(Vector2 point)
-        {
-            return X <= point.X && point.X <= X + Width && Y <= point.Y && point.Y <= Y + Height;
-        }
-
-        #endregion
-
         #region Drawing
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -138,6 +124,22 @@ namespace KernelPanic.Sprites
                 position + sprite.Position,
                 rotation + sprite.Rotation,
                 scale * sprite.Scale);
+        }
+
+        #endregion
+
+        #region Cloneing
+
+        protected virtual void CompleteClone()
+        {
+            // Does nothing by default.
+        }
+
+        internal Sprite Clone()
+        {
+            var clone = (Sprite) MemberwiseClone();
+            clone.CompleteClone();
+            return clone;
         }
 
         #endregion
