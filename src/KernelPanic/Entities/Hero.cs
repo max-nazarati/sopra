@@ -277,6 +277,7 @@ namespace KernelPanic.Entities
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
         {
             var startPoint = Grid.CoordinatePositionFromScreen(Sprite.Position);
+            //var target = Grid.CoordinatePositionFromScreen(basePosition.ToVector2());
             var target = Grid.CoordinatePositionFromScreen(basePosition.ToVector2());
             mTarget = target;
             AStar = positionProvider.MakePathFinding(this, startPoint, target);// ?? new Point(1, 1));
@@ -296,7 +297,7 @@ namespace KernelPanic.Entities
             // also sets mAStar to the current version.
             UpdateTarget(positionProvider, gameTime, inputManager);
             
-            AttackBase(inputManager, positionProvider, new Point(200, 3000));
+            AttackBase(inputManager, positionProvider, positionProvider.Target.Position);
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, gameTime, inputManager);

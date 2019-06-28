@@ -106,13 +106,12 @@ namespace KernelPanic.Entities
                 // target is on the way
                 if (AStar.Path is List<Point> path && path.Count >= 2)
                 {
-                    var jumpTarget = path[2].ToVector2();
+                    var jumpTarget = Grid.ScreenPositionFromCoordinate(path[2]).ToVector2();
                     TryActivateAbility(inputManager, true);
                     Console.WriteLine("starting");
                     StartAbility(positionProvider, inputManager, jumpTarget);
                 }
             }
-            
         }
 
         #endregion
