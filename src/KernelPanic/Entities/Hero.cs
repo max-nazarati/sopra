@@ -22,6 +22,8 @@ namespace KernelPanic.Entities
     internal abstract class Hero : Unit
     {
         #region MemberVariables
+
+        #region Enums
         
         protected enum AbilityState
         {
@@ -34,6 +36,8 @@ namespace KernelPanic.Entities
             Human = 0,
             Attack
         }
+        
+        #endregion
 
         [DataMember]
         protected CooldownComponent Cooldown { get; }
@@ -121,6 +125,7 @@ namespace KernelPanic.Entities
             if (StrategyStatus == Strategy.Attack)
             {
                 AttackBase(inputManager, positionProvider, positionProvider.Target.Position);
+                return;
             }
             // only check for new target of selected and Right Mouse Button was pressed
             if (!Selected) return;
@@ -288,8 +293,7 @@ namespace KernelPanic.Entities
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
         {
             var startPoint = Grid.CoordinatePositionFromScreen(Sprite.Position);
-            //var target = Grid.CoordinatePositionFromScreen(basePosition.ToVector2());
-            var target = Grid.CoordinatePositionFromScreen(basePosition.ToVector2());
+            var target = Grid.ScreenPositionFromCoordinate(basePosition);
             mTarget = target;
             AStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
             ShouldMove = true;
