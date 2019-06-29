@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Interface;
 using KernelPanic.Purchasing;
@@ -6,24 +7,6 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class AttackPlanner : Planner
     {
-        /*
-        TextButton, Unit, PurchasableAction<Unit>>(player,
-        new PurchasableAction<Unit>(new Firefox(sprites)),
-        new TextButton(sprites))
-        {
-            Button = { Title = "Firefox" }}
-            */
-        /*
-         private PurchaseButton<TextButton, Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
-         
-        mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(player,
-        new PurchasableAction<Unit>(new Firefox(sprites)),
-        new TextButton(sprites))
-        {
-            Button = { Title = "Firefox" }
-        };
-    */
-        
         private readonly PurchaseButton<TextButton, Unit, PurchasableAction<Unit>> mBuyBug;
         private readonly Player mPlayer;
 
@@ -43,7 +26,7 @@ namespace KernelPanic.ArtificialIntelligence
             mBuyBug.Action.TryPurchase(mPlayer);
         }
 
-        public override void Update()
+        public void Update(int[] attackData)
         {
             base.Update();
             BuyBug();
