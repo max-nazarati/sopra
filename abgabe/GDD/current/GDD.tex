@@ -67,6 +67,9 @@
   \fi}
 \makeatother
 
+% Less spacing in the table of contents.
+\RedeclareSectionCommand[tocbeforeskip=0.8ex plus 1pt minus 1pt]{chapter}
+
 % Decrease the font size slightly from \Large to fit all names in two lines.
 \addtokomafont{author}{\large}
 
@@ -127,9 +130,7 @@
 \publishers{Tutor: Daniel Lux}
 \maketitle
 
-
 \tableofcontents
-\addcontentsline{toc}{chapter}{Inhaltsverzeichnis}
 
 
 \iffinal
