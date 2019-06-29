@@ -36,10 +36,10 @@ namespace KernelPanic.ArtificialIntelligence
         private void SetAttackData()
         {
             var bitcoins = mPlayer.Bitcoins;
-            var defenceMoney = (int)(bitcoins * 0.5);
+            var attackMoney = (int)(bitcoins * 0.5);
             // Data Format is:
             // Bitcoin (own), Bug (own), Trojaner, Nokia, Thunderbird, Settings, Firefox, Bluescreen, Cable(enemy), Mauszeigersch., CD-Werfer, Antivirus, Lüftung, WiFi, Shockfield
-            var data = new[] {defenceMoney, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            var data = new[] {attackMoney, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             mAttackData = data;
         }
 
