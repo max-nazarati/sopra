@@ -17,7 +17,7 @@ namespace KernelPanic
         [DataMember]
         public int Bitcoins { get; set; }
 
-        private ArtificialPlayer mArtificalPlayer;
+        private readonly ArtificialPlayer mArtificialPlayer;
 
         [DataMember(Name = "Exp")]
         public int ExperiencePoints { get; set; }
@@ -29,7 +29,7 @@ namespace KernelPanic
         {
             if (!human)
             {
-                mArtificalPlayer = new ArtificialPlayer();
+                mArtificialPlayer = new ArtificialPlayer();
                 mHuman = false;
             }
         }
@@ -46,7 +46,7 @@ namespace KernelPanic
         {
             if (!mHuman)
             {
-                mArtificalPlayer.Update();
+                mArtificialPlayer.Update();
             }
         }
     }
