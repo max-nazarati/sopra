@@ -1,4 +1,3 @@
-%Achtung! In diesem Abschnitt werden viele Spielobjekte, die bisher noch nicht genau beschrieben wurden, gezeigt. Es kann für einen ersten Eindruck sinnvoll sein, sich die %Benutzeroberfläche vorher anzuschauen. Um das Kapitel vollständig zu verstehen, wird empfohlen, an diese Stelle zurückzukehren, sobald man sich mit der Spiellogik %auseinandergesetzt hat.
 \section{Spieler-Interface}
 % Aus dem Wiki
 % ------------
@@ -32,15 +31,17 @@
 % * Bild (Konzeptzeichnung, Screenshot, Mockup) dessen, wie das Spiel aussehen
 %   soll.
 % * Beschreibung der Steuerung.
+Abbildung \ref{fig:spieler-interface} zeigt eine typische Momentaufnahme des Spiels \textit{Kernel Panic!}.
+Der Spieler betrachtet die Spielwelt aus der Top-Down Perpektive.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\textwidth]{spieler-interface.png}
-	\caption{Spieler-Interface}
+  \caption{%
+    Ein Ausschnitt aus dem Spielfeld von \emph{Kernel Panic!.} Zu sehen sind
+    ein Teil einer Lane, Türme, Truppen, ein Teil einer Basis, die Kaufmenüs
+    und die Minimap.}
 	\label{fig:spieler-interface}
 \end{figure}
-\pagebreak\noindent
-Abbildung \ref{fig:spieler-interface} zeigt eine typische Momentaufnahme des Spiels \textit{Kernel Panic!}.
-Der Spieler betrachtet die Spielwelt aus der Top-Down Perpektive.
 
 Beschreiben wir zunächst das Head-up-Display (HUD) bestehend aus den rot markierten Bereichen mit den Nummerierungen $1$ bis $9$:
 \begin{itemize}[leftmargin=*]
