@@ -1,4 +1,4 @@
-namespace KernelPanic.ArtificalIntelligence
+namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class DefencePlanner : Planner
     {

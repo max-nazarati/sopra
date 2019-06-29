@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using KernelPanic.Table;
-using KernelPanic.ArtificalIntelligence;
+using KernelPanic.ArtificialIntelligence;
 using Newtonsoft.Json;
 
 namespace KernelPanic
