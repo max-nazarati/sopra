@@ -20,7 +20,8 @@
 In Tabelle~\ref{tab:optionen-aktionen} sind die in \emph{Kernel Panic!}
 möglichen Optionen und Aktionen beschriebenen. Tabelle~\ref{tab:helden} geht
 auf die in (\refid{A:hero-ability}) referenzierten Heldenfähigkeiten genauer
-ein.
+ein. Die Aktionen auf Gebäuden sind in Tabelle~\ref{tab:building-actions}
+beschrieben.
 
 \StartId{A}
 \begingroup
@@ -55,8 +56,9 @@ ein.
   \defid[object-selection]{Objekt auswählen}
     & Spieler
     & Spieler klickt mit der Linken Maustaste auf einen Turm oder eine Einheit.
-    & \todo[inline]{Keine Voraussetzung?}
-    & Turm oder Einheit ist ausgewählt.
+    & % Keine Voraussetzung
+    & Turm oder Einheit ist ausgewählt. Ist es ein eigenes Gebäude kann eine
+      Aktion aus Tabelle~\ref{tab:building-actions} ausgeführt werden.
   \\\midrule
 
   \defid[cancel-object-selection]{Objektauswahl kündigen}
@@ -66,7 +68,7 @@ ein.
     & Türme oder Einheiten sind ausgewählt.
     & Türme und Einheiten sind nicht mehr ausgewählt.
 	\\\midrule
-  
+
   \defid[hero-ability-indicate]{Heldenfähigkeit indizieren}
 	& Spieler
 	& Der Spieler klickt mit der linken Maustaste auf den Fähigkeiten-Button TODO check if button is already known
@@ -227,32 +229,6 @@ ein.
       (\refid{A:tower-attack}).
   \\\midrule
 
-  \defid[tower-improve]{Gebäude verbessern}
-    & Spieler
-    & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
-        \item Spieler wählt die Verbesserung aus.
-        \item Die Verbesserungskosten werden von den den Bitcoin des Spielers
-          abgezogen.
-        \item Das Gebäude erhält stärkere Werte.
-      \end{enumerate}
-    & Ein eigenes Gebäude ist ausgewählt und Spieler hat genügend Bitcoin.
-    & Das ausgewählte Gebäude hat stärkere Werte und die Bitcoin wurden abgezogen.
-  \\\midrule
-
-  \defid[tower-sell]{Gebäude verkaufen}
-    & Spieler
-    & Der Spieler erhält Bitcoin zurück und das Gebäude verschwindet.
-    & Ein eigenes Gebäude ist ausgewählt.
-    & Der Spieler hat Bitcoin zurückerhalten und das Gebäude ist weg.
-  \\\midrule
-
-  \defid[tower-strategy]{Strategie wählen}
-    & Spieler
-    & Der Spieler klickt mit der Linken Maustaste auf die gewünschte Strategie.
-    & Ein eingens Gebäude (nicht \emph{Kabel}) ist ausgewählt.
-    & Das Gebäude handelt nun nach der gewählten Strategie.
-  \\\midrule
-
   \defid[object-info]{Informationen anzeigen}
     & Spieler
     & Informationen über das Objekt werden eingeblendet.
@@ -262,5 +238,61 @@ ein.
     & Informationen werden eingeblendet.
 
   \\\bottomrule
+\end{longtabu}
+\endgroup
+
+
+
+\StartId{G}
+\begingroup
+  \small
+  \tabulinesep=1mm
+\begin{longtabu}{X[0.6L]X[L]X[L]X[L]}
+  \rowfont{\normalsize}
+  \caption{Mögliche Aktionen des Spielers auf Gebäuden.\label{tab:building-actions}}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endfirsthead
+
+  \rowfont{\normalsize}
+  \caption[]{Mögliche Optionen und Aktionen (fortges.)}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endhead
+
+  \multicolumn{4}{r}{\itshape fortges. auf der nächsten Seite}\\
+  \endfoot
+
+  \endlastfoot
+
+  \defid[sell]{Gebäude verkaufen}
+    & Der Spieler erhält 80\,\% des Gebäudewertes in Bitcoin zurück und das
+      Gebäude verschwindet.
+    & Ein eigenes Gebäude ist ausgewählt.
+    & Die Kachel, auf der das Gebäude stand, ist nun wieder für gegnerische
+      Einheiten passierbar und ein neues Gebäude kann wieder an diese Stelle
+      gebaut werden.
+  \\\midrule
+
+  \defid[improve]{Gebäude verbessern}
+    & Die Kosten der Verbesserung werden von den den Bitcoin des Spielers
+      abgezogen und die Werte des Gebäudes werden erhöht.
+    & Ein eigenes Gebäude, das verbessert werden kann, ist ausgewählt und der
+      Spieler hat genügend Bitcoin.
+    & Das ausgewählte Gebäude hat stärkere Werte und die Bitcoin wurden abgezogen.
+  \\\midrule
+
+  \defid[choose-strategy]{Strategie wählen}
+    & Der Spieler klickt mit der Linken Maustaste auf die gewünschte Strategie.
+    & Ein eigenes Gebäude, dass eine Strategie unterstützt, ist ausgewählt.
+    & Das Gebäude handelt nun nach der gewählten Strategie.
+  \\\bottomrule
+
 \end{longtabu}
 \endgroup
