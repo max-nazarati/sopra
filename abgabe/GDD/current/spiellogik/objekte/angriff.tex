@@ -1,25 +1,5 @@
-\subsection{Angriffseinheiten}\label{sec:attack}
-
-\newlength{\bodywidth}
-\setlength{\bodywidth}{\textwidth}
-\addtolength{\bodywidth}{-12pt}
-
-\begin{description}
-  \item[Truppen]
-    kosten relativ wenig, lassen sich jedoch nicht weiter kontrollieren.
-    Sie sind einer Welle zugeordnet und spawnen gemeinsam mit den anderen
-    Truppen dieser Welle. Sie verfolgen das Ziel, auf dem kürzesten Weg das
-    gegenerischen Lager zu erreichen um dort Schaden zu verursachen.
-
-
-  \item[Helden] kosten mehr als Truppen, diese Einheiten lassen sich jedoch vom
-    Spieler kontrollieren und so strategisch einsetzen und außerhalb der
-    Reichweite von Verteidigungsgebäuden positionieren; zusätzlich besitzen sie
-    Fähigkeiten, die der Spieler einsetzen kann. Es ist nicht möglich, mehr als
-    einen Helden einer Art zum gleichen Zeitpunkt am Leben zu haben. Helden
-    sind keiner Welle zugeordnet, sie spawnen direkt beim Kauf.
-
-\end{description}
+\subsection[Angriffseinheiten]{Angriffseinheiten \hyperref[sec:attack-concept]{\footnotesize $\rightarrow$ Konzept}}
+\label{sec:attack}
 
 Tabelle~\ref{tab:attack-unit-props} beschreibt die Eigenschaften die
 Angriffseinheiten haben, in Tabelle~\ref{tab:attack-units} sind alle Truppen
@@ -56,7 +36,6 @@ alle Helden.
     genau aus? Diese ist doch nur interessant, wenn die Einheit kollidiert?}
 \endgroup
 
-\pagebreak
 \begingroup
   \small
   \begin{longtabu}{XXXX}
@@ -92,7 +71,7 @@ alle Helden.
          etwas langsamer ist, aber mehr LP hat und mehr Schaden verursacht.
       \end{minipage}\hfill\parbox{0.15\linewidth}{%
         \hfill\includegraphics[scale=0.7]{angriff/virus.png}\hfill\null}}
-    \\\bottomrule
+    \\\bottomrule\pagebreak
 
     \multicolumn{4}{c}{\bfseries Trojaner} \\*
     K: 20 & LP: 30 & AS: 6 & GS: 3 \\\midrule
@@ -132,7 +111,7 @@ alle Helden.
   \end{longtabu}
 \endgroup
 
-
+\enlargethispage{1cm}
 \begingroup
   \small
   \begin{longtabu}{XXXX}
@@ -148,20 +127,6 @@ alle Helden.
     \\\endfoot
 
     \endlastfoot
-
-    \multicolumn{4}{c}{\bfseries Settings} \\*
-    K: 50 & LP: 25 & AS: 0 & GS: 4 \\\midrule
-    \multicolumn{4}{p{\bodywidth}}{%
-      \begin{minipage}{0.85\linewidth}
-        Diese Einheit heilt andere Truppen, hat dafür jedoch eher wenig LP;
-        dies ist die langsamste Heldeneinheit, sie verursacht am gegenerischen
-        Lager keinen Schaden.
-
-        \emph{Fähigkeit:} Heilt alle zwei Sekunden, Truppen im Radius von 1
-        Kachel um 2 LP. Dies ist eine passive Fähigkeit.
-      \end{minipage}\hfill\parbox{0.15\linewidth}{%
-        \hfill\includegraphics[scale=0.6]{angriff/settings.png}\hfill\null}}
-    \\\bottomrule\pagebreak
 
     \multicolumn{4}{c}{\bfseries Firefox} \\*
     K: 50 & LP: 30 & AS: 10 & GS: 6 \\\midrule
@@ -196,6 +161,20 @@ alle Helden.
          zurückkehren um sich aufzuladen (\refid{H:reload}).
       \end{minipage}\hfill\parbox{0.15\linewidth}{%
         \hfill\includegraphics[scale=0.6]{angriff/bluescreen.png}\hfill\null}}
+    \\\bottomrule
+
+    \multicolumn{4}{c}{\bfseries Settings} \\*
+    K: 50 & LP: 25 & AS: 0 & GS: 4 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+        Diese Einheit heilt andere Truppen, hat dafür jedoch eher wenig LP;
+        dies ist die langsamste Heldeneinheit, sie verursacht am gegenerischen
+        Lager keinen Schaden.
+
+        \emph{Fähigkeit:} Heilt alle zwei Sekunden, Truppen im Radius von 1
+        Kachel um 2 LP. Dies ist eine passive Fähigkeit.
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.6]{angriff/settings.png}\hfill\null}}
     \\\bottomrule
 
   \end{longtabu}
