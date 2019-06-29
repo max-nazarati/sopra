@@ -45,6 +45,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AGameState.cs" />
+    <Compile Include="ArtificalIntelligence\ArtificialPlayer.cs" />
+    <Compile Include="ArtificalIntelligence\AttackPlanner.cs" />
+    <Compile Include="ArtificalIntelligence\DefencePlanner.cs" />
+    <Compile Include="ArtificalIntelligence\UpgradePlanner.cs" />
     <Compile Include="BuildingBuyingMenu.cs" />
     <Compile Include="BuyingMenuOverlay.cs" />
     <Compile Include="Camera\Camera2D.cs" />

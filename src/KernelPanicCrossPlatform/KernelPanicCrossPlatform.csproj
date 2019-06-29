@@ -60,6 +60,18 @@
     <Compile Include="..\KernelPanic\AGameState.cs">
       <Link>AGameState.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\ArtificalIntelligence\ArtificialPlayer.cs">
+      <Link>ArtificalIntelligence\ArtificialPlayer.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\ArtificalIntelligence\AttackPlanner.cs">
+      <Link>ArtificalIntelligence\AttackPlanner.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\ArtificalIntelligence\DefencePlanner.cs">
+      <Link>ArtificalIntelligence\DefencePlanner.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\ArtificalIntelligence\UpgradePlanner.cs">
+      <Link>ArtificalIntelligence\UpgradePlanner.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\BuildingBuyingMenu.cs">
       <Link>BuildingBuyingMenu.cs</Link>
     </Compile>
