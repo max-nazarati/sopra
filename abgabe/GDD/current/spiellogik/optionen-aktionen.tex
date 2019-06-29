@@ -28,7 +28,7 @@ ein.
   \tabulinesep=1mm
 \begin{longtabu}{X[0.6L]X[0.4L]X[L]X[L]X[L]}
   \rowfont{\normalsize}
-  \caption{Mögliche Optionen und Aktionen in \emph{Kernel Panic!}\label{tab:optionen-aktionen}}\\
+  \caption{Mögliche Optionen und Aktionen in \emph{Kernel Panic!}.\label{tab:optionen-aktionen}}\\
   \midrule[\heavyrulewidth]\rowfont{\itshape}
     ID/Name              &
     Akteure              &
@@ -66,13 +66,27 @@ ein.
     & Türme oder Einheiten sind ausgewählt.
     & Türme und Einheiten sind nicht mehr ausgewählt.
 	\\\midrule
-
-  \defid[hero-ability]{Heldenfähigkeit aktivieren}
-    & Spieler
-    & Der Spieler klickt mit der Linken Maustaste auf die Heldenfähigkeit.
-    & Ein Held ist ausgewählt und seine Fähigkeit kann aktiviert werden.
-    & Fähigkeit wird ausgeführt, siehe Tabelle~\ref{tab:helden}.
+  
+  \defid[hero-ability-indicate]{Heldenfähigkeit indizieren}
+	& Spieler
+	& Der Spieler klickt mit der linken Maustaste auf den Fähigkeiten-Button TODO check if button is already known
+	& Ein Held ist ausgewählt und seine Fähigkeit ist bereit
+	& Ein Held ist ausgewählt, seine Fähigkeit ist bereit und der Einflussbereich der Fähigkeit wird angezeigt.
   \\\midrule
+
+  \defid[hero-ability]{Heldenfähigkeit Indizierung bestätigen}
+	& Spieler
+	& Der Spieler bestätigt die Bereichsauswahl der Heldenfähigkeit mit der mittleren Maustaste.
+	& Ein Held ist ausgewählt und seine Fähigkeit wird indiziert.
+	& Fähigkeit wird ausgeführt, siehe Tabelle~\ref{tab:helden}.
+	\\\midrule
+
+  \defid[hero-ability-abort]{Heldenfähigkeit Indizierung abbrechen}
+	& Spieler
+	& Der Spieler bricht die Bereichsauswahl der Heldenfähigkeit mit der rechten Maustaste ab.
+	& Ein Held ist ausgewählt und seine Fähigkeit wird indiziert.
+	& Der Held ist ausgewählt und seine Fähigkeit ist bereit, die Indizierung der Fähigkeit ist abgebrochen.
+	\\\midrule
 
   \defid[buy-attack]{Angriffseinheit kaufen}
     & Spieler
