@@ -66,6 +66,9 @@
     <Compile Include="..\KernelPanic\ArtificialIntelligence\AttackPlanner.cs">
       <Link>ArtificialIntelligence\AttackPlanner.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\ArtificialIntelligence\DecisionTreeClassifier.cs">
+      <Link>ArtificialIntelligence\DecisionTreeClassifier.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\ArtificialIntelligence\DefencePlanner.cs">
       <Link>ArtificialIntelligence\DefencePlanner.cs</Link>
     </Compile>
@@ -327,7 +330,6 @@
     <Compile Include="..\KernelPanic\UnitBuyingMenu.cs">
       <Link>UnitBuyingMenu.cs</Link>
     </Compile>
-    <Compile Include="ArtificialIntelligence\DecisionTreeClassifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\KernelPanic\CollisionManager.cs">
       <Link>CollisionManager.cs</Link>
