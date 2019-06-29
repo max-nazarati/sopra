@@ -1,7 +1,91 @@
 \section{Tastaturbelegung}
 
+Das Spiel lässt sich vollständig intuitiv mit der Maus steuern.
+Um Aktionen schneller durchführen zu können ist dennoch die Tastatur hilfreich.
+Manche Tasten sind mit mehreren Optionen belegt. Es wird die zu erst genannte Option (weiter oben in der Tabelle) gewählt, deren Vorbedingungen erfüllt sind.\\
 Die Tastaturbelegung lässt sich im Optionsmenü
-(Abschnitt~\ref{sec:menu-options}) anpassen. Standardmäßig ist nur die
+(Abschnitt~\ref{sec:menu-options}) anpassen. Standardmäßig sind folgendende Tasten belegt:
+
+\begingroup
+\small
+\tabulinesep=1.2mm
+\begin{longtabu}{X[0.3]X[0.6]X[L]}
+	\rowfont{\normalsize}
+	\caption{Standardtastaturbelegung in \emph{Kernel Panic!}.\label{tab:tastaturbelegung}}\\
+	\midrule[\heavyrulewidth]\rowfont{\itshape}
+	Taste & Vorbedingung & Aktion \\
+	\midrule\endfirsthead
+	
+	\rowfont{\normalsize}
+	\caption[]{Tastaturbelegung (fortges.)}\\
+	\midrule[\heavyrulewidth]\rowfont{\itshape}
+	Taste & Vorbedingung & Aktion \\
+	\midrule\endhead
+	
+	\bottomrule
+	\multicolumn{2}{r}{\emph{fortges. auf der nächsten Seite}} \\
+	\endfoot
+	
+	\endlastfoot
+	
+	% Example
+	\emph{Escape}-Taste
+	& Im Spiel, Auswahl an Einheiten / Türmen vorhanden
+	& Auswahl aufheben
+	\\
+	%
+	\emph{Escape}-Taste
+	& Im Spiel, Auswahl an Einheiten / Türmen vorhanden
+	& Auswahl aufheben
+	\\
+	%
+	\emph{Escape}-Taste
+	& Im Spiel, keine Auswahl
+	& Pause-Menü öffnen
+	\\
+	%
+	\emph{Escape}-Taste
+	& Im Pause-Menü
+	& Pause-Menü schließen / weiter Spielen
+	\\
+	% 
+	W
+	& Im Spiel
+	& Kamera nach oben bewegen
+	\\
+	%
+	A
+	& Im Spiel
+	& Kamera nach links bewegen
+	\\
+	%
+	S
+	& Im Spiel
+	& Kamera nach unten bewegen
+	\\
+	%
+	D
+	& Im Spiel
+	& Kamera nach rechts bewegen
+	\\
+	%
+	Q
+	& Held ausgewählt, Fähigkeit wird nicht indiziert
+	& Fähigkeit wird indiziert
+	\\
+	%
+	Q
+	& Held ausgewählt, Fähigkeit wird indiziert
+	& Fähigkeit wird bestätigt TODO Link auf Tabelle
+	\\
+	%
+	E
+	& Held ausgewählt, Fähigkeit wird indiziert
+	& Fähigkeitsindizierung abbrechen. TODO Link auf Tabelle
+	\\
+	\bottomrule
+\end{longtabu}
+
 \emph{Escape}-Taste belegt: ist der Spieler im Baumodus, wird dieser beendet;
 ist der Spieler im Spiel, wird dieses pausiert, das Pausenmenü wird
 eingeblendet (Abschnitt~\ref{sec:menu-pause}); ist der Spieler im Menü, kehrt
