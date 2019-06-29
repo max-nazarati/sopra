@@ -1,5 +1,9 @@
 \subsection{Angriffseinheiten}\label{sec:attack}
 
+\newlength{\bodywidth}
+\setlength{\bodywidth}{\textwidth}
+\addtolength{\bodywidth}{-12pt}
+
 \begin{description}
   \item[Truppen]
     kosten relativ wenig, lassen sich jedoch nicht weiter kontrollieren.
@@ -60,16 +64,11 @@ alle Helden.
 
 \begingroup
   \small
-  \newlength{\bodywidth}
-  \setlength{\bodywidth}{\textwidth}
-  \addtolength{\bodywidth}{-12pt}
   \begin{longtabu}{XXXX}
     \rowfont{\normalsize}
     \caption{Truppen und ihre Werte\label{tab:attack-units}}
     \\\midrule[\heavyrulewidth]\endfirsthead
 
-    % TODO: This seems to introduce too much vertical whitespace between the
-    % midrule and the next row.
     \rowfont{\normalsize}
     \caption[]{Truppen und ihre Werte (fortges.)}
     \\\midrule[\heavyrulewidth]\endhead
@@ -104,10 +103,10 @@ alle Helden.
     K: 20 & LP: 30 & AS: 6 & GS: 3 \\\midrule
     \multicolumn{4}{p{\bodywidth}}{%
       \begin{minipage}{0.85\linewidth}
-         Stirbt diese Einheit, werden an der Stelle ihres Todes \emph{Bugs} und
-         \emph{Viren} gespawnt (\refid{A:spawn-children}). Ein Trojaner ist
-         zwar relativ langsam und kostet mehr als \emph{Viren,} hat dafür aber
-         mehr LP und mehr AS.
+         Stirbt diese Einheit, werden an der Stelle ihres Todes fünf \emph{Bugs}
+         gespawnt (\refid{A:spawn-children}). Ein Trojaner ist zwar relativ
+         langsam und kostet mehr als \emph{Viren,} hat dafür aber mehr LP und
+         mehr AS.
       \end{minipage}\hfill\parbox{0.15\linewidth}{%
         \hfill\includegraphics[scale=0.6]{angriff/trojan.png}\hfill\null}}
     \\\bottomrule
@@ -141,69 +140,68 @@ alle Helden.
 
 \begingroup
   \small
-  \begin{longtabu}{rXp{0.191\linewidth}}
+  \begin{longtabu}{XXXX}
     \rowfont{\normalsize}
     \caption{Helden und ihre Werte\label{tab:attack-heroes}}
     \\\midrule[\heavyrulewidth]\endfirsthead
 
-    % TODO: This seems to introduce too much vertical whitespace between the
-    % midrule and the next row.
     \rowfont{\normalsize}
-    \caption[]{Helden und ihre Werte (fortges.)}
+    \caption[]{Truppen und ihre Werte (fortges.)}
     \\\midrule[\heavyrulewidth]\endhead
 
-    \multicolumn{3}{r}{\itshape fortges. auf der nächsten Seite}
+    \multicolumn{4}{r}{\itshape fortges. auf der nächsten Seite}
     \\\endfoot
 
     \endlastfoot
 
-    \multicolumn{3}{c}{\bfseries Settings} \\*\midrule
-    B  & \emph{(kollidierend)} Diese Einheit heilt Truppen um sich herum, hat
-         jedoch selbst eher wenig LP; diese ist die langsamste der
-         Heldeneinheiten, sie verursacht am gegenerischen Lager keinen Schaden.
-       & \missingpic \\*
-    F  & \emph{(passiv)} heilt verbündete Truppen in Radius 4
-         jede Sekunde um 3 LP (\refid{H:heal}).\\*
-    K  & 10   \\*
-    LP & 4    \\*
-    AS & 0    \\*
-    GS & 4    \\
-    \midrule[\heavyrulewidth]
-    \pagebreak
+    \multicolumn{4}{c}{\bfseries Settings} \\*
+    K: 50 & LP: 25 & AS: 0 & GS: 4 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+        Diese Einheit heilt andere Truppen, hat dafür jedoch eher wenig LP;
+        dies ist die langsamste Heldeneinheit, sie verursacht am gegenerischen
+        Lager keinen Schaden.
 
-    \multicolumn{3}{c}{\bfseries Firefox} \\*\midrule
-    B  & \emph{(kollidierend)} Dieser Held ist eine starke Angriffseinheiten,
-         die mit ihrer Fähigkeit leichter zwischen den Verteidigungsgebäuden
-         hindurchkommt. Der \emph{Firefox} ist relativ schnell, hat
-         durchschnittliche LP und relativ viel~AS.
-       & \missingpic \\*
-    F  & \emph{(aktiv)} kann 2 Felder überspringen, auch wenn
-         Verteidigungsgebäude im Weg stehen (\refid{H:jump}). Die Abklingzeit
-         für diese Fähigkeit beträgt fünf Sekunden.\\*
-    K  & 10     \\*
-    LP & 6      \\*
-    AS & 8      \\*
-    GS & 8      \\
-    \midrule[\heavyrulewidth]
+        \emph{Fähigkeit:} Heil alle zwei Sekunden, Truppen im Radius von 1
+        Kachel um 2 LP. Dies ist eine passive Fähigkeit.
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.6]{angriff/settings.png}\hfill\null}}
+    \\\bottomrule\pagebreak
 
-    \multicolumn{3}{c}{\bfseries Bluescreen} \\*\nopagebreak\midrule\nopagebreak
-    B  & \emph{(kollidierend)} Diese Einheit unterstützt verbündete Einheit,
-         indem sie gegenerische Verteidigungsgebäude für einen Moment
-         deaktivieren kann; dafür verursacht sie am gegenerischen Lager selbst
-         keinen Schaden, hat wenige LP ist aber schnell.
-       & \missingpic \\*
-    F  & \emph{(aktiv)} kann eine Schockwelle zünden, um gegenerische
-         Verteidigungsgebäude in der Nähe für zwei Sekunden zu deaktivieren
-         (\refid{H:emp}).
+    \multicolumn{4}{c}{\bfseries Firefox} \\*
+    K: 50 & LP: 30 & AS: 10 & GS: 6 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+        Dieser Held ist eine starke Angriffseinheiten, die mit ihrer Fähigkeit
+        leichter zwischen den Verteidigungsgebäuden hindurchkommt. Der
+        \emph{Firefox} ist relativ schnell, hat durchschnittliche LP und
+        relativ viel~AS.
+
+        \emph{Fähigkeit:} kann 2 Felder überspringen, auch wenn
+          Verteidigungsgebäude im Weg stehen (\refid{H:jump}). Die Abklingzeit
+          für diese Fähigkeit beträgt fünf Sekunden.
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.7]{angriff/firefox.png}\hfill\null}}
+    \\\bottomrule
+
+    \multicolumn{4}{c}{\bfseries Bluescreen} \\*
+    K: 50 & LP: 15 & AS: 0 & GS: 9 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+        Diese Einheit unterstützt verbündete Einheit, indem sie gegenerische
+        Verteidigungsgebäude für einen Moment deaktivieren kann; dafür
+        verursacht sie am gegenerischen Lager selbst keinen Schaden, hat wenige
+        LP ist aber schnell.
+
+        \emph{Fähigkeit:} kann eine Schockwelle zünden, um gegenerische
+          Verteidigungsgebäude in der Nähe für zwei Sekunden zu deaktivieren
+          (\refid{H:emp}).
 
          Um diese Fähigkeit erneut einzusetzen, muss diese Einheit zur Basis
-         zurückkehren um sich aufzuladen (\refid{H:reload}).\\*
-    K  & 10     \\*	
-    LP & 4      \\*
-    AS & 0      \\*
-    GS & 10     \\
+         zurückkehren um sich aufzuladen (\refid{H:reload}).
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.6]{angriff/bluescreen.png}\hfill\null}}
+    \\\bottomrule
 
-    \bottomrule
   \end{longtabu}
-  \missingpics{Bilder für Helden}
 \endgroup
