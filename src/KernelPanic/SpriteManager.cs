@@ -234,7 +234,7 @@ namespace KernelPanic
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower));
         
-        internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Tower));
+        internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
         
         internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Tower));
         

@@ -186,6 +186,9 @@
     <Compile Include="..\KernelPanic\Entities\Virus.cs">
       <Link>Entities\Virus.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Entities\WifiProjectile.cs">
+      <Link>Entities\WifiProjectile.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\WifiRouter.cs">
       <Link>Entities\WifiRouter.cs</Link>
     </Compile>

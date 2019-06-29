@@ -14,7 +14,7 @@ namespace KernelPanic.Entities
     {
         [DataMember] protected readonly float mRadius;
         [DataMember] protected readonly CooldownComponent mFireTimer;
-        [JsonIgnore] protected List<Projectile> mProjectiles = new List<Projectile>();
+        [JsonIgnore] private List<Projectile> mProjectiles = new List<Projectile>();
         protected Sprite mRadiusSprite;
         protected bool mInRange;
 
@@ -48,14 +48,14 @@ namespace KernelPanic.Entities
                     sprite.Position = position;
                     sprite.ScaleToHeight(size);
                     sprite.SetOrigin(RelativePosition.Center);
-                    returnTower = new CursorShooter(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+                    returnTower = new CursorShooter(15, 400, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
                     break;
                 case StrategicTower.Towers.WifiRouter:
-                    sprite = sprites.CreateCDThrower();
+                    sprite = sprites.CreateWifiRouter();
                     sprite.Position = position;
                     sprite.ScaleToHeight(size);
                     sprite.SetOrigin(RelativePosition.Center);
-                    returnTower = new CursorShooter(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+                    returnTower = new WifiRouter(15, 400, new TimeSpan(0, 0, 1), sprite, sprites, sounds);
                     break;
 
                 case StrategicTower.Towers.Ventilator:
@@ -107,9 +107,10 @@ namespace KernelPanic.Entities
             
             mRadiusSprite.Position = Sprite.Position;
             mRadiusSprite.Draw(spriteBatch, gameTime);
+            
         }
-        
-        private Vector2? Target(PositionProvider positionProvider)
+
+        protected Vector2? Target(PositionProvider positionProvider)
         {
             var target = (Vector2?) null;
             var minDistance = 1000;
