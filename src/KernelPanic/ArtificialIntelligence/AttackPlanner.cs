@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using KernelPanic.Entities;
-using KernelPanic.Interface;
 using KernelPanic.Purchasing;
 using Microsoft.Xna.Framework;
 
@@ -9,6 +6,10 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class AttackPlanner : Planner
     {
+        #region Member
+
+        #region UnitPurchaser
+
         private readonly PurchasableAction<Unit> mBug;
         private readonly PurchasableAction<Unit> mVirus;
         private readonly PurchasableAction<Unit> mTrojan;
@@ -18,14 +19,21 @@ namespace KernelPanic.ArtificialIntelligence
         private readonly PurchasableAction<Unit> mSettings;
         private readonly PurchasableAction<Unit> mBluescreen;
         
-        private readonly Player mPlayer;
-        private int mTimer = 0;
-        
+        #endregion
 
+        private readonly Player mPlayer;
+        private int mTimer = 0; // this can prob be deleted in the future (usage: TroupeParade)
+        
+        #endregion
+
+        #region Konstruktor
+        
         public AttackPlanner(Player player, SpriteManager sprites)
         {
             mPlayer = player;
-            
+
+            #region Initializing Member
+
             mBug = new PurchasableAction<Unit>(new Bug(sprites));
             mVirus = new PurchasableAction<Unit>(new Virus(sprites));
             mTrojan = new PurchasableAction<Unit>(new Trojan(sprites));
@@ -34,6 +42,11 @@ namespace KernelPanic.ArtificialIntelligence
             mFirefox = new PurchasableAction<Unit>(new Firefox(sprites));
             mSettings = new PurchasableAction<Unit>(new Settings(sprites));
             mBluescreen = new PurchasableAction<Unit>(new Bluescreen(sprites));
+
+            #endregion
+
+            #region initializing Purchases
+
             mBug.Purchased += UnitBought;
             mVirus.Purchased += UnitBought;
             mTrojan.Purchased += UnitBought;
@@ -42,8 +55,12 @@ namespace KernelPanic.ArtificialIntelligence
             mFirefox.Purchased += UnitBought;
             mSettings.Purchased += UnitBought;
             mBluescreen.Purchased += UnitBought;
+            
+            #endregion
         }
-
+        
+        #endregion
+        
         #region Buy Troupes
         
         private static void UnitBought(Player buyer, Unit unit)
@@ -104,11 +121,15 @@ namespace KernelPanic.ArtificialIntelligence
         }
         
         #endregion
-        
+
+        #region Update
+
         public void Update(int[] attackData, GameTime gameTime)
         {
             base.Update();
             TroupeParade();
         }
+        
+        #endregion
     }
 }
