@@ -327,6 +327,7 @@
     <Compile Include="..\KernelPanic\UnitBuyingMenu.cs">
       <Link>UnitBuyingMenu.cs</Link>
     </Compile>
+    <Compile Include="ArtificialIntelligence\DecisionTreeClassifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\KernelPanic\CollisionManager.cs">
       <Link>CollisionManager.cs</Link>
@@ -339,6 +340,27 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Accord">
+      <HintPath>..\KernelPanic\bin\Windows\x86\Debug\Accord.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Extensions.Core">
+      <HintPath>..\KernelPanic\bin\Windows\x86\Debug\Accord.Extensions.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.IO">
+      <HintPath>..\KernelPanic\bin\Windows\x86\Debug\Accord.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.MachineLearning">
+      <HintPath>..\KernelPanic\bin\Windows\x86\Debug\Accord.MachineLearning.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Math">
+      <HintPath>..\KernelPanic\bin\Windows\x86\Debug\Accord.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Math.Core">
+      <HintPath>..\KernelPanic\bin\Windows\x86\Debug\Accord.Math.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Statistics">
+      <HintPath>..\KernelPanic\bin\Windows\x86\Debug\Accord.Statistics.dll</HintPath>
+    </Reference>
     <Reference Include="Autofac, Version=4.9.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da">
       <HintPath>..\packages\Autofac.4.9.2\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
