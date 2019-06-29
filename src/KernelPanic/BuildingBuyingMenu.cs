@@ -101,8 +101,8 @@ namespace KernelPanic
 
             var scaledSprite = spriteManager.CreateTower();
             scaledSprite.ScaleToWidth(64);
-            var tower = CreateButton(Tower.CreateCursorShooter(new Vector2(0, 0), 64
-                , spriteManager, sounds), scaledSprite);
+            var tower = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64
+                , spriteManager, sounds, StrategicTower.Towers.CursorShooter), scaledSprite);
             
             return new BuildingBuyingMenu(player, spriteManager, tower);
         }

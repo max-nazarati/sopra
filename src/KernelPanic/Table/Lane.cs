@@ -145,7 +145,8 @@ namespace KernelPanic.Table
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    EntityGraph.Add(Tower.CreateCursorShooter(position, size, mSpriteManager, mSounds));
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.CursorShooter));
                     mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
                     UpdateHeatMap();
                 }
@@ -157,7 +158,8 @@ namespace KernelPanic.Table
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    EntityGraph.Add(Tower.CreateCdThrower(position, size, mSpriteManager, mSounds));
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.CdThrower));
                     mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
                     UpdateHeatMap();
                 }
@@ -169,7 +171,8 @@ namespace KernelPanic.Table
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    EntityGraph.Add(Tower.CreateAntivirus(position, size, mSpriteManager, mSounds));
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.Antivirus));
                     mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
                     UpdateHeatMap();
                 }

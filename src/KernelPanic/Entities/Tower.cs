@@ -36,33 +36,57 @@ namespace KernelPanic.Entities
             mRadiusSprite = SpriteManager.CreateTowerRadiusIndicator(mRadius);
         }
 
-        internal static Tower CreateCdThrower(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
+        internal static Tower CreateTower(Vector2 position, float size, SpriteManager sprites, SoundManager sounds
+            , StrategicTower.Towers tower)
         {
-            var sprite = sprites.CreateCDThrower();
-            sprite.Position = position;
-            sprite.ScaleToHeight(size);
-            sprite.SetOrigin(RelativePosition.Center);
-            return new CdThrower(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
-        }
-        
-        internal static Tower CreateAntivirus(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
-        {
-            var sprite = sprites.CreateAntivirus();
-            sprite.Position = position;
-            sprite.ScaleToHeight(size);
-            sprite.SetOrigin(RelativePosition.Center);
-            return new Antivirus(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+            Tower returnTower;
+            ImageSprite sprite;
+            switch (tower)
+            {
+                case StrategicTower.Towers.CursorShooter:
+                    sprite = sprites.CreateCDThrower();
+                    sprite.Position = position;
+                    sprite.ScaleToHeight(size);
+                    sprite.SetOrigin(RelativePosition.Center);
+                    returnTower = new CursorShooter(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+                    break;
+                case StrategicTower.Towers.WifiRouter:
+                    sprite = sprites.CreateCDThrower();
+                    sprite.Position = position;
+                    sprite.ScaleToHeight(size);
+                    sprite.SetOrigin(RelativePosition.Center);
+                    returnTower = new CursorShooter(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+                    break;
+
+                case StrategicTower.Towers.Ventilator:
+                    sprite = sprites.CreateCDThrower();
+                    sprite.Position = position;
+                    sprite.ScaleToHeight(size);
+                    sprite.SetOrigin(RelativePosition.Center);
+                    returnTower = new CursorShooter(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+                    break;
+                case StrategicTower.Towers.Antivirus:
+                    sprite = sprites.CreateAntivirus();
+                    sprite.Position = position;
+                    sprite.ScaleToHeight(size);
+                    sprite.SetOrigin(RelativePosition.Center);
+                    returnTower = new Antivirus(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+                    break;
+                case StrategicTower.Towers.CdThrower:
+                    sprite = sprites.CreateCDThrower();
+                    sprite.Position = position;
+                    sprite.ScaleToHeight(size);
+                    sprite.SetOrigin(RelativePosition.Center);
+                    returnTower = new CursorShooter(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(tower), tower, null);
+            }
+
+            return returnTower;
         }
 
-        internal static Tower CreateCursorShooter(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
-        {
-            var sprite = sprites.CreateCDThrower();
-            sprite.Position = position;
-            sprite.ScaleToHeight(size);
-            sprite.SetOrigin(RelativePosition.Center);
-            return new CursorShooter(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
-        }
-        
         protected override void CompleteClone()
         {
             mRadiusSprite = mRadiusSprite.Clone();
