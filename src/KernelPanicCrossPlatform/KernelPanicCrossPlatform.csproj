@@ -135,8 +135,8 @@
     <Compile Include="..\KernelPanic\Entities\Building.cs">
       <Link>Entities\Building.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\CDThrower.cs">
-      <Link>Entities\CDThrower.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\CdThrower.cs">
+      <Link>Entities\CdThrower.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\CursorShooter.cs">
       <Link>Entities\CursorShooter.cs</Link>
