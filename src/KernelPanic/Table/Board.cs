@@ -90,12 +90,5 @@ namespace KernelPanic.Table
             RightLane.Draw(spriteBatch, gameTime);
             mBase.Draw(spriteBatch, gameTime);
         }
-
-        /*    
-        public DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
-        {
-            
-        }
-        */
     }
 }
