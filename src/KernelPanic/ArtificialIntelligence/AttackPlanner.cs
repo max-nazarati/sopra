@@ -9,10 +9,14 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class AttackPlanner : Planner
     {
-        private readonly PurchasableAction<Unit> mBuyBug;
-        private readonly PurchasableAction<Unit> mBuyVirus;
-        private readonly PurchasableAction<Unit> mBuyTrojan;
-        private readonly PurchasableAction<Unit> mBuyThunderbird;
+        private readonly PurchasableAction<Unit> mBug;
+        private readonly PurchasableAction<Unit> mVirus;
+        private readonly PurchasableAction<Unit> mTrojan;
+        private readonly PurchasableAction<Unit> mThunderbird;
+        private readonly PurchasableAction<Unit> mNokia;
+        private readonly PurchasableAction<Unit> mFirefox;
+        private readonly PurchasableAction<Unit> mSettings;
+        private readonly PurchasableAction<Unit> mBluescreen;
         
         private readonly Player mPlayer;
         private int mTimer = 0;
@@ -22,10 +26,22 @@ namespace KernelPanic.ArtificialIntelligence
         {
             mPlayer = player;
             
-            mBuyBug = new PurchasableAction<Unit>(new Bug(sprites));
-            mBuyVirus = new PurchasableAction<Unit>(new Virus(sprites));
-            mBuyTrojan = new PurchasableAction<Unit>(new Trojan(sprites));
-            mBuyThunderbird = new PurchasableAction<Unit>(new Thunderbird(sprites));
+            mBug = new PurchasableAction<Unit>(new Bug(sprites));
+            mVirus = new PurchasableAction<Unit>(new Virus(sprites));
+            mTrojan = new PurchasableAction<Unit>(new Trojan(sprites));
+            mThunderbird = new PurchasableAction<Unit>(new Thunderbird(sprites));
+            mNokia = new PurchasableAction<Unit>(new Nokia(sprites));
+            mFirefox = new PurchasableAction<Unit>(new Firefox(sprites));
+            mSettings = new PurchasableAction<Unit>(new Settings(sprites));
+            mBluescreen = new PurchasableAction<Unit>(new Bluescreen(sprites));
+            mBug.Purchased += UnitBought;
+            mVirus.Purchased += UnitBought;
+            mTrojan.Purchased += UnitBought;
+            mThunderbird.Purchased += UnitBought;
+            mNokia.Purchased += UnitBought;
+            mFirefox.Purchased += UnitBought;
+            mSettings.Purchased += UnitBought;
+            mBluescreen.Purchased += UnitBought;
         }
 
         #region Buy Troupes
@@ -34,74 +50,65 @@ namespace KernelPanic.ArtificialIntelligence
         {
             buyer.AttackingLane.UnitSpawner.Register(unit.Clone());
         }
-        
-        private void BuyVirus(int amount = 1)
-        {
-            for (var i = 0; i < amount; i++)
-            {
-                mBuyVirus.TryPurchase(mPlayer);
-                mBuyVirus.Purchased += UnitBought;
-            }
-        }
-        
-        private void BuyThunderbird(int amount = 1)
-        {
-            for (var i = 0; i < amount; i++)
-            {
-                mBuyThunderbird.TryPurchase(mPlayer);
-                mBuyThunderbird.Purchased += UnitBought;
-            }
-        }
-        
-        private void BuyBug(int amount=1)
-        {
-            for (var i = 0; i < amount; i++)
-            {
-                mBuyBug.TryPurchase(mPlayer);
-                mBuyBug.Purchased += UnitBought;
-            }
-        }
 
-        private void BuyTrojan(int amount=1)
+        private void BuyUnit(PurchasableAction<Unit> unit, int amount=1)
         {
             for (var i = 0; i < amount; i++)
             {
-                mBuyTrojan.TryPurchase(mPlayer);
-                mBuyTrojan.Purchased += UnitBought;
+                unit.TryPurchase(mPlayer);
             }
         }
-
+        
         #endregion
+
+        #region Spawn Functions
         
-        public void Update(int[] attackData, GameTime gameTime)
+        private void TroupeParade(int interval = 200)
         {
-            base.Update();
-            if (mTimer == 60)
+            if (mTimer == interval)
             {
-                BuyThunderbird();
+                BuyUnit(mThunderbird);
+                // BuyThunderbird();
                 mTimer++;
                 return;
             }
-            if (mTimer == 120)
+            if (mTimer == 2 * interval)
             {
-                BuyBug();
+                BuyUnit(mBug);
+                // BuyBug();
                 mTimer++;
                 return;
             }
-            if (mTimer == 180)
+            if (mTimer == 3 * interval)
             {
-                BuyVirus();
+                BuyUnit(mVirus);
+                // BuyVirus();
                 mTimer++;
                 return;
             }
-            if (mTimer >= 240)
+            if (mTimer == 4 * interval)
             {
-                BuyTrojan();
+                BuyUnit(mNokia);
+                mTimer++;
+                return;
+            }
+            if (mTimer >= 5 * interval)
+            {
+                BuyUnit(mTrojan);
+                // BuyTrojan();
                 mTimer = 0;
                 return;
             }
 
             mTimer++;
+        }
+        
+        #endregion
+        
+        public void Update(int[] attackData, GameTime gameTime)
+        {
+            base.Update();
+            TroupeParade();
         }
     }
 }
