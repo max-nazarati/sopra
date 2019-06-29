@@ -23,14 +23,14 @@ namespace KernelPanic
         public int ExperiencePoints { get; set; }
 
         internal Base Base => DefendingLane.Target;
-        public bool Human { get; } = true;
+        private readonly bool mHuman  = true;
 
         internal Player(Lane defendingLane, Lane attackingLane, bool human=true) : this(9999, defendingLane, attackingLane)
         {
             if (!human)
             {
                 mArtificalPlayer = new ArtificialPlayer();
-                Human = false;
+                mHuman = false;
             }
         }
 
@@ -44,7 +44,7 @@ namespace KernelPanic
 
         internal void Update()
         {
-            if (!Human)
+            if (!mHuman)
             {
                 mArtificalPlayer.Update();
             }
