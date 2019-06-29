@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using KernelPanic.Table;
+using KernelPanic.ArtificialIntelligence;
 using Newtonsoft.Json;
 
 namespace KernelPanic
@@ -16,13 +17,21 @@ namespace KernelPanic
         [DataMember]
         public int Bitcoins { get; set; }
 
+        private readonly ArtificialPlayer mArtificialPlayer;
+
         [DataMember(Name = "Exp")]
         public int ExperiencePoints { get; set; }
 
         internal Base Base => DefendingLane.Target;
+        private readonly bool mHuman  = true;
 
-        internal Player(Lane defendingLane, Lane attackingLane) : this(9999, defendingLane, attackingLane)
+        internal Player(Lane defendingLane, Lane attackingLane, bool human=true) : this(9999, defendingLane, attackingLane)
         {
+            if (!human)
+            {
+                mArtificialPlayer = new ArtificialPlayer();
+                mHuman = false;
+            }
         }
 
         [JsonConstructor]
@@ -31,6 +40,14 @@ namespace KernelPanic
             Bitcoins = bitcoins;
             AttackingLane = attackingLane;
             DefendingLane = defendingLane;
+        }
+
+        internal void Update()
+        {
+            if (!mHuman)
+            {
+                mArtificialPlayer.Update();
+            }
         }
     }
 }
