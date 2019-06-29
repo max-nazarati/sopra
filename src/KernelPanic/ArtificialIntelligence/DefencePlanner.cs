@@ -7,7 +7,6 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData)
         {
             base.Update();
-            throw new System.NotImplementedException();
         }
     }
 }
