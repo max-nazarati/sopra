@@ -242,6 +242,8 @@ beschrieben.
 \endgroup
 
 
+% ---------------------------------------------------------------------------
+% Gebäudeaktionen
 
 \StartId{G}
 \begingroup
@@ -294,5 +296,72 @@ beschrieben.
     & Das Gebäude handelt nun nach der gewählten Strategie.
   \\\bottomrule
 
+\end{longtabu}
+\endgroup
+
+
+% ---------------------------------------------------------------------------
+% Heldenfähigkeiten
+
+\StartId{H}
+\begingroup
+  \small
+  \tabulinesep=1mm
+\begin{longtabu}{X[0.6L]X[0.4L]X[L]X[L]X[L]}
+  \rowfont{\normalsize}
+  \caption{Beschreibung der Heldenfähigkeiten die durch \refid{A:hero-ability} ausgeführt werden.\label{tab:helden}}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Held                 &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endfirsthead
+
+  \rowfont{\normalsize}
+  \caption[]{Beschreibung der Heldenfähigkeiten (fortges.)}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Held                 &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endhead
+
+  \multicolumn{5}{r}{\itshape fortges. auf der nächsten Seite}\\
+  \endfoot
+
+  \endlastfoot
+
+  \defid[heal]{Heilen}
+    & Settings
+    & Heilt die Einheiten, die sich im Radius befinden regelmäßig.
+    & Es befinden sich Einheiten im Radius.
+    & Einheiten haben mehr LP, oder maximale LP.
+  \\\midrule
+
+  \defid[jump]{Gebäude überspringen}
+    & Firefox
+    & Springt über Einheiten und Gebäude in die gewählte Richtung.
+    & Das Zielfeld des Sprungs muss ein gültiges Feld auf der Angriffsbahn
+      sein und seit dem letzten Einsetzen ist die Abklingzeit vergangen.
+    & Firefox hat sich in die gewählte Richtung bewegt.
+  \\\midrule
+
+  \defid[emp]{EMP-Angriff}
+    & Blue"-screen
+    & Das Verteidigungsgebäude, das am nächsten am Helden ist, wird kurzzeitig
+      ausgeschaltet.
+    & Die Fähigkeit ist aufgeladen.
+    & Das nächste Angriffsgebäude wird ausgeschaltet und der EMP-Angriff bis
+      zur Aufladung (\refid{H:reload}) deaktiviert.
+  \\\midrule
+
+  \defid[reload]{EMP-Aufladung}
+    & Blue"-screen
+    & Der EMP-Angriff wird aufgeladen.
+    & EMP-Angriff ist deaktiviert und Blue"-screen ist an der eigenen Basis.
+    & EMP-Angriff ist wieder aufgeladen.
+ \\\bottomrule
 \end{longtabu}
 \endgroup
