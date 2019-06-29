@@ -5,45 +5,6 @@ Verteidigungsgebäuden beschrieben, Tabelle~\ref{tab:defend-units} enthält die
 Gebäude und weist den Eigenschaften Werte zu. Der Wert W berechnet sich aus der
 Menge an Bitcoin, die in dieses Gebäude investiert wurde.
 
-Im Laufe des Spiels kann der Spieler folgende Aktionen auf eigenen Türmen
-ausführen:
-
-\begin{description}
-  \item[Verkaufen] (\refid{A:tower-sell}) Das Gebäude verschwindet, es können
-    neue Gebäude an dieser Stelle gebaut werden und feindliche Einheiten können
-    wieder über diese Felder laufen.
-
-    Der Spieler erhält 80\,\% des Gebäudewertes an Bitcoin.
-
-  \item[Verbessern] (\refid{A:tower-improve}) Erhöht die Reichweite des
-    Gebäudes (außer bei \emph{Schockfeld}) um 50\,\% des aktuellen Wertes und
-    reduziert das Angriffsintervall um 20\,\% des aktuellen Wertes.
-
-    Die Verbesserung kostet den Spieler 50\,\% des aktuellen Turmwertes und der
-    Turmwert steigt um diese Kosten.
-
-    Bei \emph{Kabel} ist keine Verbesserung möglich, jedes andere Gebäude kann
-    maximal zweimal verbessert werden.
-
-  \item[Strategie wählen] (\refid{A:tower-strategy}) Mögliche Strategien sind
-    \begin{description}[itemsep=0pt]
-      \item[Erste Einheit] \emph{(ist standardmäßig ausgewählt)}\\
-        Greift die Einheit an, die den kürzesten Weg hat, um Schaden an der Basis
-        zu verusachen.
-
-      \item[Stärkste Einheit] ~\\
-        Greift die Einheit an, die die meisten LP hat.
-
-      \item[Schwächste Einheit] ~\\
-        Greift die Einheit an, die die wenigsten LP hat.
-    \end{description}
-
-    Bei \emph{Kabel} und \emph{Schockfeld} ist ein Wählen der Strategie nicht
-    möglich.
-
-\end{description}
-
-
 \begingroup
   \small
   \begin{longtabu}{rlX}
