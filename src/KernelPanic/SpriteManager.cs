@@ -242,6 +242,8 @@ namespace KernelPanic
         
         internal ImageSprite CreateCDThrower() => new ImageSprite(Lookup(Image.CdThrower));
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile));
+        
+        internal ImageSprite CreateCursorProjectile() => new ImageSprite(Lookup(Image.Cursor));
         internal ImageSprite CreateVectorArrow()
         {
             var sprite = new ImageSprite(Lookup(Image.VectorArrow));

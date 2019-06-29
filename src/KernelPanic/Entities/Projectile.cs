@@ -11,17 +11,18 @@ namespace KernelPanic.Entities
         private readonly float mRadius;
         public bool mHasHit;
         
-        public Projectile(Vector2 direction, Vector2 startPoint, float radius, SpriteManager sprites)
+        public Projectile(Vector2 direction, Vector2 startPoint, float radius
+            , int size, ImageSprite sprite)
         {
             mStartPoint = startPoint;
             mDirection = direction;
             mRadius = radius;
             mHasHit = false;
-            
-            mSprite = sprites.CreateProjectile();
+
+            mSprite = sprite;
             mSprite.Position = startPoint;
-            mSprite.TintColor = Color.Red;
-            mSprite.ScaleToWidth(8);
+            mSprite.TintColor = Color.White;
+            mSprite.ScaleToWidth(size);
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)

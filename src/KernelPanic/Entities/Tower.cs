@@ -10,16 +10,13 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.Entities
 {
-    internal class Tower : Building
+    internal abstract class Tower : Building
     {
-        [DataMember]
-        private readonly float mRadius;
-        [DataMember]
-        private readonly CooldownComponent mFireTimer;
-        [JsonIgnore]
-        private List<Projectile> mProjectiles = new List<Projectile>();
-        private Sprite mRadiusSprite;
-        private bool mInRange;
+        [DataMember] protected readonly float mRadius;
+        [DataMember] protected readonly CooldownComponent mFireTimer;
+        [JsonIgnore] protected List<Projectile> mProjectiles = new List<Projectile>();
+        protected Sprite mRadiusSprite;
+        protected bool mInRange;
 
         internal Tower(SpriteManager sprites, SoundManager sounds)
             : this(0, 0, new TimeSpan(), sprites.CreateTower(), sprites, sounds)
@@ -31,35 +28,6 @@ namespace KernelPanic.Entities
         {
             mFireTimer = new CooldownComponent(cooldown);
             mRadius = radius;
-
-            mFireTimer.CooledDown += timer =>
-            {
-                if (!mInRange)
-                {
-                    // If the cursor isn't in the range do nothing for now but keep the timer enabled.
-                    // If it is enabled it keeps calling this callback.
-                    timer.Enabled = true;
-                    return;
-                }
-
-                var direction = new Vector2(
-                    (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
-                    -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
-                mProjectiles.Add(new Projectile(direction, Sprite.Position, mRadius, sprites));
-                sounds.PlaySound(SoundManager.Sound.Shoot1);
-
-                // SoundManager.Instance.PlaySound("shoot");
-                // TODO implement updated SoundManager
-                
-                if (mProjectiles.Count > 5)
-                {
-                    mProjectiles.RemoveAt(0);
-                }
-
-                timer.Reset();
-            };
-
-            mRadiusSprite = sprites.CreateTowerRadiusIndicator(radius);
         }
 
         [OnDeserialized]
@@ -68,25 +36,6 @@ namespace KernelPanic.Entities
             mRadiusSprite = SpriteManager.CreateTowerRadiusIndicator(mRadius);
         }
 
-        internal static Tower Create(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
-        {
-            var sprite = sprites.CreateTower();
-            sprite.Position = position;
-            sprite.ScaleToHeight(size);
-            sprite.SetOrigin(RelativePosition.Center);
-            return new Tower(15, 300, new TimeSpan(0, 0, 1), sprite, sprites, sounds);
-        }
-
-        // Only for demonstration purposes.
-        internal static Tower CreateStrategic(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
-        {
-            var sprite = sprites.CreateTower();
-            sprite.Position = position;
-            sprite.ScaleToHeight(size);
-            sprite.SetOrigin(RelativePosition.Center);
-            return new StrategicTower(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
-        }
-        
         internal static Tower CreateCdThrower(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
         {
             var sprite = sprites.CreateCDThrower();
@@ -105,6 +54,15 @@ namespace KernelPanic.Entities
             return new Antivirus(15, 150, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
         }
 
+        internal static Tower CreateCursorShooter(Vector2 position, float size, SpriteManager sprites, SoundManager sounds)
+        {
+            var sprite = sprites.CreateCDThrower();
+            sprite.Position = position;
+            sprite.ScaleToHeight(size);
+            sprite.SetOrigin(RelativePosition.Center);
+            return new CursorShooter(15, 300, new TimeSpan(0, 0, 3), sprite, sprites, sounds);
+        }
+        
         protected override void CompleteClone()
         {
             mRadiusSprite = mRadiusSprite.Clone();

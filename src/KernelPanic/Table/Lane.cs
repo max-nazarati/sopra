@@ -145,7 +145,7 @@ namespace KernelPanic.Table
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
+                    EntityGraph.Add(Tower.CreateCursorShooter(position, size, mSpriteManager, mSounds));
                     mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
                     UpdateHeatMap();
                 }
