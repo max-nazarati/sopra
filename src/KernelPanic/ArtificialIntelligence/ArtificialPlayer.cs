@@ -10,9 +10,10 @@ namespace KernelPanic.ArtificialIntelligence
         private UpgradePlanner mUpgradePlanner;
 
         private Planner[] mPlanners;
-        public ArtificialPlayer()
+        
+        public ArtificialPlayer(Player player, SpriteManager spriteManager)
         {
-            mAttackPlanner = new AttackPlanner();
+            mAttackPlanner = new AttackPlanner(player, spriteManager);
             mDefencePlanner = new DefencePlanner();
             mUpgradePlanner = new UpgradePlanner();
             mPlanners = new Planner[] {mAttackPlanner, mDefencePlanner, mUpgradePlanner};

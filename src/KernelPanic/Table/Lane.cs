@@ -34,7 +34,7 @@ namespace KernelPanic.Table
 
         #region Properties
 
-        private readonly SpriteManager mSpriteManager;
+        internal readonly SpriteManager mSpriteManager;
         private readonly SoundManager mSounds;
 
         [JsonProperty]
