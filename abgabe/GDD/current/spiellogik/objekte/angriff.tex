@@ -60,7 +60,10 @@ alle Helden.
 
 \begingroup
   \small
-  \begin{longtabu}{rXp{0.191\linewidth}}
+  \newlength{\bodywidth}
+  \setlength{\bodywidth}{\textwidth}
+  \addtolength{\bodywidth}{-12pt}
+  \begin{longtabu}{XXXX}
     \rowfont{\normalsize}
     \caption{Truppen und ihre Werte\label{tab:attack-units}}
     \\\midrule[\heavyrulewidth]\endfirsthead
@@ -71,73 +74,70 @@ alle Helden.
     \caption[]{Truppen und ihre Werte (fortges.)}
     \\\midrule[\heavyrulewidth]\endhead
 
-    \multicolumn{3}{r}{\itshape fortges. auf der nächsten Seite}
+    \multicolumn{4}{r}{\itshape fortges. auf der nächsten Seite}
     \\\endfoot
 
     \endlastfoot
 
-    \multicolumn{3}{c}{\bfseries Bug} \\*\midrule
-    B  & \emph{(nicht kollidierend)} Eine schnelle Sprintereinheit ohne viele
-         Lebenspunkte, die alleine nicht besonders viel Schaden verursacht,
-         aber in großer Masse gekauft werden kann, da sie nicht viel kostet.
-       & \missingpic \\*
-    K  & 1    \\*
-    LP & 1    \\*
-    AS & 1    \\*
-    GS & 10   \\
-    \midrule[\heavyrulewidth]
+    \multicolumn{4}{c}{\bfseries Bug} \\*
+    K: 2 & LP: 4 & AS: 1 & GS: 7 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+        Eine schnelle Sprintereinheit ohne viele Lebenspunkte, die alleine
+        nicht besonders viel Schaden verursacht, aber in großer Masse gekauft
+        werden kann, da sie nicht viel kostet.
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.9]{angriff/bug.png}\hfill\null}}
+    \\\bottomrule
 
-    \multicolumn{3}{c}{\bfseries Virus} \\*\midrule
-    B  & \emph{(nicht kollidierend)} Durchschnittliche Einheit, die etwas mehr
-         kostet als ein \emph{Bug,} etwas langsamer ist, aber mehr LP hat und
-         mehr Schaden verursacht.
-       & \missingpic \\*
-    K  & 2      \\*
-    LP & 2      \\*
-    AS & 2      \\*
-    GS & 5      \\
-    \midrule[\heavyrulewidth]
+    \multicolumn{4}{c}{\bfseries Virus} \\*
+    K: 3 & LP: 10 & AS: 2 & GS: 5 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+         Durchschnittliche Einheit, die etwas mehr kostet als ein \emph{Bug,}
+         etwas langsamer ist, aber mehr LP hat und mehr Schaden verursacht.
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.7]{angriff/virus.png}\hfill\null}}
+    \\\bottomrule
 
-    \multicolumn{3}{c}{\bfseries Trojaner} \\*\nopagebreak\midrule\nopagebreak
-    B  & \emph{(kollidierend)} Stirbt diese Einheit, werden an der Stelle ihres
-         Todes \emph{Bugs} und \emph{Viren} gespawnt
-         (\refid{A:spawn-children}). Ein Trojaner ist zwar relativ langsam und
-         kostet mehr als \emph{Viren,} hat dafür aber mehr LP und mehr AS.
-       & \missingpic \\*
-    K  & 4 \\*
-    LP & 4 \\*
-    AS & 4 \\*
-    GS & 3 \\
-    \midrule[\heavyrulewidth]
-    \pagebreak
+    \multicolumn{4}{c}{\bfseries Trojaner} \\*
+    K: 20 & LP: 30 & AS: 6 & GS: 3 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+         Stirbt diese Einheit, werden an der Stelle ihres Todes \emph{Bugs} und
+         \emph{Viren} gespawnt (\refid{A:spawn-children}). Ein Trojaner ist
+         zwar relativ langsam und kostet mehr als \emph{Viren,} hat dafür aber
+         mehr LP und mehr AS.
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.6]{angriff/trojan.png}\hfill\null}}
+    \\\bottomrule
 
-    \multicolumn{3}{c}{\bfseries Nokia} \\*\midrule
-    B  & \emph{(kollidierend)} Diese Einheit ist bei gleichen Kosten zwar
-         langsamer als ein \emph{Trojaner,} dafür aber hat sie mehr LP und AS.
-       & \missingpic \\*
-    K  & 4 \\*
-    LP & 6 \\*
-    AS & 6 \\*
-    GS & 2 \\
-    \midrule[\heavyrulewidth]
+    \multicolumn{4}{c}{\bfseries Nokia} \\*
+    K: 30 & LP: 100 & AS: 15 & GS: 2 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+         Diese Einheit ist bei gleichen Kosten zwar langsamer als ein
+         \emph{Trojaner,} dafür aber hat sie mehr LP und AS.
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.6]{angriff/nokia.png}\hfill\null}}
+    \\\bottomrule
 
-    \multicolumn{3}{c}{\bfseries Thunderbird} \\*\midrule
-    B  & \emph{(kollidierend)} Diese Einheit fliegt, daher muss sie nicht den
+    \multicolumn{4}{c}{\bfseries Thunderbird} \\*
+    K: 15 & LP: 15 & AS: 3 & GS: 3 \\\midrule
+    \multicolumn{4}{p{\bodywidth}}{%
+      \begin{minipage}{0.85\linewidth}
+         Diese Einheit fliegt, daher muss sie nicht den
          Weg um Mauern und Türme herumfinden, sondern kann einfach auf
          Luftlinie darüber hinwegfliegen.
 
-         Von den Kosten ist diese Einheit mit \emph{Trojaner} vergleichbar, sie
-         ist zwar etwas schneller, hat aber nicht viele LP und weniger AS.
-       & \missingpic \\*
-    K  & 4 \\*
-    LP & 4 \\*
-    AS & 3 \\*
-    GS & 4 \\
-
-    \bottomrule
+         Von der Geschwindigkeit ist diese Einheit mit \emph{Trojaner}
+         vergleichbar, sie ist zwar etwas günstiger, und hat nur halb so viele LP.
+      \end{minipage}\hfill\parbox{0.15\linewidth}{%
+        \hfill\includegraphics[scale=0.6]{angriff/thunderbird.png}\hfill\null}}
+    \\\bottomrule
   \end{longtabu}
-  \missingpics{Bilder für Truppen}
 \endgroup
+
 
 \begingroup
   \small
