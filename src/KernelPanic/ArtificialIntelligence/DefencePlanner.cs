@@ -7,6 +7,7 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData)
         {
             base.Update();
+            // how do i force jenkins to build again?
         }
     }
 }
