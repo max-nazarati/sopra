@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic.ArtificialIntelligence
 {
@@ -56,15 +57,13 @@ namespace KernelPanic.ArtificialIntelligence
 
         #endregion
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             SetData();
             
-            mAttackPlanner.Update(mAttackData);
-            mDefencePlanner.Update(mDefenceData);
+            mAttackPlanner.Update(mAttackData, gameTime);
+            mDefencePlanner.Update(mDefenceData, gameTime);
             mUpgradePlanner.Update();
-
-            Console.WriteLine(this + " is updating.");
         }
     }
 }

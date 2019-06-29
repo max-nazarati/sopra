@@ -6,7 +6,7 @@ namespace KernelPanic.ArtificialIntelligence
     {
         public virtual void Update()
         {
-            Console.WriteLine(this + " is updating.");
+            // Console.WriteLine(this + " is updating.");
         }
     }
 }

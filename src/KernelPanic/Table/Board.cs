@@ -67,8 +67,8 @@ namespace KernelPanic.Table
         {
             PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
             PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
-            PlayerA.Update();
-            PlayerB.Update();
+            PlayerA.Update(gameTime);
+            PlayerB.Update(gameTime);
         }
 
         internal GameState CheckGameState()

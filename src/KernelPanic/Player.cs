@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using KernelPanic.Table;
 using KernelPanic.ArtificialIntelligence;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace KernelPanic
@@ -42,11 +43,11 @@ namespace KernelPanic
             DefendingLane = defendingLane;
         }
 
-        internal void Update()
+        internal void Update(GameTime gameTime)
         {
             if (!mHuman)
             {
-                mArtificialPlayer.Update();
+                mArtificialPlayer.Update(gameTime);
             }
         }
     }
