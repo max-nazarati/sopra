@@ -51,7 +51,7 @@ namespace KernelPanic.Table
             var rightLane = new Lane(Lane.Side.Right, content, sounds);
             
             PlayerA = new Player(leftLane, rightLane);
-            PlayerB = new Player(rightLane, leftLane);
+            PlayerB = new Player(rightLane, leftLane, false);
         }
 
         private static Sprite CreateBase(SpriteManager spriteManager)
@@ -67,6 +67,8 @@ namespace KernelPanic.Table
         {
             PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
             PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
+            if (!PlayerA.Human) { PlayerA.Update();}
+            if (!PlayerB.Human) { PlayerB.Update();}
         }
 
         internal GameState CheckGameState()

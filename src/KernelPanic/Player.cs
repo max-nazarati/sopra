@@ -23,12 +23,14 @@ namespace KernelPanic
         public int ExperiencePoints { get; set; }
 
         internal Base Base => DefendingLane.Target;
+        public bool Human { get; } = true;
 
         internal Player(Lane defendingLane, Lane attackingLane, bool human=true) : this(9999, defendingLane, attackingLane)
         {
             if (!human)
             {
-                
+                mArtificalPlayer = new ArtificialPlayer();
+                Human = false;
             }
         }
 
@@ -38,6 +40,14 @@ namespace KernelPanic
             Bitcoins = bitcoins;
             AttackingLane = attackingLane;
             DefendingLane = defendingLane;
+        }
+
+        internal void Update()
+        {
+            if (!Human)
+            {
+                mArtificalPlayer.Update();
+            }
         }
     }
 }

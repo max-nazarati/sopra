@@ -69,6 +69,9 @@
     <Compile Include="..\KernelPanic\ArtificalIntelligence\DefencePlanner.cs">
       <Link>ArtificalIntelligence\DefencePlanner.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\ArtificalIntelligence\Planner.cs">
+      <Link>ArtificalIntelligence\Planner.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\ArtificalIntelligence\UpgradePlanner.cs">
       <Link>ArtificalIntelligence\UpgradePlanner.cs</Link>
     </Compile>

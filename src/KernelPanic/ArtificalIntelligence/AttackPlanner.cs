@@ -1,6 +1,6 @@
 namespace KernelPanic.ArtificalIntelligence
 {
-    internal sealed class AttackPlanner
+    internal sealed class AttackPlanner : Planner
     {
         
     }

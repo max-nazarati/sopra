@@ -48,6 +48,7 @@
     <Compile Include="ArtificalIntelligence\ArtificialPlayer.cs" />
     <Compile Include="ArtificalIntelligence\AttackPlanner.cs" />
     <Compile Include="ArtificalIntelligence\DefencePlanner.cs" />
+    <Compile Include="ArtificalIntelligence\Planner.cs" />
     <Compile Include="ArtificalIntelligence\UpgradePlanner.cs" />
     <Compile Include="BuildingBuyingMenu.cs" />
     <Compile Include="BuyingMenuOverlay.cs" />

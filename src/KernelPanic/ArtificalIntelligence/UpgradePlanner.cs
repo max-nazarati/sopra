@@ -1,6 +1,6 @@
 namespace KernelPanic.ArtificalIntelligence
 {
-    internal sealed class UpgradePlanner
+    internal sealed class UpgradePlanner : Planner
     {
         
     }
