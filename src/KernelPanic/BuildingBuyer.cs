@@ -32,7 +32,7 @@ namespace KernelPanic
                 {
                     mAction.TryPurchase(mBuyer);
                     // TODO: Replace Tower.Create(...) with Building.Clone()
-                    mBuyer.DefendingLane.BuildingSpawner.Register(Tower.Create(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound), position);
+                    mBuyer.DefendingLane.BuildingSpawner.Register(Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound, StrategicTower.Towers.CursorShooter), position);
                 }
                 else
                 {

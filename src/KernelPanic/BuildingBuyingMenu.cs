@@ -100,7 +100,7 @@ namespace KernelPanic
                 return button;
             }
 
-            var scaledSprite = spriteManager.CreateTower();
+            var scaledSprite = spriteManager.CreateCDThrower();
             scaledSprite.ScaleToWidth(64);
             var tower = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64
                 , spriteManager, sounds, StrategicTower.Towers.CursorShooter), scaledSprite);
