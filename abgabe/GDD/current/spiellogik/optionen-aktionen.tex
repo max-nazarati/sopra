@@ -20,7 +20,9 @@
 In Tabelle~\ref{tab:optionen-aktionen} sind die in \emph{Kernel Panic!}
 möglichen Optionen und Aktionen beschriebenen. Tabelle~\ref{tab:helden} geht
 auf die in (\refid{A:hero-ability}) referenzierten Heldenfähigkeiten genauer
-ein.
+ein. Die Aktionen auf Gebäuden sind in Tabelle~\ref{tab:building-actions}
+beschrieben. In Tabelle~\ref{tab:build-mode} sind die Optionen und Aktionen des
+Baumodus, der mit (\refid{A:select-building}) aktiviert wird, erläutert.
 
 \StartId{A}
 \begingroup
@@ -28,7 +30,7 @@ ein.
   \tabulinesep=1mm
 \begin{longtabu}{X[0.6L]X[0.4L]X[L]X[L]X[L]}
   \rowfont{\normalsize}
-  \caption{Mögliche Optionen und Aktionen in \emph{Kernel Panic!}\label{tab:optionen-aktionen}}\\
+  \caption{Mögliche Optionen und Aktionen in \emph{Kernel Panic!}.\label{tab:optionen-aktionen}}\\
   \midrule[\heavyrulewidth]\rowfont{\itshape}
     ID/Name              &
     Akteure              &
@@ -55,8 +57,9 @@ ein.
   \defid[object-selection]{Objekt auswählen}
     & Spieler
     & Spieler klickt mit der Linken Maustaste auf einen Turm oder eine Einheit.
-    & \todo[inline]{Keine Voraussetzung?}
-    & Turm oder Einheit ist ausgewählt.
+    & % Keine Voraussetzung
+    & Turm oder Einheit ist ausgewählt. Ist es ein eigenes Gebäude, kann eine
+      Aktion aus Tabelle~\ref{tab:building-actions} ausgeführt werden.
   \\\midrule
 
   \defid[cancel-object-selection]{Objektauswahl kündigen}
@@ -67,27 +70,28 @@ ein.
     & Türme und Einheiten sind nicht mehr ausgewählt.
 	\\\midrule
 
-  \defid[hero-ability]{Heldenfähigkeit aktivieren}
-    & Spieler
-    & Der Spieler klickt mit der Linken Maustaste auf die Heldenfähigkeit.
-    & Ein Held ist ausgewählt und seine Fähigkeit kann aktiviert werden.
-    & Fähigkeit wird ausgeführt, siehe Tabelle~\ref{tab:helden}.
+  \defid[hero-ability-indicate]{Heldenfähigkeit indizieren}
+	& Spieler
+  & Der Spieler klickt mit der linken Maustaste auf den Fähigkeiten-Button. Darauf folgt entweder \refid{A:hero-ability} oder \refid{A:hero-ability-abort}.
+	& Ein eigener Held ist ausgewählt und seine Fähigkeit ist bereit.
+	& Ein Held ist ausgewählt, seine Fähigkeit ist bereit und der Einflussbereich der Fähigkeit wird angezeigt.
   \\\midrule
 
-  \defid[buy-attack]{Angriffseinheit kaufen}
-    & Spieler
-    & \vspace*{-0.2cm}\begin{enumerate}[nosep,leftmargin=*]
-        \item Spieler klickt mit der Linken Maustaste auf eine Einheit in der
-          Liste der Angriffseinheiten.
-        \item Dem Spieler werden die Kosten der Einheit von seinen Bitcoins
-          abgezogen.
-      \end{enumerate}
-    & Der Spieler hat genügend Bitcoin um die Einheit zu kaufen.
-    & Beim Beginn der nächsten Welle spawnt eine Einheit mehr der ausgewählten
-      Sorte.
-  \\\midrule
+  \defid[hero-ability]{Heldenfähigkeit Indizierung bestätigen}
+	& Spieler
+	& Der Spieler bestätigt die Bereichsauswahl der Heldenfähigkeit mit der mittleren Maustaste.
+	& Ein Held ist ausgewählt und seine Fähigkeit wird indiziert.
+	& Fähigkeit wird ausgeführt, siehe Tabelle~\ref{tab:helden}.
+	\\\midrule
 
-  \defid[move-figure]{Figur(en) durch Klick bewegen}
+  \defid[hero-ability-abort]{Heldenfähigkeit Indizierung abbrechen}
+	& Spieler
+	& Der Spieler bricht die Bereichsauswahl der Heldenfähigkeit mit der rechten Maustaste ab.
+	& Ein Held ist ausgewählt und seine Fähigkeit wird indiziert.
+	& Der Held ist ausgewählt und seine Fähigkeit ist bereit, die Indizierung der Fähigkeit ist abgebrochen.
+	\\\midrule
+
+  \defid[move-figure]{Helden durch Klick bewegen}
     & Spieler
     & \vspace*{-0.2cm}\begin{enumerate}[nosep,leftmargin=*]
         \item Spieler klickt mit der Rechten Maustaste auf einen Punkt auf der
@@ -96,8 +100,8 @@ ein.
           auf dem kürzesten Weg auf den ausgewählten Punkt zu, Hindernisse
           werden rechtzeitig umlaufen.
       \end{enumerate}
-    & Mindestens eine eigene kontrollierbare Einheit ist ausgewählt, das Spiel
-      befindet sich nicht in der Vorbereitungszeit.
+    & Eine eigener Held ist ausgewählt, das Spiel befindet sich nicht in der
+      Vorbereitungszeit.
     & Die ausgewählten eigenen kontrollierbaren Spielfiguren befinden sich am
       Zielpunkt, \textbf{\textls{oder}} die befinden sich an dem erreichbaren
       Punkt, der möglichst nah am Zielpunkt liegt.
@@ -111,9 +115,9 @@ ein.
     & Upgrade wurde angewendet.
   \\\midrule
 
-  \defid[tower-attack]{Gebäude verteidigt}
-    & Ge"-bäude
-    & Das Gebäude führt seinen Angriff durch.
+  \defid[tower-attack]{Turm verteidigt}
+    & Turm
+    & Der Turm führt seinen Angriff durch.
     & Einheit befindet sich in der Reichweite des Gebäudes und das Gebäude ist
       bereit zum Angriff.
     & Turm muss Angriffsintervall abwarten um den nächsten Angriff durchführen
@@ -141,9 +145,8 @@ ein.
 
   \defid[spawn-children]{Trojaner spawnt Einheiten}
     & \emph{Tro"-janer}
-    & An der Stelle an der die Eineit gestorben ist, werden \emph{Bugs} und
-      \emph{Viren} gespawnt. Diese werden der gleichen Welle zugeordnet wie der
-      Trojaner.
+    & An der Stelle an der die Eineit gestorben ist, werden fünf \emph{Bugs}
+      gespawnt. Diese werden der gleichen Welle zugeordnet wie der Trojaner.
     & Trojaner ist gestorben.
     & \emph{Bugs} und \emph{Viren} sind gespawnt worden.
   \\\midrule
@@ -172,37 +175,10 @@ ein.
     & Spieler
     & Spieler klickt mit der Linken Maustaste in der Liste der
       Verteidigungsgebäude auf ein Gebäude.
-    & \todo[inline]{Keine Voraussetzung?}
-    & Spieler befindet sich im Baumodus und kann eine Gebäudeplatzierung
-      wählen (\refid{A:choose-position}).
+    & % Keine Voraussetzung.
+    & Spieler befindet sich im Baumodus (siehe Tab.~\ref{tab:build-mode}). Es
+      folgt entweder \refid{B:leave} oder \refid{B:choose-position}.
   \\\midrule
-
-  \defid[deselect-building]{Baumodus verlassen}
-    & Spieler
-    & Spieler klickt mit der Linken Maustaste auf das aktuell gewählte Gebäude
-    & Spieler befindet sich im Baumodus.
-    & Spieler befindet sich nicht mehr im Baumodus.
-  \\\midrule
-
-  \defid[choose-position]{Gebäudeplatzierung wählen}
-    & Spieler
-    & Der Spieler wählt mit der Maus einen gültigen Ort für ein Gebäude.
-    & Der Spieler befindet sich im Baumodus.
-    & Unter der Annahme, dass das Gebäude an der gewählten Position gebaut
-      würde, muss für jede lebende Einheit ein Weg zu jeder Basis frei sein und
-      ein Weg zwischen den Basen bestehen.
-  \\\midrule
-
-  \defid[put-defend]{Gebäude platzieren}
-    & Spieler
-    & Der Spieler klickt mit der linken Maustaste, das Gebäude wird platziert
-      und die Kosten des Gebäudes vom eigenen Bitcoin abgezogen.
-    & Der Spieler hat eine gültige Gebäudeplatzierung gewählt
-      (\refid{A:choose-position}) und genügend Bitcoin um das Gebäude zu kaufen.
-    & Das Bitcoin wurde reduziert und das Gebäude platziert, das auf den
-      nächstmöglichen Zeitpunkt seiner Aktivierung wartet.
-      (\refid{A:activate-building}).
-    \\\midrule
 
   \defid[activate-building]{Gebäude aktivieren}
     & Ge"-bäude
@@ -213,30 +189,18 @@ ein.
       (\refid{A:tower-attack}).
   \\\midrule
 
-  \defid[tower-improve]{Gebäude verbessern}
+  \defid[buy-attack]{Einheitenspawner kaufen}
     & Spieler
-    & \vspace*{-0.2cm}\begin{enumerate}[nosep, leftmargin=*]
-        \item Spieler wählt die Verbesserung aus.
-        \item Die Verbesserungskosten werden von den den Bitcoin des Spielers
+    & \vspace*{-0.2cm}\begin{enumerate}[nosep,leftmargin=*]
+        \item Spieler klickt mit der Linken Maustaste auf eine Einheit in der
+          Liste der Angriffseinheiten.
+        \item Dem Spieler werden die Kosten der Einheit von seinen Bitcoins
           abgezogen.
-        \item Das Gebäude erhält stärkere Werte.
+        \item Die Zahl neben Button wird um eins inkrementiert.
       \end{enumerate}
-    & Ein eigenes Gebäude ist ausgewählt und Spieler hat genügend Bitcoin.
-    & Das ausgewählte Gebäude hat stärkere Werte und die Bitcoin wurden abgezogen.
-  \\\midrule
-
-  \defid[tower-sell]{Gebäude verkaufen}
-    & Spieler
-    & Der Spieler erhält Bitcoin zurück und das Gebäude verschwindet.
-    & Ein eigenes Gebäude ist ausgewählt.
-    & Der Spieler hat Bitcoin zurückerhalten und das Gebäude ist weg.
-  \\\midrule
-
-  \defid[tower-strategy]{Strategie wählen}
-    & Spieler
-    & Der Spieler klickt mit der Linken Maustaste auf die gewünschte Strategie.
-    & Ein eingens Gebäude (nicht \emph{Kabel}) ist ausgewählt.
-    & Das Gebäude handelt nun nach der gewählten Strategie.
+    & Der Spieler hat genügend Bitcoin um die Einheit zu kaufen.
+    & Beim Beginn aller zukünftigen Wellen spawnt eine Einheit mehr der
+      ausgewählten Sorte.
   \\\midrule
 
   \defid[object-info]{Informationen anzeigen}
@@ -248,5 +212,190 @@ ein.
     & Informationen werden eingeblendet.
 
   \\\bottomrule
+\end{longtabu}
+\endgroup
+
+
+% ---------------------------------------------------------------------------
+% Gebäudeaktionen
+
+\StartId{G}
+\begingroup
+  \small
+  \tabulinesep=1mm
+\begin{longtabu}{X[0.6L]X[L]X[L]X[L]}
+  \rowfont{\normalsize}
+  \caption{Mögliche Aktionen des Spielers auf Gebäuden.\label{tab:building-actions}}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endfirsthead
+
+  \rowfont{\normalsize}
+  \caption[]{Mögliche Aktionen des Spielers auf Gebäuden (fortges.)}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endhead
+
+  \multicolumn{4}{r}{\itshape fortges. auf der nächsten Seite}\\
+  \endfoot
+
+  \endlastfoot
+
+  \defid[sell]{Gebäude verkaufen}
+    & Der Spieler erhält 80\,\% des Gebäudewertes in Bitcoin zurück und das
+      Gebäude verschwindet.
+    & Ein eigenes Gebäude ist ausgewählt.
+    & Die Kachel, auf der das Gebäude stand, ist nun wieder für gegnerische
+      Einheiten passierbar und ein neues Gebäude kann wieder an diese Stelle
+      gebaut werden.
+  \\\midrule
+
+  \defid[improve]{Gebäude verbessern}
+    & Die Kosten der Verbesserung werden von den den Bitcoin des Spielers
+      abgezogen und die Werte des Gebäudes werden erhöht.
+    & Ein eigenes Gebäude, das verbessert werden kann, ist ausgewählt und der
+      Spieler hat genügend Bitcoin.
+    & Das ausgewählte Gebäude hat stärkere Werte und die Bitcoin wurden abgezogen.
+  \\\midrule
+
+  \defid[choose-strategy]{Strategie wählen}
+    & Der Spieler klickt mit der Linken Maustaste auf die gewünschte Strategie.
+    & Ein eigenes Gebäude, dass eine Strategie unterstützt, ist ausgewählt.
+    & Das Gebäude handelt nun nach der gewählten Strategie.
+  \\\bottomrule
+
+\end{longtabu}
+\endgroup
+
+
+% ---------------------------------------------------------------------------
+% Baumodus
+
+
+\StartId{B}
+\begingroup
+  \small
+  \tabulinesep=1mm
+\begin{longtabu}{X[0.6L]X[L]X[L]X[L]}
+  \rowfont{\normalsize}
+  \caption{Optionen und Aktionen des Spielers im Baumodus.\label{tab:build-mode}}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endfirsthead
+
+  \rowfont{\normalsize}
+  \caption[]{Optionen und Aktionen des Spielers im Baumodus (fortges.)}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endhead
+
+  \multicolumn{4}{r}{\itshape fortges. auf der nächsten Seite}\\
+  \endfoot
+
+  \endlastfoot
+
+  \defid[leave]{Baumodus verlassen}
+    & Spieler klickt mit der Linken Maustaste auf das aktuell gewählte Gebäude
+    & Spieler befindet sich im Baumodus.
+    & Spieler befindet sich nicht mehr im Baumodus.
+  \\\midrule
+
+  \defid[choose-position]{Gebäudeplatzierung wählen}
+    & Der Spieler wählt mit der Maus einen gültigen Ort für ein Gebäude.
+    & Der Spieler befindet sich im Baumodus.
+    & Unter der Annahme, dass das Gebäude an der gewählten Position gebaut
+      würde, muss für jede lebende Einheit ein Weg zu jeder Basis frei sein und
+      ein Weg zwischen den Basen bestehen. Es folgt entweder \refid{B:leave}
+      oder \refid{B:put-defend}.
+  \\\midrule
+
+  \defid[put-defend]{Gebäude platzieren}
+    & Der Spieler klickt mit der linken Maustaste, das Gebäude wird platziert
+      und die Kosten des Gebäudes von den eigenen Bitcoins abgezogen.
+    & Der Spieler hat eine gültige Gebäudeplatzierung gewählt
+      (\refid{B:choose-position}) und genügend Bitcoin um das Gebäude zu kaufen.
+    & Das Bitcoin wurde reduziert und das Gebäude platziert, das auf den
+      nächstmöglichen Zeitpunkt seiner Aktivierung wartet
+      (\refid{A:activate-building}).
+  \\\bottomrule
+
+\end{longtabu}
+\endgroup
+
+% ---------------------------------------------------------------------------
+% Heldenfähigkeiten
+
+\StartId{H}
+\begingroup
+  \small
+  \tabulinesep=1mm
+\begin{longtabu}{X[0.6L]X[0.4L]X[L]X[L]X[L]}
+  \rowfont{\normalsize}
+  \caption{Beschreibung der Heldenfähigkeiten die durch \refid{A:hero-ability} ausgeführt werden.\label{tab:helden}}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Held                 &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endfirsthead
+
+  \rowfont{\normalsize}
+  \caption[]{Beschreibung der Heldenfähigkeiten (fortges.)}\\
+  \midrule[\heavyrulewidth]\rowfont{\itshape}
+    ID/Name              &
+    Held                 &
+    Ereignis"-fluss      &
+    Anfangs"-bedingung   &
+    Abschluss"-bedingung \\
+  \midrule\endhead
+
+  \multicolumn{5}{r}{\itshape fortges. auf der nächsten Seite}\\
+  \endfoot
+
+  \endlastfoot
+
+  \defid[heal]{Heilen}
+    & Settings
+    & Heilt die Einheiten, die sich im Radius befinden regelmäßig.
+    & Es befinden sich Einheiten im Radius.
+    & Einheiten haben mehr LP, oder maximale LP.
+  \\\midrule
+
+  \defid[jump]{Gebäude überspringen}
+    & Firefox
+    & Springt über Einheiten und Gebäude in die gewählte Richtung.
+    & Das Zielfeld des Sprungs muss ein gültiges Feld auf der Angriffsbahn
+      sein und seit dem letzten Einsetzen ist die Abklingzeit vergangen.
+    & Firefox hat sich in die gewählte Richtung bewegt.
+  \\\midrule
+
+  \defid[emp]{EMP-Angriff}
+    & Blue"-screen
+    & Das Verteidigungsgebäude, das am nächsten am Helden ist, wird kurzzeitig
+      ausgeschaltet.
+    & Die Fähigkeit ist aufgeladen.
+    & Das nächste Angriffsgebäude wird ausgeschaltet und der EMP-Angriff bis
+      zur Aufladung (\refid{H:reload}) deaktiviert.
+  \\\midrule
+
+  \defid[reload]{EMP-Aufladung}
+    & Blue"-screen
+    & Der EMP-Angriff wird aufgeladen.
+    & EMP-Angriff ist deaktiviert und Blue"-screen ist an der eigenen Basis.
+    & EMP-Angriff ist wieder aufgeladen.
+ \\\bottomrule
 \end{longtabu}
 \endgroup

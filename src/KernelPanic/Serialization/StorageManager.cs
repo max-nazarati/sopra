@@ -68,7 +68,7 @@ namespace KernelPanic.Serialization
             builder.Register(c => new Board(manager.Sprite, manager.Sound, true));
             builder.Register(c => new Lane(manager.Sprite, manager.Sound));
             builder.Register(c => new Firefox(manager.Sprite));
-            builder.Register(c => new Tower(manager.Sprite, manager.Sound));
+            builder.Register(c => new CursorShooter(manager.Sprite, manager.Sound));
             builder.Register(c => new StrategicTower(manager.Sprite, manager.Sound));
             builder.Register(c => new Trojan(manager.Sprite));
 

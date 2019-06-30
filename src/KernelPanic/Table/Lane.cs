@@ -34,7 +34,7 @@ namespace KernelPanic.Table
 
         #region Properties
 
-        private readonly SpriteManager mSpriteManager;
+        internal readonly SpriteManager mSpriteManager;
         private readonly SoundManager mSounds;
 
         [JsonProperty]
@@ -49,6 +49,7 @@ namespace KernelPanic.Table
 
         internal EntityGraph EntityGraph { get; private set; }
         internal UnitSpawner UnitSpawner { get; private set; }
+        internal BuildingSpawner BuildingSpawner { get; private set; }
 
         internal Rectangle GridRectangle() => mGrid.LaneRectangle;
         internal int LaneWidthInTiles() => Grid.LaneWidthInTiles;
@@ -113,10 +114,11 @@ namespace KernelPanic.Table
         {
             mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
+            var obstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
             UnitSpawner = new UnitSpawner(mGrid, EntityGraph.Add);
-            var obstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
-
+            BuildingSpawner = new BuildingSpawner(mGrid, mHeatMap, EntityGraph.Add);
+            
             if (entities?.Count > 0)
             {
                 EntityGraph.Add(entities);
@@ -143,7 +145,21 @@ namespace KernelPanic.Table
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.CursorShooter));
+                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
+                    UpdateHeatMap();
+                }
+            }
+            
+            if (gridPoint != null && inputManager.KeyPressed(Keys.R))
+            {
+                var (position, size) = gridPoint.Value;
+                if (!EntityGraph.HasEntityAt(position))
+                {
+                    mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.WifiRouter));
                     mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
                     UpdateHeatMap();
                 }

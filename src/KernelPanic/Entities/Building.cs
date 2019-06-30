@@ -24,7 +24,7 @@ namespace KernelPanic.Entities
         private int BitcoinWorth { get; set; }
 
         internal State StateProperty { get; set; }
-        
+
         internal enum State
         {
             /// <summary>
