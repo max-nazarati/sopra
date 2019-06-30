@@ -18,7 +18,7 @@ namespace KernelPanic.ArtificialIntelligence
     {
         private DataTable mDataSet;
         private Codification mCodebook;
-        private DecisionTree Mmodel;
+        private DecisionTree mModel;
 
         /// <summary>
         /// Train a decision tree model based on its training set (mDataset)
@@ -36,10 +36,10 @@ namespace KernelPanic.ArtificialIntelligence
 
         // train decision tree model
         C45Learning teacher = new C45Learning();
-        Mmodel = teacher.Learn(xTrain, yTrain);
+        mModel = teacher.Learn(xTrain, yTrain);
 
         // training statistics
-        int[] predicted = Mmodel.Decide(xTrain);
+        int[] predicted = mModel.Decide(xTrain);
         double error = new ZeroOneLoss(yTrain).Loss(predicted);
         Console.WriteLine("training error: " + error);
         }
@@ -107,14 +107,14 @@ namespace KernelPanic.ArtificialIntelligence
         public override String ToString()
         {
             DecisionTree model = this.Model;
-            DecisionSet rules = Mmodel.ToRules();
+            DecisionSet rules = mModel.ToRules();
             String result = rules.ToString(mCodebook, "Aktion",
                 System.Globalization.CultureInfo.InvariantCulture);
             return result;
         }
 
         public Codification Codebook { get => mCodebook; set => mCodebook = value; }
-        public DecisionTree Model { get => Mmodel; set => Mmodel = value; }
-        public DecisionSet Rules { get => Mmodel.ToRules();}
+        public DecisionTree Model { get => mModel; set => mModel = value; }
+        public DecisionSet Rules { get => mModel.ToRules();}
     }
 }
