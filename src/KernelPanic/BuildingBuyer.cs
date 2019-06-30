@@ -32,7 +32,18 @@ namespace KernelPanic
                 {
                     mAction.TryPurchase(mBuyer);
                     // TODO: Replace Tower.Create(...) with Building.Clone()
-                    mBuyer.DefendingLane.BuildingSpawner.Register(Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound, StrategicTower.Towers.CursorShooter), position);
+                    if (Building.GetType() == typeof(CursorShooter))
+                    {
+                        mBuyer.DefendingLane.BuildingSpawner.Register
+                            (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
+                            StrategicTower.Towers.CursorShooter), position);
+                    }
+                    else if (Building.GetType() == typeof(WifiRouter))
+                    {
+                        mBuyer.DefendingLane.BuildingSpawner.Register
+                            (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
+                            StrategicTower.Towers.WifiRouter), position);
+                    }
                 }
                 else
                 {
