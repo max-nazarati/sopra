@@ -49,6 +49,7 @@ namespace KernelPanic.Entities
         {
         }
         
+
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);

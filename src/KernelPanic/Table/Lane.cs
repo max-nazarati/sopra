@@ -34,8 +34,8 @@ namespace KernelPanic.Table
 
         #region Properties
 
-        internal readonly SpriteManager mSpriteManager;
-        private readonly SoundManager mSounds;
+        internal readonly SpriteManager mSpriteManager; // TODO write getonly property
+        internal readonly SoundManager mSounds; // TODO write getonly property
 
         [JsonProperty]
         internal Base Target { get; /* required for deserialization */ private set; }

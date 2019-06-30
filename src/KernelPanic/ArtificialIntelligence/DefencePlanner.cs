@@ -13,24 +13,22 @@ namespace KernelPanic.ArtificialIntelligence
 
         #region UnitPurchaser
 
-        private readonly PurchasableAction<Entity> mCable;
+        private readonly PurchasableAction<Entity> mWifiRouter;
         
         #endregion
-        
-        // private int mTimer = 0; // this can prob be deleted in the future (usage: TroupeParade)
-        
+
         #endregion
-        public DefencePlanner(Player player, SpriteManager sprites) : base(player, sprites)
+        public DefencePlanner(Player player, SpriteManager sprites, SoundManager soundManager) : base(player, sprites)
         {
             #region Initializing Member
 
-            // mCable = new PurchasableAction<Entity>(new Cable(sprites));
+            mWifiRouter = new PurchasableAction<Entity>(new WifiRouter(sprites, soundManager));
 
             #endregion
 
             #region initializing Purchases
 
-            // mCable.Purchased += EntityBought;
+            mWifiRouter.Purchased += EntityBought;
 
             #endregion
         }
@@ -39,7 +37,7 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData, GameTime gameTime)
         {
             base.Update();
-            // PurchasableAction<Entity> turret = new PurchasableAction<Entity>(new StrategicTower());
+            // mWifiRouter.TryPurchase(Player);
         }
         
     }
