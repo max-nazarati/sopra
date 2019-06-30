@@ -7,6 +7,7 @@ using Accord.MachineLearning.DecisionTrees;
 using System.Data;
 using System.IO;
 using Accord.MachineLearning.DecisionTrees.Learning;
+using Accord.MachineLearning.DecisionTrees.Rules;
 using Accord.Math;
 using Accord.Math.Optimization.Losses;
 using Accord.Statistics.Filters;
@@ -16,8 +17,13 @@ namespace KernelPanic.ArtificialIntelligence
     class DecisionTreeClassifier
     {
         private DataTable mDataSet;
+        private Codification mCodebook;
+        private DecisionTree Mmodel;
 
-        public DecisionTree TrainModel()
+        /// <summary>
+        /// Train a decision tree model based on its training set (mDataset)
+        /// </summary>
+        public void TrainModel()
         {
         // split dataset into features (xTrain) and labels (yTrain)  
         double[][] xTrain = mDataSet.ToJagged<double>("Bitcoins",
@@ -25,22 +31,34 @@ namespace KernelPanic.ArtificialIntelligence
         "Firefox", "Bluescreen", "Kabel", "Mauszeigerschütze", "CD-Werfer",
         "Antivirusprogramm", "Lüftung", "Wifi-Router", "Schockfeld");
         string[] labels = mDataSet.ToArray<String>("Aktion");
-        var codebook = new Codification("Aktion", labels);
-        int[] yTrain = codebook.Transform("Aktion", labels);
+        mCodebook = new Codification("Aktion", labels);
+        int[] yTrain = mCodebook.Transform("Aktion", labels);
 
         // train decision tree model
         C45Learning teacher = new C45Learning();
-        DecisionTree model = teacher.Learn(xTrain, yTrain);
+        Mmodel = teacher.Learn(xTrain, yTrain);
 
         // training statistics
-        int[] predicted = model.Decide(xTrain);
+        int[] predicted = Mmodel.Decide(xTrain);
         double error = new ZeroOneLoss(yTrain).Loss(predicted);
         Console.WriteLine("training error: " + error);
-
-        return model;
         }
 
-        public void ReaderCSV(string filename)
+        /// <summary>
+        /// Read csv file and store content as DataTable, e.g.:
+        /// ==============================
+        /// Bitcoins,Trojaner,Aktion
+        /// 3,5,CD-Werfer
+        /// ==============================
+        /// to
+        /// ==============================
+        /// Bitcoins | Trojaner | Aktion
+        /// ------------------------------
+        ///     3          5     CD-Werfer
+        /// ==============================
+        /// </summary>
+        /// <param name="filename">path to file</param>
+        public void ReaderCsv(string filename)
         {
             DataTable resulTable = new DataTable();
             StreamReader reader = new StreamReader(File.OpenRead(filename));
@@ -74,5 +92,29 @@ namespace KernelPanic.ArtificialIntelligence
 
             mDataSet = resulTable;
         }
+
+        /// <summary>
+        /// Translate tree into set of rules, e.g.:
+        ///                     /   \
+        /// Feature 1      <10 /     \ >= 10
+        ///                   /       \
+        ///                  no       yes
+        /// Will be translated to:
+        /// no : (1 <  10)
+        /// yes: (1 >= 10)
+        /// </summary>
+        /// <returns>The set of rules</returns>
+        public override String ToString()
+        {
+            DecisionTree model = this.Model;
+            DecisionSet rules = Mmodel.ToRules();
+            String result = rules.ToString(mCodebook, "Aktion",
+                System.Globalization.CultureInfo.InvariantCulture);
+            return result;
+        }
+
+        public Codification Codebook { get => mCodebook; set => mCodebook = value; }
+        public DecisionTree Model { get => Mmodel; set => Mmodel = value; }
+        public DecisionSet Rules { get => Mmodel.ToRules();}
     }
 }
