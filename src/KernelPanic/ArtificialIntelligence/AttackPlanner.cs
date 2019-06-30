@@ -10,70 +10,50 @@ namespace KernelPanic.ArtificialIntelligence
 
         #region UnitPurchaser
 
-        private readonly PurchasableAction<Unit> mBug;
-        private readonly PurchasableAction<Unit> mVirus;
-        private readonly PurchasableAction<Unit> mTrojan;
-        private readonly PurchasableAction<Unit> mThunderbird;
-        private readonly PurchasableAction<Unit> mNokia;
-        private readonly PurchasableAction<Unit> mFirefox;
-        private readonly PurchasableAction<Unit> mSettings;
-        private readonly PurchasableAction<Unit> mBluescreen;
+        private readonly PurchasableAction<Entity> mBug;
+        private readonly PurchasableAction<Entity> mVirus;
+        private readonly PurchasableAction<Entity> mTrojan;
+        private readonly PurchasableAction<Entity> mThunderbird;
+        private readonly PurchasableAction<Entity> mNokia;
+        private readonly PurchasableAction<Entity> mFirefox;
+        private readonly PurchasableAction<Entity> mSettings;
+        private readonly PurchasableAction<Entity> mBluescreen;
         
         #endregion
-
-        private readonly Player mPlayer;
+        
         private int mTimer = 0; // this can prob be deleted in the future (usage: TroupeParade)
         
         #endregion
 
         #region Konstruktor
         
-        public AttackPlanner(Player player, SpriteManager sprites)
+        public AttackPlanner(Player player, SpriteManager sprites) : base(player, sprites)
         {
-            mPlayer = player;
-
             #region Initializing Member
 
-            mBug = new PurchasableAction<Unit>(new Bug(sprites));
-            mVirus = new PurchasableAction<Unit>(new Virus(sprites));
-            mTrojan = new PurchasableAction<Unit>(new Trojan(sprites));
-            mThunderbird = new PurchasableAction<Unit>(new Thunderbird(sprites));
-            mNokia = new PurchasableAction<Unit>(new Nokia(sprites));
-            mFirefox = new PurchasableAction<Unit>(new Firefox(sprites));
-            mSettings = new PurchasableAction<Unit>(new Settings(sprites));
-            mBluescreen = new PurchasableAction<Unit>(new Bluescreen(sprites));
+            mBug = new PurchasableAction<Entity>(new Bug(sprites));
+            mVirus = new PurchasableAction<Entity>(new Virus(sprites));
+            mTrojan = new PurchasableAction<Entity>(new Trojan(sprites));
+            mThunderbird = new PurchasableAction<Entity>(new Thunderbird(sprites));
+            mNokia = new PurchasableAction<Entity>(new Nokia(sprites));
+            mFirefox = new PurchasableAction<Entity>(new Firefox(sprites));
+            mSettings = new PurchasableAction<Entity>(new Settings(sprites));
+            mBluescreen = new PurchasableAction<Entity>(new Bluescreen(sprites));
 
             #endregion
 
             #region initializing Purchases
 
-            mBug.Purchased += UnitBought;
-            mVirus.Purchased += UnitBought;
-            mTrojan.Purchased += UnitBought;
-            mThunderbird.Purchased += UnitBought;
-            mNokia.Purchased += UnitBought;
-            mFirefox.Purchased += UnitBought;
-            mSettings.Purchased += UnitBought;
-            mBluescreen.Purchased += UnitBought;
+            mBug.Purchased += EntityBought;
+            mVirus.Purchased += EntityBought;
+            mTrojan.Purchased += EntityBought;
+            mThunderbird.Purchased += EntityBought;
+            mNokia.Purchased += EntityBought;
+            mFirefox.Purchased += EntityBought;
+            mSettings.Purchased += EntityBought;
+            mBluescreen.Purchased += EntityBought;
             
             #endregion
-        }
-        
-        #endregion
-        
-        #region Buy Troupes
-        
-        private static void UnitBought(Player buyer, Unit unit)
-        {
-            buyer.AttackingLane.UnitSpawner.Register(unit.Clone());
-        }
-
-        private void BuyUnit(PurchasableAction<Unit> unit, int amount=1)
-        {
-            for (var i = 0; i < amount; i++)
-            {
-                unit.TryPurchase(mPlayer);
-            }
         }
         
         #endregion
@@ -84,34 +64,34 @@ namespace KernelPanic.ArtificialIntelligence
         {
             if (mTimer == interval)
             {
-                BuyUnit(mThunderbird);
+                BuyEntity(mThunderbird);
                 // BuyThunderbird();
                 mTimer++;
                 return;
             }
             if (mTimer == 2 * interval)
             {
-                BuyUnit(mBug);
+                BuyEntity(mBug);
                 // BuyBug();
                 mTimer++;
                 return;
             }
             if (mTimer == 3 * interval)
             {
-                BuyUnit(mVirus);
+                BuyEntity(mVirus);
                 // BuyVirus();
                 mTimer++;
                 return;
             }
             if (mTimer == 4 * interval)
             {
-                BuyUnit(mNokia);
+                BuyEntity(mNokia);
                 mTimer++;
                 return;
             }
             if (mTimer >= 5 * interval)
             {
-                BuyUnit(mTrojan);
+                BuyEntity(mTrojan);
                 // BuyTrojan();
                 mTimer = 0;
                 return;
@@ -131,5 +111,6 @@ namespace KernelPanic.ArtificialIntelligence
         }
         
         #endregion
+        
     }
 }
