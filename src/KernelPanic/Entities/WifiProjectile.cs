@@ -11,8 +11,8 @@ namespace KernelPanic.Entities
         private readonly Vector2 mDirection2, mDirection3;
         private readonly Sprite mSprite2, mSprite3;
         public bool mHasHit2, mHasHit3;
-        public WifiProjectile(Vector2 direction, Vector2 startPoint, float radius, float rotation, int size, ImageSprite sprite) 
-            : base(direction, startPoint, radius, rotation, size, sprite)
+        public WifiProjectile(Vector2 direction, Vector2 startPoint, float radius, float rotation, int size, int speed
+            , ImageSprite sprite) : base(direction, startPoint, radius, rotation, size, speed, sprite)
         {
             mHasHit2 = false;
             mHasHit3 = false;
@@ -46,9 +46,9 @@ namespace KernelPanic.Entities
 
         public new void Update(PositionProvider positionProvider)
         {
-            mSprite.Position += mDirection * 3;
-            mSprite2.Position += mDirection2 * 3;
-            mSprite3.Position += mDirection3 * 3;
+            mSprite.Position += mDirection * mSpeed;
+            mSprite2.Position += mDirection2 * mSpeed;
+            mSprite3.Position += mDirection3 * mSpeed;
             
             foreach (var entity in positionProvider.NearEntities<Unit>(new Vector2(mSprite.X, mSprite.Y), mRadius))
             {

@@ -30,7 +30,7 @@ namespace KernelPanic.Entities
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
                 Console.WriteLine(direction);
                 mProjectiles.Add(new Projectile(direction, Sprite.Position, mRadius, Sprite.Rotation,20
-                    , sprites.CreateCursorProjectile()));
+                    , 10, sprites.CreateCursorProjectile()));
                 sounds.PlaySound(SoundManager.Sound.Shoot1);
 
                 // SoundManager.Instance.PlaySound("shoot");

@@ -10,14 +10,16 @@ namespace KernelPanic.Entities
         protected readonly Vector2 mDirection, mStartPoint;
         protected readonly ImageSprite mSprite;
         protected readonly float mRadius;
+        protected int mSpeed;
         public bool mHasHit;
-        
+
         public Projectile(Vector2 direction, Vector2 startPoint, float radius, float rotation
-            , int size, ImageSprite sprite)
+            , int size, int speed, ImageSprite sprite)
         {
             mStartPoint = startPoint;
             mDirection = direction;
             mRadius = radius;
+            mSpeed = speed;
             mHasHit = false;
 
             mSprite = sprite;
@@ -38,8 +40,8 @@ namespace KernelPanic.Entities
 
         public void Update(PositionProvider positionProvider)
         {
-            mSprite.X += mDirection.X * 7;
-            mSprite.Y += mDirection.Y * 7;
+            mSprite.X += mDirection.X * mSpeed;
+            mSprite.Y += mDirection.Y * mSpeed;
             foreach (var entity in positionProvider.NearEntities<Unit>(new Vector2(mSprite.X, mSprite.Y), mRadius))
             {
                 if (!entity.Bounds.Intersects(mSprite.Bounds)) continue;

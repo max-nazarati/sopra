@@ -235,15 +235,13 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower));
-        
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
-        
         internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Tower));
-        
         internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
-        
         internal ImageSprite CreateCDThrower() => new ImageSprite(Lookup(Image.CdThrower));
+        internal ImageSprite CreateCursorShooter() => new ImageSprite(Lookup(Image.Mouse));
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile));
+        internal ImageSprite CreateCdProjectile() => new ImageSprite(Lookup(Image.Cd));
         internal ImageSprite CreateWifiProjectile() => new ImageSprite(Lookup(Image.WifiProjectile));
 
 

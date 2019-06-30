@@ -164,6 +164,19 @@ namespace KernelPanic.Table
                     UpdateHeatMap();
                 }
             }
+            
+            if (gridPoint != null && inputManager.KeyPressed(Keys.Z))
+            {
+                var (position, size) = gridPoint.Value;
+                if (!EntityGraph.HasEntityAt(position))
+                {
+                    mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.CdThrower));
+                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
+                    UpdateHeatMap();
+                }
+            }
 
             var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
