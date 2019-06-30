@@ -1,4 +1,3 @@
-Achtung! In diesem Abschnitt werden viele Spielobjekte, die bisher noch nicht genau beschrieben wurden, gezeigt. Es kann für einen ersten Eindruck sinnvoll sein, sich die Benutzeroberfläche vorher anzuschauen. Um das Kapitel vollständig zu verstehen, wird empfohlen, an diese Stelle zurückzukehren, sobald man sich mit der Spiellogik auseinandergesetzt hat.
 \section{Spieler-Interface}
 % Aus dem Wiki
 % ------------
@@ -32,40 +31,45 @@ Achtung! In diesem Abschnitt werden viele Spielobjekte, die bisher noch nicht ge
 % * Bild (Konzeptzeichnung, Screenshot, Mockup) dessen, wie das Spiel aussehen
 %   soll.
 % * Beschreibung der Steuerung.
+Abbildung \ref{fig:spieler-interface} zeigt eine typische Momentaufnahme des Spiels \textit{Kernel Panic!}.
+Der Spieler betrachtet die Spielwelt aus der Top-Down Perpektive.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\textwidth]{spieler-interface.png}
-	\caption{Spieler-Interface}
+  \caption{%
+    Ein Ausschnitt aus dem Spielfeld von \emph{Kernel Panic!.} Zu sehen sind
+    ein Teil einer Lane, Türme, Truppen, ein Teil einer Basis, die Kaufmenüs
+    und die Minimap.}
 	\label{fig:spieler-interface}
 \end{figure}
-\pagebreak\noindent
-Abbildung \ref{fig:spieler-interface} zeigt eine typische Momentaufnahme des Spiels \textit{Kernel Panic!}.
-Der Spieler betrachtet die Spielwelt aus der Top-Down Perpektive.
 
-Beschreiben wir zunächst das Head-up-Display (HUD) bestehend aus den rot markierten Bereichen mit den Nummerierungen $1$ bis $6$:
+Beschreiben wir zunächst das Head-up-Display (HUD) bestehend aus den rot markierten Bereichen mit den Nummerierungen $1$ bis $9$:
 \begin{itemize}[leftmargin=*]
 	\item{1 Spielstand:} Hier werden die wichtigsten Informationen angezeigt um im Spiel den Überblick zu behalten, vergleichbar mit einem Punktestand.
-	\begin{itemize}
-		\item{$1 A$: Die aktuelle \textit{Spielzeit} zeigt an, wieviele Minuten und Sekunden das aktuelle Spiel bereits im Gange ist.}
-		\item{$1 B$: Direkt unter der \textit{Spielzeit} ist die Anzahl der erfolgreich besiegten \textit{Wellen} im Überblick zu sehen: links die eigenen, rechts die des Gegners.}
-		\item{$1 C_{1}$ \& $1C_{2}$:} $C_{1}$ zeigt die \textit{Erfahrungspunkte,} die man sich erspielt hat, $C_{2}$ die des Gegners.
-		\item{$D_{1}$ \& $D_{2}$:} Die aktuelle \emph{Ladung} der Spieler. Hier gilt ebenfalls, links die eigenen auf der rechten Seite die des Gegners.
-	\end{itemize}
-	\item {$2$ Verteidigungsgebäude:} Oben, am linken Bildrand ist eine Liste an \textit{Verteidigungsgebäuden}. Um die verschiedenen Gebäude auszuwählen kann man die Tafeln $2 A$ bis $2 E$ benutzen.
-	\item {$3$ \& $4$ Angriffseinheiten:} Auf der gegenüberliegenden Seite des Bildschirms befinden sich die \textit{Angriffseinheiten}. Dabei ist $3$ die Liste der \textit{Truppen} und $4$ die Liste der \textit{Helden}. Auch hier kann man mit den verschiedenen Tafeln ($3 A$ bis $3 E$ bzw $4 A$ bis $4 C$) die genaue Auswahl treffen.
-	\item {$5$ Übersicht:}
-	\begin{itemize}
-		\item{$5 B$ Pause: Mithilfe von diesem Feld kann man das Spiel pausieren und auf die Menüstruktur (siehe Abschnitt~\ref{sec:menu}) zugreifen.}
-		\item{$5 A$: Im unteren rechten Eck ist eine Mini-map, wie man sie aus MOBAs oder Strategiespielen kennt. Sie zeigt abstrahiert die gesamte Spielwelt.}
-		\item{$5 C$: der aktuelle Kameraausschnitt ist auf der Mini-map markiert; man kann den Bildausschnitt symbolisch erkennen.}
-	\end{itemize}
-	\item {$6$ Auswahl-Tafel: Zeigt Informationen über ein aktuell ausgewähltes Spielobjekt.}	\begin{itemize}
-		\item{$6 A$ bis $6 C$: Der hier ausgewählte Mauszeigerschütze hat drei mögliche Aktionen: \textbf{Verbessern ($6 A$)}, \textbf{Verkaufen ($6 B$)} und \textbf{Strategie wählen ($6 C$)}.}
-		\item{$6 D$: Eine Ansicht der aktuellen Auswahl im Bildformat.}
-		\item{$6 E$: Der Status zeigt die wichtigsten Daten über das ausgewählte Spielobjekt, hier \textit{Kosten} (K), \textit{Verteidigungsstärke} (VS), \textit{Angriffsintervall }(AI) und \textit{Reichweite} (RW)}
-	\end{itemize}
-	\item {$7$ Der Mauszeiger mit dem der Spieler die Auswahl trifft.}
+	Die aktuelle \textit{Spielzeit} zeigt an, wieviele Minuten und Sekunden das aktuelle Spiel bereits im Gange ist. Links neben der angezeigten Spielzeit sieht der Spieler, wie viel Ladung seine Basis noch besitzt und wie viel Bitcoins er derzeit ausgeben kann \textbf{(D1)}. Rechts neben der angezeigten Spielzeit sieht der Spieler, die des Gegners \textbf{(D2)}.
+	%\begin{itemize}
+	%	\item{$1 A$: Die aktuelle \textit{Spielzeit} zeigt an, %wieviele Minuten und Sekunden das aktuelle Spiel bereits im %Gange ist.}
+	%	\item{$1 B$: Direkt unter der \textit{Spielzeit} ist die %Anzahl der erfolgreich besiegten \textit{Wellen} im %Überblick zu sehen: links die eigenen, rechts die des %Gegners.}
+	%	\item{$1 C_{1}$ \& $1C_{2}$:} $C_{1}$ zeigt die %\textit{Erfahrungspunkte,} die man sich erspielt hat, %$C_{2}$ die des Gegners.
+	%	\item{$D_{1}$ \& $D_{2}$:} Die aktuelle \emph{Ladung} %der Spieler. Hier gilt ebenfalls, links die eigenen auf der %rechten Seite die des Gegners.
+	%\end{itemize}
+	\item {$2$ Verteidigungsgebäude:} Oben, am linken Bildrand ist eine Liste an \textit{Verteidigungsgebäuden} \textbf{(2)}. Um die verschiedenen Gebäude auszuwählen kann man die ensptechenden Tafeln benutzen.
+	\item {$3$ \& $4$ Angriffseinheiten:} Auf der gegenüberliegenden Seite des Bildschirms befinden sich die \textit{Angriffseinheiten}. Dabei ist \textbf{(3)} die Liste der \textit{Truppen} und \textbf{(4)} die Liste der \textit{Helden}. Auch hier kann man mit den verschiedenen Tafeln die genaue Auswahl treffen.
+	\item {$5$ Minimap:} Unten rechts gibt es eine Minimap \textbf{(5)}, in
+	welche die Position (in rot) gegnerischer und (in grün) eigener Einheiten abgebildet wird.
+	%\begin{itemize}
+	%	\item{$5 B$ Pause: Mithilfe von diesem Feld kann man das %Spiel pausieren und auf die Menüstruktur (siehe %Abschnitt~\ref{sec:menu}) zugreifen.}
+	%	\item{$5 A$: Im unteren rechten Eck ist eine Mini-map, %wie man sie aus MOBAs oder Strategiespielen kennt. Sie %zeigt abstrahiert die gesamte Spielwelt.}
+	%	\item{$5 C$: der aktuelle Kameraausschnitt ist auf der %Mini-map markiert; man kann den Bildausschnitt symbolisch %erkennen.}
+	%\end{itemize}
+	\item {$6$ Auswahl-Tafel: Zeigt Informationen über ein aktuell ausgewähltes Spielobjekt.} \(6\) In diesem Fall wird der Angriffsradius des Turm (grüner Kreis) angezeigt sowie die Möglichkeit, ihn wieder zu verkaufen.
+	%\begin{itemize}
+	%	\item{$6 A$ bis $6 C$: Der hier ausgewählte %Mauszeigerschütze hat drei mögliche Aktionen: %\textbf{Verbessern ($6 A$)}, \textbf{Verkaufen ($6 B$)} und %\textbf{Strategie wählen ($6 C$)}.}
+	%	\item{$6 D$: Eine Ansicht der aktuellen Auswahl im %Bildformat.}
+	%	\item{$6 E$: Der Status zeigt die wichtigsten Daten über %das ausgewählte Spielobjekt, hier \textit{Kosten} (K), %\textit{Verteidigungsstärke} (VS), %\textit{Angriffsintervall }(AI) und \textit{Reichweite} %(RW)}
+	%\end{itemize} trifft.}
 \end{itemize}
-Die anderen sichtbaren Objekte bilden die Spielwelt. Ein wichtiger Teil davon ist die Strecke die in Felder unterteilt ist. Eines dieser Felder belegt das Verteidigungsgebäude \textbf{Mauszeigerschütze (8)}, der in dieser Spielsituation gerade seinen Angriff durchführt und \textbf{Mauszeiger (10)} auf einen \textbf{Bug (12)} schießt.
+Die anderen sichtbaren Objekte bilden die Spielwelt. Ein wichtiger Teil davon ist die Strecke die in Felder unterteilt ist. Eines dieser Felder belegt das Verteidigungsgebäude \textbf{Mauszeigerschütze (7)}, der in dieser Spielsituation gerade seinen Angriff durchführt (betrachte Projektil \textbf{(8)}) - hier ist das Ziel die Trojaner-Einheit \textbf{(9)}.
+%und \textbf{Mauszeiger (10)} auf einen \textbf{Bug (12)} schießt.
 
-Zwei weitere Verteidigungsgebäude sind ebenfalls zu sehen: einige \textbf{Kabel (11)} und der \textbf{CD-Werfer (9)} der gerade eine CD abfeuert.
+%Zwei weitere Verteidigungsgebäude sind ebenfalls zu sehen: %einige \textbf{Kabel (11)} und der \textbf{CD-Werfer (9)} der %gerade eine CD abfeuert.

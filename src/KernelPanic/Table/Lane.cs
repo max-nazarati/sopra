@@ -145,7 +145,21 @@ namespace KernelPanic.Table
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    EntityGraph.Add(Tower.Create(position, size, mSpriteManager, mSounds));
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.CursorShooter));
+                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
+                    UpdateHeatMap();
+                }
+            }
+            
+            if (gridPoint != null && inputManager.KeyPressed(Keys.R))
+            {
+                var (position, size) = gridPoint.Value;
+                if (!EntityGraph.HasEntityAt(position))
+                {
+                    mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.WifiRouter));
                     mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
                     UpdateHeatMap();
                 }

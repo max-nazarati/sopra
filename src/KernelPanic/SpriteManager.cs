@@ -36,6 +36,7 @@ namespace KernelPanic
             CdThrower,
             Cd,
             Cursor,
+            WifiProjectile,
             Fan,
             Mouse,
             Router,
@@ -85,6 +86,7 @@ namespace KernelPanic
                 Texture(Image.Cd, "towers/cd"),
                 Texture(Image.CdThrower, "towers/cd_thrower"),
                 Texture(Image.Cursor, "towers/cursor"),
+                Texture(Image.WifiProjectile, "towers/WifiProjectile"),
                 Texture(Image.Fan, "towers/fan"),
                 Texture(Image.Mouse, "towers/mouse"),
                 Texture(Image.Router, "towers/router"),
@@ -233,7 +235,19 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower));
+        
+        internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
+        
+        internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Tower));
+        
+        internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
+        
+        internal ImageSprite CreateCDThrower() => new ImageSprite(Lookup(Image.CdThrower));
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile));
+        internal ImageSprite CreateWifiProjectile() => new ImageSprite(Lookup(Image.WifiProjectile));
+
+
+        internal ImageSprite CreateCursorProjectile() => new ImageSprite(Lookup(Image.Cursor));
         internal ImageSprite CreateVectorArrow()
         {
             var sprite = new ImageSprite(Lookup(Image.VectorArrow));

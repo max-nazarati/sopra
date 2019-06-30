@@ -13,10 +13,12 @@ namespace KernelPanic.Entities
     internal abstract class Troupe : Unit
     {
         private Vector2 mLastMovement;
+
         protected Troupe(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
             mLastMovement = new Vector2(0, 0);
+            Speed = speed;
         }
 
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
@@ -30,7 +32,7 @@ namespace KernelPanic.Entities
             {
                 mLastMovement = movementDirection;
             }
-            MoveTarget = Sprite.Position + movementDirection;
+            MoveTarget = Sprite.Position + Speed * movementDirection;
         }
     }
 }

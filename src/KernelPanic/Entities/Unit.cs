@@ -18,7 +18,7 @@ namespace KernelPanic.Entities
         protected Vector2? MoveTarget { get; set; }
 
         [DataMember]
-        private int Speed { get; set; }
+        protected int Speed { get; set; }
         [DataMember]
         private int AttackStrength { get; set; }
         [DataMember]

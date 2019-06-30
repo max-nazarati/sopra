@@ -15,6 +15,15 @@ namespace KernelPanic.Entities
     {
         [JsonProperty]
         private TowerStrategy mStrategy = TowerStrategy.First;
+        
+        public enum Towers
+        {
+            CursorShooter,
+            WifiRouter,
+            Ventilator,
+            Antivirus,
+            CdThrower
+        }
 
         internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds)
             : base(price, radius, cooldown, sprite, sprites, sounds)

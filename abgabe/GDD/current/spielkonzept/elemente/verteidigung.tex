@@ -1,15 +1,64 @@
-\subsection{Verteidigungsgebäude}
-
-Es gibt unterschiedliche Verteidigungsgebäude, um ein Gebäude zu errichten muss
-der Spieler Bitcoin zahlen. Der \emph{Wert} eines Gebäudes berechnet sich aus
-der Summe der Bitcoin, die ein Spieler in ein Gebäude investiert.
+\subsection[Verteidigungsgebäude]{Verteidigungsgebäude \hyperref[sec:defence]{\footnotesize $\rightarrow$ Spielobjekte}}
+\label{sec:defence-concept}
 
 Der Spieler baut Gebäude, um die gegnerischen Einheiten auf ihrem Weg zur Basis
 aufzuhalten und zu töten, damit die Einheiten nicht erfolgreich Schaden
 verursachen können. Jedes Gebäude nimmt eine Kachel vollständig ein, sodass
-weder Angriffseinheiten darüber laufen können, noch weitere Gebäude auf diese
-Kachel platziert werden können.
+weder Angriffseinheiten darüber laufen, noch weitere Gebäude auf dieses Feld
+platziert werden können.
 
-Projektile, die gezielt verschossen werden, haben keine Treffergarantie;
-vielmehr fliegen sie gradlinig in die Richtung, in die der Turm beim Abschuss
-gezielt hat.
+Um ein Gebäude zu errichten muss der Spieler Bitcoin zahlen. Der
+\emph{Gebäudewert,} aus dem sich in machen Fällen weiterführende Kosten
+berechnen, ist die Summe an Bitcoins, die in dieses Gebäude investiert wurden.
+
+
+\subsubsection{Gebäudearten}
+
+Wie die Angriffseinheiten lassen sich auf die Gebäude in Unterkategorien
+aufteilen: Es gibt aktive Gebäude -- \emph{Türme} genannt --, die feindlichen
+Einheiten Schaden zufügen oder einen temporären Malus auferlegen, und passive
+Gebäude, die lediglich Wege versperren und Einheiten damit zwingen, längere
+Routen zu wählen.
+
+Türme haben einen \emph{Radius.} Nur Einheiten innerhalb dieses Radius werden
+anvisiert und vom Effekt des Turms (wie beispielsweise „Schaden zufügen“)
+getroffen. Nachdem ein Turm aktiv geworden ist, muss zuerst die
+\emph{Abklingzeit} vergehen, bevor er erneut aktiv werden kan. Ein neu gebauter
+Turm kann direkt aktiv werden.
+
+Manche Türme verschießen gezielt einzelne Projektile, andere Türme haben einen
+Flächeneffekt oder schießen ungezielt. Projektile, die gezielt verschossen
+werden, haben keine Treffergarantie; vielmehr fliegen sie gradlinig in die
+Richtung, in die der Turm beim Abschuss gezielt hat.
+
+
+\subsubsection{Aktionen auf Gebäuden}
+
+Ist ein eigenes Gebäude ausgewählt, so kann man Aktionen auf diesem Gebäude
+ausführen. Je nach Gebäudetyp steht eventuell nur eine Untermenge der im
+Folgenden beschriebenen Aktionen zur Verfügung.
+
+\begin{description}
+  \item[Verkaufen] Gebaute Gebäude lassen sich jederzeit wieder verkaufen. Der
+    Spieler erhält 80\,\% des Gebäudewertes zurück, das Feld ist für
+    Einheiten wieder begehbar und kann mit anderen Gebäuden bebaut werden.
+
+  \item[Verbessern] Türme können bis zu zweimal verbessert werden. Dies erhöht
+    ihre Verteidigungsstärke und ihren Gebäudewert. Eine Verbesserung kostet
+    den Spieler 25\,\% des aktuellen Gebäudewertes.
+
+  \item[Strategie wählen] Bei gezielt schießenden Türmen ist es möglich,
+    auszuwählen, welche Einheit im Radius anvisiert wird. Die Optionen sind:
+    \begin{description}[itemsep=0pt]
+      \item[Erste Einheit] \emph{(ist standardmäßig ausgewählt)}\\
+        Greift die Einheit an, die den kürzesten Weg hat, um Schaden an der Basis
+        zu verusachen.
+
+      \item[Stärkste Einheit] ~\\
+        Greift die Einheit an, die die meisten LP hat.
+
+      \item[Schwächste Einheit] ~\\
+        Greift die Einheit an, die die wenigsten LP hat.
+    \end{description}
+
+\end{description}

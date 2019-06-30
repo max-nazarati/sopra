@@ -23,5 +23,14 @@ namespace KernelPanic.Table
             unit.Sprite.Position = mGrid.GetTile(spawnTile).Position;
             mSpawnAction(unit);
         }
+
+        public void Register(Entity clone)
+        {
+            // throw new NotImplementedException();
+            if (clone is Unit unit)
+            {
+                Register(unit);
+            }
+        }
     }
 }

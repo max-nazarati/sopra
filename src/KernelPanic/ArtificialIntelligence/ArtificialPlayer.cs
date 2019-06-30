@@ -21,8 +21,8 @@ namespace KernelPanic.ArtificialIntelligence
         {
             mPlayer = player;
             mAttackPlanner = new AttackPlanner(player, spriteManager);
-            mDefencePlanner = new DefencePlanner();
-            mUpgradePlanner = new UpgradePlanner();
+            mDefencePlanner = new DefencePlanner(player, spriteManager);
+            mUpgradePlanner = new UpgradePlanner(player, spriteManager);
             mPlanners = new Planner[] {mAttackPlanner, mDefencePlanner, mUpgradePlanner};
         }
 

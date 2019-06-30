@@ -22,9 +22,9 @@
 
 Das Spiel ist dynamisch. Der Spieler und die KI verändern die Bebauung der
 Lanes zur Verbesserung der Verteidigung und damit die Laufrouten der Truppen
-während des Spiels durchgängig. Es keine Ruhepausen, sobald das Spiel einmal
-gestartet wurde. Die Angriffswellen laufen automatisch direkt nacheinander ab.
-Der Spieler hat darauf keinen Einfluss.
+während des Spiels durchgängig. Es gibt keine Ruhepausen, sobald das Spiel
+einmal gestartet wurde. Die Angriffswellen laufen automatisch direkt
+nacheinander ab, der Spieler hat darauf keinen Einfluss.
 
 \subsection{Kaufoptionen}
 \label{subsec:kaufoptionen}
@@ -34,9 +34,8 @@ Der Spieler hat darauf keinen Einfluss.
     Aktivierungs-/Spawnzeitpunkt.
 
   \begin{description}[noitemsep]
-    \item[Angriffseinheiten] Helden spawnen direkt, die Truppen die Seit der
-      letzten Welle gekauft wurd, spawnen gemeinsam sobald die nächste Welle
-      startet.
+    \item[Angriffseinheiten] Helden spawnen direkt, Truppen beim
+      Start der nächsten Welle.
     \item[Verteidigungsgebäude] werden aktiv, sobald sich an ihrem Platz keine
       Einheit befindet.
 		\item[Verbesserungen] Die Veränderung tritt sofort in Kraft.
@@ -66,3 +65,9 @@ kauft neue Angriffseinheiten, die mit der nächsten Welle spawnen.
 Das Spiel geht solange, bis die Ladung einer Basis auf 0\,\% oder weniger
 gesunken ist. Der Spieler, dessen Basis mehr Ladung hat, hat dann gewonnen. Dem
 Spieler wird nun das Ergebnis angezeigt und er kann ins Hauptmenü zurückkehren.
+
+\subsection{Verhalten der KI}
+Anhand integrierter Metriken entscheidet sich die KI mehr Bitcoins in Offensive, Defensive oder Upgrades aus der Spielfeldmitte zu investieren - sie
+handelt bei der Auswahl in welche Einheiten sie investieren sollte sehr prophylaktisch: 
+In Abhängigkeit von der Komposition der Angriffseinheiten des Gegner und der eigenen
+Verteidigung werden entsprechende Verteidigungseinheiten gebaut.
