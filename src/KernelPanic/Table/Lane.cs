@@ -150,6 +150,7 @@ namespace KernelPanic.Table
                     UpdateHeatMap();
                 }
             }
+            UpdateHeatMap();
 
             var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
             EntityGraph.Update(positionProvider, gameTime, inputManager);

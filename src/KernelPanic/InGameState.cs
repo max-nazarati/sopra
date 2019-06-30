@@ -17,7 +17,7 @@ namespace KernelPanic
     {
         private readonly Board mBoard;
         private readonly SelectionManager mSelectionManager;
-
+        private BuildingBuyer mBuildingBuyer;
         private PurchaseButton<TextButton, Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
         private PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
         private TextButton mPurchaseDemoReset;
@@ -32,6 +32,7 @@ namespace KernelPanic
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
+            mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager);
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
             SaveSlot = saveSlot;
 
@@ -113,7 +114,7 @@ namespace KernelPanic
                 GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, graphics));
                 return;
             }
-
+            mBuildingBuyer.Update(inputManager);
             mSelectionManager.Update(inputManager);
             mBoard.Update(gameTime, inputManager);
             var gameState = mBoard.CheckGameState();

@@ -16,16 +16,16 @@ namespace KernelPanic
     {
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
-            private readonly PurchaseButton<ImageButton, Building> mButton;
+            private readonly ImageButton mButton;
             private readonly TextSprite mCounterSprite;
             private int mCounter;
 
             Vector2 IPositioned.Position
             {
-                get => mButton.Button.Sprite.Position;
+                get => mButton.Sprite.Position;
                 set
                 {
-                    var buttonSprite = mButton.Button.Sprite;
+                    var buttonSprite = mButton.Sprite;
                     buttonSprite.Position = value;
                     mCounterSprite.X = buttonSprite.Position.X + 72 /* padding between text and button */;
                     mCounterSprite.Y = value.Y + buttonSprite.Height / 2;
@@ -34,11 +34,11 @@ namespace KernelPanic
             Vector2 IPositioned.Size {
                 get
                 {
-                    return mButton.Button.Sprite.Size;
+                    return mButton.Sprite.Size;
                 }
             }
 
-            internal Element(PurchaseButton<ImageButton, Building> button, SpriteManager spriteManager)
+            internal Element(ImageButton button, SpriteManager spriteManager)
             {
                 mCounterSprite = spriteManager.CreateText();
                 mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterLeft);
@@ -46,7 +46,7 @@ namespace KernelPanic
 
                 // When a unit is purchased, increase its counter.
                 mButton = button;
-                mButton.Action.Purchased += (buyer, resource) =>
+                mButton.Clicked += (btn, input) =>
                 {
                     if (true)
                     {
@@ -54,7 +54,7 @@ namespace KernelPanic
                     }
                 };
                 //mButton.Button.Sprite.ScaleToWidth(64);
-                mButton.Button.Sprite.SetOrigin(RelativePosition.TopLeft);
+                mButton.Sprite.SetOrigin(RelativePosition.TopLeft);
             }
 
             internal void Reset()
@@ -75,7 +75,7 @@ namespace KernelPanic
             }
         }
 
-        private BuildingBuyingMenu(Player player, SpriteManager spriteManager, params PurchaseButton<ImageButton, Building>[] buttons)
+        private BuildingBuyingMenu(Player player, SpriteManager spriteManager, params ImageButton[] buttons)
                 : base(MenuPosition(Lane.Side.Left, spriteManager), player, buttons.Select(b => new Element(b, spriteManager)))
         {
         }
@@ -84,19 +84,20 @@ namespace KernelPanic
         {
             void BuildingBought(Player buyer, Building building)
             {
-                if (true)
-                {
-                    sounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    buyer.AttackingLane.BuildingSpawner.Register(building);
-                }
+                sounds.PlaySound(SoundManager.Sound.TowerPlacement);
             }
 
-            PurchaseButton<ImageButton, Building> CreateButton(Building building, ImageSprite sprite)
+            ImageButton CreateButton(Building building, ImageSprite sprite)
             {
-                var action = new PurchasableAction<Building>(building);
-                action.Purchased += BuildingBought;
                 var button = new ImageButton(spriteManager, sprite, 70, 70);
-                return new PurchaseButton<ImageButton, Building>(player, action, button);
+                button.Clicked += (btn, input) =>
+                {
+                    BuildingBuyer.Building = (Tower)building;
+                    var action = new PurchasableAction<Building>(BuildingBuyer.Building);
+                    action.Purchased += BuildingBought;
+                    BuildingBuyer.mAction = action;
+                };
+                return button;
             }
 
             var scaledSprite = spriteManager.CreateTower();

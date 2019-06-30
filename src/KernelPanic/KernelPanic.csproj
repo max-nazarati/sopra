@@ -50,6 +50,7 @@
     <Compile Include="ArtificialIntelligence\DefencePlanner.cs" />
     <Compile Include="ArtificialIntelligence\Planner.cs" />
     <Compile Include="ArtificialIntelligence\UpgradePlanner.cs" />
+    <Compile Include="BuildingBuyer.cs" />
     <Compile Include="BuildingBuyingMenu.cs" />
     <Compile Include="BuyingMenuOverlay.cs" />
     <Compile Include="Camera\Camera2D.cs" />

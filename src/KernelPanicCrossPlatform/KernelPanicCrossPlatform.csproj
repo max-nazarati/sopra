@@ -75,6 +75,9 @@
     <Compile Include="..\KernelPanic\ArtificialIntelligence\UpgradePlanner.cs">
       <Link>ArtificialIntelligence\UpgradePlanner.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\BuildingBuyer.cs">
+      <Link>BuildingBuyer.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\BuildingBuyingMenu.cs">
       <Link>BuildingBuyingMenu.cs</Link>
     </Compile>
