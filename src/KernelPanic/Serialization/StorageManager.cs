@@ -6,6 +6,7 @@ using System.Linq;
 using Autofac;
 using KernelPanic.Entities;
 using KernelPanic.Table;
+using KernelPanic.Upgrades;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Serialization
@@ -93,6 +94,7 @@ namespace KernelPanic.Serialization
             // Register further classes.
             builder.Register(c => new Board(manager.Sprite, manager.Sound, true));
             builder.Register(c => new Lane(manager.Sprite, manager.Sound));
+            builder.Register(c => new UpgradePool(null, manager.Sprite));
 
             return new AutofacContractResolver(builder.Build());
         }
