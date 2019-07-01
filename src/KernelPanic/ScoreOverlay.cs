@@ -1,5 +1,7 @@
 ﻿using System;
 using KernelPanic.Sprites;
+using KernelPanic.Interface;
+using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -14,9 +16,12 @@ namespace KernelPanic
         private readonly Sprite mSprite;
         private readonly TextSprite mTextA;
         private readonly TextSprite mTextAMoney;
+        private readonly TextSprite mTextAEP;
         private readonly TextSprite mTextB;
         private readonly TextSprite mTextBMoney;
+        private readonly TextSprite mTextBEP;
         private readonly TextSprite mTextTime;
+        private readonly ImageButton mPauseButton;
 
         private static Point PowerIndicatorSize => new Point(100, 30);
         private static Point ClockSize => new Point(100, 20);
@@ -27,26 +32,35 @@ namespace KernelPanic
             mPlayerB = player2;
             mPlayTime = new PlayTime();
 
-            (mSprite, mTextA, mTextAMoney, mTextB, mTextBMoney, mTextTime) =
+            (mSprite, mTextA, mTextAMoney, mTextAEP, mTextB, mTextBMoney, mTextBEP, mTextTime) =
                 spriteManager.CreateScoreDisplay(PowerIndicatorSize, ClockSize);
             mTextTime.Text = mPlayTime.Time;
+
+            var sprite = spriteManager.CreatePause();
+            mPauseButton = new ImageButton(spriteManager, sprite, 40, 40);
+            mPauseButton.Sprite.X = spriteManager.ScreenSize.X/2-20;
+            mPauseButton.Sprite.Y = 20;
         }
 
         public TimeSpan Time => mPlayTime.Overall;
 
-        public void Update(GameTime gameTime)
+        public void Update(InputManager inputManager, GameTime gameTime)
         {
             mPlayTime.Update(gameTime);
             mTextA.Text = "A: " + mPlayerA.Base.Power + "%";
             mTextAMoney.Text = mPlayerA.Bitcoins + "$";
+            mTextAEP.Text = mPlayerA.ExperiencePoints + "EP";
             mTextB.Text = "B: " + mPlayerB.Base.Power + "%";
             mTextBMoney.Text = mPlayerB.Bitcoins + "$";
+            mTextBEP.Text = mPlayerB.ExperiencePoints + "EP";
             mTextTime.Text = mPlayTime.Time;
+            mPauseButton.Update(inputManager, gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mSprite.Draw(spriteBatch, gameTime);
+            mPauseButton.Draw(spriteBatch, gameTime);
         }
     }
 }

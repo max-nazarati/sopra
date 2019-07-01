@@ -143,7 +143,9 @@ namespace KernelPanic
         internal ImageSprite CreatePause()
         {
             var texture = Lookup(Image.Pause);
-            return new ImageSprite(texture);
+            var sprite = new ImageSprite(texture);
+            sprite.DestinationRectangle = new Rectangle(0, 0, 40, 40);
+            return sprite;
         }
 
         internal TextSprite CreateText(string text = "")
@@ -256,12 +258,12 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite Right, TextSprite RightMoney, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
+        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
         {
             var texture = Lookup(Image.ButtonBackground);
             var font = Lookup(Font.Hud);
-            var pauseTexture = Lookup(Image.Pause);
             var secondLine = new Point(0, powerIndicatorSize.Y);
+            var thirdLine = new Point(0, 2*powerIndicatorSize.Y);
 
             var leftBackground = new ImageSprite(texture)
             {
@@ -272,6 +274,10 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
             };
+            var leftEPBackground = new ImageSprite(texture)
+            {
+                DestinationRectangle = new Rectangle(thirdLine, powerIndicatorSize)
+            };
             var rightBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
@@ -281,6 +287,10 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
             };
+            var rightEPBackground = new ImageSprite(texture)
+            {
+                DestinationRectangle = new Rectangle(thirdLine, powerIndicatorSize)
+            };
             var clockBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, clockSize)
@@ -288,17 +298,21 @@ namespace KernelPanic
 
             var leftText = AutoCenteredTextSprite(font, leftBackground);
             var leftMoneyText = AutoCenteredTextSprite(font, leftMoneyBackground);
+            var leftEPText = AutoCenteredTextSprite(font, leftEPBackground);
             leftMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
+            leftEPText.Y = (float)(2.5 * powerIndicatorSize.Y);
             var rightText = AutoCenteredTextSprite(font, rightBackground);
             var rightMoneyText = AutoCenteredTextSprite(font, rightMoneyBackground);
+            var rightEPText = AutoCenteredTextSprite(font, rightEPBackground);
             rightMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
+            rightEPText.Y = (float)(2.5 * powerIndicatorSize.Y);
             var clockText = AutoCenteredTextSprite(font, clockBackground);
 
             var left = new CompositeSprite
             {
                 X = (ScreenSize.X - clockSize.X) / 2f,
                 Y = 0,
-                Children = { leftBackground, leftText, leftMoneyBackground, leftMoneyText }
+                Children = { leftBackground, leftText, leftMoneyBackground, leftMoneyText, leftEPBackground, leftEPText }
             };
             left.SetOrigin(RelativePosition.TopRight);
 
@@ -306,7 +320,7 @@ namespace KernelPanic
             {
                 X = (ScreenSize.X + clockSize.X) / 2f,
                 Y = 0,
-                Children = { rightBackground, rightText, rightMoneyBackground, rightMoneyText }
+                Children = { rightBackground, rightText, rightMoneyBackground, rightMoneyText, rightEPBackground, rightEPText }
             };
             right.SetOrigin(RelativePosition.TopLeft);
 
@@ -322,7 +336,7 @@ namespace KernelPanic
             {
                 Children = { left, right, middle }
             };
-            return (sprite, leftText, leftMoneyText, rightText, rightMoneyText, clockText);
+            return (sprite, leftText, leftMoneyText, leftEPText, rightText, rightMoneyText, rightEPText, clockText);
         }
 
         #region Troupes
