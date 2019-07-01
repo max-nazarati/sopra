@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
@@ -46,21 +46,18 @@ namespace KernelPanic.Upgrades
         /// Stores all available upgrades. The first/outermost level is organized by price, this data-layout is
         /// reused by the indexer; so something which costs one EP, is somewhere in the list at index 0.
         /// </summary>
-        private readonly UpgradeReference[][] mUpgrades;
+        private UpgradeReference[][] mUpgrades;
+
+        [JsonProperty]
+        private readonly Player mPlayer;
+
+        private readonly SpriteManager mSpriteManager;
 
         /// <summary>
         /// Stores for each upgrade, whether it is already purchased.
         /// </summary>
         [JsonProperty]
-        private List<bool> PurchasedMask
-        {
-            get => UpgradeActions.Select(action => action.IsPurchased).ToList();
-            set
-            {
-                foreach (var (action, isPurchased) in UpgradeActions.Zip(value))
-                    action.IsPurchased = isPurchased;
-            }
-        }
+        private List<bool> mSerializedPurchasedMask;
 
         /// <summary>
         /// Creates a new <see cref="UpgradePool"/> with all available upgrades.
@@ -69,22 +66,57 @@ namespace KernelPanic.Upgrades
         /// <param name="spriteManager">The <see cref="SpriteManager"/>.</param>
         internal UpgradePool(Player player, SpriteManager spriteManager)
         {
+            mPlayer = player;
+            mSpriteManager = spriteManager;
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             mUpgrades = Upgrade.Matrix.Select(upgrades =>
                 upgrades.Select(upgrade =>
-                    new UpgradeReference(upgrade, player, spriteManager)
+                    new UpgradeReference(upgrade, mPlayer, mSpriteManager)
                 ).ToArray()
             ).ToArray();
-
         }
+
+        #region Serialization
+
+        [OnSerializing]
+        private void BeforeSerialization(StreamingContext context)
+        {
+            mSerializedPurchasedMask = UpgradeActions.Select(action => action.IsPurchased).ToList();
+        }
+
+        [OnSerialized]
+        private void AfterSerialization(StreamingContext context)
+        {
+            mSerializedPurchasedMask = null;
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            Initialize();
+
+            foreach (var (action, isPurchased) in UpgradeActions.Zip(mSerializedPurchasedMask))
+                action.IsPurchased = isPurchased;
+
+            mSerializedPurchasedMask = null;
+        }
+
+        #endregion
 
         #region Layout
 
+        [JsonIgnore]
         public Vector2 Position
         {
             get => mUpgrades[0][0].Button.Position;
             set => LayOut(value);
         }
 
+        [JsonIgnore]
         public Vector2 Size
         {
             get
@@ -97,6 +129,7 @@ namespace KernelPanic.Upgrades
             }
         }
 
+        [JsonIgnore]
         public Rectangle Bounds => KernelPanic.Data.Bounds.ContainingRectangle(Position, Size);
 
         /// <summary>

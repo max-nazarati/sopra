@@ -63,7 +63,7 @@ namespace KernelPanic.Table
         }
 
         [OnDeserialized]
-        private void AfterDeserialization()
+        private void AfterDeserialization(StreamingContext context)
         {
             LayOutUpgradePool();
         }
