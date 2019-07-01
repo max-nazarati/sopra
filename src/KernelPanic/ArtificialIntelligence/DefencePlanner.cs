@@ -28,7 +28,7 @@ namespace KernelPanic.ArtificialIntelligence
         {
             #region Initializing Member
 
-            // mCable = new PurchasableAction<Entity>(new Cable(sprites, soundManager));  // TODO LOAD CABLE INTO CONTENT
+            mCable = new PurchasableAction<Entity>(new Cable(sprites, soundManager));
             mCursorShooter = new PurchasableAction<Entity>(new CursorShooter(sprites, soundManager));
             mCdThrower = new PurchasableAction<Entity>(new CdThrower(sprites, soundManager));
             mAntiVirus = new PurchasableAction<Entity>(new Antivirus(sprites, soundManager));
@@ -40,7 +40,7 @@ namespace KernelPanic.ArtificialIntelligence
 
             #region initializing Purchases
 
-            // mCable.Purchased += EntityBought;  // TODO LOAD CABLE INTO CONTENT
+            mCable.Purchased += EntityBought;
             mCursorShooter.Purchased += EntityBought;
             mCdThrower.Purchased += EntityBought;
             mAntiVirus.Purchased += EntityBought;
@@ -55,7 +55,8 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData, GameTime gameTime)
         {
             base.Update();
-            // mWifiRouter.TryPurchase(Player);
+            // Console.WriteLine(defenceData);
+            // mCursorShooter.TryPurchase(Player);
         }
         
     }
