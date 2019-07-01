@@ -439,6 +439,7 @@ namespace KernelPanic
         
         private Texture2D CreateCircleTexture(int radius, Color color)
         {
+            radius = radius == 200 ? 201 : radius; // this function will crash if you call it with radius 200 (and some other numbers... dont ask me)
             var radiusSquared = radius * radius;
             var diameter = 2 * radius;
             var data = Enumerable.Repeat(Color.Transparent, diameter * diameter).ToArray();
