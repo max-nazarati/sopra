@@ -146,13 +146,10 @@ namespace KernelPanic.Data
 
             Count++;
 
-            if (mChildren != null)
+            if (mChildren != null && CalculatePosition(entity) is SquareIndex index)
             {
-                if (CalculatePosition(entity) is SquareIndex index)
-                {
-                    mChildren[(int) index].Add(entity);
-                    return;
-                }
+                mChildren[(int) index].Add(entity);
+                return;
             }
 
             mObjects.Add(entity);
