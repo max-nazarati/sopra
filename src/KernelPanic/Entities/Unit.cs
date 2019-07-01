@@ -17,13 +17,29 @@ namespace KernelPanic.Entities
         [DataMember]
         protected Vector2? MoveTarget { get; set; }
 
+        /// <summary>
+        /// The speed (GS) of this unit.
+        /// </summary>
         [DataMember]
         protected int Speed { get; set; }
+
+        /// <summary>
+        /// The AS of this Unit. This is the damage dealt to the enemy's base if reached.
+        /// </summary>
         [DataMember]
         private int AttackStrength { get; set; }
+
+        /// <summary>
+        /// Stores the initial/maximum LP. Kept to ensure,
+        /// that <see cref="RemainingLife"/> won't increase above the maximum life.
+        /// </summary>
         [DataMember]
-        private int MaximumLife { get; set; }
-        [DataMember(Name = "HP")]
+        internal int MaximumLife { get; set; }
+
+        /// <summary>
+        /// Stores the current/remaining LP. If this goes to zero or below, this unit is considered to be dead.
+        /// </summary>
+        [DataMember]
         private int RemainingLife { get; set; }
 
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
