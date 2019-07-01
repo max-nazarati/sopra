@@ -10,8 +10,8 @@ namespace KernelPanic
     internal class BuildingBuyer
     {
         internal static Building Building { get; set; }
-        internal Player mBuyer;
-        internal static PurchasableAction<Building> mAction;
+        private Player mBuyer;
+        internal static PurchasableAction<Building> BoughtAction;
         private bool mSelected;
         private GameStateManager mStateManager;
         internal BuildingBuyer(Player player, GameStateManager gameStateManager)
@@ -28,24 +28,7 @@ namespace KernelPanic
             }
             else if (Building != null && mBuyer.DefendingLane.Contains(position))
             {
-                if (!mBuyer.DefendingLane.EntityGraph.HasEntityAt(position) && input.MouseDown(InputManager.MouseButton.Left))
-                {
-                    mAction.TryPurchase(mBuyer);
-                    // TODO: Replace Tower.Create(...) with Building.Clone()
-                    if (Building.GetType() == typeof(CursorShooter))
-                    {
-                        mBuyer.DefendingLane.BuildingSpawner.Register
-                            (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
-                            StrategicTower.Towers.CursorShooter), position);
-                    }
-                    else if (Building.GetType() == typeof(WifiRouter))
-                    {
-                        mBuyer.DefendingLane.BuildingSpawner.Register
-                            (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
-                            StrategicTower.Towers.WifiRouter), position);
-                    }
-                }
-                else
+                if (input.MousePressed(InputManager.MouseButton.Left))
                 {
                     var entities = mBuyer.DefendingLane.EntityGraph.EntitiesAt(position);
                     foreach (var e in entities)
@@ -54,9 +37,41 @@ namespace KernelPanic
                         {
                             mSelected = false;
                             Building = null;
-                            return; 
+                            return;
+                        }
+                        else if (e.GetType() == Building.GetType())
+                        {
+                            mSelected = false;
+                            Building = null;
+                            return;
                         }
                     }
+                    if (BoughtAction.TryPurchase(mBuyer))
+                    {
+                        // TODO: Replace Tower.Create(...) with Building.Clone()
+                        if (Building.GetType() == typeof(CursorShooter))
+                        {
+                            mBuyer.DefendingLane.BuildingSpawner.Register
+                                (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
+                                StrategicTower.Towers.CursorShooter), position);
+                        }
+                        else if (Building.GetType() == typeof(WifiRouter))
+                        {
+                            mBuyer.DefendingLane.BuildingSpawner.Register
+                                (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
+                                StrategicTower.Towers.WifiRouter), position);
+                        }
+                        else if (Building.GetType() == typeof(CdThrower))
+                        {
+                            mBuyer.DefendingLane.BuildingSpawner.Register
+                                (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
+                                StrategicTower.Towers.CdThrower), position);
+                        }
+                    }
+                }
+                else
+                {
+                    
                 }
             }
             else
