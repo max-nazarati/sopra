@@ -15,7 +15,7 @@ namespace KernelPanic.Entities
         protected override void DidDie()
         {
             for (var i = 0; i < (SpawnsDouble ? 10 : 5); ++i)
-                Wave.SpawnChild(new Bug(SpriteManager));
+                Wave.SpawnChild(new Bug(SpriteManager) {Sprite = {Position = Sprite.Position}});
 
             base.DidDie();
         }

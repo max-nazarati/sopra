@@ -14,13 +14,22 @@ namespace KernelPanic.Table
             mSpawnAction = spawnAction;
         }
 
-        internal void Register(Unit unit)
+        /// <summary>
+        /// Registers a unit for spawning.
+        /// </summary>
+        /// <param name="unit">The unit to spawn.</param>
+        /// <param name="atBase">If <c>true</c> the units position is modified to be at the lanes base.</param>
+        internal void Register(Unit unit, bool atBase = true)
         {
-            var spawnTile =
-                mGrid.LaneSide == Lane.Side.Left
-                    ? new TileIndex(Grid.LaneWidthInTiles / 2, mGrid.LaneRectangle.Width - 1, 1)
-                    : new TileIndex(mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
-            unit.Sprite.Position = mGrid.GetTile(spawnTile).Position;
+            if (atBase)
+            {
+                var tile =
+                    mGrid.LaneSide == Lane.Side.Left
+                        ? new TileIndex(Grid.LaneWidthInTiles / 2, mGrid.LaneRectangle.Width - 1, 1)
+                        : new TileIndex(mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
+                unit.Sprite.Position = mGrid.GetTile(tile).Position;
+            }
+
             mSpawnAction(unit);
         }
 

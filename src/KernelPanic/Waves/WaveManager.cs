@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Players;
-using KernelPanic.Table;
 
 namespace KernelPanic.Waves
 {
@@ -43,7 +41,7 @@ namespace KernelPanic.Waves
                 {
                     unit.Wave = new WaveReference(wave.Index, SpawnChild);
                     units.Add(unit);
-                    spawner.Register(unit);
+                    spawner.Register(unit, false);
                 }
                 
                 foreach (var unit in units)
