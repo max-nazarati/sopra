@@ -91,15 +91,6 @@ namespace KernelPanic.Entities
 
         #endregion
 
-        /// <summary>
-        /// Called when this unit is spawned, the passed action can be used to spawn further units when something
-        /// special happens. The spawned units are automatically associated with the correct wave.
-        /// </summary>
-        /// <param name="spawnAction">To be used to spawn further units for this wave later on.</param>
-        public virtual void WillSpawn(Action<Unit> spawnAction)
-        {
-        }
-
         protected abstract void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager);
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
