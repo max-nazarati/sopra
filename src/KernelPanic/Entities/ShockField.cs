@@ -1,9 +1,14 @@
 ﻿
+using KernelPanic.Sprites;
+
 namespace KernelPanic.Entities
 {
-    class ShockField
+    internal sealed class ShockField : Building
     {
-        public int Price { get; set; }
-        public float Radius { get; set; }
+        // todo: correct price
+        public ShockField(SpriteManager spriteManager, SoundManager soundManager) : base(1, spriteManager.CreateShockField(), spriteManager)
+        {
+            // throw new System.NotImplementedException();
+        }
     }
 }

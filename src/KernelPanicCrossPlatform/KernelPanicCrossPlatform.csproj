@@ -135,6 +135,9 @@
     <Compile Include="..\KernelPanic\Entities\Building.cs">
       <Link>Entities\Building.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Entities\Cable.cs">
+      <Link>Entities\Cable.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\CdThrower.cs">
       <Link>Entities\CdThrower.cs</Link>
     </Compile>
