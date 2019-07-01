@@ -23,10 +23,29 @@ namespace KernelPanic.Table
             if (mGrid.Contains(position))
             {
                 var clonedBuilding = unit;
-                clonedBuilding.Sprite.Position = (Vector2)mGrid.GridPointFromWorldPoint(position)?.Position;
+                var buildingPosition = mGrid.GridPointFromWorldPoint(position)?.Position;
+                if (buildingPosition != null)
+                    clonedBuilding.Sprite.Position = (Vector2) buildingPosition;
+                else
+                {
+                    Console.WriteLine("Error, cant register a turret here");
+                    return;
+                }
+
                 mSpawnAction(clonedBuilding);
                 mHeatMap.Block(Grid.CoordinatePositionFromScreen(clonedBuilding.Sprite.Position));
             }
+        }
+        
+        private void RegisterBuilding(Building building, int x, int y)
+        {
+            var buildingPosition =
+                mGrid.LaneSide != Lane.Side.Left
+                    ? new TileIndex(Grid.LaneWidthInTiles / 2, mGrid.LaneRectangle.Width - 1, 1)
+                    : new TileIndex(mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
+            building.Sprite.Position = mGrid.GetTile(buildingPosition).Position;
+            mSpawnAction(building);
+
         }
     }
 }
