@@ -49,23 +49,22 @@ namespace KernelPanic.Upgrades
         internal Id Kind { get; private set; }
 
         public Currency Currency => Currency.Experience;
-        public int Price
-        {
-            get
-            {
-                if (Kind < Id.BeginningTier2)
-                    return 1;
-                if (Kind < Id.BeginningTier3)
-                    return 2;
-                if (Kind < Id.BeginningTier4)
-                    return 3;
-                if (Kind < Id.BeginningTier5)
-                    return 4;
-                if (Kind < Id.EndOfUpgrades)
-                    return 5;
+        public int Price => IdPrice(Kind);
 
-                throw new InvalidOperationException("Invalid upgrade id " + Kind);
-            }
+        internal static int IdPrice(Id id)
+        {
+            if (id < Id.BeginningTier2)
+                return 1;
+            if (id < Id.BeginningTier3)
+                return 2;
+            if (id < Id.BeginningTier4)
+                return 3;
+            if (id < Id.BeginningTier5)
+                return 4;
+            if (id < Id.EndOfUpgrades)
+                return 5;
+
+            throw new InvalidOperationException("Invalid upgrade id " + id);
         }
 
         internal void Apply(Entity entity)
