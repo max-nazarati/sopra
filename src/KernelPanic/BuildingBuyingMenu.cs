@@ -92,7 +92,7 @@ namespace KernelPanic
                 var button = new ImageButton(spriteManager, sprite, 70, 70);
                 button.Clicked += (btn, input) =>
                 {
-                    BuildingBuyer.Building = (Tower)building;
+                    BuildingBuyer.Building = building;
                     var action = new PurchasableAction<Building>(BuildingBuyer.Building);
                     action.Purchased += BuildingBought;
                     BuildingBuyer.mAction = action;
@@ -100,12 +100,17 @@ namespace KernelPanic
                 return button;
             }
 
-            var scaledSprite = spriteManager.CreateCdThrower();
-            scaledSprite.ScaleToWidth(64);
-            var tower = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64
-                , spriteManager, sounds, StrategicTower.Towers.CursorShooter), scaledSprite);
+            var cursorSprite = spriteManager.CreateTower();
+            cursorSprite.ScaleToWidth(64);
+            var cursorShooter = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64
+                , spriteManager, sounds, StrategicTower.Towers.CursorShooter), cursorSprite);
+
+            var cdSprite = spriteManager.CreateWifiRouter();
+            cdSprite.ScaleToWidth(64);
+            var cdThrower = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64, spriteManager, sounds,
+                StrategicTower.Towers.WifiRouter), cdSprite);
             
-            return new BuildingBuyingMenu(player, spriteManager, tower);
+            return new BuildingBuyingMenu(player, spriteManager, cursorShooter, cdThrower);
         }
 
         /// <summary>
