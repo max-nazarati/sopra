@@ -8,7 +8,7 @@ using KernelPanic.Sprites;
 
 namespace KernelPanic.Purchasing
 {
-    internal class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded, IButtonLike
+    internal class PurchaseButton<TButton, TResource, TAction>: IPositioned, IBounded, IDrawable, IUpdatable, IButtonLike
         where TResource: IPriced
         where TAction: PurchasableAction<TResource>
         where TButton: Button
@@ -36,8 +36,20 @@ namespace KernelPanic.Purchasing
         /// </summary>
         internal bool PossiblyEnabled { /*internal*/ private get; set; } = true;
 
+        #region IPositioned/IBounded
+
+        public Vector2 Position
+        {
+            get => Button.Position;
+            set => Button.Position = value;
+        }
+
+        public Vector2 Size => Button.Size;
+
         /// <inheritdoc />
         public Rectangle Bounds => Button.Bounds;
+
+        #endregion
 
         /// <summary>
         /// Creates a <code>PurchaseButton</code> so that a click on it purchases

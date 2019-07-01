@@ -6,13 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Interface
 {
-    internal abstract class InterfaceComponent: IBounded, IDrawable, IUpdatable
+    internal abstract class InterfaceComponent: IPositioned, IBounded, IDrawable, IUpdatable
     {
         internal virtual bool Enabled { get; set; } = true;
 
         internal abstract Sprite Sprite { get; }
-
-        public Rectangle Bounds => Sprite.Bounds;
 
         public abstract void Update(InputManager inputManager, GameTime gameTime);
 
@@ -20,5 +18,19 @@ namespace KernelPanic.Interface
         {
             Sprite.Draw(spriteBatch, gameTime);
         }
+
+        #region IBounded/IPositioned
+
+        public Vector2 Position
+        {
+            get => Sprite.Position;
+            set => Sprite.Position = value;
+        }
+
+        public Vector2 Size => Sprite.Size;
+
+        public Rectangle Bounds => Sprite.Bounds;
+
+        #endregion
     }
 }
