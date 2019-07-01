@@ -10,7 +10,7 @@ namespace KernelPanic
     internal sealed class InGameOverlay: AGameState
     {
         internal Entity mSelection;
-        private readonly ScoreOverlay mScoreOverlay;
+        internal readonly ScoreOverlay mScoreOverlay;
         private readonly UnitBuyingMenu mUnitBuyingMenu;
         private readonly BuildingBuyingMenu mBuildingBuyingMenu;
         private readonly MinimapOverlay mMinimapOverlay;

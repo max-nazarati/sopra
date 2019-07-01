@@ -112,9 +112,10 @@ namespace KernelPanic
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
             , GraphicsDeviceManager graphics)
         {
-            if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive)
+            if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.mScoreOverlay.Pause)
             {
                 GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, graphics));
+                mHud.mScoreOverlay.Pause = false;
                 return;
             }
             mBuildingBuyer.Update(inputManager);
