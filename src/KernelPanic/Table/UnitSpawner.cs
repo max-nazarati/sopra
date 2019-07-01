@@ -5,10 +5,10 @@ namespace KernelPanic.Table
 {
     internal sealed class UnitSpawner
     {
-        private readonly Action<Unit> mSpawnAction;
+        private readonly Action<Entity> mSpawnAction;
         private readonly Grid mGrid;
 
-        public UnitSpawner(Grid grid, Action<Unit> spawnAction)
+        public UnitSpawner(Grid grid, Action<Entity> spawnAction)
         {
             mGrid = grid;
             mSpawnAction = spawnAction;
@@ -24,12 +24,28 @@ namespace KernelPanic.Table
             mSpawnAction(unit);
         }
 
-        public void Register(Entity clone)
+        private void Register(Building building)
+        {
+            var buildingPosition =
+                mGrid.LaneSide == Lane.Side.Left
+                    ? new TileIndex(Grid.LaneWidthInTiles / 2, mGrid.LaneRectangle.Width - 1, 1)
+                    : new TileIndex(mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
+            building.Sprite.Position = mGrid.GetTile(buildingPosition).Position;
+            mSpawnAction(building);
+
+        }
+        
+        internal void Register(Entity clone)
         {
             // throw new NotImplementedException();
             if (clone is Unit unit)
             {
                 Register(unit);
+            }
+
+            if (clone is Building building)
+            {
+                Register(building);
             }
         }
     }

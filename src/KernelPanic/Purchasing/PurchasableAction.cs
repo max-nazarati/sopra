@@ -75,5 +75,6 @@ namespace KernelPanic.Purchasing
                     throw new InvalidOperationException();
             }
         }
+
     }
 }
