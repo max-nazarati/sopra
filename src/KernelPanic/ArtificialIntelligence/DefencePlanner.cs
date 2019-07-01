@@ -20,6 +20,8 @@ namespace KernelPanic.ArtificialIntelligence
         private readonly PurchasableAction<Entity> mWifiRouter;
         private readonly PurchasableAction<Entity> mVentilator;
         private readonly PurchasableAction<Entity> mShockfield;
+
+        private bool mFirstTime = true;
         
         #endregion
 
@@ -55,9 +57,14 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData, GameTime gameTime)
         {
             base.Update();
-            // Console.WriteLine(defenceData);
-            // mCursorShooter.TryPurchase(Player);
+            BuySingleTower();
         }
-        
+
+        private void BuySingleTower()
+        {
+            if (!mFirstTime) return;
+            mCursorShooter.TryPurchase(Player);
+            mFirstTime = false;
+        }
     }
 }

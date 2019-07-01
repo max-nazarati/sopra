@@ -24,10 +24,10 @@ namespace KernelPanic.Table
             mSpawnAction(unit);
         }
 
-        private void Register(Building building)
+        private void RegisterBuilding(Building building, int x, int y)
         {
             var buildingPosition =
-                mGrid.LaneSide == Lane.Side.Left
+                mGrid.LaneSide != Lane.Side.Left
                     ? new TileIndex(Grid.LaneWidthInTiles / 2, mGrid.LaneRectangle.Width - 1, 1)
                     : new TileIndex(mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
             building.Sprite.Position = mGrid.GetTile(buildingPosition).Position;
@@ -35,9 +35,8 @@ namespace KernelPanic.Table
 
         }
         
-        internal void Register(Entity clone)
+        internal void Register(Entity clone, int? x=null, int? y=null)
         {
-            // throw new NotImplementedException();
             if (clone is Unit unit)
             {
                 Register(unit);
@@ -45,7 +44,14 @@ namespace KernelPanic.Table
 
             if (clone is Building building)
             {
-                Register(building);
+                if (x is int xInt && y is int yInt)
+                {
+                    RegisterBuilding(building, xInt, yInt);
+                }
+                else
+                {
+                    // throw new NotSupportedException("Cant build a tower without position");
+                }
             }
         }
     }
