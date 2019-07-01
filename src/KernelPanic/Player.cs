@@ -30,7 +30,7 @@ namespace KernelPanic
         {
             if (!human)
             {
-                mArtificialPlayer = new ArtificialPlayer(this, DefendingLane.mSpriteManager);
+                mArtificialPlayer = new ArtificialPlayer(this, DefendingLane.mSpriteManager, DefendingLane.mSounds);
                 mHuman = false;
             }
         }

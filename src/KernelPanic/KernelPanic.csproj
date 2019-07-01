@@ -73,6 +73,7 @@
     <Compile Include="Entities\Bluescreen.cs" />
     <Compile Include="Entities\Bug.cs" />
     <Compile Include="Entities\Building.cs" />
+    <Compile Include="Entities\Cable.cs" />
     <Compile Include="Entities\CdThrower.cs" />
     <Compile Include="Entities\CursorShooter.cs" />
     <Compile Include="Entities\Entity.cs" />

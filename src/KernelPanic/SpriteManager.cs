@@ -33,6 +33,7 @@ namespace KernelPanic
             Bluescreen,
             Settings,
             Antivirus,
+            // Cable,  // TODO LOAD CABLE INTO CONTENT
             CdThrower,
             Cd,
             Cursor,
@@ -83,6 +84,7 @@ namespace KernelPanic
                 Texture(Image.Base1, "base_1"),
                 Texture(Image.Base2, "base_2"),
                 Texture(Image.Bluescreen, "heroes/bluescreen"),
+                // Texture(Image.Cable, "towers/cable"),  // TODO LOAD CABLE INTO CONTENT
                 Texture(Image.Cd, "towers/cd"),
                 Texture(Image.CdThrower, "towers/cd_thrower"),
                 Texture(Image.Cursor, "towers/cursor"),
@@ -235,15 +237,15 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower));
-        
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
-        
         internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Tower));
-        
         internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
-        
-        internal ImageSprite CreateCDThrower() => new ImageSprite(Lookup(Image.CdThrower));
+        // internal ImageSprite CreateCable() => new ImageSprite(Lookup(Image.Cable)); // TODO LOAD CABLE INTO CONTENT
+        internal ImageSprite CreateShockField() => new ImageSprite(Lookup(Image.ShockField));
+        internal ImageSprite CreateCdThrower() => new ImageSprite(Lookup(Image.CdThrower));
+        internal ImageSprite CreateCursorShooter() => new ImageSprite(Lookup(Image.Mouse));
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile));
+        internal ImageSprite CreateCdProjectile() => new ImageSprite(Lookup(Image.Cd));
         internal ImageSprite CreateWifiProjectile() => new ImageSprite(Lookup(Image.WifiProjectile));
 
 
@@ -588,7 +590,6 @@ namespace KernelPanic
             text.SizeChanged += s => s.Origin = new Vector2(s.Width / 2, s.Height / 2);
             return text;
         }
-
 
     }
 }

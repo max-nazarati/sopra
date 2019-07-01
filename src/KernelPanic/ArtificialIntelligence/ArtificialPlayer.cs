@@ -17,11 +17,11 @@ namespace KernelPanic.ArtificialIntelligence
 
         private Planner[] mPlanners;
         
-        public ArtificialPlayer(Player player, SpriteManager spriteManager)
+        public ArtificialPlayer(Player player, SpriteManager spriteManager, SoundManager soundManager)
         {
             mPlayer = player;
             mAttackPlanner = new AttackPlanner(player, spriteManager);
-            mDefencePlanner = new DefencePlanner(player, spriteManager);
+            mDefencePlanner = new DefencePlanner(player, spriteManager, soundManager);
             mUpgradePlanner = new UpgradePlanner(player, spriteManager);
             mPlanners = new Planner[] {mAttackPlanner, mDefencePlanner, mUpgradePlanner};
         }

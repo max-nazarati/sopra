@@ -44,7 +44,7 @@ namespace KernelPanic.Entities
             switch (tower)
             {
                 case StrategicTower.Towers.CursorShooter:
-                    sprite = sprites.CreateCDThrower();
+                    sprite = sprites.CreateCursorShooter();
                     sprite.Position = position;
                     sprite.ScaleToHeight(size);
                     sprite.SetOrigin(RelativePosition.Center);
@@ -61,7 +61,7 @@ namespace KernelPanic.Entities
                     break;
 
                 case StrategicTower.Towers.Ventilator:
-                    sprite = sprites.CreateCDThrower();
+                    sprite = sprites.CreateCdThrower();
                     sprite.Position = position;
                     sprite.ScaleToHeight(size);
                     sprite.SetOrigin(RelativePosition.Center);
@@ -77,11 +77,11 @@ namespace KernelPanic.Entities
                         , sprite, sprites, sounds);
                     break;
                 case StrategicTower.Towers.CdThrower:
-                    sprite = sprites.CreateCDThrower();
+                    sprite = sprites.CreateCdThrower();
                     sprite.Position = position;
                     sprite.ScaleToHeight(size);
                     sprite.SetOrigin(RelativePosition.Center);
-                    returnTower = new CursorShooter(15, 300, new TimeSpan(0, 0, 3)
+                    returnTower = new CdThrower(15, 300, new TimeSpan(0, 0, 3)
                         , sprite, sprites, sounds);
                     break;
 
