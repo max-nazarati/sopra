@@ -11,21 +11,14 @@ namespace KernelPanic.Serialization
 {
     internal static class StorageManager
     {
-        #region Constructor
-
-        static StorageManager()
-        {
-            Directory.CreateDirectory(sFolder);
-        }
-
-        #endregion
-
         #region Save & Load
 
         internal static IEnumerable<int> Slots => Enumerable.Range(0, 5);
 
         internal static void SaveGame(InGameState gameState)
         {
+            Directory.CreateDirectory(sFolder);
+
             if (!Slots.Contains(gameState.SaveSlot))
                 throw new InvalidOperationException("InGameState has invalid save-slot " + gameState.SaveSlot);
 
@@ -39,6 +32,8 @@ namespace KernelPanic.Serialization
 
         internal static Storage LoadGame(int slot, GameStateManager gameStateManager)
         {
+            Directory.CreateDirectory(sFolder);
+
             if (!Slots.Contains(slot))
                 throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
 
