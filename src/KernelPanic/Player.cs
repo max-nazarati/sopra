@@ -28,14 +28,12 @@ namespace KernelPanic
         public int ExperiencePoints { get; set; }
 
         internal Base Base => DefendingLane.Target;
-        private readonly bool mHuman  = true;
 
-        internal Player(Lane defendingLane, Lane attackingLane, bool human=true) : this(9999, defendingLane, attackingLane)
+        internal Player(Lane defendingLane, Lane attackingLane, bool human = true) : this(9999, defendingLane, attackingLane)
         {
             if (!human)
             {
                 mArtificialPlayer = new ArtificialPlayer(this, DefendingLane.mSpriteManager, DefendingLane.mSounds);
-                mHuman = false;
             }
         }
 
@@ -49,10 +47,7 @@ namespace KernelPanic
 
         internal void Update(GameTime gameTime)
         {
-            if (!mHuman)
-            {
-                mArtificialPlayer.Update(gameTime);
-            }
+            mArtificialPlayer?.Update(gameTime);
         }
 
         internal void AddUpgrade(Upgrade upgrade)
