@@ -21,6 +21,7 @@ namespace KernelPanic
         private PurchaseButton<TextButton, Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
         private PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
         private TextButton mPurchaseDemoReset;
+        private InGameOverlay mHud;
 
         internal int SaveSlot { get; }
 
@@ -36,6 +37,8 @@ namespace KernelPanic
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
             SaveSlot = saveSlot;
 
+            mHud = new InGameOverlay(mBoard.PlayerA, mBoard.PlayerB, mSelectionManager, gameStateManager);
+            
             var entityGraph = mBoard.LeftLane.EntityGraph;
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
         }
@@ -43,9 +46,8 @@ namespace KernelPanic
         internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)
         {
             var game = new InGameState(storage, saveSlot, gameStateManager);
-            var hud = new InGameOverlay(game.mBoard.PlayerA, game.mBoard.PlayerB, game.mSelectionManager, gameStateManager);
             gameStateManager.Restart(game);
-            gameStateManager.Push(hud);
+            gameStateManager.Push(game.mHud);
         }
 
         private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites, SoundManager sounds)
