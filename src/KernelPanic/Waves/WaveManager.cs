@@ -9,7 +9,7 @@ namespace KernelPanic.Waves
     internal sealed class WaveManager
     {
         private PlayerOwned<List<Unit>> mUnits;
-        private readonly PlayerOwned<Player> mPlayers;
+        internal PlayerOwned<Player> Players { get; }
 
         private TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(30);
 
@@ -28,7 +28,7 @@ namespace KernelPanic.Waves
         public WaveManager(PlayerOwned<Player> players)
         {
             mUnits = new PlayerOwned<List<Unit>>(new List<Unit>(), new List<Unit>());
-            mPlayers = players;
+            Players = players;
         }
 
         private void Activate()
@@ -39,7 +39,7 @@ namespace KernelPanic.Waves
             void Spawn(StaticDistinction distinction)
             {
                 var units = mUnits.Select(distinction);
-                var spawner = mPlayers.Select(distinction).AttackingLane.UnitSpawner;
+                var spawner = Players.Select(distinction).AttackingLane.UnitSpawner;
 
                 void SpawnChild(Unit unit)
                 {
@@ -71,7 +71,7 @@ namespace KernelPanic.Waves
             // 1. Remove all units from the waves that are either dead or have reached the base.
             //    This awards experience points.
             foreach (var wave in mAliveWaves)
-                wave.RemoveDead(mPlayers);
+                wave.RemoveDead(Players);
 
             // 2. Remember the current wave, which might get removed from mAliveWaves in 3.
             var current = CurrentWave;

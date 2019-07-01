@@ -38,7 +38,7 @@ namespace KernelPanic
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
             SaveSlot = saveSlot;
 
-            mHud = new InGameOverlay(mBoard.PlayerA, mBoard.PlayerB, mSelectionManager, gameStateManager);
+            mHud = new InGameOverlay(mBoard.WaveManager, mSelectionManager, gameStateManager);
             
             var entityGraph = mBoard.LeftLane.EntityGraph;
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);

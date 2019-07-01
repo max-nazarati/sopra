@@ -4,6 +4,7 @@ using KernelPanic.Input;
 using KernelPanic.Players;
 using KernelPanic.Sprites;
 using KernelPanic.Upgrades;
+using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -22,6 +23,8 @@ namespace KernelPanic.Table
 
         [JsonProperty]
         internal UpgradePool mUpgradePool;
+        
+        internal WaveManager WaveManager { get; /* required for deserialization */ private set; }
 
         private readonly Sprite mBase;
 
@@ -61,6 +64,8 @@ namespace KernelPanic.Table
 
             mUpgradePool = new UpgradePool(PlayerA, content);
             LayOutUpgradePool();
+            
+            WaveManager = new WaveManager(new PlayerOwned<Player>(PlayerA, PlayerB));
         }
 
         [OnDeserialized]
@@ -93,6 +98,7 @@ namespace KernelPanic.Table
             PlayerA.Update(gameTime);
             PlayerB.Update(gameTime);
             mUpgradePool.Update(inputManager, gameTime);
+            WaveManager.Update(gameTime);
         }
 
         internal GameState CheckGameState()

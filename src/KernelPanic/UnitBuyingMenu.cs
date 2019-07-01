@@ -9,6 +9,7 @@ using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
+using KernelPanic.Waves;
 
 namespace KernelPanic
 {
@@ -69,11 +70,13 @@ namespace KernelPanic
         {
         }
 
-        internal static UnitBuyingMenu Create(Player player, SpriteManager spriteManager)
+        internal static UnitBuyingMenu Create(WaveManager waveManager, SpriteManager spriteManager)
         {
+            var player = waveManager.Players.B;    // TODO: This should become .Players.A!
+
             void UnitBought(Player buyer, Unit unit)
             {
-                buyer.AttackingLane.UnitSpawner.Register(unit.Clone());
+                waveManager.Add(buyer, unit);
             }
 
             PurchaseButton<ImageButton, Unit> CreateButton(Unit unit, AnimatedSprite sprite)

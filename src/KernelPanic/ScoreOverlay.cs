@@ -10,17 +10,13 @@ namespace KernelPanic
 {
     internal sealed class ScoreOverlay
     {
-        private readonly Player mPlayerA;
-        private readonly Player mPlayerB;
+        private readonly PlayerOwned<Player> mPlayers;
         private readonly PlayTime mPlayTime;
 
         private readonly Sprite mSprite;
-        private readonly TextSprite mTextA;
-        private readonly TextSprite mTextAMoney;
-        private readonly TextSprite mTextAExperience;
-        private readonly TextSprite mTextB;
-        private readonly TextSprite mTextBMoney;
-        private readonly TextSprite mTextBExperience;
+        private readonly PlayerOwned<TextSprite> mPowerTexts;
+        private readonly PlayerOwned<TextSprite> mMoneyTexts;
+        private readonly PlayerOwned<TextSprite> mExperienceTexts;
         private readonly TextSprite mTextTime;
         private readonly ImageButton mPauseButton;
 
@@ -29,14 +25,17 @@ namespace KernelPanic
         private static Point PowerIndicatorSize => new Point(100, 30);
         private static Point ClockSize => new Point(100, 20);
 
-        public ScoreOverlay(Player player1, Player player2, SpriteManager spriteManager)
+        public ScoreOverlay(PlayerOwned<Player> players, SpriteManager spriteManager)
         {
-            mPlayerA = player1;
-            mPlayerB = player2;
+            mPlayers = players;
             mPlayTime = new PlayTime();
 
-            (mSprite, mTextA, mTextAMoney, mTextAExperience, mTextB, mTextBMoney, mTextBExperience, mTextTime) =
-                spriteManager.CreateScoreDisplay(PowerIndicatorSize, ClockSize);
+            var sprites = spriteManager.CreateScoreDisplay(PowerIndicatorSize, ClockSize);
+            mSprite = sprites.Main;
+            mPowerTexts = new PlayerOwned<TextSprite>(sprites.Left, sprites.Right);
+            mMoneyTexts = new PlayerOwned<TextSprite>(sprites.LeftMoney, sprites.RightMoney);
+            mExperienceTexts = new PlayerOwned<TextSprite>(sprites.LeftEP, sprites.RightEP);
+            mTextTime = sprites.Clock;
             mTextTime.Text = mPlayTime.Time;
 
             var sprite = spriteManager.CreatePause();
@@ -51,14 +50,16 @@ namespace KernelPanic
 
         public void Update(InputManager inputManager, GameTime gameTime)
         {
+            mPowerTexts.A.Text = "A: " + mPlayers.A.Base.Power + "%";
+            mPowerTexts.B.Text = "B: " + mPlayers.B.Base.Power + "%";
+            mMoneyTexts.A.Text = mPlayers.A.Bitcoins + "$";
+            mMoneyTexts.B.Text = mPlayers.B.Bitcoins + "$";
+            mExperienceTexts.A.Text = mPlayers.A.ExperiencePoints + " EP";
+            mExperienceTexts.B.Text = mPlayers.B.ExperiencePoints + " EP";
+
             mPlayTime.Update(gameTime);
-            mTextA.Text = "A: " + mPlayerA.Base.Power + "%";
-            mTextAMoney.Text = mPlayerA.Bitcoins + "$";
-            mTextAExperience.Text = mPlayerA.ExperiencePoints + " EP";
-            mTextB.Text = "B: " + mPlayerB.Base.Power + "%";
-            mTextBMoney.Text = mPlayerB.Bitcoins + "$";
-            mTextBExperience.Text = mPlayerB.ExperiencePoints + " EP";
             mTextTime.Text = mPlayTime.Time;
+
             mPauseButton.Update(inputManager, gameTime);
         }
 
