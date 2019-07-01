@@ -147,5 +147,18 @@ namespace KernelPanic.Upgrades
             Enumerable
                 .Range((int) Id.BeginningTier1, Id.EndOfUpgrades - Id.BeginningTier1)
                 .Select(id => new Upgrade {Kind = (Id) id});
+
+        internal static IEnumerable<IEnumerable<Upgrade>> Matrix =>
+            new[]
+            {
+                UpgradesInRange(Id.BeginningTier1, Id.BeginningTier2),
+                UpgradesInRange(Id.BeginningTier2, Id.BeginningTier3),
+                UpgradesInRange(Id.BeginningTier3, Id.BeginningTier4),
+                UpgradesInRange(Id.BeginningTier4, Id.BeginningTier5),
+                UpgradesInRange(Id.BeginningTier5, Id.EndOfUpgrades)
+            };
+
+        private static IEnumerable<Upgrade> UpgradesInRange(Id start, Id stop) =>
+            Enumerable.Range((int) start, stop - start).Select(id => new Upgrade {Kind = (Id) id});
     }
 }
