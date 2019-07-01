@@ -25,8 +25,8 @@ namespace KernelPanic.Entities
             CdThrower
         }
 
-        internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds)
-            : base(price, radius, cooldown, sprite, sprites, sounds)
+        internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
+            : base(price, radius, cooldown, sprite, spriteManager, sounds)
         {
         }
 

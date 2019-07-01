@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -12,8 +13,8 @@ namespace KernelPanic.Entities
 {
     internal abstract class Tower : Building
     {
-        [DataMember] protected readonly float mRadius;
-        [DataMember] protected readonly CooldownComponent mFireTimer;
+        [DataMember] protected readonly float Radius;
+        [DataMember] protected readonly CooldownComponent FireTimer;
         [JsonIgnore] private List<Projectile> mProjectiles = new List<Projectile>(); 
         protected Sprite mRadiusSprite;
         protected bool mInRange;
@@ -23,25 +24,25 @@ namespace KernelPanic.Entities
         {
         }
 
-        internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds)
-            : base(price, sprite, sprites)
+        internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
+            : base(price, sprite, spriteManager)
         {
-            mFireTimer = new CooldownComponent(cooldown);
-            mRadius = radius;
+            FireTimer = new CooldownComponent(cooldown);
+            Radius = radius * Grid.KachelSize;
         }
 
         ~Tower()
         {
-            // todo: Tell the heatmap
+            // todo: Tell the heatMap
         }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            mRadiusSprite = SpriteManager.CreateTowerRadiusIndicator(mRadius);
+            mRadiusSprite = SpriteManager.CreateTowerRadiusIndicator(Radius);
         }
-
-        internal static Tower CreateTower(Vector2 position, float size, SpriteManager sprites, SoundManager sounds
+        
+        internal static Tower CreateTower(Vector2 position, float size, SpriteManager spriteManager, SoundManager sounds
             , StrategicTower.Towers tower)
         {
             Tower returnTower;
@@ -49,50 +50,32 @@ namespace KernelPanic.Entities
             switch (tower)
             {
                 case StrategicTower.Towers.CursorShooter:
-                    sprite = sprites.CreateCursorShooter();
-                    sprite.Position = position;
-                    sprite.ScaleToHeight(size);
-                    sprite.SetOrigin(RelativePosition.Center);
-                    returnTower = new CursorShooter(15, 400, new TimeSpan(0, 0, 3)
-                        , sprite, sprites, sounds);
+                    sprite = spriteManager.CreateCursorShooter();
+                    returnTower = new CursorShooter(sprite, spriteManager, sounds);
                     break;
                 case StrategicTower.Towers.WifiRouter:
-                    sprite = sprites.CreateWifiRouter();
-                    sprite.Position = position;
-                    sprite.ScaleToHeight(size);
-                    sprite.SetOrigin(RelativePosition.Center);
-                    returnTower = new WifiRouter(15, 400, new TimeSpan(0, 0, 1)
-                        , sprite, sprites, sounds);
+                    sprite = spriteManager.CreateWifiRouter();
+                    returnTower = new WifiRouter(sprite, spriteManager, sounds);
                     break;
-
                 case StrategicTower.Towers.Ventilator:
-                    sprite = sprites.CreateCdThrower();
-                    sprite.Position = position;
-                    sprite.ScaleToHeight(size);
-                    sprite.SetOrigin(RelativePosition.Center);
-                    returnTower = new CursorShooter(15, 300, new TimeSpan(0, 0, 3)
-                        , sprite, sprites, sounds);
+                    sprite = spriteManager.CreateCdThrower();
+                    returnTower = new CursorShooter(sprite, spriteManager, sounds);
                     break;
                 case StrategicTower.Towers.Antivirus:
-                    sprite = sprites.CreateAntivirus();
-                    sprite.Position = position;
-                    sprite.ScaleToHeight(size);
-                    sprite.SetOrigin(RelativePosition.Center);
-                    returnTower = new Antivirus(15, 150, new TimeSpan(0, 0, 3)
-                        , sprite, sprites, sounds);
+                    sprite = spriteManager.CreateAntivirus();
+                    returnTower = new Antivirus(sprite, spriteManager, sounds);
                     break;
                 case StrategicTower.Towers.CdThrower:
-                    sprite = sprites.CreateCdThrower();
-                    sprite.Position = position;
-                    sprite.ScaleToHeight(size);
-                    sprite.SetOrigin(RelativePosition.Center);
-                    returnTower = new CdThrower(15, 300, new TimeSpan(0, 0, 3)
-                        , sprite, sprites, sounds);
+                    sprite = spriteManager.CreateCdThrower();
+                    returnTower = new CdThrower(sprite, spriteManager, sounds);
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tower), tower, null);
             }
+            sprite.Position = position;
+            sprite.ScaleToHeight(size);
+            sprite.SetOrigin(RelativePosition.Center);
 
             return returnTower;
         }
@@ -124,7 +107,7 @@ namespace KernelPanic.Entities
         {
             var target = (Vector2?) null;
             var minDistance = 1000;
-            foreach (var entity in positionProvider.NearEntities<Unit>(this, mRadius))
+            foreach (var entity in positionProvider.NearEntities<Unit>(this, Radius))
             {
                 var distance = (int)Vector2.Distance(entity.Sprite.Position, Sprite.Position);
                 if (distance >= minDistance) continue;
@@ -139,7 +122,7 @@ namespace KernelPanic.Entities
         {
             base.Update(positionProvider, gameTime, inputManager);
 
-            if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= mRadius)
+            if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= Radius)
             {
                 // Turn into the direction of the target.
                 mInRange = true;
@@ -152,7 +135,7 @@ namespace KernelPanic.Entities
                 Sprite.Rotation = (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
             }
 
-            mFireTimer.Update(gameTime);
+            FireTimer.Update(gameTime);
             foreach (var projectile in new List<Projectile>(mProjectiles))
             {
                 if (projectile.mHasHit)

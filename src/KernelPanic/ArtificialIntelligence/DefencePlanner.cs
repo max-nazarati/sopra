@@ -54,7 +54,7 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData, GameTime gameTime)
         {
             base.Update();
-            BuySingleTower();
+            // BuySingleTower();
         }
 
         private void BuySingleTower()

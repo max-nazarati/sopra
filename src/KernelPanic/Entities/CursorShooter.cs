@@ -12,10 +12,11 @@ namespace KernelPanic.Entities
     internal class CursorShooter : StrategicTower
     {
         [JsonIgnore] private readonly List<Projectile> mProjectiles = new List<Projectile>();
-        internal CursorShooter(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites
-            , SoundManager sounds) : base(price, radius, cooldown, sprite, sprites, sounds)
+        internal CursorShooter(Sprite sprite, SpriteManager spriteManager
+            , SoundManager sounds) : base(price: 20, radius: 4, cooldown: TimeSpan.FromSeconds(1), sprite: sprite, spriteManager: spriteManager, sounds: sounds)
+
         {
-            mFireTimer.CooledDown += timer =>
+            FireTimer.CooledDown += timer =>
             {
                 if (!mInRange)
                 {
@@ -29,8 +30,8 @@ namespace KernelPanic.Entities
                     (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
                 Console.WriteLine(direction);
-                mProjectiles.Add(new Projectile(direction, Sprite.Position, mRadius, Sprite.Rotation,20
-                    , 10, sprites.CreateCursorProjectile()));
+                mProjectiles.Add(new Projectile(direction, Sprite.Position, Radius, Sprite.Rotation,20
+                    , 10, spriteManager.CreateCursorProjectile()));
                 sounds.PlaySound(SoundManager.Sound.Shoot1);
 
                 // SoundManager.Instance.PlaySound("shoot");
@@ -44,7 +45,7 @@ namespace KernelPanic.Entities
                 timer.Reset();
             };
 
-            mRadiusSprite = sprites.CreateTowerRadiusIndicator(radius);
+            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
         internal CursorShooter(SpriteManager spriteManager, SoundManager soundManager)
@@ -72,7 +73,7 @@ namespace KernelPanic.Entities
         {
             base.Update(positionProvider, gameTime, inputManager);
 
-            if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= mRadius)
+            if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= Radius)
             {
                 // Turn into the direction of the target.
                 mInRange = true;
@@ -85,7 +86,7 @@ namespace KernelPanic.Entities
                 Sprite.Rotation = (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
             }
 
-            mFireTimer.Update(gameTime);
+            FireTimer.Update(gameTime);
             foreach (var projectile in new List<Projectile>(mProjectiles))
             {
                 if (projectile.mHasHit)

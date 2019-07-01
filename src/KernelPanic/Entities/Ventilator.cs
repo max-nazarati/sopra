@@ -5,8 +5,8 @@ namespace KernelPanic.Entities
 {
     internal class Ventilator : StrategicTower
     {
-        internal Ventilator(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites
-            , SoundManager sounds) : base(price, radius, cooldown, sprite, sprites, sounds)
+        internal Ventilator(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager
+            , SoundManager sounds) : base(price, radius, cooldown, sprite, spriteManager, sounds)
         {
         }
 
