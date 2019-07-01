@@ -30,6 +30,11 @@ namespace KernelPanic.Entities
             mRadius = radius;
         }
 
+        ~Tower()
+        {
+            // todo: Tell the heatmap
+        }
+
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {

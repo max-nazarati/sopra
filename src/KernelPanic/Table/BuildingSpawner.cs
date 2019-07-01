@@ -45,7 +45,6 @@ namespace KernelPanic.Table
                     : new TileIndex(mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
             building.Sprite.Position = mGrid.GetTile(buildingPosition).Position;
             mSpawnAction(building);
-
         }
     }
 }

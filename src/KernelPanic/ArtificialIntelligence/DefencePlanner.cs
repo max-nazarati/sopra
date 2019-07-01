@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Purchasing;
 using Microsoft.Xna.Framework;
@@ -8,7 +6,6 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class DefencePlanner : Planner
     {
-        
         #region Member
 
         #region UnitPurchaser
