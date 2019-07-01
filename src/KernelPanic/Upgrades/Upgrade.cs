@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using KernelPanic.Entities;
 using KernelPanic.Interface;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Upgrades
 {
@@ -49,9 +50,13 @@ namespace KernelPanic.Upgrades
             EndOfUpgrades
         }
 
+        [JsonProperty]
         internal Id Kind { get; private set; }
 
+        [JsonIgnore]
         public Currency Currency => Currency.Experience;
+
+        [JsonIgnore]
         public int Price => IdPrice(Kind);
 
         internal static int IdPrice(Id id)
