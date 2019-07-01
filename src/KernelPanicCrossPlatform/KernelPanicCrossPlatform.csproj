@@ -276,6 +276,9 @@
     <Compile Include="..\KernelPanic\Players\Player.cs">
       <Link>Players\Player.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Players\PlayerOwned.cs">
+      <Link>Players\PlayerOwned.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Players\StaticDistinction.cs">
       <Link>Players\StaticDistinction.cs</Link>
     </Compile>

@@ -112,6 +112,7 @@
     <Compile Include="PathPlanning\Visualizer.cs" />
     <Compile Include="Players\IPlayerDistinction.cs" />
     <Compile Include="Players\Player.cs" />
+    <Compile Include="Players\PlayerOwned.cs" />
     <Compile Include="Players\StaticDistinction.cs" />
     <Compile Include="PlayTime.cs" />
     <Compile Include="PositionProvider.cs" />
