@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Players;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Waves
 {
@@ -8,7 +10,9 @@ namespace KernelPanic.Waves
     {
         private PlayerOwned<List<Unit>> mUnits;
         private readonly PlayerOwned<Player> mPlayers;
-        
+
+        private TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(30);
+
         private int mLastIndex;
 
         /// <summary>
@@ -62,23 +66,31 @@ namespace KernelPanic.Waves
             mUnits.Select(player).Add(unit);
         }
 
-        internal void Update(bool forceActivate = false)
+        internal void Update(GameTime gameTime)
         {
             // 1. Remove all units from the waves that are either dead or have reached the base.
             //    This awards experience points.
             foreach (var wave in mAliveWaves)
                 wave.RemoveDead(mPlayers);
 
-            // 2. Remember if we want to activate the next wave, as the current wave might be removed in the next step.
-            //    Doing this after 3. might save us some allocations.
-            var activateNext = forceActivate || CurrentWave is Wave currentWave && currentWave.AtLeastPartiallyDefeated;
-            
+            // 2. Remember the current wave, which might get removed from mAliveWaves in 3.
+            var current = CurrentWave;
+
             // 3. Remove all fully defeated waves.
             mAliveWaves.RemoveAll(wave => wave.FullyDefeated);
 
-            // 4. Activate the next wave.
-            if (activateNext)
+            // 4. Activate the next wave. Doing this after 3. might save us some allocations.
+            if (current?.AtLeastPartiallyDefeated ?? false)
+            {
                 Activate();
+            }
+            else if (current == null)
+            {
+                // Decrease the time till the first wave.
+                mTimeTillFirstWave -= gameTime.ElapsedGameTime;
+                if (mTimeTillFirstWave <= TimeSpan.Zero)
+                    Activate();
+            }
         }
     }
 }
