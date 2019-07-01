@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Autofac;
 using KernelPanic.Entities;
 using KernelPanic.Table;
@@ -64,15 +65,26 @@ namespace KernelPanic.Serialization
         [SuppressMessage("ReSharper", "ImplicitlyCapturedClosure")]
         private static AutofacContractResolver CreateContractResolver(GameStateManager manager)
         {
+            const BindingFlags bindingFlags =
+                BindingFlags.Instance | BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+
             var builder = new ContainerBuilder();
 
             // A unit is assumed to be constructable with a SpriteManager as the only argument.
             void RegisterUnit<TUnit>() where TUnit : Unit =>
-                builder.Register(c => Activator.CreateInstance(typeof(TUnit), manager.Sprite)).As<TUnit>();
+                builder.Register(c => Activator.CreateInstance(typeof(TUnit),
+                    bindingFlags,
+                    null,
+                    new object[] {manager.Sprite},
+                    null)).As<TUnit>();
 
             // A building is assumed to be constructable with the SpriteManager and the SoundManager as the only arguments.
             void RegisterBuilding<TBuilding>() where TBuilding : Building =>
-                builder.Register(c => Activator.CreateInstance(typeof(TBuilding), manager.Sprite, manager.Sound));
+                builder.Register(c => Activator.CreateInstance(typeof(TBuilding),
+                    bindingFlags,
+                    null,
+                    new object[] {manager.Sprite, manager.Sound},
+                    null)).As<TBuilding>();
                 
             RegisterUnit<Bug>();
             RegisterUnit<Virus>();
