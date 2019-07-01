@@ -1,4 +1,6 @@
-﻿namespace KernelPanic.Purchasing
+﻿using KernelPanic.Players;
+
+namespace KernelPanic.Purchasing
 {
     internal sealed class SinglePurchasableAction<TResource> : PurchasableAction<TResource>
         where TResource : IPriced

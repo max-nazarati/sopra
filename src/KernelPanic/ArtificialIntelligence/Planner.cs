@@ -1,5 +1,6 @@
 using System;
 using KernelPanic.Entities;
+using KernelPanic.Players;
 using KernelPanic.Purchasing;
 
 namespace KernelPanic.ArtificialIntelligence

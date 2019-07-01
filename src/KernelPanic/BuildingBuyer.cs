@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using KernelPanic.Table;
 using KernelPanic.Input;
 using KernelPanic.Entities;
+using KernelPanic.Players;
 using KernelPanic.Purchasing;
 
 namespace KernelPanic

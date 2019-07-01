@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using KernelPanic.Players;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 

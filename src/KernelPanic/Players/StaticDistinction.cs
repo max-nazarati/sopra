@@ -1,10 +1,5 @@
-namespace KernelPanic
+namespace KernelPanic.Players
 {
-    internal interface IPlayerDistinction
-    {
-        T Select<T>(T ifActive, T ifPassive);
-    }
-
     internal struct StaticDistinction : IPlayerDistinction
     {
         private readonly bool mIsActive;

@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Input;
+using KernelPanic.Players;
 using KernelPanic.Sprites;
 using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;

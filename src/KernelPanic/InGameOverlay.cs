@@ -1,6 +1,7 @@
 ﻿using KernelPanic.Camera;
 using KernelPanic.Entities;
 using KernelPanic.Input;
+using KernelPanic.Players;
 using KernelPanic.Selection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Sprites;
 using KernelPanic.Table;

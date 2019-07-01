@@ -2,6 +2,7 @@ using System;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

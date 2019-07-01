@@ -8,6 +8,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.PathPlanning;
+using KernelPanic.Players;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;

@@ -6,7 +6,7 @@ using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
-namespace KernelPanic
+namespace KernelPanic.Players
 {
     [DataContract]
     internal sealed class Player: IPlayerDistinction

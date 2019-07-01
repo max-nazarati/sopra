@@ -1,4 +1,5 @@
 using KernelPanic.Entities;
+using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using Microsoft.Xna.Framework;
 

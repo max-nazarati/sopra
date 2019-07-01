@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using KernelPanic.Input;
+using KernelPanic.Players;
 using KernelPanic.Table;
 
 namespace KernelPanic

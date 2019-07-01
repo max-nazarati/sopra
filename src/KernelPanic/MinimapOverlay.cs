@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Net;
 using KernelPanic.Entities;
 using KernelPanic.Input;
+using KernelPanic.Players;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;

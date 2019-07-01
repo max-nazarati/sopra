@@ -103,7 +103,6 @@
     <Compile Include="Interface\InterfaceComponent.cs" />
     <Compile Include="Interface\StaticComponent.cs" />
     <Compile Include="Interface\TextButton.cs" />
-    <Compile Include="IPlayerDistinction.cs" />
     <Compile Include="IPositioned.cs" />
     <Compile Include="MinimapOverlay.cs" />
     <Compile Include="PathPlanning\AStar.cs" />
@@ -111,8 +110,10 @@
     <Compile Include="PathPlanning\ObstacleMatrix.cs" />
     <Compile Include="PathPlanning\PathPlanner.cs" />
     <Compile Include="PathPlanning\Visualizer.cs" />
+    <Compile Include="Players\IPlayerDistinction.cs" />
+    <Compile Include="Players\Player.cs" />
+    <Compile Include="Players\StaticDistinction.cs" />
     <Compile Include="PlayTime.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="PositionProvider.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameStateManager.cs" />

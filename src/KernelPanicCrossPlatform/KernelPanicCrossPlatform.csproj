@@ -240,9 +240,6 @@
     <Compile Include="..\KernelPanic\Interface\TextButton.cs">
       <Link>Interface\TextButton.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\IPlayerDistinction.cs">
-      <Link>IPlayerDistinction.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\IPositioned.cs">
       <Link>IPositioned.cs</Link>
     </Compile>
@@ -273,8 +270,14 @@
     <Compile Include="..\KernelPanic\PathPlanning\Visualizer.cs">
       <Link>PathPlanning\Visualizer.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Player.cs">
-      <Link>Player.cs</Link>
+    <Compile Include="..\KernelPanic\Players\IPlayerDistinction.cs">
+      <Link>Players\IPlayerDistinction.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Players\Player.cs">
+      <Link>Players\Player.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Players\StaticDistinction.cs">
+      <Link>Players\StaticDistinction.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\PlayTime.cs">
       <Link>PlayTime.cs</Link>

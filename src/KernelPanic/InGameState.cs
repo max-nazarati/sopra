@@ -3,6 +3,7 @@ using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Selection;
 using KernelPanic.Serialization;

@@ -6,6 +6,7 @@ using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using KernelPanic.Interface;
+using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using Microsoft.Xna.Framework.Graphics;
 

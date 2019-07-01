@@ -8,6 +8,7 @@ using KernelPanic.Entities;
 using KernelPanic.Sprites;
 using KernelPanic.Input;
 using KernelPanic.Data;
+using KernelPanic.Players;
 using KernelPanic.Table;
 
 namespace KernelPanic
