@@ -1,6 +1,7 @@
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
+using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -16,6 +17,9 @@ namespace KernelPanic.Table
         internal Player PlayerA { get; /* required for deserialization */ private set; }
         [JsonProperty]
         internal Player PlayerB { get; /* required for deserialization */ private set; }
+
+        [JsonProperty]
+        internal UpgradePool mUpgradePool;
 
         private readonly Sprite mBase;
 
@@ -52,6 +56,8 @@ namespace KernelPanic.Table
             
             PlayerA = new Player(leftLane, rightLane);
             PlayerB = new Player(rightLane, leftLane, false);
+
+            mUpgradePool = new UpgradePool(PlayerA, content, Lane.LeftBounds.At(RelativePosition.CenterRight));
         }
 
         private static Sprite CreateBase(SpriteManager spriteManager)
@@ -69,6 +75,7 @@ namespace KernelPanic.Table
             PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
             PlayerA.Update(gameTime);
             PlayerB.Update(gameTime);
+            mUpgradePool.Update(inputManager, gameTime);
         }
 
         internal GameState CheckGameState()
@@ -88,6 +95,7 @@ namespace KernelPanic.Table
         {
             LeftLane.Draw(spriteBatch, gameTime);
             RightLane.Draw(spriteBatch, gameTime);
+            mUpgradePool.Draw(spriteBatch, gameTime);
             mBase.Draw(spriteBatch, gameTime);
         }
     }

@@ -357,6 +357,9 @@
     <Compile Include="..\KernelPanic\Upgrades\Upgrade.cs">
       <Link>Upgrades\Upgrade.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Upgrades\UpgradePool.cs">
+      <Link>Upgrades\UpgradePool.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\KernelPanic\CollisionManager.cs">
       <Link>CollisionManager.cs</Link>

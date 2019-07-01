@@ -1,6 +1,8 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using KernelPanic.Table;
 using KernelPanic.ArtificialIntelligence;
+using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -9,7 +11,6 @@ namespace KernelPanic
     [DataContract]
     internal sealed class Player
     {
-        // private List<Upgrade> Upgrades;
         [DataMember]
         internal Lane AttackingLane { get; }
         [DataMember]
@@ -17,6 +18,9 @@ namespace KernelPanic
 
         [DataMember]
         public int Bitcoins { get; set; }
+
+        [DataMember]
+        private readonly List<Upgrade> mUpgrades = new List<Upgrade>();
 
         private readonly ArtificialPlayer mArtificialPlayer;
 
@@ -49,6 +53,11 @@ namespace KernelPanic
             {
                 mArtificialPlayer.Update(gameTime);
             }
+        }
+
+        internal void AddUpgrade(Upgrade upgrade)
+        {
+            mUpgrades.Add(upgrade);
         }
     }
 }
