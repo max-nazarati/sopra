@@ -126,6 +126,15 @@ namespace KernelPanic.ArtificialIntelligence
             return prediction;
         }
 
+        public double Score(double[][] xTest, string[] yTest)
+        {
+            int[] decodedYTest = mCodebook.Transform("Aktion", yTest);
+            int[] predictions = mModel.Decide(xTest);
+            double error = new ZeroOneLoss(decodedYTest).Loss(predictions);
+
+            return error;
+        }
+
         public int[] PredictMulti(double[][] input)
         {
             int[] predictions = mModel.Decide(input);
