@@ -4,12 +4,11 @@ using KernelPanic.Input;
 using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using KernelPanic.Sprites;
 
 namespace KernelPanic.Purchasing
 {
-    internal class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded, IButtonLike
-        where TResource: class, IPriced
+    internal class PurchaseButton<TButton, TResource, TAction>: IPositioned, IBounded, IButtonLike
+        where TResource: IPriced
         where TAction: PurchasableAction<TResource>
         where TButton: Button
     {
@@ -36,8 +35,20 @@ namespace KernelPanic.Purchasing
         /// </summary>
         internal bool PossiblyEnabled { /*internal*/ private get; set; } = true;
 
+        #region IPositioned/IBounded
+
+        public Vector2 Position
+        {
+            get => Button.Position;
+            set => Button.Position = value;
+        }
+
+        public Vector2 Size => Button.Size;
+
         /// <inheritdoc />
         public Rectangle Bounds => Button.Bounds;
+
+        #endregion
 
         /// <summary>
         /// Creates a <code>PurchaseButton</code> so that a click on it purchases

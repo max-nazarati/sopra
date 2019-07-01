@@ -95,22 +95,26 @@ namespace KernelPanic
                     BuildingBuyer.Building = building;
                     var action = new PurchasableAction<Building>(BuildingBuyer.Building);
                     action.Purchased += BuildingBought;
-                    BuildingBuyer.mAction = action;
+                    BuildingBuyer.BoughtAction = action;
                 };
                 return button;
-            }
+            } 
 
-            var cursorSprite = spriteManager.CreateTower();
+            var cursorSprite = spriteManager.CreateCursorShooter();
             cursorSprite.ScaleToWidth(64);
             var cursorShooter = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64
                 , spriteManager, sounds, StrategicTower.Towers.CursorShooter), cursorSprite);
 
-            var cdSprite = spriteManager.CreateWifiRouter();
-            cdSprite.ScaleToWidth(64);
-            var cdThrower = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64, spriteManager, sounds,
-                StrategicTower.Towers.WifiRouter), cdSprite);
+            var wifiSprite = spriteManager.CreateWifiRouter();
+            wifiSprite.ScaleToWidth(64);
+            var router = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64, spriteManager, sounds,
+                StrategicTower.Towers.WifiRouter), wifiSprite);
+
+            var cdSpite = spriteManager.CreateCdThrower();
+            var cdThrower = CreateButton(Tower.CreateTower(Vector2.Zero, 64, spriteManager, sounds,
+                StrategicTower.Towers.CdThrower), cdSpite);
             
-            return new BuildingBuyingMenu(player, spriteManager, cursorShooter, cdThrower);
+            return new BuildingBuyingMenu(player, spriteManager, cursorShooter, router, cdThrower);
         }
 
         /// <summary>

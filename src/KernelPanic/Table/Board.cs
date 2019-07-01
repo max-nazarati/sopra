@@ -1,6 +1,8 @@
+using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
+using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -16,6 +18,9 @@ namespace KernelPanic.Table
         internal Player PlayerA { get; /* required for deserialization */ private set; }
         [JsonProperty]
         internal Player PlayerB { get; /* required for deserialization */ private set; }
+
+        [JsonProperty]
+        internal UpgradePool mUpgradePool;
 
         private readonly Sprite mBase;
 
@@ -52,6 +57,23 @@ namespace KernelPanic.Table
             
             PlayerA = new Player(leftLane, rightLane);
             PlayerB = new Player(rightLane, leftLane, false);
+
+            mUpgradePool = new UpgradePool(PlayerA, content);
+            LayOutUpgradePool();
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            LayOutUpgradePool();
+        }
+
+        private void LayOutUpgradePool()
+        {
+            var centerLeft = Lane.LeftBounds.At(RelativePosition.CenterRight);
+            var centerRight = Lane.RightBounds.At(RelativePosition.CenterLeft);
+            var middle = centerLeft + (centerRight - centerLeft) / 2;
+            mUpgradePool.Position = middle - mUpgradePool.Size / 2;
         }
 
         private static Sprite CreateBase(SpriteManager spriteManager)
@@ -69,6 +91,7 @@ namespace KernelPanic.Table
             PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
             PlayerA.Update(gameTime);
             PlayerB.Update(gameTime);
+            mUpgradePool.Update(inputManager, gameTime);
         }
 
         internal GameState CheckGameState()
@@ -88,6 +111,7 @@ namespace KernelPanic.Table
         {
             LeftLane.Draw(spriteBatch, gameTime);
             RightLane.Draw(spriteBatch, gameTime);
+            mUpgradePool.Draw(spriteBatch, gameTime);
             mBase.Draw(spriteBatch, gameTime);
         }
     }

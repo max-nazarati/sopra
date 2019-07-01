@@ -1,9 +1,9 @@
 ﻿namespace KernelPanic.Purchasing
 {
     internal sealed class SinglePurchasableAction<TResource> : PurchasableAction<TResource>
-        where TResource : class, IPriced
+        where TResource : IPriced
     {
-        private bool IsPurchased { get; set; }
+        internal bool IsPurchased { get; set; }
 
         internal SinglePurchasableAction(TResource resource, bool isPurchased = false) : base(resource)
         {

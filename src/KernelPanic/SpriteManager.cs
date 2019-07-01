@@ -200,11 +200,11 @@ namespace KernelPanic
             };*/
         }
 
-        internal (Sprite, ImageSprite, TextSprite) CreateTextButton()
+        internal (Sprite, ImageSprite, TextSprite) CreateTextButton(int width, int height)
         {
             var background = new ImageSprite(Lookup(Image.ButtonBackground))
             {
-                DestinationRectangle = new Rectangle(0, 0, 250, 70)
+                DestinationRectangle = new Rectangle(0, 0, width, height)
             };
 
             var titleSprite = AutoCenteredTextSprite(Lookup(Font.Button), background);

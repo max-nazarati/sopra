@@ -2,14 +2,14 @@
 
 namespace KernelPanic.Purchasing
 {
-    internal class PurchasableAction<TResource> where TResource : class, IPriced
+    internal class PurchasableAction<TResource> where TResource : IPriced
     {
         public delegate void Delegate(Player buyer, TResource resource);
 
         public event Delegate Purchased;
         private TResource mResource;
 
-        internal PurchasableAction(TResource resource = null)
+        internal PurchasableAction(TResource resource = default(TResource))
         {
             mResource = resource;
         }
@@ -18,7 +18,7 @@ namespace KernelPanic.Purchasing
         /// Overwrites <see cref="mResource"/> with a new value.
         /// </summary>
         /// <param name="newResource">The new resource which will be purchased.</param>
-        internal void ResetResource(TResource newResource = null)
+        internal void ResetResource(TResource newResource = default(TResource))
         {
             mResource = newResource;
         }
