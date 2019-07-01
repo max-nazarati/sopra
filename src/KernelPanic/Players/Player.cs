@@ -25,7 +25,7 @@ namespace KernelPanic.Players
         private readonly ArtificialPlayer mArtificialPlayer;
 
         [DataMember(Name = "Exp")]
-        public int ExperiencePoints { get; set; }
+        public int ExperiencePoints { get; set; } = 5;
 
         internal Base Base => DefendingLane.Target;
 
