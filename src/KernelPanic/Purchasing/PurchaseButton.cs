@@ -9,7 +9,7 @@ using KernelPanic.Sprites;
 namespace KernelPanic.Purchasing
 {
     internal class PurchaseButton<TButton, TResource, TAction>: IDrawable, IUpdatable, IBounded, IButtonLike
-        where TResource: class, IPriced
+        where TResource: IPriced
         where TAction: PurchasableAction<TResource>
         where TButton: Button
     {
