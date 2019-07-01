@@ -33,7 +33,7 @@ namespace KernelPanic
             Bluescreen,
             Settings,
             Antivirus,
-            // Cable,  // TODO LOAD CABLE INTO CONTENT
+            Cable,
             CdThrower,
             Cd,
             Cursor,
@@ -42,7 +42,6 @@ namespace KernelPanic
             Mouse,
             Router,
             ShockField,
-            Wires,
             Bug,
             Nokia,
             Thunderbird,
@@ -84,7 +83,7 @@ namespace KernelPanic
                 Texture(Image.Base1, "base_1"),
                 Texture(Image.Base2, "base_2"),
                 Texture(Image.Bluescreen, "heroes/bluescreen"),
-                // Texture(Image.Cable, "towers/cable"),  // TODO LOAD CABLE INTO CONTENT
+                Texture(Image.Cable, "towers/wires"),
                 Texture(Image.Cd, "towers/cd"),
                 Texture(Image.CdThrower, "towers/cd_thrower"),
                 Texture(Image.Cursor, "towers/cursor"),
@@ -95,7 +94,6 @@ namespace KernelPanic
                 Texture(Image.Settings, "heroes/settings"),
                 Texture(Image.ShockField, "towers/shock_field"),
                 Texture(Image.Skill, "skill_tile"),
-                Texture(Image.Wires, "towers/wires"),
                 Texture(Image.Bug, "troupes/bug"),
                 Texture(Image.Nokia, "troupes/nokia"),
                 Texture(Image.Thunderbird, "troupes/thunderbird"),
@@ -240,7 +238,7 @@ namespace KernelPanic
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
         internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Tower));
         internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
-        // internal ImageSprite CreateCable() => new ImageSprite(Lookup(Image.Cable)); // TODO LOAD CABLE INTO CONTENT
+        internal ImageSprite CreateCable() => new ImageSprite(Lookup(Image.Cable));
         internal ImageSprite CreateShockField() => new ImageSprite(Lookup(Image.ShockField));
         internal ImageSprite CreateCdThrower() => new ImageSprite(Lookup(Image.CdThrower));
         internal ImageSprite CreateCursorShooter() => new ImageSprite(Lookup(Image.Mouse));
