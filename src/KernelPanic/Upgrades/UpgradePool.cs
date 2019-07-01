@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
@@ -10,8 +11,11 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.Upgrades
 {
-    public sealed class UpgradePool
+    public sealed class UpgradePool: IPositioned, IBounded
     {
+        private const int ButtonWidth = 400;
+        private const int ButtonPadding = 20;
+
         /// <summary>
         /// Stores the <see cref="PurchaseButton{TButton,TResource,TAction}"/> for an <see cref="Upgrade"/> together
         /// with the upgrades <see cref="Upgrade.Id"/>.
@@ -32,7 +36,7 @@ namespace KernelPanic.Upgrades
                 Id = upgrade.Kind;
 
                 var action = new SinglePurchasableAction<Upgrade>(upgrade);
-                var button = new TextButton(spriteManager, 500) {Title = upgrade.Label};
+                var button = new TextButton(spriteManager, ButtonWidth) {Title = upgrade.Label};
                 action.Purchased += (buyer, resource) => buyer.AddUpgrade(resource);
                 Button = new PurchaseButton<TextButton, Upgrade, SinglePurchasableAction<Upgrade>>(player, action, button);
             }
@@ -75,6 +79,28 @@ namespace KernelPanic.Upgrades
             LayOut(upperLeft);
         }
 
+        #region Layout
+
+        public Vector2 Position
+        {
+            get => mUpgrades[0][0].Button.Position;
+            set => LayOut(value);
+        }
+
+        public Vector2 Size
+        {
+            get
+            {
+                var width = mUpgrades.Length * ButtonWidth + (mUpgrades.Length - 1) * ButtonPadding;
+                var height = mUpgrades.Max(upgrades =>
+                    upgrades.Sum(upgrade => upgrade.Button.Size.Y) + (upgrades.Length - 1) * ButtonPadding
+                );
+                return new Vector2(width, height);
+            }
+        }
+
+        public Rectangle Bounds => KernelPanic.Data.Bounds.ContainingRectangle(Position, Size);
+
         /// <summary>
         /// Performs a simple layout of the buttons currently in <see cref="mUpgrades"/>. For each price there is a
         /// column, and all the columns are aligned at the top.
@@ -82,9 +108,6 @@ namespace KernelPanic.Upgrades
         /// <param name="start">The position of the first button.</param>
         private void LayOut(Vector2 start)
         {
-            const float xPadding = 20;    // Horizontal padding.
-            const float yPadding = 20;    // Vertical padding.
-
             var x = start.X;
             foreach (var upgrades in mUpgrades)
             {
@@ -92,16 +115,15 @@ namespace KernelPanic.Upgrades
                 foreach (var upgrade in upgrades)
                 {
                     upgrade.Button.Position = new Vector2(x, y);
-                    y += upgrade.Button.Size.Y + yPadding;
+                    y += upgrade.Button.Size.Y + ButtonPadding;
                 }
 
-                if (upgrades.Length > 0)
-                {
-                    // Assume that all buttons share the same width.
-                    x += upgrades[0].Button.Size.X + xPadding;
-                }
+                // Assume that all buttons share the same width.
+                x += upgrades[0].Button.Size.X + ButtonPadding;
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Enumerates through all upgrades.

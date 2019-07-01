@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -58,6 +59,21 @@ namespace KernelPanic.Table
             PlayerB = new Player(rightLane, leftLane, false);
 
             mUpgradePool = new UpgradePool(PlayerA, content, Lane.LeftBounds.At(RelativePosition.CenterRight));
+            LayOutUpgradePool();
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization()
+        {
+            LayOutUpgradePool();
+        }
+
+        private void LayOutUpgradePool()
+        {
+            var centerLeft = Lane.LeftBounds.At(RelativePosition.CenterRight);
+            var centerRight = Lane.RightBounds.At(RelativePosition.CenterLeft);
+            var middle = centerLeft + (centerRight - centerLeft) / 2;
+            mUpgradePool.Position = middle - mUpgradePool.Size / 2;
         }
 
         private static Sprite CreateBase(SpriteManager spriteManager)
