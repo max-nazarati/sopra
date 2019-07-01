@@ -4,11 +4,10 @@ using KernelPanic.Input;
 using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using KernelPanic.Sprites;
 
 namespace KernelPanic.Purchasing
 {
-    internal class PurchaseButton<TButton, TResource, TAction>: IPositioned, IBounded, IDrawable, IUpdatable, IButtonLike
+    internal class PurchaseButton<TButton, TResource, TAction>: IPositioned, IBounded, IButtonLike
         where TResource: IPriced
         where TAction: PurchasableAction<TResource>
         where TButton: Button
