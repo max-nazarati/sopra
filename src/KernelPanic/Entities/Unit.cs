@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
+using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -41,6 +42,8 @@ namespace KernelPanic.Entities
         /// </summary>
         [DataMember]
         private int RemainingLife { get; set; }
+
+        internal WaveReference Wave { get; set; }
 
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
