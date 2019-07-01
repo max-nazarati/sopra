@@ -240,6 +240,9 @@
     <Compile Include="..\KernelPanic\Interface\TextButton.cs">
       <Link>Interface\TextButton.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\IPlayerDistinction.cs">
+      <Link>IPlayerDistinction.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\IPositioned.cs">
       <Link>IPositioned.cs</Link>
     </Compile>

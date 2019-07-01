@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace KernelPanic
 {
     [DataContract]
-    internal sealed class Player
+    internal sealed class Player: IPlayerDistinction
     {
         [DataMember]
         internal Lane AttackingLane { get; }
@@ -53,6 +53,12 @@ namespace KernelPanic
         internal void AddUpgrade(Upgrade upgrade)
         {
             mUpgrades.Add(upgrade);
+        }
+
+        /// <inheritdoc />
+        public T Select<T>(T ifActive, T ifPassive)
+        {
+            return mArtificialPlayer == null ? ifActive : ifPassive;
         }
     }
 }

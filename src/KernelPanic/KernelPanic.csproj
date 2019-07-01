@@ -103,6 +103,7 @@
     <Compile Include="Interface\InterfaceComponent.cs" />
     <Compile Include="Interface\StaticComponent.cs" />
     <Compile Include="Interface\TextButton.cs" />
+    <Compile Include="IPlayerDistinction.cs" />
     <Compile Include="IPositioned.cs" />
     <Compile Include="MinimapOverlay.cs" />
     <Compile Include="PathPlanning\AStar.cs" />
