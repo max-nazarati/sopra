@@ -67,8 +67,7 @@ namespace KernelPanic.Upgrades
         /// </summary>
         /// <param name="player">The player who buys an upgrade when it is clicked.</param>
         /// <param name="spriteManager">The <see cref="SpriteManager"/>.</param>
-        /// <param name="upperLeft">The upper left corner of the first button in the pool.</param>
-        internal UpgradePool(Player player, SpriteManager spriteManager, Vector2 upperLeft)
+        internal UpgradePool(Player player, SpriteManager spriteManager)
         {
             mUpgrades = Upgrade.Matrix.Select(upgrades =>
                 upgrades.Select(upgrade =>
@@ -76,7 +75,6 @@ namespace KernelPanic.Upgrades
                 ).ToArray()
             ).ToArray();
 
-            LayOut(upperLeft);
         }
 
         #region Layout

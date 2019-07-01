@@ -58,7 +58,7 @@ namespace KernelPanic.Table
             PlayerA = new Player(leftLane, rightLane);
             PlayerB = new Player(rightLane, leftLane, false);
 
-            mUpgradePool = new UpgradePool(PlayerA, content, Lane.LeftBounds.At(RelativePosition.CenterRight));
+            mUpgradePool = new UpgradePool(PlayerA, content);
             LayOutUpgradePool();
         }
 
