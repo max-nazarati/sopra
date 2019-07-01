@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using KernelPanic.Entities;
+using KernelPanic.Interface;
 
 namespace KernelPanic.Upgrades
 {
@@ -65,6 +68,54 @@ namespace KernelPanic.Upgrades
                 return 5;
 
             throw new InvalidOperationException("Invalid upgrade id " + id);
+        }
+
+        internal string Label => IdLabel(Kind);
+
+        private static string IdLabel(Id id)
+        {
+            switch (id)
+            {
+                case Id.IncreaseLp1:
+                    return "+5% LP";
+                case Id.IncreaseGs1:
+                    return "+5% GS";
+                case Id.IncreaseVs1:
+                    return "+5% VS";
+                case Id.DecreaseAi1:
+                    return "-5% AI";
+
+                case Id.IncreaseLp2:
+                    return "+10% LP";
+                case Id.IncreaseGs2:
+                    return "+10% GS";
+                case Id.IncreaseVs2:
+                    return "+10% VS";
+                case Id.IncreaseBitcoins:
+                    return "+10% mehr Bitcoin";
+
+                case Id.CdBoomerang:
+                    return "CD als Boomerang";
+                case Id.IncreaseGsNokia:
+                    return "+40% GS bei Nokia";
+                case Id.IncreaseGsFirefox:
+                    return "+10% GS bei Firefox";
+                case Id.MoreTrojanChildren:
+                    return "+5 Einheiten bei Trojaner";
+
+                case Id.BeginningTier4:
+                    return "TODO";
+                    
+                case Id.BeginningTier5:
+                    return "TODO";
+
+                case Id.Invalid:
+                    goto default;
+                case Id.EndOfUpgrades:
+                    goto default;
+                default:
+                    throw new InvalidEnumArgumentException(nameof(id), (int) id, typeof(Id));
+            }
         }
 
         internal void Apply(Entity entity)

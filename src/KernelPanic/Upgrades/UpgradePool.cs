@@ -32,7 +32,7 @@ namespace KernelPanic.Upgrades
                 Id = upgrade.Kind;
 
                 var action = new SinglePurchasableAction<Upgrade>(upgrade);
-                var button = new TextButton(spriteManager) {Title = upgrade.Kind.ToString()};
+                var button = new TextButton(spriteManager, 500) {Title = upgrade.Label};
                 action.Purchased += (buyer, resource) => buyer.AddUpgrade(resource);
                 Button = new PurchaseButton<TextButton, Upgrade, SinglePurchasableAction<Upgrade>>(player, action, button);
             }

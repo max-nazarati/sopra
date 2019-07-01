@@ -10,9 +10,9 @@ namespace KernelPanic.Interface
         
         private readonly TextSprite mTitleSprite;
 
-        internal TextButton(SpriteManager sprites)
+        internal TextButton(SpriteManager sprites, int width = 250, int height = 70)
         {
-            (Sprite, mBackground, mTitleSprite) = sprites.CreateTextButton();
+            (Sprite, mBackground, mTitleSprite) = sprites.CreateTextButton(width, height);
         }
 
         internal string Title
