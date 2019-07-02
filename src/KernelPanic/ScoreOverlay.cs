@@ -10,13 +10,13 @@ namespace KernelPanic
 {
     internal sealed class ScoreOverlay
     {
-        private readonly PlayerOwned<Player> mPlayers;
+        private readonly PlayerIndexed<Player> mPlayers;
         private readonly PlayTime mPlayTime;
 
         private readonly Sprite mSprite;
-        private readonly PlayerOwned<TextSprite> mPowerTexts;
-        private readonly PlayerOwned<TextSprite> mMoneyTexts;
-        private readonly PlayerOwned<TextSprite> mExperienceTexts;
+        private readonly PlayerIndexed<TextSprite> mPowerTexts;
+        private readonly PlayerIndexed<TextSprite> mMoneyTexts;
+        private readonly PlayerIndexed<TextSprite> mExperienceTexts;
         private readonly TextSprite mTextTime;
         private readonly ImageButton mPauseButton;
 
@@ -25,16 +25,16 @@ namespace KernelPanic
         private static Point PowerIndicatorSize => new Point(100, 30);
         private static Point ClockSize => new Point(100, 20);
 
-        public ScoreOverlay(PlayerOwned<Player> players, SpriteManager spriteManager)
+        public ScoreOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager)
         {
             mPlayers = players;
             mPlayTime = new PlayTime();
 
             var sprites = spriteManager.CreateScoreDisplay(PowerIndicatorSize, ClockSize);
             mSprite = sprites.Main;
-            mPowerTexts = new PlayerOwned<TextSprite>(sprites.Left, sprites.Right);
-            mMoneyTexts = new PlayerOwned<TextSprite>(sprites.LeftMoney, sprites.RightMoney);
-            mExperienceTexts = new PlayerOwned<TextSprite>(sprites.LeftEP, sprites.RightEP);
+            mPowerTexts = new PlayerIndexed<TextSprite>(sprites.Left, sprites.Right);
+            mMoneyTexts = new PlayerIndexed<TextSprite>(sprites.LeftMoney, sprites.RightMoney);
+            mExperienceTexts = new PlayerIndexed<TextSprite>(sprites.LeftEP, sprites.RightEP);
             mTextTime = sprites.Clock;
             mTextTime.Text = mPlayTime.Time;
 

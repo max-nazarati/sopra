@@ -65,7 +65,7 @@ namespace KernelPanic.Table
             mUpgradePool = new UpgradePool(PlayerA, content);
             LayOutUpgradePool();
             
-            WaveManager = new WaveManager(new PlayerOwned<Player>(PlayerA, PlayerB));
+            WaveManager = new WaveManager(new PlayerIndexed<Player>(PlayerA, PlayerB));
         }
 
         [OnDeserialized]

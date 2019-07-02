@@ -16,7 +16,7 @@ namespace KernelPanic
         #region Member Variables
         
         private Sprite mSprite;
-        private readonly PlayerOwned<Player> mPlayers;
+        private readonly PlayerIndexed<Player> mPlayers;
         private readonly SpriteManager mSpriteManager;
         private readonly float mRelativeSize; // how much of the screen should be the minimap [0, 1]
         private int mSize;
@@ -43,7 +43,7 @@ namespace KernelPanic
 
         #region Konstruktor
         
-        internal MinimapOverlay(PlayerOwned<Player> players, SpriteManager spriteManager, float relativeSize = 0.3f)
+        internal MinimapOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager, float relativeSize = 0.3f)
         {
             var screenSizeX = spriteManager.ScreenSize.X;
             var screenSizeY = spriteManager.ScreenSize.Y;

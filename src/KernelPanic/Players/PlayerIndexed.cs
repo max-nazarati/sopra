@@ -8,12 +8,12 @@ namespace KernelPanic.Players
     /// using values implementing <see cref="IPlayerDistinction"/>.
     /// </summary>
     /// <typeparam name="T">The type of value stored.</typeparam>
-    internal struct PlayerOwned<T>
+    internal struct PlayerIndexed<T>
     {
         internal T A { get; set; }
         internal T B { get; set; }
 
-        internal PlayerOwned(T a, T b)
+        internal PlayerIndexed(T a, T b)
         {
             A = a;
             B = b;
@@ -32,15 +32,15 @@ namespace KernelPanic.Players
 
         /// <summary>
         /// Applies a function to both <see cref="A"/> and <see cref="B"/> and constructs a new
-        /// <see cref="PlayerOwned{T}"/> from the result.
+        /// <see cref="PlayerIndexed{T}"/> from the result.
         /// </summary>
         /// <param name="func">The function to apply.</param>
         /// <typeparam name="TMapped">The result type.</typeparam>
-        /// <returns>A new <see cref="PlayerOwned{T}"/> object with the resulting values.</returns>
+        /// <returns>A new <see cref="PlayerIndexed{T}"/> object with the resulting values.</returns>
         [Pure]
-        internal PlayerOwned<TMapped> Map<TMapped>(Func<T, TMapped> func)
+        internal PlayerIndexed<TMapped> Map<TMapped>(Func<T, TMapped> func)
         {
-            return new PlayerOwned<TMapped>(func(A), func(B));
+            return new PlayerIndexed<TMapped>(func(A), func(B));
         }
     }
 }

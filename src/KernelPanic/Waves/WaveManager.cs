@@ -9,8 +9,8 @@ namespace KernelPanic.Waves
 {
     internal sealed class WaveManager
     {
-        private PlayerOwned<List<Unit>> mUnits;
-        internal PlayerOwned<Player> Players { get; }
+        private PlayerIndexed<List<Unit>> mUnits;
+        internal PlayerIndexed<Player> Players { get; }
 
         private TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(30);
 
@@ -26,9 +26,9 @@ namespace KernelPanic.Waves
         /// </summary>
         private Wave CurrentWave => mAliveWaves.Count == 0 ? null : mAliveWaves[mAliveWaves.Count - 1];
 
-        public WaveManager(PlayerOwned<Player> players)
+        public WaveManager(PlayerIndexed<Player> players)
         {
-            mUnits = new PlayerOwned<List<Unit>>(new List<Unit>(), new List<Unit>());
+            mUnits = new PlayerIndexed<List<Unit>>(new List<Unit>(), new List<Unit>());
             Players = players;
         }
 

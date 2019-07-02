@@ -8,14 +8,14 @@ namespace KernelPanic.Waves
     internal sealed class Wave
     {
         internal int Index { get; }
-        private readonly PlayerOwned<List<Unit>> mUnits;
+        private readonly PlayerIndexed<List<Unit>> mUnits;
 
         /// <summary>
         /// Creates a new <see cref="Wave"/> with the given index and units.
         /// </summary>
         /// <param name="index">The <see cref="Wave"/>'s index.</param>
         /// <param name="units">The <see cref="Unit"/>'s initially in this wave.</param>
-        internal Wave(int index, PlayerOwned<List<Unit>> units)
+        internal Wave(int index, PlayerIndexed<List<Unit>> units)
         {
             Index = index;
             mUnits = units;
@@ -26,7 +26,7 @@ namespace KernelPanic.Waves
         /// one part is gets completely defeated, the corresponding players is awarded a experience point.
         /// </summary>
         /// <param name="players">The players.</param>
-        internal void RemoveDead(PlayerOwned<Player> players)
+        internal void RemoveDead(PlayerIndexed<Player> players)
         {
             void Remove(Player player)
             {
