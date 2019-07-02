@@ -72,25 +72,18 @@ namespace KernelPanic
 
         internal static UnitBuyingMenu Create(WaveManager waveManager, SpriteManager spriteManager)
         {
-            var player = waveManager.Players.B;    // TODO: This should become .Players.A!
-
-            void UnitBought(Player buyer, Unit unit)
-            {
-                waveManager.Add(buyer, unit);
-            }
-
             PurchaseButton<ImageButton, Unit> CreateButton(Unit unit, AnimatedSprite sprite)
             {
                 var action = new PurchasableAction<Unit>(unit);
-                action.Purchased += UnitBought;
+                action.Purchased += waveManager.Add;
                 var button = new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70);
-                return new PurchaseButton<ImageButton, Unit>(player, action, button);
+                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, action, button);
             }
 
             var bug = CreateButton(new Bug(spriteManager), spriteManager.CreateBug());
             var trojan = CreateButton(new Trojan(spriteManager), spriteManager.CreateTrojan());
             var firefox = CreateButton(new Firefox(spriteManager), spriteManager.CreateFirefox());
-            return new UnitBuyingMenu(player, spriteManager, bug, trojan, firefox);
+            return new UnitBuyingMenu(waveManager.Players.A, spriteManager, bug, trojan, firefox);
         }
 
         /// <summary>
