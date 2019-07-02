@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
@@ -36,6 +37,9 @@ namespace KernelPanic.Waves
             var wave = new Wave(++mLastIndex, mUnits);
             mAliveWaves.Add(wave);
 
+            // We have to clone the units before they are modified by Spawn.
+            var unitsCopy = mUnits.Map(units => new List<Unit>(units.Select(u => u.Clone())));
+
             void Spawn(StaticDistinction distinction)
             {
                 var units = mUnits.Select(distinction);
@@ -57,8 +61,7 @@ namespace KernelPanic.Waves
             
             Spawn(new StaticDistinction(true));
             Spawn(new StaticDistinction(false));
-            mUnits.A = new List<Unit>();
-            mUnits.B = new List<Unit>();
+            mUnits = unitsCopy;
         }
 
         internal void Add(IPlayerDistinction player, Unit unit)

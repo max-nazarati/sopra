@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.Contracts;
 
 namespace KernelPanic.Players
@@ -27,6 +28,19 @@ namespace KernelPanic.Players
         internal T Select(IPlayerDistinction distinction)
         {
             return distinction.Select(A, B);
+        }
+
+        /// <summary>
+        /// Applies a function to both <see cref="A"/> and <see cref="B"/> and constructs a new
+        /// <see cref="PlayerOwned{T}"/> from the result.
+        /// </summary>
+        /// <param name="func">The function to apply.</param>
+        /// <typeparam name="TMapped">The result type.</typeparam>
+        /// <returns>A new <see cref="PlayerOwned{T}"/> object with the resulting values.</returns>
+        [Pure]
+        internal PlayerOwned<TMapped> Map<TMapped>(Func<T, TMapped> func)
+        {
+            return new PlayerOwned<TMapped>(func(A), func(B));
         }
     }
 }
