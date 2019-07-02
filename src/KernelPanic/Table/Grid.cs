@@ -107,23 +107,6 @@ namespace KernelPanic.Table
             return tile;
         }
 
-        /* TODO implement when needed
-        private static bool CoordinateInGrid(Point coordinate)
-        {
-            coordinate = CoordinatePositionFromScreen(coordinate);
-            foreach (var rectangle in sExistingGrids)
-            {
-                if (rectangle.X <= coordinate.X && coordinate.X <= rectangle.X + rectangle.Width && 
-                    rectangle.Y <= coordinate.Y && coordinate.Y <= rectangle.Y + rectangle.Height)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        */
-
         /// <summary>
         /// calculates the position on the screen for a grid coordinate point,
         /// so things can be drawn correctly
