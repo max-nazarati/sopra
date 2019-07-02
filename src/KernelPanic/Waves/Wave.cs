@@ -8,14 +8,14 @@ namespace KernelPanic.Waves
     internal sealed class Wave
     {
         internal int Index { get; }
-        private readonly PlayerIndexed<List<Unit>> mUnits;
+        private readonly PlayerIndexed<List<Troupe>> mUnits;
 
         /// <summary>
         /// Creates a new <see cref="Wave"/> with the given index and units.
         /// </summary>
         /// <param name="index">The <see cref="Wave"/>'s index.</param>
         /// <param name="units">The <see cref="Unit"/>'s initially in this wave.</param>
-        internal Wave(int index, PlayerIndexed<List<Unit>> units)
+        internal Wave(int index, PlayerIndexed<List<Troupe>> units)
         {
             Index = index;
             mUnits = units;

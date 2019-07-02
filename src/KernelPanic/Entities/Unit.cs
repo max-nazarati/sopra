@@ -47,8 +47,6 @@ namespace KernelPanic.Entities
         [DataMember]
         private int RemainingLife { get; set; }
 
-        internal WaveReference Wave { get; set; }
-
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
         protected delegate void MoveTargetReachedDelegate(Vector2 target);

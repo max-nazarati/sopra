@@ -9,10 +9,10 @@ namespace KernelPanic.Waves
 {
     internal sealed class WaveManager
     {
-        private PlayerIndexed<List<Unit>> mUnits;
+        private PlayerIndexed<List<Troupe>> mTroupes;
         internal PlayerIndexed<Player> Players { get; }
 
-        private TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(30);
+        private TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(10);
 
         private int mLastIndex;
 
@@ -28,48 +28,56 @@ namespace KernelPanic.Waves
 
         public WaveManager(PlayerIndexed<Player> players)
         {
-            mUnits = new PlayerIndexed<List<Unit>>(new List<Unit>(), new List<Unit>());
+            mTroupes = new PlayerIndexed<List<Troupe>>(new List<Troupe>(), new List<Troupe>());
             Players = players;
         }
 
         private void Activate()
         {
-            var wave = new Wave(++mLastIndex, mUnits);
+            var wave = new Wave(++mLastIndex, mTroupes);
             mAliveWaves.Add(wave);
 
             // We have to clone the units before they are modified by Spawn.
-            var unitsCopy = mUnits.Map(units => new List<Unit>(units.Select(u => u.Clone())));
+            var unitsCopy = mTroupes.Map(troupes => new List<Troupe>(troupes.Select(t => t.Clone())));
 
             void Spawn(StaticDistinction distinction)
             {
-                var units = mUnits.Select(distinction);
+                var troupes = mTroupes.Select(distinction);
                 var player = Players.Select(distinction);
                 var spawner = player.AttackingLane.UnitSpawner;
                 
-                void SpawnChild(Unit unit)
+                void SpawnChild(Troupe troupe)
                 {
-                    player.ApplyUpgrades(unit);
-                    unit.Wave = new WaveReference(wave.Index, SpawnChild);
-                    units.Add(unit);
-                    spawner.Register(unit, false);
+                    player.ApplyUpgrades(troupe);
+                    troupe.Wave = new WaveReference(wave.Index, SpawnChild);
+                    troupes.Add(troupe);
+                    spawner.Register(troupe, false);
                 }
                 
-                foreach (var unit in units)
+                foreach (var troupe in troupes)
                 {
-                    player.ApplyUpgrades(unit);
-                    unit.Wave = new WaveReference(wave.Index, SpawnChild);
-                    spawner.Register(unit);
+                    player.ApplyUpgrades(troupe);
+                    troupe.Wave = new WaveReference(wave.Index, SpawnChild);
+                    spawner.Register(troupe);
                 }
             }
             
             Spawn(new StaticDistinction(true));
             Spawn(new StaticDistinction(false));
-            mUnits = unitsCopy;
+            mTroupes = unitsCopy;
         }
 
         internal void Add(IPlayerDistinction player, Unit unit)
         {
-            mUnits.Select(player).Add(unit);
+            if (unit is Troupe troupe)
+            {
+                mTroupes.Select(player).Add(troupe);
+                return;
+            }
+
+            var player1 = Players.Select(player);
+            player1.ApplyUpgrades(unit);
+            player1.AttackingLane.UnitSpawner.Register(unit);
         }
 
         internal void Update(GameTime gameTime)
