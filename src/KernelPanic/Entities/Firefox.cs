@@ -106,7 +106,7 @@ namespace KernelPanic.Entities
                 // just jump the next steps
                 if (AStar.Path is List<Point> path && path.Count >= 2)
                 {
-                    var jumpTarget = Grid.ScreenPositionFromCoordinate(path[2]).ToVector2();
+                    var jumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[2], 1)).Position;
                     TryActivateAbility(inputManager, true);
                     StartAbility(positionProvider, inputManager, jumpTarget);
                 }

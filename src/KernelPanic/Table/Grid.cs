@@ -130,6 +130,7 @@ namespace KernelPanic.Table
         /// </summary>
         /// <param name="upperLeft"></param>
         /// <returns></returns>
+        // TODO: Replace calls to this function with Grid.GetTile.
         public static Point ScreenPositionFromCoordinate(Point upperLeft)
         {
             var xPositionGlobal = upperLeft.X; // this is now saved in the grid + mLaneRectangle.X;
