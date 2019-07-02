@@ -28,9 +28,8 @@ namespace KernelPanic.Entities
                 var direction = new Vector2(
                     (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
-                Console.WriteLine(direction);
                 mProjectiles.Add(new Projectile(direction, Sprite.Position, Radius, Sprite.Rotation,40
-                    , 7, spriteManager.CreateCdProjectile()));
+                    , 7, 1, spriteManager.CreateCdProjectile()));
                 sounds.PlaySound(SoundManager.Sound.Shoot1);
 
                 if (mProjectiles.Count > 5)

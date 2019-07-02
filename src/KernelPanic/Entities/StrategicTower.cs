@@ -23,7 +23,9 @@ namespace KernelPanic.Entities
             WifiRouter,
             Ventilator,
             Antivirus,
-            CdThrower
+            CdThrower,
+            Cable,
+            ShockField
         }
 
         internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)

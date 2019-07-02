@@ -10,16 +10,17 @@ namespace KernelPanic.Entities
         protected readonly Vector2 mDirection, mStartPoint;
         protected readonly ImageSprite mSprite;
         protected readonly float mRadius;
-        protected int mSpeed;
+        protected readonly int mSpeed, mDamage;
         public bool mHasHit;
 
         public Projectile(Vector2 direction, Vector2 startPoint, float radius, float rotation
-            , int size, int speed, ImageSprite sprite)
+            , int size, int speed, int damage, ImageSprite sprite)
         {
             mStartPoint = startPoint;
             mDirection = direction;
             mRadius = radius;
             mSpeed = speed;
+            mDamage = damage;
             mHasHit = false;
 
             mSprite = sprite;
@@ -46,7 +47,7 @@ namespace KernelPanic.Entities
             {
                 if (!entity.Bounds.Intersects(mSprite.Bounds)) continue;
                 mHasHit = true;
-                entity.DealDamage(2);
+                entity.DealDamage(mDamage);
                 break;
             }
         }

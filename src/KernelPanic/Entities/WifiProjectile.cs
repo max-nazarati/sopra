@@ -11,8 +11,8 @@ namespace KernelPanic.Entities
         private readonly Vector2 mDirection2, mDirection3;
         private readonly Sprite mSprite2, mSprite3;
         public bool mHasHit2, mHasHit3;
-        public WifiProjectile(Vector2 direction, Vector2 startPoint, float radius, float rotation, int size, int speed
-            , ImageSprite sprite) : base(direction, startPoint, radius, rotation, size, speed, sprite)
+        public WifiProjectile(Vector2 direction, Vector2 startPoint, float radius, float rotation, int size, int speed,
+            int damage, ImageSprite sprite) : base(direction, startPoint, radius, rotation, size, speed, damage, sprite)
         {
             mHasHit2 = false;
             mHasHit3 = false;
@@ -54,21 +54,21 @@ namespace KernelPanic.Entities
             {
                 if (!entity.Bounds.Intersects(mSprite.Bounds) || mHasHit) continue;
                 mHasHit = true;
-                entity.DealDamage(2);
+                entity.DealDamage(mDamage);
             }
             
             foreach (var entity in positionProvider.NearEntities<Unit>(new Vector2(mSprite2.X, mSprite2.Y), mRadius))
             {
                 if (!entity.Bounds.Intersects(mSprite2.Bounds) || mHasHit2) continue;
                 mHasHit2 = true;
-                entity.DealDamage(2);
+                entity.DealDamage(mDamage);
             }
             
             foreach (var entity in positionProvider.NearEntities<Unit>(new Vector2(mSprite3.X, mSprite3.Y), mRadius))
             {
                 if (!entity.Bounds.Intersects(mSprite3.Bounds) || mHasHit3) continue;
                 mHasHit3 = true;
-                entity.DealDamage(2);
+                entity.DealDamage(mDamage);
             }
         }
     }

@@ -190,6 +190,19 @@ namespace KernelPanic.Table
                     UpdateHeatMap();
                 }
             }
+            
+            if (gridTile is TileIndex tile5 && inputManager.KeyPressed(Keys.I))
+            {
+                var (position, size) = mGrid.GetTile(tile5);
+                if (!EntityGraph.HasEntityAt(position))
+                {
+                    mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        ,StrategicTower.Towers. Antivirus));
+                    mHeatMap.Block(tile5.ToPoint());
+                    UpdateHeatMap();
+                }
+            }
 
             UpdateHeatMap();
 

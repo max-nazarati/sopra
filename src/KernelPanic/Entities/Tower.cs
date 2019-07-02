@@ -15,7 +15,7 @@ namespace KernelPanic.Entities
     {
         [DataMember] protected readonly float Radius;
         [DataMember] protected readonly CooldownComponent FireTimer;
-        [JsonIgnore] private List<Projectile> mProjectiles = new List<Projectile>(); 
+        [JsonIgnore] protected List<Projectile> mProjectiles = new List<Projectile>(); 
         protected Sprite mRadiusSprite;
         protected bool mInRange;
 
@@ -67,6 +67,14 @@ namespace KernelPanic.Entities
                     break;
                 case StrategicTower.Towers.CdThrower:
                     sprite = spriteManager.CreateCdThrower();
+                    returnTower = new CdThrower(sprite, spriteManager, sounds);
+                    break;
+                case StrategicTower.Towers.Cable:
+                    sprite = spriteManager.CreateCable();
+                    returnTower = new CdThrower(sprite, spriteManager, sounds);
+                    break;
+                case StrategicTower.Towers.ShockField:
+                    sprite = spriteManager.CreateShockField();
                     returnTower = new CdThrower(sprite, spriteManager, sounds);
                     break;
 

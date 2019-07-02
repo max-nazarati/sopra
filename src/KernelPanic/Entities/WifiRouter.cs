@@ -30,7 +30,7 @@ namespace KernelPanic.Entities
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
                 Console.WriteLine(direction);
                 mProjectiles.Add(new WifiProjectile(direction, Sprite.Position, Radius, Sprite.Rotation
-                    , 40, 3, spriteManager.CreateWifiProjectile()));
+                    , 40, 3, 1, spriteManager.CreateWifiProjectile()));
                 // sounds.PlaySound(SoundManager.Sound.Shoot1);
                 
                 if (mProjectiles.Count > 5)
