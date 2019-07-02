@@ -43,10 +43,12 @@ namespace KernelPanic.Waves
             void Spawn(StaticDistinction distinction)
             {
                 var units = mUnits.Select(distinction);
-                var spawner = Players.Select(distinction).AttackingLane.UnitSpawner;
-
+                var player = Players.Select(distinction);
+                var spawner = player.AttackingLane.UnitSpawner;
+                
                 void SpawnChild(Unit unit)
                 {
+                    player.ApplyUpgrades(unit);
                     unit.Wave = new WaveReference(wave.Index, SpawnChild);
                     units.Add(unit);
                     spawner.Register(unit, false);
@@ -54,6 +56,7 @@ namespace KernelPanic.Waves
                 
                 foreach (var unit in units)
                 {
+                    player.ApplyUpgrades(unit);
                     unit.Wave = new WaveReference(wave.Index, SpawnChild);
                     spawner.Register(unit);
                 }
