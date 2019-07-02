@@ -18,23 +18,17 @@ namespace KernelPanic.Table
             mHeatMap = heatMap;
         }
 
-        internal void Register(Building unit, Vector2 position)
+        internal void Register(Building building, Vector2 position)
         {
-            if (mGrid.Contains(position))
+            if (mGrid.TileFromWorldPoint(position) is TileIndex tile)
             {
-                var clonedBuilding = unit;
-                var buildingPosition = mGrid.GridPointFromWorldPoint(position)?.Position;
-                if (buildingPosition != null)
-                    clonedBuilding.Sprite.Position = (Vector2) buildingPosition;
-                else
-                {
-                    Console.WriteLine("Error, cant register a turret here");
-                    return;
-                }
-
-                mSpawnAction(clonedBuilding);
-                mHeatMap.Block(Grid.CoordinatePositionFromScreen(clonedBuilding.Sprite.Position));
+                building.Sprite.Position = mGrid.GetTile(tile).Position;
+                mHeatMap.Block(tile.ToPoint());
+                mSpawnAction(building);
+                return;
             }
+
+            Console.WriteLine("Requested an out-of bounds placement of a building: " + building);
         }
         
         private void RegisterBuilding(Building building, int x, int y)

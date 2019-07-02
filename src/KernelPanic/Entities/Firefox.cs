@@ -73,7 +73,7 @@ namespace KernelPanic.Entities
             }
             
             // jump was too long
-            while (!positionProvider.Contains(goal) || positionProvider.HasEntityAt(goal))
+            while (!positionProvider.Grid.Contains(goal) || positionProvider.HasEntityAt(goal))
             {
                 goal -= mAbility.Pop();
             }

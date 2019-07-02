@@ -125,17 +125,6 @@ namespace KernelPanic.Table
         */
 
         /// <summary>
-        /// calculates the position in the Grid for a given MousePosition on the screen
-        /// </summary>
-        /// <returns></returns>
-        public static Point CoordinatePositionFromScreen(Vector2 screenCoordinate)
-        {
-            // var posX = mRelativeX / SingleTileSizePixel * SingleTileSizePixel;
-            // var posY = mRelativeY / SingleTileSizePixel * SingleTileSizePixel;
-            return (screenCoordinate / KachelSize).ToPoint();
-        }
-
-        /// <summary>
         /// calculates the position on the screen for a grid coordinate point,
         /// so things can be drawn correctly
         /// </summary>
@@ -167,30 +156,19 @@ namespace KernelPanic.Table
             int subTileCount = 1,
             RelativePosition origin = RelativePosition.Center)
         {
+            if (TileFromWorldPoint(point, subTileCount) is TileIndex tile)
+                return GetTile(tile, origin);
+
+            return null;
+        }
+
+        internal TileIndex? TileFromWorldPoint(Vector2 point, int subTileCount = 1)
+        {
             if (!Contains(point))
                 return null;
 
             var subTileSize = (float) KachelSize / subTileCount;
-            void Calculate(ref float val)
-            {
-                var fullDiv = (int) (val / KachelSize);
-                var fullRem = val % KachelSize;
-
-                var subTileDiv = (int) (fullRem / subTileSize);
-                
-                // If there is no remainder to be put into the next sub-tile, use one less full sub-tile.
-                if (Math.Abs(subTileDiv * subTileSize - fullRem) < 0.0001)
-                    --subTileDiv;
-                
-                val = fullDiv * KachelSize + subTileDiv * subTileSize;
-            }
-
-            point -= mSprite.Position;
-            Calculate(ref point.X);
-            Calculate(ref point.Y);
-            point += mSprite.Position + origin.RectangleOrigin(new Vector2(subTileSize));
-
-            return (point, (float) KachelSize / subTileCount);
+            return new TileIndex(((point - mSprite.Position) / subTileSize).ToPoint(), subTileCount);
         }
 
         /// <summary>

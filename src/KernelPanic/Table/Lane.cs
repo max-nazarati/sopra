@@ -138,42 +138,42 @@ namespace KernelPanic.Table
         internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
         {
             // It seems we can't use pattern matching here because of compiler-limitations.
-            var gridPoint = mGrid.GridPointFromWorldPoint(inputManager.TranslatedMousePosition);
-            if (gridPoint != null && inputManager.KeyPressed(Keys.T))
+            var gridTile = mGrid.TileFromWorldPoint(inputManager.TranslatedMousePosition);
+            if (gridTile is TileIndex tile1 && inputManager.KeyPressed(Keys.T))
             {
-                var (position, size) = gridPoint.Value;
+                var (position, size) = mGrid.GetTile(tile1);
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
                     EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
                         , StrategicTower.Towers.CursorShooter));
-                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
+                    mHeatMap.Block(tile1.ToPoint());
                     UpdateHeatMap();
                 }
             }
             
-            if (gridPoint != null && inputManager.KeyPressed(Keys.R))
+            if (gridTile is TileIndex tile2 && inputManager.KeyPressed(Keys.R))
             {
-                var (position, size) = gridPoint.Value;
+                var (position, size) = mGrid.GetTile(tile2);
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
                     EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
                         , StrategicTower.Towers.WifiRouter));
-                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
+                    mHeatMap.Block(tile2.ToPoint());
                     UpdateHeatMap();
                 }
             }
             
-            if (gridPoint != null && inputManager.KeyPressed(Keys.Z))
+            if (gridTile is TileIndex tile3 && inputManager.KeyPressed(Keys.Z))
             {
-                var (position, size) = gridPoint.Value;
+                var (position, size) = mGrid.GetTile(tile3);
                 if (!EntityGraph.HasEntityAt(position))
                 {
                     mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
                     EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
                         , StrategicTower.Towers.CdThrower));
-                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
+                    mHeatMap.Block(tile3.ToPoint());
                     UpdateHeatMap();
                 }
             }

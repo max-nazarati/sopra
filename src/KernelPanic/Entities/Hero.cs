@@ -78,10 +78,10 @@ namespace KernelPanic.Entities
             
             // set the start Position for the AStar (something like the current position should do great)
             var start = Sprite.Position;
-            var startPoint = Grid.CoordinatePositionFromScreen(start);
+            var startPoint = positionProvider.RequireTile(start).ToPoint();
             
             // set the target Position for the AStar (latest updated target should be saved in mTarget
-            var target = Grid.CoordinatePositionFromScreen(targetVector);
+            var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
             AStar = positionProvider.MakePathFinding(this, startPoint, target);
@@ -97,11 +97,11 @@ namespace KernelPanic.Entities
 
             if (path.Count > 2)
             {
-                MoveTarget = positionProvider.TilePoint(path[1]);
+                MoveTarget = positionProvider.Grid.GetTile(new TileIndex(path[1], 1)).Position;
             }
             else
             {
-                MoveTarget = positionProvider.TilePoint(target);
+                MoveTarget = positionProvider.Grid.GetTile(new TileIndex(target, 1)).Position;
                 MoveTargetReached += MoveTargetReachedHandler;
             }
         }
@@ -133,7 +133,7 @@ namespace KernelPanic.Entities
             if (!inputManager.MousePressed(InputManager.MouseButton.Right)) return;
 
             var mouse = inputManager.TranslatedMousePosition;
-            if (positionProvider.GridCoordinate(mouse) == null) return;
+            if (positionProvider.Grid.GridPointFromWorldPoint(mouse, 1)?.Position == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
             ShouldMove = true;
             MoveTargetReached -= MoveTargetReachedHandler;
@@ -293,9 +293,8 @@ namespace KernelPanic.Entities
 
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
         {
-            var startPoint = Grid.CoordinatePositionFromScreen(Sprite.Position);
-            var target = Grid.ScreenPositionFromCoordinate(basePosition);
-            mTarget = target;
+            var startPoint = positionProvider.RequireTile(this).ToPoint();
+            mTarget = positionProvider.RequireTile(basePosition.ToVector2()).ToPoint();
             AStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
             ShouldMove = true;
         }
