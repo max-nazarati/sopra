@@ -13,7 +13,7 @@ namespace KernelPanic.Entities
     {
         [JsonIgnore] private List<WifiProjectile> mProjectiles = new List<WifiProjectile>();
         internal WifiRouter(Sprite sprite, SpriteManager spriteManager
-            , SoundManager sounds) : base(40, radius:2, cooldown: TimeSpan.FromSeconds(1), sprite: sprite, spriteManager: spriteManager, sounds: sounds)
+            , SoundManager sounds) : base(40, radius:3, cooldown: TimeSpan.FromSeconds(1), sprite: sprite, spriteManager: spriteManager, sounds: sounds)
         {
             FireTimer.CooledDown += timer =>
             {
@@ -28,7 +28,6 @@ namespace KernelPanic.Entities
                 var direction = new Vector2(
                     (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
-                Console.WriteLine(direction);
                 mProjectiles.Add(new WifiProjectile(direction, Sprite.Position, Radius, Sprite.Rotation
                     , 40, 3, 1, spriteManager.CreateWifiProjectile()));
                 // sounds.PlaySound(SoundManager.Sound.Shoot1);
