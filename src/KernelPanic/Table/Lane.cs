@@ -182,6 +182,7 @@ namespace KernelPanic.Table
 
             var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
+            UnitSpawner.Update(gameTime);
         }
 
         #endregion
