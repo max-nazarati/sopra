@@ -24,6 +24,9 @@ namespace KernelPanic.Entities
         /// </summary>
         [DataMember]
         protected int Speed { get; set; }
+        private int OriginalSpeed { get; set; }
+
+        public bool mIsSlower;
 
         /// <summary>
         /// The AS of this Unit. This is the damage dealt to the enemy's base if reached.
@@ -55,6 +58,8 @@ namespace KernelPanic.Entities
             : base(price, sprite, spriteManager)
         {
             Speed = speed;
+            OriginalSpeed = speed;
+            mIsSlower = false;
             MaximumLife = life;
             RemainingLife = life;
             AttackStrength = attackStrength;
@@ -116,6 +121,15 @@ namespace KernelPanic.Entities
                     CheckBaseReached(positionProvider);
                     move = theMove;
                 }
+            }
+
+            if (mIsSlower)
+            {
+                Speed = OriginalSpeed / 2;
+            }
+            else
+            {
+                Speed = OriginalSpeed;
             }
             
             if (!(Sprite is AnimatedSprite animated))

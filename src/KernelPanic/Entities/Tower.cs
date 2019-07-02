@@ -58,8 +58,8 @@ namespace KernelPanic.Entities
                     returnTower = new WifiRouter(sprite, spriteManager, sounds);
                     break;
                 case StrategicTower.Towers.Ventilator:
-                    sprite = spriteManager.CreateCdThrower();
-                    returnTower = new CursorShooter(sprite, spriteManager, sounds);
+                    sprite = spriteManager.CreateVentilator();
+                    returnTower = new Ventilator(sprite, spriteManager, sounds);
                     break;
                 case StrategicTower.Towers.Antivirus:
                     sprite = spriteManager.CreateAntivirus();

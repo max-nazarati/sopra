@@ -178,6 +178,19 @@ namespace KernelPanic.Table
                 }
             }
 
+            if (gridTile is TileIndex tile4 && inputManager.KeyPressed(Keys.U))
+            {
+                var (position, size) = mGrid.GetTile(tile4);
+                if (!EntityGraph.HasEntityAt(position))
+                {
+                    mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
+                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
+                        , StrategicTower.Towers.Ventilator));
+                    mHeatMap.Block(tile4.ToPoint());
+                    UpdateHeatMap();
+                }
+            }
+
             UpdateHeatMap();
 
             var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target, owner);

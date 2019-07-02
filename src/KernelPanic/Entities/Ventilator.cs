@@ -1,17 +1,47 @@
 using System;
+using System.Collections.Generic;
+using KernelPanic.Data;
+using KernelPanic.Input;
 using KernelPanic.Sprites;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities
 {
     internal class Ventilator : StrategicTower
     {
-        internal Ventilator(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager
-            , SoundManager sounds) : base(price, radius, cooldown, sprite, spriteManager, sounds)
+        private List<Unit> mSlowedDownUnits, mSlowedDownUnitsOld;
+        
+        internal Ventilator(Sprite sprite, SpriteManager spriteManager
+            , SoundManager sounds) : base(20, 2, new TimeSpan(0,0,0),  sprite, spriteManager, sounds)
         {
+            mSlowedDownUnits = new List<Unit>();
+            mSlowedDownUnitsOld = new List<Unit>();
+            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
         internal Ventilator(SpriteManager spriteManager, SoundManager soundManager) : base(spriteManager, soundManager)
         {
+        }
+        
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        {
+            base.Update(positionProvider, gameTime, inputManager);
+            mSlowedDownUnits.Clear();
+            foreach (var entity in positionProvider.NearEntities<Unit>(Sprite.Position, 200))
+            {
+                if (!(Vector2.Distance(Sprite.Position, entity.Sprite.Position) <= 200)) continue;
+                entity.mIsSlower = true;
+                mSlowedDownUnits.Add(entity);
+            }
+
+            foreach (var unit in mSlowedDownUnitsOld)
+            {
+                if (!mSlowedDownUnits.Contains(unit))
+                {
+                    unit.mIsSlower = false;
+                }
+            }
+            mSlowedDownUnitsOld = new List<Unit>(mSlowedDownUnits);
         }
     }
 }
