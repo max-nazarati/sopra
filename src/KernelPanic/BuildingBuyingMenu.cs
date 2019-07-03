@@ -119,17 +119,6 @@ namespace KernelPanic
             return new BuildingBuyingMenu(player, spriteManager, cursorShooter, router, cdThrower);
         }
 
-        /// <summary>
-        /// Resets the counter of each element to zero.
-        /// </summary>
-        internal void ResetCounts()
-        {
-            foreach (var element in Elements)
-            {
-                element.Reset();
-            }
-        }
-
         internal override Dictionary<Type, PurchasableAction<Building>> BuyingActions => throw new NotImplementedException();
     }
 }

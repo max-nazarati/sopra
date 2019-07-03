@@ -41,20 +41,14 @@ namespace KernelPanic
             internal Element(Type unitType, PurchaseButton<ImageButton, Unit> button, SpriteManager spriteManager)
             {
                 UnitType = unitType;
-                mCounterSprite = spriteManager.CreateText();
+                mCounter = 0;
+                mCounterSprite = spriteManager.CreateText("0");
                 mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterRight);
-                Reset();
 
                 // When a unit is purchased, increase its counter.
                 mButton = button;
                 mButton.Action.Purchased += (buyer, resource) => mCounterSprite.Text = (++mCounter).ToString();
                 mButton.Button.Sprite.SetOrigin(RelativePosition.TopRight);
-            }
-
-            internal void Reset()
-            {
-                mCounter = 0;
-                mCounterSprite.Text = "0";
             }
 
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -100,17 +94,6 @@ namespace KernelPanic
             var trojan = CreateElement<Trojan>();
             var firefox = CreateElement<Firefox>();
             return new UnitBuyingMenu(waveManager.Players.A, spriteManager, bug, trojan, firefox);
-        }
-
-        /// <summary>
-        /// Resets the counter of each element to zero.
-        /// </summary>
-        internal void ResetCounts()
-        {
-            foreach (var element in Elements)
-            {
-                element.Reset();
-            }
         }
 
         internal override Dictionary<Type, PurchasableAction<Unit>> BuyingActions
