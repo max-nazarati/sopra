@@ -42,7 +42,7 @@ namespace KernelPanic.Entities
 
         [DataMember]
         protected CooldownComponent Cooldown { get; }
-        internal AStar AStar; // save the AStar for path-drawing
+        internal AStar mAStar; // save the AStar for path-drawing
         private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
         protected AbilityState AbilityStatus { get; set; }
@@ -84,15 +84,15 @@ namespace KernelPanic.Entities
             var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
-            AStar = positionProvider.MakePathFinding(this, startPoint, target);
-            mPathVisualizer = positionProvider.Visualize(AStar);
-            var path = AStar.Path;
+            mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+            mPathVisualizer = positionProvider.Visualize(mAStar);
+            var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
-                AStar = positionProvider.MakePathFinding(this, startPoint, target);
-                mPathVisualizer = positionProvider.Visualize(AStar);
-                path = AStar.Path;
+                mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+                mPathVisualizer = positionProvider.Visualize(mAStar);
+                path = mAStar.Path;
             }
 
             if (path.Count > 2)
@@ -108,7 +108,7 @@ namespace KernelPanic.Entities
 
         private void MoveTargetReachedHandler(Vector2 target)
         {
-            AStar = null;
+            mAStar = null;
             mTarget = null;
             mPathVisualizer = null;
             MoveTargetReached -= MoveTargetReachedHandler;
@@ -141,7 +141,7 @@ namespace KernelPanic.Entities
 
         private Point FindNearestWalkableField(Point target)
         {
-            var result = AStar.FindNearestField();
+            var result = mAStar.FindNearestField();
             return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);
         }
         
@@ -219,9 +219,7 @@ namespace KernelPanic.Entities
 
                 case AbilityState.Finished:
                     // finally cleaning up has to be done and starting to cool down
-                    ShouldMove = true;
-                    AbilityStatus = AbilityState.CoolingDown;
-                    Cooldown.Reset();
+                    FinishAbility();
                     break;
 
                 case AbilityState.CoolingDown:
@@ -268,7 +266,7 @@ namespace KernelPanic.Entities
             }
         }
 
-        protected virtual void StartAbility(PositionProvider positionProvider, InputManager inputManager, Vector2? jumpTarget=null)
+        protected virtual void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             #region DEBUG
 #if DEBUG
@@ -286,6 +284,13 @@ namespace KernelPanic.Entities
             // Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
             AbilityStatus = AbilityState.Finished;
         }
+
+        protected virtual void FinishAbility()
+        {
+            ShouldMove = true;
+            AbilityStatus = AbilityState.CoolingDown;
+            Cooldown.Reset();
+        }
         
         #endregion Ability
 
@@ -295,7 +300,7 @@ namespace KernelPanic.Entities
         {
             var startPoint = positionProvider.RequireTile(this).ToPoint();
             mTarget = positionProvider.RequireTile(basePosition.ToVector2()).ToPoint();
-            AStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
+            mAStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
             ShouldMove = true;
         }
 
