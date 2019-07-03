@@ -22,7 +22,6 @@ namespace KernelPanic.Entities
             return new Projectile(direction,
                 Sprite.Position,
                 Radius,
-                Sprite.Rotation,
                 40,
                 7,
                 1,

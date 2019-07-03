@@ -52,10 +52,7 @@ namespace KernelPanic.Entities
             if (NextTarget == null)
                 return;
 
-            var direction = new Vector2(
-                (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
-                -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
-            Projectiles.Add(CreateProjectile(direction));
+            Projectiles.Add(CreateProjectile(NextTarget.Sprite.Position - Sprite.Position));
             timer.Reset();
         }
 

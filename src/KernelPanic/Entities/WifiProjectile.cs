@@ -12,11 +12,11 @@ namespace KernelPanic.Entities
         private readonly Sprite mSprite2, mSprite3;
         public bool mHasHit2, mHasHit3;
         public WifiProjectile(Vector2 direction, Vector2 startPoint, float radius, float rotation, int size, int speed,
-            int damage, ImageSprite sprite) : base(direction, startPoint, radius, rotation, size, speed, damage, sprite)
+            int damage, ImageSprite sprite) : base(direction, startPoint, radius, size, speed, damage, sprite)
         {
             mHasHit2 = false;
             mHasHit3 = false;
-            mSprite.Rotation = (float)(rotation % (Math.PI * 2));
+            Sprite.Rotation = (float)(rotation % (Math.PI * 2));
             mSprite2 = sprite.Clone();
             mSprite2.Rotation = (float)(rotation % (Math.PI * 2)+0.4);
             mSprite3 = sprite.Clone();
@@ -36,23 +36,23 @@ namespace KernelPanic.Entities
         
         public new void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (!(Vector2.Distance(mStartPoint, mSprite.Position) < mRadius) ||
+            if (!(Vector2.Distance(mStartPoint, Sprite.Position) < mRadius) ||
                 !(Vector2.Distance(mStartPoint, mSprite2.Position) < mRadius) ||
                 !(Vector2.Distance(mStartPoint, mSprite3.Position) < mRadius)) return;
-            if (!mHasHit) mSprite.Draw(spriteBatch, gameTime);
+            if (!mHasHit) Sprite.Draw(spriteBatch, gameTime);
             if (!mHasHit2) mSprite2.Draw(spriteBatch, gameTime);
             if (!mHasHit3) mSprite3.Draw(spriteBatch, gameTime);
         }
 
         public new void Update(PositionProvider positionProvider)
         {
-            mSprite.Position += mDirection * mSpeed;
+            Sprite.Position += mDirection * mSpeed;
             mSprite2.Position += mDirection2 * mSpeed;
             mSprite3.Position += mDirection3 * mSpeed;
             
-            foreach (var entity in positionProvider.NearEntities<Unit>(new Vector2(mSprite.X, mSprite.Y), mRadius))
+            foreach (var entity in positionProvider.NearEntities<Unit>(new Vector2(Sprite.X, Sprite.Y), mRadius))
             {
-                if (!entity.Bounds.Intersects(mSprite.Bounds) || mHasHit) continue;
+                if (!entity.Bounds.Intersects(Sprite.Bounds) || mHasHit) continue;
                 mHasHit = true;
                 entity.DealDamage(mDamage);
             }
