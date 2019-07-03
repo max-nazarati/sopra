@@ -11,18 +11,15 @@ namespace KernelPanic.Entities
     {
         private List<Unit> mSlowedDownUnits, mSlowedDownUnitsOld;
         
-        internal Ventilator(Sprite sprite, SpriteManager spriteManager
-            , SoundManager sounds) : base(20, 2, new TimeSpan(0,0,0),  sprite, spriteManager, sounds)
+        internal Ventilator(SpriteManager spriteManager
+            , SoundManager sounds) : base(20, 2, new TimeSpan(0,0,0)
+            ,  spriteManager.CreateVentilator(), spriteManager, sounds)
         {
             mSlowedDownUnits = new List<Unit>();
             mSlowedDownUnitsOld = new List<Unit>();
             mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
-        internal Ventilator(SpriteManager spriteManager, SoundManager soundManager) : base(spriteManager, soundManager)
-        {
-        }
-        
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             base.Update(positionProvider, gameTime, inputManager);

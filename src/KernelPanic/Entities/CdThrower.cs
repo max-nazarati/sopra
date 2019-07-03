@@ -12,8 +12,9 @@ namespace KernelPanic.Entities
     internal class CdThrower : StrategicTower
     {
         [JsonIgnore] private readonly List<Projectile> mProjectiles = new List<Projectile>();
-        internal CdThrower(Sprite sprite, SpriteManager spriteManager
-            , SoundManager sounds) : base(price:20, radius: 4, cooldown: TimeSpan.FromSeconds(2), sprite: sprite, spriteManager: spriteManager, sounds: sounds)
+        internal CdThrower(SpriteManager spriteManager
+            , SoundManager sounds) : base(price:20, radius: 4, cooldown: TimeSpan.FromSeconds(2)
+            , sprite: spriteManager.CreateCdThrower(), spriteManager: spriteManager, sounds: sounds)
         {
             FireTimer.CooledDown += timer =>
             {
@@ -43,10 +44,6 @@ namespace KernelPanic.Entities
             mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
-        internal CdThrower(SpriteManager spriteManager, SoundManager soundManager) : base(spriteManager, soundManager)
-        {
-        }
-        
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
@@ -63,10 +60,8 @@ namespace KernelPanic.Entities
             mRadiusSprite.Draw(spriteBatch, gameTime);
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager) 
         {
-            base.Update(positionProvider, gameTime, inputManager);
-
             if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= Radius)
             {
                 // Turn into the direction of the target.
@@ -83,10 +78,7 @@ namespace KernelPanic.Entities
             FireTimer.Update(gameTime);
             foreach (var projectile in new List<Projectile>(mProjectiles))
             {
-                if (projectile.mHasHit)
-                    mProjectiles.Remove(projectile);
-                else
-                    projectile.Update(positionProvider);
+                projectile.Update(positionProvider);
             }
         }
     }

@@ -12,8 +12,9 @@ namespace KernelPanic.Entities
     internal class WifiRouter : StrategicTower
     {
         [JsonIgnore] private List<WifiProjectile> mProjectiles = new List<WifiProjectile>();
-        internal WifiRouter(Sprite sprite, SpriteManager spriteManager
-            , SoundManager sounds) : base(40, radius:3, cooldown: TimeSpan.FromSeconds(1), sprite: sprite, spriteManager: spriteManager, sounds: sounds)
+        internal WifiRouter(SpriteManager spriteManager
+            , SoundManager sounds) : base(40, radius:3, cooldown: TimeSpan.FromSeconds(1)
+            , sprite: spriteManager.CreateWifiRouter(), spriteManager: spriteManager, sounds: sounds)
         {
             FireTimer.CooledDown += timer =>
             {
@@ -42,13 +43,7 @@ namespace KernelPanic.Entities
 
             mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
-
-        internal WifiRouter(SpriteManager spriteManager, SoundManager soundManager)
-            : base(spriteManager, soundManager)
-        {
-        }
         
-
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
@@ -79,7 +74,7 @@ namespace KernelPanic.Entities
             {
                 // If no unit is in range we wiggle the tower.
                 mInRange = false;
-                Sprite.Rotation = (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
+                Sprite.Rotation = (float) (gameTime.TotalGameTime.TotalSeconds % (2 * Math.PI));
             }
 
             FireTimer.Update(gameTime);

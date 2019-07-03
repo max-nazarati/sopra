@@ -11,10 +11,10 @@ namespace KernelPanic
     internal class BuildingBuyer
     {
         internal static Building Building { get; set; }
-        private Player mBuyer;
+        private readonly Player mBuyer;
         internal static PurchasableAction<Building> BoughtAction;
         private bool mSelected;
-        private GameStateManager mStateManager;
+        private readonly GameStateManager mStateManager;
         internal BuildingBuyer(Player player, GameStateManager gameStateManager)
         {
             mBuyer = player;
@@ -53,20 +53,27 @@ namespace KernelPanic
                         if (Building.GetType() == typeof(CursorShooter))
                         {
                             mBuyer.DefendingLane.BuildingSpawner.Register
-                                (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
-                                StrategicTower.Towers.CursorShooter), position);
+                                (new CursorShooter(mStateManager.Sprite, mStateManager.Sound), position);
                         }
                         else if (Building.GetType() == typeof(WifiRouter))
                         {
                             mBuyer.DefendingLane.BuildingSpawner.Register
-                                (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
-                                StrategicTower.Towers.WifiRouter), position);
+                                (new WifiRouter(mStateManager.Sprite, mStateManager.Sound), position);
                         }
                         else if (Building.GetType() == typeof(CdThrower))
                         {
                             mBuyer.DefendingLane.BuildingSpawner.Register
-                                (Tower.CreateTower(Vector2.Zero, 64, mStateManager.Sprite, mStateManager.Sound,
-                                StrategicTower.Towers.CdThrower), position);
+                                (new CdThrower(mStateManager.Sprite, mStateManager.Sound), position);
+                        }
+                        else if (Building.GetType() == typeof(Antivirus))
+                        {
+                            mBuyer.DefendingLane.BuildingSpawner.Register
+                                (new Antivirus(mStateManager.Sprite, mStateManager.Sound), position);
+                        }
+                        else if (Building.GetType() == typeof(Ventilator))
+                        {
+                            mBuyer.DefendingLane.BuildingSpawner.Register
+                                (new Ventilator(mStateManager.Sprite, mStateManager.Sound), position);
                         }
                     }
                 }

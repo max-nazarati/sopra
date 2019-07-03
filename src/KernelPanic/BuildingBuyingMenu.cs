@@ -104,19 +104,26 @@ namespace KernelPanic
 
             var cursorSprite = spriteManager.CreateCursorShooter();
             cursorSprite.ScaleToWidth(64);
-            var cursorShooter = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64
-                , spriteManager, sounds, StrategicTower.Towers.CursorShooter), cursorSprite);
+            var cursorShooter = CreateButton(new CursorShooter(spriteManager, sounds),  cursorSprite);
 
             var wifiSprite = spriteManager.CreateWifiRouter();
             wifiSprite.ScaleToWidth(64);
-            var router = CreateButton(Tower.CreateTower(new Vector2(0, 0), 64, spriteManager, sounds,
-                StrategicTower.Towers.WifiRouter), wifiSprite);
+            var router = CreateButton(new WifiRouter(spriteManager, sounds), wifiSprite);
 
-            var cdSpite = spriteManager.CreateCdThrower();
-            var cdThrower = CreateButton(Tower.CreateTower(Vector2.Zero, 64, spriteManager, sounds,
-                StrategicTower.Towers.CdThrower), cdSpite);
+            var cdSprite = spriteManager.CreateCdThrower();
+            cdSprite.ScaleToWidth(64);
+            var cdThrower = CreateButton(new CdThrower(spriteManager, sounds), cdSprite);
             
-            return new BuildingBuyingMenu(player, spriteManager, cursorShooter, router, cdThrower);
+            var AntivirusSprite = spriteManager.CreateAntivirus();
+            AntivirusSprite.ScaleToWidth(64);
+            var antivirus = CreateButton(new Antivirus(spriteManager, sounds), AntivirusSprite);
+
+            var ventilatorSprite = spriteManager.CreateVentilator();
+            cdSprite.ScaleToWidth(64);
+            var ventilator = CreateButton(new Ventilator(spriteManager, sounds), ventilatorSprite);
+            
+            return new BuildingBuyingMenu(player, spriteManager, cursorShooter, router, cdThrower
+                , antivirus, ventilator);
         }
 
         internal override Dictionary<Type, PurchasableAction<Building>> BuyingActions => throw new NotImplementedException();

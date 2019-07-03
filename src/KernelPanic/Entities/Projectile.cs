@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using KernelPanic.Data;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -11,6 +12,7 @@ namespace KernelPanic.Entities
         protected readonly ImageSprite mSprite;
         protected readonly float mRadius;
         protected readonly int mSpeed, mDamage;
+        private List<Entity> mHasHitted;
         public bool mHasHit;
 
         public Projectile(Vector2 direction, Vector2 startPoint, float radius, float rotation
@@ -22,6 +24,7 @@ namespace KernelPanic.Entities
             mSpeed = speed;
             mDamage = damage;
             mHasHit = false;
+            mHasHitted = new List<Entity>();
 
             mSprite = sprite;
             mSprite.Position = startPoint;
@@ -47,7 +50,9 @@ namespace KernelPanic.Entities
             {
                 if (!entity.Bounds.Intersects(mSprite.Bounds)) continue;
                 mHasHit = true;
-                entity.DealDamage(mDamage);
+                if (!mHasHitted.Contains(entity))
+                    entity.DealDamage(mDamage);
+                mHasHitted.Add(entity);
                 break;
             }
         }

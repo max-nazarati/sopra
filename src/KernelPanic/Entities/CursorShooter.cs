@@ -12,8 +12,9 @@ namespace KernelPanic.Entities
     internal class CursorShooter : StrategicTower
     {
         [JsonIgnore] private readonly List<Projectile> mProjectiles = new List<Projectile>();
-        internal CursorShooter(Sprite sprite, SpriteManager spriteManager
-            , SoundManager sounds) : base(price: 20, radius: 4, cooldown: TimeSpan.FromSeconds(1), sprite: sprite, spriteManager: spriteManager, sounds: sounds)
+        internal CursorShooter(SpriteManager spriteManager, SoundManager sounds) 
+            : base(price: 20, radius: 4, cooldown: TimeSpan.FromSeconds(1), sprite: spriteManager.CreateCursorShooter()
+            , spriteManager: spriteManager, sounds: sounds)
 
         {
             FireTimer.CooledDown += timer =>
@@ -47,11 +48,6 @@ namespace KernelPanic.Entities
             mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
-        internal CursorShooter(SpriteManager spriteManager, SoundManager soundManager)
-            : base(spriteManager, soundManager)
-        {
-        }
-        
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);

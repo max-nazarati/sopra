@@ -6,8 +6,9 @@ namespace KernelPanic.Entities
 {
     internal class Antivirus : StrategicTower
     {
-        internal Antivirus(Sprite sprite, SpriteManager spriteManager
-            , SoundManager sounds) : base(price:30, radius:5, cooldown: TimeSpan.FromSeconds(3), sprite: sprite, spriteManager: spriteManager, sounds: sounds)
+        internal Antivirus(SpriteManager spriteManager
+            , SoundManager sounds) : base(price:30, radius:5, cooldown: TimeSpan.FromSeconds(3)
+            , sprite: spriteManager.CreateAntivirus(), spriteManager: spriteManager, sounds: sounds)
         {
             FireTimer.CooledDown += timer =>
             {
@@ -38,10 +39,6 @@ namespace KernelPanic.Entities
             };
 
             mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
-        }
-
-        internal Antivirus(SpriteManager spriteManager, SoundManager soundManager) : base(spriteManager, soundManager)
-        {
         }
     }
 }

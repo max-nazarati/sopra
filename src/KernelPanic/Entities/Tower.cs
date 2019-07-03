@@ -29,6 +29,8 @@ namespace KernelPanic.Entities
         {
             FireTimer = new CooldownComponent(cooldown);
             Radius = radius * Grid.KachelSize;
+            sprite.ScaleToHeight(64);
+            sprite.SetOrigin(RelativePosition.Center);
         }
 
         ~Tower()
@@ -40,52 +42,6 @@ namespace KernelPanic.Entities
         private void AfterDeserialization(StreamingContext context)
         {
             mRadiusSprite = SpriteManager.CreateTowerRadiusIndicator(Radius);
-        }
-        
-        internal static Tower CreateTower(Vector2 position, float size, SpriteManager spriteManager, SoundManager sounds
-            , StrategicTower.Towers tower)
-        {
-            Tower returnTower;
-            ImageSprite sprite;
-            switch (tower)
-            {
-                case StrategicTower.Towers.CursorShooter:
-                    sprite = spriteManager.CreateCursorShooter();
-                    returnTower = new CursorShooter(sprite, spriteManager, sounds);
-                    break;
-                case StrategicTower.Towers.WifiRouter:
-                    sprite = spriteManager.CreateWifiRouter();
-                    returnTower = new WifiRouter(sprite, spriteManager, sounds);
-                    break;
-                case StrategicTower.Towers.Ventilator:
-                    sprite = spriteManager.CreateVentilator();
-                    returnTower = new Ventilator(sprite, spriteManager, sounds);
-                    break;
-                case StrategicTower.Towers.Antivirus:
-                    sprite = spriteManager.CreateAntivirus();
-                    returnTower = new Antivirus(sprite, spriteManager, sounds);
-                    break;
-                case StrategicTower.Towers.CdThrower:
-                    sprite = spriteManager.CreateCdThrower();
-                    returnTower = new CdThrower(sprite, spriteManager, sounds);
-                    break;
-                case StrategicTower.Towers.Cable:
-                    sprite = spriteManager.CreateCable();
-                    returnTower = new CdThrower(sprite, spriteManager, sounds);
-                    break;
-                case StrategicTower.Towers.ShockField:
-                    sprite = spriteManager.CreateShockField();
-                    returnTower = new CdThrower(sprite, spriteManager, sounds);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(tower), tower, null);
-            }
-            sprite.Position = position;
-            sprite.ScaleToHeight(size);
-            sprite.SetOrigin(RelativePosition.Center);
-
-            return returnTower;
         }
 
         protected override void CompleteClone()
