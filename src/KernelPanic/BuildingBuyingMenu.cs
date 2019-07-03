@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Accord.MachineLearning.Performance;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Purchasing;
@@ -16,66 +17,62 @@ namespace KernelPanic
 {
     internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element, Building>
     {
+        private Button mSelected;
+
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
-            private readonly ImageButton mButton;
-            private readonly TextSprite mCounterSprite;
-            private int mCounter;
+            internal Button Button;
+            internal Building Building { get; }
 
             Vector2 IPositioned.Position
             {
-                get => mButton.Sprite.Position;
-                set
-                {
-                    var buttonSprite = mButton.Sprite;
-                    buttonSprite.Position = value;
-                    mCounterSprite.X = buttonSprite.Position.X + 72 /* padding between text and button */;
-                    mCounterSprite.Y = value.Y + buttonSprite.Height / 2;
-                }
+                get => Button.Sprite.Position;
+                set => Button.Sprite.Position = value;
             }
 
-            Vector2 IPositioned.Size => mButton.Size;
+            Vector2 IPositioned.Size => Button.Size;
 
-            internal Element(ImageButton button, SpriteManager spriteManager)
+            internal Element(Building building, SpriteManager spriteManager)
             {
-                mCounterSprite = spriteManager.CreateText();
-                mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterLeft);
-                Reset();
-
-                // When a unit is purchased, increase its counter.
-                mButton = button;
-                mButton.Clicked += (btn, input) =>
-                {
-                    if (true)
-                    {
-                        mCounterSprite.Text = (++mCounter).ToString();
-                    }
-                };
-                //mButton.Button.Sprite.ScaleToWidth(64);
-                mButton.Sprite.SetOrigin(RelativePosition.TopLeft);
-            }
-
-            private void Reset()
-            {
-                mCounter = 0;
-                mCounterSprite.Text = "0";
+                Building = building;
+                var sprite = building.Sprite.Clone();
+                sprite.SetOrigin(RelativePosition.TopLeft);
+                Button = new ImageButton(spriteManager, (ImageSprite)sprite, 70, 70);
             }
 
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
             {
-                mButton.Draw(spriteBatch, gameTime);
-                mCounterSprite.Draw(spriteBatch, gameTime);
+                Button.Draw(spriteBatch, gameTime);
             }
 
             public void Update(InputManager inputManager, GameTime gameTime)
             {
-                mButton.Update(inputManager, gameTime);
+                Button.Update(inputManager, gameTime);
             }
         }
 
-        private BuildingBuyingMenu(Player player, SpriteManager spriteManager, params ImageButton[] buttons)
-                : base(MenuPosition(Lane.Side.Left, spriteManager), player, buttons.Select(b => new Element(b, spriteManager)))
+        private BuildingBuyingMenu(Player player, BuildingBuyer buildingBuyer, SpriteManager spriteManager, params Element[] elements)
+            : base(MenuPosition(Lane.Side.Left, spriteManager), player, elements)
         {
+            foreach (var element in Elements)
+            {
+                element.Button.Clicked += (button, input) =>
+                {
+                    if (mSelected != null)
+                        mSelected.ViewPressed = false;
+
+                    if (button == mSelected)
+                    {
+                        buildingBuyer.Building = null;
+                        mSelected = null;
+                        return;
+                    }
+
+                    buildingBuyer.Building = element.Building;
+                    mSelected = button;
+                    mSelected.ViewPressed = true;
+                };
+            }
         }
 
         internal static BuildingBuyingMenu Create(Player player,
@@ -83,46 +80,15 @@ namespace KernelPanic
             SpriteManager spriteManager,
             SoundManager sounds)
         {
-            void BuildingBought(Player buyer, Building building)
-            {
-                sounds.PlaySound(SoundManager.Sound.TowerPlacement);
-            }
+            Element CreateElement<TBuilding>() where TBuilding : Building =>
+                new Element(Building.Create<TBuilding>(spriteManager, sounds), spriteManager);
 
-            ImageButton CreateButton(Building building, ImageSprite sprite)
-            {
-                var button = new ImageButton(spriteManager, sprite, 70, 70);
-                button.Clicked += (btn, input) =>
-                {
-                    var action = new PurchasableAction<Building>(building);
-                    action.Purchased += BuildingBought;
-                    buildingBuyer.Building = building;
-                    buildingBuyer.BuyAction = action;
-                };
-                return button;
-            } 
-
-            var cursorSprite = spriteManager.CreateCursorShooter();
-            cursorSprite.ScaleToWidth(64);
-            var cursorShooter = CreateButton(new CursorShooter(spriteManager, sounds),  cursorSprite);
-
-            var wifiSprite = spriteManager.CreateWifiRouter();
-            wifiSprite.ScaleToWidth(64);
-            var router = CreateButton(new WifiRouter(spriteManager, sounds), wifiSprite);
-
-            var cdSprite = spriteManager.CreateCdThrower();
-            cdSprite.ScaleToWidth(64);
-            var cdThrower = CreateButton(new CdThrower(spriteManager, sounds), cdSprite);
-            
-            var antivirusSprite = spriteManager.CreateAntivirus();
-            antivirusSprite.ScaleToWidth(64);
-            var antivirus = CreateButton(new Antivirus(spriteManager, sounds), antivirusSprite);
-
-            var ventilatorSprite = spriteManager.CreateVentilator();
-            cdSprite.ScaleToWidth(64);
-            var ventilator = CreateButton(new Ventilator(spriteManager, sounds), ventilatorSprite);
-            
-            return new BuildingBuyingMenu(player, spriteManager, 
-                cursorShooter, router, cdThrower , antivirus, ventilator);
+            return new BuildingBuyingMenu(player, buildingBuyer, spriteManager,
+                CreateElement<CursorShooter>(),
+                CreateElement<WifiRouter>(),
+                CreateElement<CdThrower>(),
+                CreateElement<Antivirus>(),
+                CreateElement<Ventilator>());
         }
 
         internal override Dictionary<Type, PurchasableAction<Building>> BuyingActions =>
