@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace KernelPanic.Players
 {
     [DataContract]
-    internal sealed class Player: IPlayerDistinction
+    internal class Player: IPlayerDistinction
     {
         [DataMember]
         internal Lane AttackingLane { get; }
@@ -24,32 +24,22 @@ namespace KernelPanic.Players
         [DataMember]
         private readonly List<Upgrade> mUpgrades = new List<Upgrade>();
 
-        private readonly ArtificialPlayer mArtificialPlayer;
-
         [DataMember(Name = "Exp")]
         public int ExperiencePoints { get; set; } = 5;
 
         internal Base Base => DefendingLane.Target;
 
-        internal Player(Lane defendingLane, Lane attackingLane, bool human = true) : this(9999, defendingLane, attackingLane)
+        internal Player(Lane defendingLane, Lane attackingLane) : this(defendingLane, attackingLane, 9999)
         {
-            if (!human)
-            {
-                mArtificialPlayer = new ArtificialPlayer(this, DefendingLane.mSpriteManager, DefendingLane.mSounds);
-            }
+
         }
 
         [JsonConstructor]
-        private Player(int bitcoins, Lane defendingLane, Lane attackingLane)
+        protected Player(Lane defendingLane, Lane attackingLane, int bitcoins)
         {
             Bitcoins = bitcoins;
             AttackingLane = attackingLane;
             DefendingLane = defendingLane;
-        }
-
-        internal void Update(GameTime gameTime)
-        {
-            mArtificialPlayer?.Update(gameTime);
         }
 
         #region Upgrades
@@ -78,7 +68,7 @@ namespace KernelPanic.Players
         /// <inheritdoc />
         public T Select<T>(T ifActive, T ifPassive)
         {
-            return mArtificialPlayer == null ? ifActive : ifPassive;
+            return this is ArtificialPlayer ? ifPassive : ifActive;
         }
     }
 }

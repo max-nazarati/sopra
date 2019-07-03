@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Players;
@@ -19,7 +20,7 @@ namespace KernelPanic.Table
         [JsonProperty]
         internal Player PlayerA { get; /* required for deserialization */ private set; }
         [JsonProperty]
-        internal Player PlayerB { get; /* required for deserialization */ private set; }
+        internal ArtificialPlayer PlayerB { get; /* required for deserialization */ private set; }
 
         [JsonProperty]
         internal UpgradePool mUpgradePool;
@@ -47,22 +48,22 @@ namespace KernelPanic.Table
 
         #region Constructing a Board
 
-        internal Board(SpriteManager content, SoundManager sounds, bool deserializing = false)
+        internal Board(SpriteManager spriteManager, SoundManager soundManager, bool deserializing = false)
         {
-            mBase = CreateBase(content);
+            mBase = CreateBase(spriteManager);
             if (deserializing)
             {
                 // If this is object is deserialized the other properties are set automatically later.
                 return;
             }
 
-            var leftLane = new Lane(Lane.Side.Left, content, sounds);
-            var rightLane = new Lane(Lane.Side.Right, content, sounds);
+            var leftLane = new Lane(Lane.Side.Left, spriteManager, soundManager);
+            var rightLane = new Lane(Lane.Side.Right, spriteManager, soundManager);
             
             PlayerA = new Player(leftLane, rightLane);
-            PlayerB = new Player(rightLane, leftLane, false);
+            PlayerB = new ArtificialPlayer(rightLane, leftLane, 9999, spriteManager, soundManager);
 
-            mUpgradePool = new UpgradePool(PlayerA, content);
+            mUpgradePool = new UpgradePool(PlayerA, spriteManager);
             LayOutUpgradePool();
             
             WaveManager = new WaveManager(new PlayerIndexed<Player>(PlayerA, PlayerB));
@@ -95,7 +96,6 @@ namespace KernelPanic.Table
         {
             PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
             PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
-            PlayerA.Update(gameTime);
             PlayerB.Update(gameTime);
             mUpgradePool.Update(inputManager, gameTime);
             WaveManager.Update(gameTime);

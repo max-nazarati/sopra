@@ -8,33 +8,27 @@ using Microsoft.Xna.Framework;
 namespace KernelPanic.ArtificialIntelligence
 {
     
-    internal sealed class ArtificialPlayer
+    internal sealed class ArtificialPlayer : Player
     {
-        private Player mPlayer;
         private AttackPlanner mAttackPlanner;
         private DefencePlanner mDefencePlanner;
+        private UpgradePlanner mUpgradePlanner;
         private int[] mDefenceData;
         private int[] mAttackData;
-        private UpgradePlanner mUpgradePlanner;
-        private Lane mDefendingLane;
-        private Lane mAttackingLane;
         private int mAttackMoney;
         private int mDefenceMoney;
 
         private int[] mOwnTroupeAmount;
 
         private Planner[] mPlanners;
-        
-        public ArtificialPlayer(Player player, SpriteManager spriteManager, SoundManager soundManager)
+
+        internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins, SpriteManager spriteManager, SoundManager soundManager) : base(defendingLane, attackingLane, bitcoins)
         {
-            mPlayer = player;
-            mAttackPlanner = new AttackPlanner(player, spriteManager);
-            mDefencePlanner = new DefencePlanner(player, spriteManager, soundManager);
-            mUpgradePlanner = new UpgradePlanner(player, spriteManager);
+            mAttackPlanner = new AttackPlanner(this, spriteManager);
+            mDefencePlanner = new DefencePlanner(this, spriteManager, soundManager);
+            mUpgradePlanner = new UpgradePlanner(this, spriteManager);
             mPlanners = new Planner[] {mAttackPlanner, mDefencePlanner, mUpgradePlanner};
-            mDefendingLane = mPlayer.DefendingLane;
-            mAttackingLane = mPlayer.AttackingLane;
-            mOwnTroupeAmount = new int[5]; // amount of different troupes in the game
+            mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
         }
 
         #region Data
@@ -49,8 +43,8 @@ namespace KernelPanic.ArtificialIntelligence
         private void SetMoney()
         {
             // for now we are only splitting the money equal between attack and defence
-            mAttackMoney = (int)(mPlayer.Bitcoins * 0.5);
-            mDefenceMoney = (int)(mPlayer.Bitcoins * 0.5);;
+            mAttackMoney = (int)(Bitcoins * 0.5);
+            mDefenceMoney = (int)(Bitcoins * 0.5);;
         }
 
         private void SetAttackData()
