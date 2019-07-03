@@ -78,7 +78,7 @@ namespace KernelPanic
         {
         }
 
-        internal static BuildingBuyingMenu Create(Player player, SpriteManager spriteManager, Entity selection, SoundManager sounds)
+        internal static BuildingBuyingMenu Create(Player player, SpriteManager spriteManager, SoundManager sounds)
         {
             void BuildingBought(Player buyer, Building building)
             {

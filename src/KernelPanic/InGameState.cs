@@ -18,8 +18,8 @@ namespace KernelPanic
     {
         private readonly Board mBoard;
         private readonly SelectionManager mSelectionManager;
-        private BuildingBuyer mBuildingBuyer;
-        private InGameOverlay mHud;
+        private readonly BuildingBuyer mBuildingBuyer;
+        private readonly InGameOverlay mHud;
 
         internal int SaveSlot { get; }
 
@@ -35,9 +35,12 @@ namespace KernelPanic
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
             SaveSlot = saveSlot;
 
-            mHud = new InGameOverlay(mBoard.WaveManager, mSelectionManager, gameStateManager);
+            var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
+            var buildingMenu = BuildingBuyingMenu.Create(mBoard.PlayerA, gameStateManager.Sprite, gameStateManager.Sound);
+            mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager);
+
             mBoard.PlayerB.InitializePlanners(
-                mHud.UnitBuyingMenu.BuyingActions,
+                unitMenu.BuyingActions,
                 upgradeId => mBoard.mUpgradePool[upgradeId]
             );
         }
