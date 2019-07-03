@@ -69,15 +69,17 @@ namespace KernelPanic.Waves
 
         internal void Add(IPlayerDistinction player, Unit unit)
         {
-            if (unit is Troupe troupe)
+            var clone = unit.Clone();
+
+            if (clone is Troupe troupe)
             {
                 mTroupes.Select(player).Add(troupe);
                 return;
             }
 
             var player1 = Players.Select(player);
-            player1.ApplyUpgrades(unit);
-            player1.AttackingLane.UnitSpawner.Register(unit);
+            player1.ApplyUpgrades(clone);
+            player1.AttackingLane.UnitSpawner.Register(clone);
         }
 
         internal void Update(GameTime gameTime)
