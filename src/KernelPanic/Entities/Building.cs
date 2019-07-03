@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Input;
@@ -20,6 +21,30 @@ namespace KernelPanic.Entities
         {
             BitcoinWorth = price;
             sprite.ScaleToWidth(Table.Grid.KachelSize);
+        }
+
+        /// <summary>
+        /// Creates an object of type <typeparamref name="TBuilding"/> using reflection. <typeparamref name="TBuilding"/>
+        /// should have a two-argument constructor which takes a <see cref="SpriteManager"/> and a <see cref="SoundManager"/>.
+        /// 
+        /// <para>
+        /// Prefer the explicit constructor if possible.
+        /// </para>
+        /// </summary>
+        /// <param name="spriteManager">The <see cref="SpriteManager"/> passed to the constructor.</param>
+        /// <param name="soundManager"></param>
+        /// <typeparam name="TBuilding">The type of <see cref="Unit"/> to create.</typeparam>
+        /// <returns>A new instance of <typeparamref name="TBuilding"/>.</returns>
+        internal static TBuilding Create<TBuilding>(SpriteManager spriteManager, SoundManager soundManager) where TBuilding : Building
+        {
+            const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.CreateInstance |
+                                              BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+
+            return (TBuilding) Activator.CreateInstance(typeof(TBuilding),
+                bindingFlags,
+                null,
+                new object[] {spriteManager, soundManager},
+                null);
         }
 
         private int BitcoinWorth { get; set; }
