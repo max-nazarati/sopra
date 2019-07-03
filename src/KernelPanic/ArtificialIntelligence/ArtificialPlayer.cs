@@ -5,6 +5,7 @@ using KernelPanic.Entities;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Table;
+using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.ArtificialIntelligence
@@ -27,16 +28,18 @@ namespace KernelPanic.ArtificialIntelligence
         internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins, SpriteManager spriteManager, SoundManager soundManager) : base(defendingLane, attackingLane, bitcoins)
         {
             mDefencePlanner = new DefencePlanner(this, spriteManager, soundManager);
-            mUpgradePlanner = new UpgradePlanner(this, spriteManager);
             mPlanners = new Planner[] {mAttackPlanner, mDefencePlanner, mUpgradePlanner};
             mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
         }
 
         #region Data
 
-        internal void InitializeAttackPlanner(Dictionary<Type, PurchasableAction<Unit>> actions)
+        internal void InitializePlanners(
+            Dictionary<Type, PurchasableAction<Unit>> unitBuyingActions,
+            Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup)
         {
-            mAttackPlanner = new AttackPlanner(this, actions);
+            mAttackPlanner = new AttackPlanner(this, unitBuyingActions);
+            mUpgradePlanner = new UpgradePlanner(this, upgradeLookup);
         }
 
         private void SetData()

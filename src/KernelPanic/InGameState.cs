@@ -39,7 +39,10 @@ namespace KernelPanic
             SaveSlot = saveSlot;
 
             mHud = new InGameOverlay(mBoard.WaveManager, mSelectionManager, gameStateManager);
-            mBoard.PlayerB.InitializeAttackPlanner(mHud.UnitBuyingMenu.BuyingActions);
+            mBoard.PlayerB.InitializePlanners(
+                mHud.UnitBuyingMenu.BuyingActions,
+                upgradeId => mBoard.mUpgradePool[upgradeId]
+            );
             
             var entityGraph = mBoard.LeftLane.EntityGraph;
             InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
