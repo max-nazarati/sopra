@@ -47,20 +47,17 @@ namespace KernelPanic.Entities
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
-
             foreach (var projectile in mProjectiles)
             {
                 projectile.Draw(spriteBatch, gameTime);
             }
-            
             if (!Selected)
                 return;
-            
             mRadiusSprite.Position = Sprite.Position;
             mRadiusSprite.Draw(spriteBatch, gameTime);
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager) 
+        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= Radius)
             {
