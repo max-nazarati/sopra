@@ -52,10 +52,10 @@ namespace KernelPanic
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
             , GraphicsDeviceManager graphics)
         {
-            if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.mScoreOverlay.Pause)
+            if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.ScoreOverlay.Pause)
             {
                 GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, graphics));
-                mHud.mScoreOverlay.Pause = false;
+                mHud.ScoreOverlay.Pause = false;
                 return;
             }
             mBuildingBuyer.Update(inputManager);
@@ -79,7 +79,8 @@ namespace KernelPanic
 
         internal Storage Data => new Storage
         {
-            Board = mBoard
+            Board = mBoard,
+            GameTime = mHud.ScoreOverlay.Time
         };
 
         #endregion
