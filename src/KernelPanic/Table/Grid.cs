@@ -41,25 +41,12 @@ namespace KernelPanic.Table
         /// The size of a single tile in pixels.
         /// </summary>
         internal const int KachelSize = 100; // TODO
-        
-        private const int TilesPerSprite = 1; // per Dimension
-        private const int SingleTileSizePixel = KachelSize / TilesPerSprite;
 
         private static int TileCountPixelSize(int tiles) => tiles * KachelSize;
 
         private readonly Sprite mSprite;
 
         public Rectangle Bounds => mSprite.Bounds;
-
-        internal int TileCount
-        {
-            get
-            {
-                var rectangle = LaneRectangle;
-                var cutout = TileCutout;
-                return rectangle.Width * rectangle.Height - cutout.Width * cutout.Height;
-            }
-        }
 
         internal Grid(Rectangle laneBounds, SpriteManager sprites, Lane.Side laneSide)
         {
