@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Entities
 {
-    internal class WifiProjectile : Projectile
+    internal sealed class WifiProjectile : Projectile
     {
         private readonly Vector2 mDirection2, mDirection3;
         private readonly Sprite mSprite2, mSprite3;

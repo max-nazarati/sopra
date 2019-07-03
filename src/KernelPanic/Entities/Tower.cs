@@ -92,13 +92,13 @@ namespace KernelPanic.Entities
             }
 
             FireTimer.Update(gameTime);
-            foreach (var projectile in new List<Projectile>(Projectiles))
+
+            foreach (var projectile in Projectiles)
             {
-                if (projectile.mHasHit)
-                    Projectiles.Remove(projectile);
-                else
-                    projectile.Update(positionProvider);
-            }   
+                projectile.Update(positionProvider);
+            }
+
+            Projectiles.RemoveAll(projectile => projectile.mHasHit);
         }
     }
 }
