@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -62,6 +63,29 @@ namespace KernelPanic.Entities
             RemainingLife = life;
             AttackStrength = attackStrength;
             ShouldMove = true;
+        }
+
+        /// <summary>
+        /// Creates an object of type <typeparamref name="TUnit"/> using reflection. <typeparamref name="TUnit"/> should
+        /// have a one-argument constructor which takes a <see cref="SpriteManager"/>.
+        ///
+        /// <para>
+        /// Prefer the explicit constructor if possible.
+        /// </para>
+        /// </summary>
+        /// <param name="spriteManager">The <see cref="SpriteManager"/> passed to the constructor.</param>
+        /// <typeparam name="TUnit">The type of <see cref="Unit"/> to create.</typeparam>
+        /// <returns>A new instance of <typeparamref name="TUnit"/>.</returns>
+        internal static TUnit Create<TUnit>(SpriteManager spriteManager) where TUnit : Unit
+        {
+            const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.CreateInstance |
+                                              BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+
+            return (TUnit) Activator.CreateInstance(typeof(TUnit),
+                bindingFlags,
+                null,
+                new object[] {spriteManager},
+                null);
         }
 
         internal Unit Clone() => Clone<Unit>();

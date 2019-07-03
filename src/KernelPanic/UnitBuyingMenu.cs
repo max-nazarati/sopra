@@ -81,22 +81,21 @@ namespace KernelPanic
 
         internal static UnitBuyingMenu Create(WaveManager waveManager, SpriteManager spriteManager)
         {
-            Element CreateElement<T>()
+            PurchaseButton<ImageButton, Unit> CreateButton<TUnit>() where TUnit : Unit
             {
-                const BindingFlags bindingFlags =
-                    BindingFlags.Instance | BindingFlags.CreateInstance | BindingFlags.NonPublic |
-                    BindingFlags.DeclaredOnly;
-                var unit = (Unit)Activator.CreateInstance(typeof(T), bindingFlags, null, new object[] {spriteManager}, null);
-                var button = CreateButton(unit, (AnimatedSprite) unit.Sprite);
-                return new Element(typeof(T), button, spriteManager);
-            }
-
-            PurchaseButton<ImageButton, Unit> CreateButton(Unit unit, AnimatedSprite sprite)
-            {
+                var unit = Unit.Create<TUnit>(spriteManager);
+                // Can we have units with an other sprite type than an animated sprite?
+                var image = ((AnimatedSprite)unit.Sprite).getSingleFrame(spriteManager);
                 var action = new PurchasableAction<Unit>(unit);
                 action.Purchased += waveManager.Add;
-                var button = new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70);
+                var button = new ImageButton(spriteManager, image, 70, 70);
                 return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, action, button);
+            }
+
+            Element CreateElement<TUnit>() where TUnit : Unit
+            {
+                var button = CreateButton<TUnit>();
+                return new Element(typeof(TUnit), button, spriteManager);
             }
 
             return new UnitBuyingMenu(waveManager.Players.A, spriteManager, 

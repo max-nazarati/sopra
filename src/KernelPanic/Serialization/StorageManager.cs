@@ -72,11 +72,7 @@ namespace KernelPanic.Serialization
 
             // A unit is assumed to be constructable with a SpriteManager as the only argument.
             void RegisterUnit<TUnit>() where TUnit : Unit =>
-                builder.Register(c => Activator.CreateInstance(typeof(TUnit),
-                    bindingFlags,
-                    null,
-                    new object[] {manager.Sprite},
-                    null)).As<TUnit>();
+                builder.Register(c => Unit.Create<TUnit>(manager.Sprite)).As<TUnit>();
 
             // A building is assumed to be constructable with the SpriteManager and the SoundManager as the only arguments.
             void RegisterBuilding<TBuilding>() where TBuilding : Building =>
