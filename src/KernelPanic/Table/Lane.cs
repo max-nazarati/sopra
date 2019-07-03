@@ -121,7 +121,7 @@ namespace KernelPanic.Table
             if (entities?.Count > 0)
             {
                 EntityGraph.Add(entities);
-                obstacleMatrix.Rasterize(entities, mGrid.Bounds, entity => entity is Building);
+                obstacleMatrix.Raster(entities, entity => entity is Building);
             }
 
             foreach (var tileIndex in obstacleMatrix.Obstacles)

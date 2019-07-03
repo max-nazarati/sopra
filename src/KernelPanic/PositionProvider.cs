@@ -86,7 +86,7 @@ namespace KernelPanic
         internal AStar MakePathFinding(Entity entity, Point start, Point target)
         {
             var matrixObstacles = new ObstacleMatrix(Grid);
-            matrixObstacles.Rasterize(mEntities, Grid.Bounds, e => e != entity);
+            matrixObstacles.Raster(mEntities, e => e != entity);
             var aStar = new AStar(start, target, matrixObstacles);
             aStar.CalculatePath();
             return aStar;

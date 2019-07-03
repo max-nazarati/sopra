@@ -17,6 +17,7 @@ namespace KernelPanic.PathPlanning
         private readonly bool[,] mObstacles;
         private readonly bool mHasBorder;
         private readonly int mSubTileCount;
+        private readonly Grid mGrid;
 
         #endregion
 
@@ -35,6 +36,7 @@ namespace KernelPanic.PathPlanning
             if (subTileCount < 1)
                 throw new ArgumentOutOfRangeException(nameof(subTileCount), "should be at least 1");
 
+            mGrid = grid;
             mHasBorder = includeBorder;
             mSubTileCount = subTileCount;
 
@@ -100,7 +102,11 @@ namespace KernelPanic.PathPlanning
         /// </summary>
         /// <param name="point">The point to ask about.</param>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="point"/> lies outside this matrix.</exception>
-        internal bool this[Point point] => this[point.Y, point.X];
+        internal bool this[Point point]
+        {
+            get => this[point.Y, point.X];
+            private set => this[point.Y, point.X] = value;
+        }
 
         private bool this[int row, int column]
         {
@@ -137,31 +143,22 @@ namespace KernelPanic.PathPlanning
         /// Adds all elements from <paramref name="elements"/> for which the predicate returns <c>true</c> as obstacles
         /// into this <see cref="ObstacleMatrix"/>. Every tile—even if only intersected by a small part—is marked as an
         /// obstacle.
-        ///
-        /// <para>
-        /// Because an obstacle matrix has no inherent position or size in the world, <paramref name="rasterBounds"/>
-        /// has to be provided to define where this matrix is located.
-        /// </para>
         /// </summary>
         /// <param name="elements">The elements to add, can be a <see cref="QuadTree{T}"/>.</param>
-        /// <param name="rasterBounds">Defines the area which is spanned by the <see cref="ObstacleMatrix"/>.</param>
         /// <param name="predicate">A predicate to filter the elements.</param>
         /// <typeparam name="T">The type of the elements, must implement <see cref="IBounded"/>.</typeparam>
-        internal void Rasterize<T>(IEnumerable<T> elements, Rectangle rasterBounds, Func<T, bool> predicate = null) where T: IBounded
+        internal void Raster<T>(IEnumerable<T> elements, Func<T, bool> predicate = null) where T: IBounded
         {
-            var xSize = (float) rasterBounds.Width / Columns;
-            var ySize = (float) rasterBounds.Height / Rows;
             foreach (var element in predicate == null ? elements : elements.Where(predicate))
             {
-                var bounds = Rectangle.Intersect(element.Bounds, rasterBounds);
-
-                for (var i = (int) (bounds.Top / ySize); i * ySize < bounds.Bottom; ++i)
+                var center = element.Bounds.At(RelativePosition.Center);
+                if (mGrid.TileFromWorldPoint(center, mSubTileCount) is TileIndex tile)
                 {
-                    for (var j = (int) (bounds.Left / xSize); j * xSize < bounds.Right; ++j)
-                    {
-                        // Use our indexer because it automatically translates the coordinates in case there is a border.
-                        this[i, j] = true;
-                    }
+                    this[tile.ToPoint()] = true;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Element {element} is outside the bounds");
                 }
             }
         }
