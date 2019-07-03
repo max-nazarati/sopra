@@ -47,7 +47,7 @@ namespace KernelPanic.Entities
 
         protected override void CompleteClone()
         {
-            base.Clone();
+            base.CompleteClone();
             mRadiusSprite = mRadiusSprite.Clone();
             mProjectiles = new List<Projectile>(mProjectiles);
         }

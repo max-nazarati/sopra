@@ -28,6 +28,7 @@ namespace KernelPanic.Entities
 
         protected override void CompleteClone()
         {
+            base.CompleteClone();
             mAbility = new Stack<Vector2>(mAbility);
         }
 
