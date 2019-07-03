@@ -29,7 +29,6 @@ namespace KernelPanic.Entities
                 var direction = new Vector2(
                     (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
-                Console.WriteLine(direction);
                 mProjectiles.Add(new Projectile(direction, Sprite.Position, Radius, Sprite.Rotation,20
                     , 10, 2, spriteManager.CreateCursorProjectile()));
                 sounds.PlaySound(SoundManager.Sound.Shoot1);
