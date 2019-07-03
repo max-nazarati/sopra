@@ -18,6 +18,7 @@ namespace KernelPanic.ArtificialIntelligence
         public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions) : base(player)
         {
             mActions = actions;
+            FastWave();
         }
         
         #endregion
@@ -37,21 +38,18 @@ namespace KernelPanic.ArtificialIntelligence
             if (mTimer == interval)
             {
                 BuyEntity<Thunderbird>();
-                // BuyThunderbird();
                 mTimer++;
                 return;
             }
             if (mTimer == 2 * interval)
             {
                 BuyEntity<Bug>();
-                // BuyBug();
                 mTimer++;
                 return;
             }
             if (mTimer == 3 * interval)
             {
                 BuyEntity<Virus>();
-                // BuyVirus();
                 mTimer++;
                 return;
             }
@@ -64,12 +62,23 @@ namespace KernelPanic.ArtificialIntelligence
             if (mTimer >= 5 * interval)
             {
                 BuyEntity<Trojan>();
-                // BuyTrojan();
                 mTimer = 0;
                 return;
             }
 
             mTimer++;
+        }
+
+        private void FastWave()
+        {
+            BuyEntity<Bug>(1);
+        }
+        
+        private void FastAndFurious()
+        {
+            BuyEntity<Bug>(15);
+            BuyEntity<Virus>(10);
+            BuyEntity<Thunderbird>(5);
         }
         
         #endregion
@@ -79,7 +88,7 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] attackData, GameTime gameTime)
         {
             base.Update();
-            TroupeParade();
+            // TroupeParade();
         }
         
         #endregion
