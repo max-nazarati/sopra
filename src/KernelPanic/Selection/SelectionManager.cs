@@ -40,13 +40,11 @@ namespace KernelPanic.Selection
                 if (mSelection != null)
                 {
                     mSelection.Selected = false;
-                    mSelection.Removed -= SelectedEntityRemoved;
                 }
 
                 if (value != null)
                 {
                     value.Selected = true;
-                    value.Removed += SelectedEntityRemoved;
                 }
 
                 SelectionChanged?.Invoke(mSelection, value);
@@ -56,6 +54,11 @@ namespace KernelPanic.Selection
 
         internal void Update(InputManager inputManager)
         {
+            if (Selection?.WantsRemoval == true)
+            {
+                Selection = null;
+            }
+            
             if (inputManager.IsClaimed(InputManager.MouseButton.Left))
             {
                 // No click for us to handle.
@@ -87,11 +90,6 @@ namespace KernelPanic.Selection
                 // The click was inside a lane but not on an entity => deselect any selected entities.
                 Selection = null;
             }
-        }
-
-        private void SelectedEntityRemoved(Entity entity)
-        {
-            Selection = null;
         }
     }
 }
