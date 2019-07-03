@@ -78,7 +78,10 @@ namespace KernelPanic
         {
         }
 
-        internal static BuildingBuyingMenu Create(Player player, SpriteManager spriteManager, SoundManager sounds)
+        internal static BuildingBuyingMenu Create(Player player,
+            BuildingBuyer buildingBuyer,
+            SpriteManager spriteManager,
+            SoundManager sounds)
         {
             void BuildingBought(Player buyer, Building building)
             {
@@ -90,10 +93,10 @@ namespace KernelPanic
                 var button = new ImageButton(spriteManager, sprite, 70, 70);
                 button.Clicked += (btn, input) =>
                 {
-                    BuildingBuyer.Building = building;
-                    var action = new PurchasableAction<Building>(BuildingBuyer.Building);
+                    var action = new PurchasableAction<Building>(building);
                     action.Purchased += BuildingBought;
-                    BuildingBuyer.BoughtAction = action;
+                    buildingBuyer.Building = building;
+                    buildingBuyer.BuyAction = action;
                 };
                 return button;
             } 

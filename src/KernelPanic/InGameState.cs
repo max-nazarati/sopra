@@ -31,12 +31,12 @@ namespace KernelPanic
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
-            mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager);
+            mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA);
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
             SaveSlot = saveSlot;
 
             var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
-            var buildingMenu = BuildingBuyingMenu.Create(mBoard.PlayerA, gameStateManager.Sprite, gameStateManager.Sound);
+            var buildingMenu = BuildingBuyingMenu.Create(mBoard.PlayerA, mBuildingBuyer, gameStateManager.Sprite, gameStateManager.Sound);
             mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager);
 
             mBoard.PlayerB.InitializePlanners(
