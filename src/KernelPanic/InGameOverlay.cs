@@ -12,11 +12,10 @@ namespace KernelPanic
     {
         internal Entity mSelection;
         internal readonly ScoreOverlay mScoreOverlay;
-        private readonly UnitBuyingMenu mUnitBuyingMenu;
-        private readonly BuildingBuyingMenu mBuildingBuyingMenu;
         private readonly MinimapOverlay mMinimapOverlay;
-        // public BuildingBuyingMenu BuildingMenu { get; set; }
-        // public UnitBuyingMenu UnitMenu { get; set; }
+
+        internal UnitBuyingMenu UnitBuyingMenu { get; }
+        internal BuildingBuyingMenu BuildingBuyingMenu { get; }
 
         internal override bool IsOverlay => true;
 
@@ -28,25 +27,27 @@ namespace KernelPanic
             selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
             
             mScoreOverlay = new ScoreOverlay(waveManager.Players, gameStateManager.Sprite);
-            mUnitBuyingMenu = UnitBuyingMenu.Create(waveManager, gameStateManager.Sprite);
-            mBuildingBuyingMenu = BuildingBuyingMenu.Create(waveManager.Players.B, gameStateManager.Sprite, mSelection, gameStateManager.Sound);
+            UnitBuyingMenu = UnitBuyingMenu.Create(waveManager, gameStateManager.Sprite);
+            BuildingBuyingMenu = BuildingBuyingMenu.Create(waveManager.Players.B, gameStateManager.Sprite, mSelection, gameStateManager.Sound);
             mMinimapOverlay = new MinimapOverlay(waveManager.Players, gameStateManager.Sprite);
         }
 
-        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
-            , GraphicsDeviceManager mGraphics)
+        public override void Update(InputManager inputManager,
+            GameTime gameTime,
+            SoundManager soundManager,
+            GraphicsDeviceManager graphics)
         {
             mScoreOverlay.Update(inputManager, gameTime);
-            mUnitBuyingMenu.Update(inputManager, gameTime);
-            mBuildingBuyingMenu.Update(inputManager, gameTime);
+            UnitBuyingMenu.Update(inputManager, gameTime);
+            BuildingBuyingMenu.Update(inputManager, gameTime);
             mMinimapOverlay.Update(inputManager, gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mScoreOverlay.Draw(spriteBatch, gameTime);
-            mUnitBuyingMenu.Draw(spriteBatch, gameTime);
-            mBuildingBuyingMenu.Draw(spriteBatch, gameTime);
+            UnitBuyingMenu.Draw(spriteBatch, gameTime);
+            BuildingBuyingMenu.Draw(spriteBatch, gameTime);
             mMinimapOverlay.Draw(spriteBatch, gameTime);
         }
     }
