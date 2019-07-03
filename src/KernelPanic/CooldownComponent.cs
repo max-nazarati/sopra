@@ -8,17 +8,16 @@ namespace KernelPanic
     {
         [JsonProperty]
         private TimeSpan mCooldown;
+
         [JsonProperty]
         private TimeSpan mRemainingCooldown;
 
-        private bool mReady;
+        [JsonProperty]
+        internal bool Ready { get; private set; }
 
-        internal bool Ready
-        {
-            get => mReady;
-            set => mReady = value;
-        }
-        
+        [JsonIgnore]
+        internal TimeSpan TimeSpan => mCooldown;
+
         internal CooldownComponent(TimeSpan time, bool isHot = true)
         {
             mCooldown = time;

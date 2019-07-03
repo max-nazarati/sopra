@@ -11,7 +11,7 @@ namespace KernelPanic.Entities
     internal abstract class Tower : Building
     {
         [DataMember] protected float Radius { get; set; }
-        [DataMember] protected CooldownComponent FireTimer { get; }
+        [DataMember] protected CooldownComponent FireTimer { get; private set; }
 
         private Sprite mRadiusSprite;
 
@@ -36,6 +36,7 @@ namespace KernelPanic.Entities
         {
             base.CompleteClone();
             mRadiusSprite = mRadiusSprite.Clone();
+            FireTimer = new CooldownComponent(FireTimer.TimeSpan, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
         }
 
         internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
