@@ -20,11 +20,6 @@ namespace KernelPanic.Entities
         protected Sprite mRadiusSprite;
         protected bool mInRange;
 
-        internal Tower(SpriteManager sprites, SoundManager sounds)
-            : this(0, 0, new TimeSpan(), sprites.CreateTower(), sprites, sounds)
-        {
-        }
-
         internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
             : base(price, sprite, spriteManager)
         {

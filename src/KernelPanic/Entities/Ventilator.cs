@@ -8,7 +8,7 @@ namespace KernelPanic.Entities
 {
     // This is instantiated via black magic originating from Building.Create.
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-    internal sealed class Ventilator : StrategicTower
+    internal sealed class Ventilator : Tower
     {
         private readonly List<Unit> mSlowedDownUnits;
         private List<Unit> mSlowedDownUnitsOld;

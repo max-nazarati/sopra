@@ -1,17 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KernelPanic.Entities
 {
     // This is instantiated via black magic originating from Building.Create.
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-    internal sealed class ShockField : Building
+    internal sealed class ShockField : Tower
     {
-        // The parameters are required for Building.Create to work!
-        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         internal ShockField(SpriteManager spriteManager, SoundManager soundManager) 
-            : base(1, spriteManager.CreateShockField(), spriteManager)
+            : base(1, 0, TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager, soundManager)
         {
-            
         }
     }
 }
