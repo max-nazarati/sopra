@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Players;
@@ -158,7 +160,8 @@ namespace KernelPanic
                 mData[i] = mInitializedData[i];
             }
             
-            SetEntityColor();
+            SetEntityColor(mPlayers.A.DefendingLane);
+            SetEntityColor(mPlayers.B.DefendingLane);
         }
 
         private Color LaneColor(int i)
@@ -176,13 +179,14 @@ namespace KernelPanic
 
             return mColorBackground;
         }
-
-        private void SetEntityColor()
+        
+        private void SetEntityColor(Lane lane)
         {
             var drawSelected = false;
             var selectedIndex = 0;
             
-            var entities = mPlayers.B.AttackingLane.EntityGraph.QuadTree;
+            var entities = lane.EntityGraph.QuadTree;
+
             foreach (var entity in entities)
             {
                 var index = CalculateMapIndexPosition(entity.Sprite.Position);
