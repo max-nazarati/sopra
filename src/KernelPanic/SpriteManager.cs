@@ -523,11 +523,21 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal ImageSprite CreateEmpIndicator(float radius)
+        internal ImageSprite CreateEmpIndicatorRange(int abilityRange)
         {
-            if (Math.Abs(radius) < 0.00001)
+            if (Math.Abs(abilityRange) < 0.00001)
                 return null;
-            var sprite = new ImageSprite(CreateCircleTexture((int) radius, Color.Blue));
+            var sprite = new ImageSprite(CreateCircleTexture((int) abilityRange, Color.Blue));
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
+        }
+        
+        public ImageSprite CreateEmpIndicatorTarget(int gridRadius = Grid.KachelSize / 2)
+        {
+            if (Math.Abs(gridRadius) < 0.00001)
+                return null;
+            var sprite = new ImageSprite(CreateCircleTexture(gridRadius, Color.Blue));
+            sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
         
@@ -602,6 +612,5 @@ namespace KernelPanic
             text.SizeChanged += s => s.Origin = new Vector2(s.Width / 2, s.Height / 2);
             return text;
         }
-
     }
 }
