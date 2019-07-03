@@ -47,8 +47,17 @@ namespace KernelPanic
 
                 // When a unit is purchased, increase its counter.
                 mButton = button;
-                mButton.Action.Purchased += (buyer, resource) => mCounterSprite.Text = (++mCounter).ToString();
+                mButton.Action.Purchased += PurchasedUnit;
                 mButton.Button.Sprite.SetOrigin(RelativePosition.TopRight);
+            }
+
+            private void PurchasedUnit(IPlayerDistinction buyer, Unit resource)
+            {
+                // Only increment the counter if the buyer is the active player.
+                if (buyer.Select(mCounterSprite, null) is TextSprite sprite)
+                {
+                    sprite.Text = (++mCounter).ToString();
+                }
             }
 
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
