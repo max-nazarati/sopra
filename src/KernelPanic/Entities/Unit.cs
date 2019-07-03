@@ -25,9 +25,6 @@ namespace KernelPanic.Entities
         /// </summary>
         [DataMember]
         protected int Speed { get; set; }
-        private int OriginalSpeed { get; set; }
-
-        public bool mIsSlower;
 
         /// <summary>
         /// The AS of this Unit. This is the damage dealt to the enemy's base if reached.
@@ -57,8 +54,6 @@ namespace KernelPanic.Entities
             : base(price, sprite, spriteManager)
         {
             Speed = speed;
-            OriginalSpeed = speed;
-            mIsSlower = false;
             MaximumLife = life;
             RemainingLife = life;
             AttackStrength = attackStrength;
@@ -119,6 +114,16 @@ namespace KernelPanic.Entities
 
         #endregion
 
+        private bool mSlowedDown;
+
+        /// <summary>
+        /// Slows this unit for the next frame.
+        /// </summary>
+        internal void SlowDownForFrame()
+        {
+            mSlowedDown = true;
+        }
+
         protected abstract void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager);
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
@@ -126,6 +131,9 @@ namespace KernelPanic.Entities
             base.Update(positionProvider, gameTime, inputManager);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
+
+            var actualSpeed = mSlowedDown ? Speed / 2 : Speed;
+            mSlowedDown = false;
 
             var move = (Vector2?) null;
             if (ShouldMove && MoveTarget is Vector2 target)
@@ -138,28 +146,19 @@ namespace KernelPanic.Entities
                 }
                 else
                 {
-                    var theMove = Vector2.Normalize(target - Sprite.Position) * Math.Min(Speed, remainingDistance);
+                    var theMove = Vector2.Normalize(target - Sprite.Position) * Math.Min(actualSpeed, remainingDistance);
                     Sprite.Position += theMove;
                     CheckBaseReached(positionProvider);
                     move = theMove;
                 }
             }
 
-            if (mIsSlower)
-            {
-                Speed = OriginalSpeed / 2;
-            }
-            else
-            {
-                Speed = OriginalSpeed;
-            }
-            
             if (!(Sprite is AnimatedSprite animated))
                 return;
 
             if (move?.X is float x)
             {
-                // choose correct movement direction baseed on x value or direction of idle animation
+                // choose correct movement direction based on x value or direction of idle animation
                 animated.MovementDirection = (animated.Effect == SpriteEffects.None && (int)x == 0) || x < 0
                     ? AnimatedSprite.Direction.Left
                     : AnimatedSprite.Direction.Right;

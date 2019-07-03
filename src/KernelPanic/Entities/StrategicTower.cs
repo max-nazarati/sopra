@@ -19,14 +19,16 @@ namespace KernelPanic.Entities
         [JsonProperty]
         private TowerStrategy mStrategy = TowerStrategy.First;
 
-        [JsonIgnore] protected List<Projectile> Projectiles { get; private set; } = new List<Projectile>();
+        [JsonIgnore] private List<Projectile> Projectiles { get; set; } = new List<Projectile>();
 
         /// <summary>
         /// <c>true</c> if the tower should be rotated in the direction of the unit.
         /// </summary>
+        [JsonIgnore]
         protected abstract bool WantsRotation { get; }
-        
-        protected Unit NextTarget { get; private set; }
+
+        [JsonIgnore]
+        private Unit NextTarget { get; set; }
 
         protected StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
             : base(price, radius, cooldown, sprite, spriteManager, sounds)
