@@ -52,8 +52,11 @@ namespace KernelPanic.Entities
                 if (!entity.Bounds.Intersects(mSprite.Bounds)) continue;
                 mHasHit = true;
                 if (!mHasHitted.Contains(entity))
+                {
                     entity.DealDamage(mDamage);
                     mHasHitted.Add(entity);
+                }
+
                 break;
             }
         }
