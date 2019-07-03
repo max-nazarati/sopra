@@ -52,8 +52,7 @@ namespace KernelPanic.Table
         internal BuildingSpawner BuildingSpawner { get; private set; }
 
         internal Rectangle GridRectangle() => mGrid.LaneRectangle;
-        internal int LaneWidthInTiles() => Grid.LaneWidthInTiles;
-        
+
         // private BuildingSpawner mBuildingSpawner;
 
         #endregion
@@ -220,11 +219,6 @@ namespace KernelPanic.Table
             mGrid.Draw(spriteBatch, gameTime);
             if (mGrid.LaneSide == Side.Left) Visualize(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
-        }
-        
-        public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
-        {    
-            throw new NotImplementedException();
         }
 
         #endregion
