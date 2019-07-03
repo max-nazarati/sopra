@@ -36,7 +36,7 @@ namespace KernelPanic
                 }
             }
 
-            Vector2 IPositioned.Size => mButton.Button.Sprite.Size;
+            Vector2 IPositioned.Size => mButton.Button.Size;
 
             internal Element(Type unitType, PurchaseButton<ImageButton, Unit> button, SpriteManager spriteManager)
             {

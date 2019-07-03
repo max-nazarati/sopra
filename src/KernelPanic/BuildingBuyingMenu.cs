@@ -33,12 +33,8 @@ namespace KernelPanic
                     mCounterSprite.Y = value.Y + buttonSprite.Height / 2;
                 }
             }
-            Vector2 IPositioned.Size {
-                get
-                {
-                    return mButton.Sprite.Size;
-                }
-            }
+
+            Vector2 IPositioned.Size => mButton.Size;
 
             internal Element(ImageButton button, SpriteManager spriteManager)
             {
@@ -59,7 +55,7 @@ namespace KernelPanic
                 mButton.Sprite.SetOrigin(RelativePosition.TopLeft);
             }
 
-            internal void Reset()
+            private void Reset()
             {
                 mCounter = 0;
                 mCounterSprite.Text = "0";
@@ -114,16 +110,16 @@ namespace KernelPanic
             cdSprite.ScaleToWidth(64);
             var cdThrower = CreateButton(new CdThrower(spriteManager, sounds), cdSprite);
             
-            var AntivirusSprite = spriteManager.CreateAntivirus();
-            AntivirusSprite.ScaleToWidth(64);
-            var antivirus = CreateButton(new Antivirus(spriteManager, sounds), AntivirusSprite);
+            var antivirusSprite = spriteManager.CreateAntivirus();
+            antivirusSprite.ScaleToWidth(64);
+            var antivirus = CreateButton(new Antivirus(spriteManager, sounds), antivirusSprite);
 
             var ventilatorSprite = spriteManager.CreateVentilator();
             cdSprite.ScaleToWidth(64);
             var ventilator = CreateButton(new Ventilator(spriteManager, sounds), ventilatorSprite);
             
-            return new BuildingBuyingMenu(player, spriteManager, cursorShooter, router, cdThrower
-                , antivirus, ventilator);
+            return new BuildingBuyingMenu(player, spriteManager, 
+                cursorShooter, router, cdThrower , antivirus, ventilator);
         }
 
         internal override Dictionary<Type, PurchasableAction<Building>> BuyingActions => throw new NotImplementedException();
