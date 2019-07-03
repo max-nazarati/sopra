@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +14,7 @@ using KernelPanic.Table;
 
 namespace KernelPanic
 {
-    class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element>
+    internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element, Building>
     {
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
@@ -128,5 +129,7 @@ namespace KernelPanic
                 element.Reset();
             }
         }
+
+        internal override Dictionary<Type, PurchasableAction<Building>> BuyingActions => throw new NotImplementedException();
     }
 }
