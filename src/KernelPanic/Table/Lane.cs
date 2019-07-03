@@ -51,7 +51,7 @@ namespace KernelPanic.Table
         internal UnitSpawner UnitSpawner { get; private set; }
         internal BuildingSpawner BuildingSpawner { get; private set; }
 
-        internal Rectangle GridRectangle() => mGrid.LaneRectangle;
+        internal Grid Grid => mGrid;
 
         // private BuildingSpawner mBuildingSpawner;
 

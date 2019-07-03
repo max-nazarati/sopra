@@ -16,12 +16,14 @@ namespace KernelPanic.Table
         internal Rectangle LaneRectangle { get; }
 
         private Rectangle TileCutout => new Rectangle(
+            
             LaneSide == Lane.Side.Left ? LaneWidthInTiles : 0,
             LaneWidthInTiles,
             LaneRectangle.Width - LaneWidthInTiles,
             LaneRectangle.Height - 2 * LaneWidthInTiles);
+            
 
-        private Rectangle PixelCutout
+            private Rectangle PixelCutout
         {
             get
             {
@@ -30,6 +32,7 @@ namespace KernelPanic.Table
                 cutout.Y *= KachelSize;
                 cutout.Width *= KachelSize;
                 cutout.Height *= KachelSize;
+                cutout.Location += Bounds.Location;
                 return cutout;
             }
         }
@@ -105,24 +108,6 @@ namespace KernelPanic.Table
             var tile = spriteManager.CreateLaneBorder();
             tile.ScaleToWidth(KachelSize);
             return tile;
-        }
-
-        /// <summary>
-        /// calculates the position on the screen for a grid coordinate point,
-        /// so things can be drawn correctly
-        /// </summary>
-        /// <param name="upperLeft"></param>
-        /// <returns></returns>
-        // TODO: Replace calls to this function with Grid.GetTile.
-        public static Point ScreenPositionFromCoordinate(Point upperLeft)
-        {
-            var xPositionGlobal = upperLeft.X; // this is now saved in the grid + mLaneRectangle.X;
-            var yPositionGlobal = upperLeft.Y; // this is now saved in the grid + mLaneRectangle.Y;
-            var x = (SingleTileSizePixel * TilesPerSprite * xPositionGlobal);
-            var y = (SingleTileSizePixel * TilesPerSprite * yPositionGlobal);
-            var result = new Point(x, y);
-            return result;
-
         }
 
         /// <summary>

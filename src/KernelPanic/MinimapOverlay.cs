@@ -33,7 +33,7 @@ namespace KernelPanic
         private readonly Color mColorPlayerA = Color.Lime;
         private readonly Color mColorPlayerB = Color.Red;
         private readonly Color mColorLaneA = Color.SlateGray;
-        private readonly Color mColorLaneB = Color.LightGray;
+        private readonly Color mColorLaneB = Color.SlateGray;
         private readonly Color mColorSelected = Color.Coral;
         
         #endregion
@@ -106,18 +106,18 @@ namespace KernelPanic
         
         private void InitializeScale()
         {
-            // we should not assume that minX = 0 and minY = 0 although it will probably be
-            var laneRectangleA = mPlayers.A.DefendingLane.GridRectangle();
-            var minX = laneRectangleA.X;
-            var minY = laneRectangleA.Y;
+            var laneLeft = mPlayers.A.DefendingLane.Grid;
+            var laneRight = mPlayers.B.DefendingLane.Grid;
             
-            var laneRectangleB = mPlayers.B.DefendingLane.GridRectangle();
-            var maxX = laneRectangleB.X + laneRectangleB.Width;
-            var maxY = laneRectangleB.Y + laneRectangleB.Height;
+            var pointTopLeft = new TileIndex(0, 0, 1);
+            var pointBottomRight = new TileIndex(laneRight.LaneRectangle.Size - new Point(1), 1);
             
-            var bottomRight = Grid.ScreenPositionFromCoordinate(new Point(maxX-minX, maxY-minY));
+
+            var topLeft = laneLeft.GetTile(pointTopLeft, RelativePosition.TopLeft).Position;
+            var bottomRight = laneRight.GetTile(pointBottomRight, RelativePosition.BottomRight).Position;
+
+            mScale = Math.Max(bottomRight.X, bottomRight.Y) / mSize;
             
-            mScale = Math.Max(bottomRight.X, bottomRight.Y) / (float)mSize;
             Console.WriteLine("There will be " + mScale + " x " + mScale + " Pixel represented by 1 minimap Pixel");
             // Console.WriteLine("There are a total of " + mSize * mSize + " Pixel.");
             
@@ -243,32 +243,7 @@ namespace KernelPanic
             mSprite = mSpriteManager.CreateColoredRectangle(mSize, mSize, mData);
             mSprite.Position = mPosition;
         }
-
-        #region Debug
         
-        private void DebugInformation()
-        {
-            var sizePerLane = mSize / 2;
-            var laneGridA = mPlayers.A.DefendingLane.GridRectangle();
-            var laneGridB = mPlayers.B.DefendingLane.GridRectangle();
-
-            var horizontalPlaceNeeded = laneGridA.Width;
-
-            var topLeftPointA = Grid.ScreenPositionFromCoordinate(new Point(laneGridA.X, laneGridA.Y));
-            var topLeftPointB = Grid.ScreenPositionFromCoordinate(new Point(laneGridB.X, laneGridB.Y));
-            Console.WriteLine("bottom right: " + topLeftPointA);
-            Console.WriteLine("top left: " + topLeftPointB);
-            
-            var rectangleSizeA = new Point(laneGridA.Width, laneGridA.Height);
-            var rectangleSizeB = new Point(laneGridB.Width, laneGridB.Height);
-            Console.WriteLine("Rectangle Size A: " + rectangleSizeA);
-            Console.WriteLine("Rectangle Size B: " + rectangleSizeB);
-
-            var bottomRight = Grid.ScreenPositionFromCoordinate(new Point(laneGridB.X + laneGridB.Width, laneGridB.Y + laneGridB.Height));
-            Console.WriteLine("bottomRight: " + bottomRight);
-        }
-        
-        #endregion
         
         #endregion
 
