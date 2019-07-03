@@ -59,6 +59,7 @@ namespace KernelPanic.Entities
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
+            base.Update(positionProvider, gameTime, inputManager);
             if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= Radius)
             {
                 // Turn into the direction of the target.

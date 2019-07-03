@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using KernelPanic.Data;
 using KernelPanic.Sprites;
@@ -52,7 +53,7 @@ namespace KernelPanic.Entities
                 mHasHit = true;
                 if (!mHasHitted.Contains(entity))
                     entity.DealDamage(mDamage);
-                mHasHitted.Add(entity);
+                    mHasHitted.Add(entity);
                 break;
             }
         }

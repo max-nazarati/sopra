@@ -249,28 +249,6 @@ namespace KernelPanic.Data
             return EntitiesAt(point).Any();
         }
 
-        /// <summary>
-        /// returns list of all entities near to an entity
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        internal IEnumerable<T> NearObjects(T entity)
-        {
-            var entities = new List<T>();
-            NearObjects(entity, entities);
-            return entities;
-        }
-
-        private void NearObjects(T entity, List<T> nearEntities)
-        {
-            if (mChildren != null && CalculatePosition(entity) is SquareIndex index)
-            {
-                mChildren[(int) index].NearObjects(entity, nearEntities);
-            }
-            
-            nearEntities.AddRange(mObjects);
-        }
-
         internal IEnumerable<T> NearEntities(Vector2 point, float radius)
         {
             var rectangle = Bounds.ContainingRectangle(point - new Vector2(radius), new Vector2(radius*2));
