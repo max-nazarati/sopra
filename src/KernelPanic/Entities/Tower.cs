@@ -34,11 +34,6 @@ namespace KernelPanic.Entities
             sprite.SetOrigin(RelativePosition.Center);
         }
 
-        ~Tower()
-        {
-            // todo: Tell the heatMap
-        }
-
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
