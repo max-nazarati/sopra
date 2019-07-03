@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
@@ -28,7 +30,7 @@ namespace KernelPanic.ArtificialIntelligence
 
         #region Konstruktor
         
-        public AttackPlanner(Player player, SpriteManager sprites) : base(player, sprites)
+        public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions, SpriteManager sprites) : base(player, sprites)
         {
             #region Initializing Member
 

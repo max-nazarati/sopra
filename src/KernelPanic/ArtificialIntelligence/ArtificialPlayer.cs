@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using KernelPanic.Entities;
 using KernelPanic.Players;
+using KernelPanic.Purchasing;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
@@ -24,7 +26,6 @@ namespace KernelPanic.ArtificialIntelligence
 
         internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins, SpriteManager spriteManager, SoundManager soundManager) : base(defendingLane, attackingLane, bitcoins)
         {
-            mAttackPlanner = new AttackPlanner(this, spriteManager);
             mDefencePlanner = new DefencePlanner(this, spriteManager, soundManager);
             mUpgradePlanner = new UpgradePlanner(this, spriteManager);
             mPlanners = new Planner[] {mAttackPlanner, mDefencePlanner, mUpgradePlanner};
@@ -32,6 +33,11 @@ namespace KernelPanic.ArtificialIntelligence
         }
 
         #region Data
+
+        internal void InitializeAttackPlanner(Dictionary<Type, PurchasableAction<Unit>> actions, SpriteManager spriteManager)
+        {
+            mAttackPlanner = new AttackPlanner(this, actions, spriteManager);
+        }
 
         private void SetData()
         {
