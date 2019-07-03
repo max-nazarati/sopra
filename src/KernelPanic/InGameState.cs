@@ -19,9 +19,6 @@ namespace KernelPanic
         private readonly Board mBoard;
         private readonly SelectionManager mSelectionManager;
         private BuildingBuyer mBuildingBuyer;
-        private PurchaseButton<TextButton, Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
-        private PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
-        private TextButton mPurchaseDemoReset;
         private InGameOverlay mHud;
 
         internal int SaveSlot { get; }
@@ -43,9 +40,6 @@ namespace KernelPanic
                 mHud.UnitBuyingMenu.BuyingActions,
                 upgradeId => mBoard.mUpgradePool[upgradeId]
             );
-            
-            var entityGraph = mBoard.LeftLane.EntityGraph;
-            InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
         }
 
         internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)
@@ -53,64 +47,6 @@ namespace KernelPanic
             var game = new InGameState(storage, saveSlot, gameStateManager);
             gameStateManager.Restart(game);
             gameStateManager.Push(game.mHud);
-        }
-
-        private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites, SoundManager sounds)
-        {
-            var player = mBoard.PlayerB;
-            var nextPosition = new Vector2(50, 150);
-
-            mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(player,
-                new PurchasableAction<Unit>(new Firefox(sprites)),
-                new TextButton(sprites))
-            {
-                Button = { Title = "Firefox" }
-            };
-
-            mPurchaseDemoButton2 = new PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>>(player,
-                new SinglePurchasableAction<Tower>(new CursorShooter(sprites, sounds)),
-                new TextButton(sprites))
-            {
-                Button = { Title = "Turm" }
-            };
-
-            mPurchaseDemoReset = new TextButton(sprites);
-            mPurchaseDemoReset.Clicked += (button, input) =>
-            {
-                player.Bitcoins = 9999;
-                UpdateResetTitle();
-            };
-
-            void UpdateResetTitle()
-            {
-                mPurchaseDemoReset.Title = player.Bitcoins.ToString();
-            }
-
-            void OnPurchase(Player buyer, Entity resource)
-            {
-                UpdateResetTitle();
-                resource.Sprite.Position = nextPosition;
-                entityGraph.Add(resource);
-                nextPosition.Y += 100;
-                mPurchaseDemoButton1.Action.ResetResource(new Firefox(sprites));
-            }
-
-            mPurchaseDemoButton1.Action.Purchased += OnPurchase;
-            mPurchaseDemoButton2.Action.Purchased += OnPurchase;
-
-            UpdateResetTitle();
-
-            var sprite1 = mPurchaseDemoButton1.Button.Sprite;
-            sprite1.SetOrigin(RelativePosition.BottomLeft);
-            sprite1.Position = Vector2.Zero;
-
-            var sprite2 = mPurchaseDemoButton2.Button.Sprite;
-            sprite2.SetOrigin(RelativePosition.BottomLeft);
-            sprite2.Position = sprite1.Position + new Vector2(sprite1.Width, 0);
-
-            var sprite3 = mPurchaseDemoReset.Sprite;
-            sprite3.SetOrigin(RelativePosition.BottomLeft);
-            sprite3.Position = sprite2.Position + new Vector2(sprite2.Width, 0);
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
@@ -126,25 +62,17 @@ namespace KernelPanic
             mSelectionManager.Update(inputManager);
             mBoard.Update(gameTime, inputManager);
             var gameState = mBoard.CheckGameState();
-            if (gameState != Board.GameState.Playing)
-            {
-                GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager, graphics));
-                GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager, graphics));
+            if (gameState == Board.GameState.Playing)
                 return;
-            }
 
-            mPurchaseDemoButton1.Update(inputManager, gameTime);
-            mPurchaseDemoButton2.Update(inputManager, gameTime);
-            mPurchaseDemoReset.Update(inputManager, gameTime);
+            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager, graphics));
+            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager, graphics));
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mBoard.Draw(spriteBatch, gameTime);
             mSelectionManager.Selection?.DrawActions(spriteBatch, gameTime);
-            mPurchaseDemoButton1.Draw(spriteBatch, gameTime);
-            mPurchaseDemoButton2.Draw(spriteBatch, gameTime);
-            mPurchaseDemoReset.Draw(spriteBatch, gameTime);
         }
 
         #region Serialization
