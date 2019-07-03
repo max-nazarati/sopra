@@ -31,7 +31,7 @@ namespace KernelPanic
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
-            mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA);
+            mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager.Sound);
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
             SaveSlot = saveSlot;
 
@@ -77,8 +77,10 @@ namespace KernelPanic
                 mHud.ScoreOverlay.Pause = false;
                 return;
             }
-            mBuildingBuyer.Update(inputManager);
+
             mSelectionManager.Update(inputManager);
+            mBuildingBuyer.Update(inputManager);
+
             mBoard.Update(gameTime, inputManager);
             var gameState = mBoard.CheckGameState();
             if (gameState == Board.GameState.Playing)
@@ -91,6 +93,7 @@ namespace KernelPanic
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mBoard.Draw(spriteBatch, gameTime);
+            mBuildingBuyer.Draw(spriteBatch, gameTime);
             mSelectionManager.Selection?.DrawActions(spriteBatch, gameTime);
         }
 

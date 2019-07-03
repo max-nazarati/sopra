@@ -16,6 +16,11 @@ namespace KernelPanic.Purchasing
         }
 
         /// <summary>
+        /// Returns <c>true</c> if the resource is not <c>null</c>.
+        /// </summary>
+        internal bool HasResource => mResource != null;
+
+        /// <summary>
         /// Overwrites <see cref="mResource"/> with a new value.
         /// </summary>
         /// <param name="newResource">The new resource which will be purchased.</param>
