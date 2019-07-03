@@ -39,10 +39,26 @@ namespace KernelPanic
             var buildingMenu = BuildingBuyingMenu.Create(mBoard.PlayerA, mBuildingBuyer, gameStateManager.Sprite, gameStateManager.Sound);
             mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager);
 
+            /*
+             after pulling turrets dont shoot anymore,
+             im kinda certain i merged correctly...
+             feel free to delete this commented code when its fixed
             mBoard.PlayerB.InitializePlanners(
+<<<<<<< HEAD
                 unitMenu.BuyingActions,
+=======
+                mHud.UnitBuyingMenu.BuyingActions,
+                mBuildingBuyer, // TODO implement this, just added it like this so i can build :) 
+>>>>>>> [BuildingPlanner] First half of Changing the structure
                 upgradeId => mBoard.mUpgradePool[upgradeId]
             );
+            */
+            
+            mBoard.PlayerB.InitializePlanners(
+                unitMenu.BuyingActions,
+                mBuildingBuyer, // TODO implement this, just added it like this so i can build :)
+                upgradeId => mBoard.mUpgradePool[upgradeId]
+                );
         }
 
         internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)

@@ -27,21 +27,24 @@ namespace KernelPanic.ArtificialIntelligence
 
         internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins, SpriteManager spriteManager, SoundManager soundManager) : base(defendingLane, attackingLane, bitcoins)
         {
-            mDefencePlanner = new DefencePlanner(this, spriteManager, soundManager);
             mPlanners = new Planner[] {mAttackPlanner, mDefencePlanner, mUpgradePlanner};
             mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
         }
 
-        #region Data
+        
 
         internal void InitializePlanners(
             Dictionary<Type, PurchasableAction<Unit>> unitBuyingActions,
+            BuildingBuyer buildingBuyer,
             Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup)
         {
             mAttackPlanner = new AttackPlanner(this, unitBuyingActions);
+            mDefencePlanner = new DefencePlanner(this, buildingBuyer);
             mUpgradePlanner = new UpgradePlanner(this, upgradeLookup);
         }
 
+        #region Data
+        
         private void SetData()
         {
             SetMoney();

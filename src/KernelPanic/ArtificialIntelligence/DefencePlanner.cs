@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
@@ -7,50 +9,20 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class DefencePlanner : Planner
     {
-        #region Member
-
-        #region UnitPurchaser
-
-        private readonly PurchasableAction<Entity> mCable;
-        private readonly PurchasableAction<Entity> mCursorShooter;
-        private readonly PurchasableAction<Entity> mCdThrower;
-        private readonly PurchasableAction<Entity> mAntiVirus;
-        private readonly PurchasableAction<Entity> mWifiRouter;
-        private readonly PurchasableAction<Entity> mVentilator;
-        private readonly PurchasableAction<Entity> mShockfield;
-
+        
+        private readonly BuildingBuyer mBuildingBuyer;
         private bool mFirstTime = true;
         
-        #endregion
-
-        #endregion
-        public DefencePlanner(Player player, SpriteManager sprites, SoundManager soundManager) : base(player)
+        public DefencePlanner(Player player, BuildingBuyer buildingBuyer) : base(player)
         {
-            #region Initializing Member
-
-            mCable = new PurchasableAction<Entity>(new Cable(sprites, soundManager));
-            mCursorShooter = new PurchasableAction<Entity>(new CursorShooter(sprites, soundManager));
-            mCdThrower = new PurchasableAction<Entity>(new CdThrower(sprites, soundManager));
-            mAntiVirus = new PurchasableAction<Entity>(new Antivirus(sprites, soundManager));
-            mWifiRouter = new PurchasableAction<Entity>(new WifiRouter(sprites, soundManager));
-            mVentilator = new PurchasableAction<Entity>(new Ventilator(sprites, soundManager));
-            mShockfield = new PurchasableAction<Entity>(new ShockField(sprites, soundManager));
-
-            #endregion
-
-            #region initializing Purchases
-
-            mCable.Purchased += EntityBought;
-            mCursorShooter.Purchased += EntityBought;
-            mCdThrower.Purchased += EntityBought;
-            mAntiVirus.Purchased += EntityBought;
-            mWifiRouter.Purchased += EntityBought;
-            mVentilator.Purchased += EntityBought;
-            mShockfield.Purchased += EntityBought;
-
-            #endregion
+            mBuildingBuyer = buildingBuyer;
         }
 
+        private void BuyBuilding<T>(Point point) where T : Building
+        {
+            // mActions[typeof(T)].TryPurchase(mPlayer);
+
+        }
 
         public void Update(int[] defenceData, GameTime gameTime)
         {
@@ -61,7 +33,7 @@ namespace KernelPanic.ArtificialIntelligence
         private void BuySingleTower()
         {
             if (!mFirstTime) return;
-            mCursorShooter.TryPurchase(mPlayer);
+            BuyBuilding<CursorShooter>(new Point(5));
             mFirstTime = false;
         }
     }

@@ -125,6 +125,7 @@ namespace KernelPanic
                 cursorShooter, router, cdThrower , antivirus, ventilator);
         }
 
-        internal override Dictionary<Type, PurchasableAction<Building>> BuyingActions => throw new NotImplementedException();
+        internal override Dictionary<Type, PurchasableAction<Building>> BuyingActions =>
+            null; // throw new NotImplementedException();
     }
 }
