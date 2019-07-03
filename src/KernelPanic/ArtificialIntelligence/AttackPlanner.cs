@@ -9,92 +9,61 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class AttackPlanner : Planner
     {
-        #region Member
+        private readonly Dictionary<Type, PurchasableAction<Unit>> mActions;
 
-        #region UnitPurchaser
-
-        private readonly PurchasableAction<Entity> mBug;
-        private readonly PurchasableAction<Entity> mVirus;
-        private readonly PurchasableAction<Entity> mTrojan;
-        private readonly PurchasableAction<Entity> mThunderbird;
-        private readonly PurchasableAction<Entity> mNokia;
-        private readonly PurchasableAction<Entity> mFirefox;
-        private readonly PurchasableAction<Entity> mSettings;
-        private readonly PurchasableAction<Entity> mBluescreen;
-        
-        #endregion
-        
         private int mTimer = 0; // this can prob be deleted in the future (usage: TroupeParade)
-        
-        #endregion
 
         #region Konstruktor
         
-        public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions, SpriteManager sprites) : base(player, sprites)
+        public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions) : base(player)
         {
-            #region Initializing Member
-
-            mBug = new PurchasableAction<Entity>(new Bug(sprites));
-            mVirus = new PurchasableAction<Entity>(new Virus(sprites));
-            mTrojan = new PurchasableAction<Entity>(new Trojan(sprites));
-            mThunderbird = new PurchasableAction<Entity>(new Thunderbird(sprites));
-            mNokia = new PurchasableAction<Entity>(new Nokia(sprites));
-            mFirefox = new PurchasableAction<Entity>(new Firefox(sprites));
-            mSettings = new PurchasableAction<Entity>(new Settings(sprites));
-            mBluescreen = new PurchasableAction<Entity>(new Bluescreen(sprites));
-
-            #endregion
-
-            #region initializing Purchases
-
-            mBug.Purchased += EntityBought;
-            mVirus.Purchased += EntityBought;
-            mTrojan.Purchased += EntityBought;
-            mThunderbird.Purchased += EntityBought;
-            mNokia.Purchased += EntityBought;
-            mFirefox.Purchased += EntityBought;
-            mSettings.Purchased += EntityBought;
-            mBluescreen.Purchased += EntityBought;
-            
-            #endregion
+            mActions = actions;
         }
         
         #endregion
 
+        private void BuyEntity<T>(int amount=1) where T : Unit
+        {
+            for (var i = 0; i < amount; i++)
+            {
+                mActions[typeof(T)].TryPurchase(mPlayer);
+            }
+        }
+        
         #region Spawn Functions
         
         private void TroupeParade(int interval = 200)
         {
             if (mTimer == interval)
             {
-                BuyEntity(mThunderbird);
+                BuyEntity<Thunderbird>();
                 // BuyThunderbird();
                 mTimer++;
                 return;
             }
             if (mTimer == 2 * interval)
             {
-                BuyEntity(mBug);
+                BuyEntity<Bug>();
                 // BuyBug();
                 mTimer++;
                 return;
             }
             if (mTimer == 3 * interval)
             {
-                BuyEntity(mVirus);
+                BuyEntity<Virus>();
                 // BuyVirus();
                 mTimer++;
                 return;
             }
             if (mTimer == 4 * interval)
             {
-                BuyEntity(mNokia);
+                BuyEntity<Nokia>();
                 mTimer++;
                 return;
             }
             if (mTimer >= 5 * interval)
             {
-                BuyEntity(mTrojan);
+                BuyEntity<Trojan>();
                 // BuyTrojan();
                 mTimer = 0;
                 return;

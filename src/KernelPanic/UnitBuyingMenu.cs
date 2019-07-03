@@ -90,10 +90,15 @@ namespace KernelPanic
                 return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, action, button);
             }
 
-            var bug = CreateElement<Bug>();
-            var trojan = CreateElement<Trojan>();
-            var firefox = CreateElement<Firefox>();
-            return new UnitBuyingMenu(waveManager.Players.A, spriteManager, bug, trojan, firefox);
+            return new UnitBuyingMenu(waveManager.Players.A, spriteManager, 
+                CreateElement<Bug>(),
+                CreateElement<Virus>(),
+                CreateElement<Trojan>(),
+                CreateElement<Thunderbird>(),
+                CreateElement<Nokia>(),
+                CreateElement<Firefox>(),
+                CreateElement<Settings>(),
+                CreateElement<Bluescreen>());
         }
 
         internal override Dictionary<Type, PurchasableAction<Unit>> BuyingActions

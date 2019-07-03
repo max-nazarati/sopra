@@ -24,7 +24,7 @@ namespace KernelPanic.ArtificialIntelligence
         #endregion
 
         #endregion
-        public DefencePlanner(Player player, SpriteManager sprites, SoundManager soundManager) : base(player, sprites)
+        public DefencePlanner(Player player, SpriteManager sprites, SoundManager soundManager) : base(player)
         {
             #region Initializing Member
 
@@ -61,7 +61,7 @@ namespace KernelPanic.ArtificialIntelligence
         private void BuySingleTower()
         {
             if (!mFirstTime) return;
-            mCursorShooter.TryPurchase(Player);
+            mCursorShooter.TryPurchase(mPlayer);
             mFirstTime = false;
         }
     }

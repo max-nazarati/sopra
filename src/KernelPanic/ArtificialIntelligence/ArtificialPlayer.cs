@@ -34,9 +34,9 @@ namespace KernelPanic.ArtificialIntelligence
 
         #region Data
 
-        internal void InitializeAttackPlanner(Dictionary<Type, PurchasableAction<Unit>> actions, SpriteManager spriteManager)
+        internal void InitializeAttackPlanner(Dictionary<Type, PurchasableAction<Unit>> actions)
         {
-            mAttackPlanner = new AttackPlanner(this, actions, spriteManager);
+            mAttackPlanner = new AttackPlanner(this, actions);
         }
 
         private void SetData()
