@@ -92,6 +92,23 @@ namespace KernelPanic
             return aStar;
         }
 
+        internal bool CheckPathExistance(Point? start, Point? target, Building building)
+        {
+            if (start == null || target == null)
+                return false;
+
+            var matrixObstacles = new ObstacleMatrix(Grid);
+            var tmpEntities = mEntities.ToList();
+            tmpEntities.Add(building);
+            matrixObstacles.Raster(tmpEntities, e => !(e is Unit));
+            var aStar = new AStar((Point)start, (Point)target, matrixObstacles);
+            aStar.CalculatePath();
+
+            if (aStar.Path != null && aStar.Path[aStar.Path.Count - 1] == target)
+                return true;
+            return false;
+        }
+
         #endregion
 
         #region Visualization

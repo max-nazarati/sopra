@@ -16,6 +16,7 @@ namespace KernelPanic
         private readonly Player mPlayer;
         private readonly PurchasableAction<Building> mBuyAction;
         private readonly SoundManager mSoundManager;
+        private bool mBlocked = false;
 
         private Building mBuilding;
 
@@ -49,11 +50,12 @@ namespace KernelPanic
                 return;
 
             UpdatePosition(input);
+            checkPath(mPlayer.DefendingLane, mBuilding);
 
             if (!input.MousePressed(InputManager.MouseButton.Left))
                 return;
 
-            if (mPosition == null || !mBuyAction.TryPurchase(mPlayer))
+            if (mPosition == null || mBlocked || !mBuyAction.TryPurchase(mPlayer))
             {
                 // TODO: Play failure sound.
             }
@@ -79,21 +81,50 @@ namespace KernelPanic
             mPosition = tile.ToPoint();
             mBuilding.Sprite.Position = tilePoint;
         }
-        
+
+        private bool checkPath(Lane lane, Building building)
+        {
+            if (mBuilding == null)
+            {
+                mBlocked = false;
+                return true;
+            }
+            var startTile =
+                lane.Grid.LaneSide == Lane.Side.Left
+                        ? new TileIndex(Grid.LaneWidthInTiles / 2, lane.Grid.LaneRectangle.Width - 1, 1)
+                        : new TileIndex(lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
+
+            var endPosition = lane.Target.Position;
+
+            if (lane.PositionProvider.CheckPathExistance(startTile.ToPoint(), endPosition, building.Clone()))
+            {
+                mBlocked = false;
+                return true;
+            }
+            else
+            {
+                mBlocked = true;
+                return false;
+            }
+        }
+
         private void PurchasedBuilding(Player buyer, Building building)
         {
             if (!(mPosition is Point point))
                 throw new InvalidOperationException("Can't purchase the building if the position is null.");
-
-            var clone = building.Clone();
-            TintEntity(clone, Color.White);
-            buyer.DefendingLane.BuildingSpawner.Register(clone, point);
-            mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
+  
+            if (!mBlocked)
+            {
+                var clone = building.Clone();
+                TintEntity(clone, Color.White);
+                buyer.DefendingLane.BuildingSpawner.Register(clone, point);
+                mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
+            }
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (mPosition.HasValue)
+            if (mPosition.HasValue && !mBlocked)
                 mBuilding?.Draw(spriteBatch, gameTime);
         }
 
