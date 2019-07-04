@@ -1,4 +1,5 @@
 using System;
+using Accord.Math;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -10,14 +11,15 @@ namespace KernelPanic.Entities
     {
         private readonly ImageSprite mIndicatorRange;
         private ImageSprite mIndicatorTarget;
-        private Vector2 mAbilityTarget;
+        private Vector2? mAbilityTarget;
         private TimeSpan mAbilityDurationTotal;
         private TimeSpan mAbilityDurationLeft;
-        
+        private readonly int mAbilityRange;
+
         internal Bluescreen(SpriteManager spriteManager)
             : base(50, 9, 15, 0, TimeSpan.FromSeconds(5), spriteManager.CreateBluescreen(), spriteManager)
         {
-            var mAbilityRange = 1000;
+            mAbilityRange = 1000;
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
             mIndicatorTarget = spriteManager.CreateEmpIndicatorTarget();
             mAbilityDurationTotal = TimeSpan.FromSeconds(2);
@@ -26,11 +28,27 @@ namespace KernelPanic.Entities
         
         #region Ability 
 
-        protected override void IndicateAbility(InputManager inputManager)
+        private static double Distance(Vector2 a, Vector2 b)
+        {
+            return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
+        }
+            
+        protected override void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // find nearest Tower in Range
-            mAbilityTarget = Sprite.Position;
-            base.IndicateAbility(inputManager);
+            mAbilityTarget = null;
+            double shortestDistance = mAbilityRange + 1;
+            foreach (var building in positionProvider.NearEntities<Building>(Sprite.Position, mAbilityRange))
+            {
+                var distance = Distance(building.Sprite.Position, Sprite.Position);
+                if (distance < shortestDistance)
+                {
+                    shortestDistance = distance;
+                    mAbilityTarget = building.Sprite.Position;
+                }
+            }
+
+            base.IndicateAbility(positionProvider, inputManager);
             
         }
 
@@ -75,6 +93,12 @@ namespace KernelPanic.Entities
             // mIndicator.Rotation = rotation;
             // mIndicator.ScaleToHeight(JumpDuration * JumpSegmentLength);
             mIndicatorRange.Draw(spriteBatch, gameTime);
+
+            if (mAbilityTarget != null)
+            {
+                mIndicatorTarget.Position = (Vector2) mAbilityTarget;
+                mIndicatorTarget.Draw(spriteBatch, gameTime);
+            }
         }
     }
 }
