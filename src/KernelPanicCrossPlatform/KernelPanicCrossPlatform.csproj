@@ -388,6 +388,9 @@
     <Compile Include="..\KernelPanic\Sprites\AnimatedSprite.cs">
       <Link>Sprites\AnimatedSprite.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\BitcoinManager.cs">
+      <Link>BitcoinManager.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accord, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7">

@@ -29,6 +29,8 @@ namespace KernelPanic.Table
 
         private readonly Sprite mBase;
 
+        private readonly BitcoinManager mBitcoinManager;
+
         internal enum GameState
         {
             Playing,
@@ -67,6 +69,8 @@ namespace KernelPanic.Table
             LayOutUpgradePool();
             
             WaveManager = new WaveManager(new PlayerIndexed<Player>(PlayerA, PlayerB));
+
+            mBitcoinManager = new BitcoinManager(PlayerA, PlayerB);
         }
 
         [OnDeserialized]
@@ -99,6 +103,7 @@ namespace KernelPanic.Table
             PlayerB.Update(gameTime);
             mUpgradePool.Update(inputManager, gameTime);
             WaveManager.Update(gameTime);
+            mBitcoinManager.Update(gameTime);
         }
 
         internal GameState CheckGameState()
