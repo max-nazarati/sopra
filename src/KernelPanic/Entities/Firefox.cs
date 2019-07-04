@@ -35,10 +35,10 @@ namespace KernelPanic.Entities
 
         #region Ability 
 
-        protected override void IndicateAbility(InputManager inputManager)
+        protected override void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             mAbilityTarget = inputManager.TranslatedMousePosition;
-            base.IndicateAbility(inputManager);
+            base.IndicateAbility(positionProvider, inputManager);
             
         }
 

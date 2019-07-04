@@ -204,7 +204,7 @@ namespace KernelPanic.Entities
                 
                 case AbilityState.Indicating:
                     // sets the next AbilityState if wanted.
-                    IndicateAbility(inputManager);
+                    IndicateAbility(positionProvider, inputManager);
                     break;
 
                 case AbilityState.Starting:
@@ -242,7 +242,7 @@ namespace KernelPanic.Entities
             return Selected  && Cooldown.Ready && (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle) || button);
         }
 
-        protected virtual void IndicateAbility(InputManager inputManager)
+        protected virtual void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // just quit indicating when not selected anymore
             if (!Selected)
