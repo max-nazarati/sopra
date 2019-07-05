@@ -47,8 +47,6 @@ namespace KernelPanic.Table
         internal EntityGraph EntityGraph { get; private set; }
         internal UnitSpawner UnitSpawner { get; private set; }
         internal BuildingSpawner BuildingSpawner { get; private set; }
-	    internal ObstacleMatrix ObstacleMatrix { get; private set; } // For checking path existence after building placement
-        internal PositionProvider PositionProvider { get; private set; } // as above
         internal Grid Grid { get; private set; }
 
         // private BuildingSpawner mBuildingSpawner;
@@ -111,18 +109,18 @@ namespace KernelPanic.Table
         {
             Grid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             mHeatMap = new HeatMap(Grid.LaneRectangle.Width, Grid.LaneRectangle.Height);
-            ObstacleMatrix = new ObstacleMatrix(Grid, 1, false);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide));
             UnitSpawner = new UnitSpawner(Grid, EntityGraph.Add);
             BuildingSpawner = new BuildingSpawner(Grid, mHeatMap, EntityGraph.Add);
             
+            var obstacleMatrix = new ObstacleMatrix(Grid, 1, false);
             if (entities?.Count > 0)
             {
                 EntityGraph.Add(entities);
-                ObstacleMatrix.Raster(entities, entity => entity is Building);
+                obstacleMatrix.Raster(entities, entity => entity is Building);
             }
 
-            foreach (var tileIndex in ObstacleMatrix.Obstacles)
+            foreach (var tileIndex in obstacleMatrix.Obstacles)
                 mHeatMap.Block(tileIndex.ToPoint());
 
             UpdateHeatMap();
@@ -138,8 +136,8 @@ namespace KernelPanic.Table
             var gridTile = Grid.TileFromWorldPoint(inputManager.TranslatedMousePosition);
             UpdateHeatMap();
 
-            PositionProvider = new PositionProvider(Grid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
-            EntityGraph.Update(PositionProvider, gameTime, inputManager);
+            var positionProvider = new PositionProvider(Grid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
+            EntityGraph.Update(positionProvider, gameTime, inputManager);
             UnitSpawner.Update(gameTime);
         }
 

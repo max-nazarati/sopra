@@ -104,17 +104,6 @@ namespace KernelPanic
             return aStar;
         }
 
-        internal bool CheckPathExistence(Point start, Point target, Building building)
-        {
-            var matrixObstacles = new ObstacleMatrix(Grid);
-            matrixObstacles.Raster(mEntities.Entities<Building>());
-            matrixObstacles.Raster(new[] {building});
-            var aStar = new AStar(start, target, matrixObstacles);
-            aStar.CalculatePath();
-
-            return aStar.Path != null && aStar.Path[aStar.Path.Count - 1] == target;
-        }
-
         #endregion
 
         #region Visualization

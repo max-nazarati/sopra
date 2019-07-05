@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using KernelPanic.Input;
 using KernelPanic.Entities;
+using KernelPanic.PathPlanning;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Sprites;
@@ -94,12 +94,17 @@ namespace KernelPanic
 
             var startTile =
                 lane.Grid.LaneSide == Lane.Side.Left
-                        ? new TileIndex(Grid.LaneWidthInTiles / 2, lane.Grid.LaneRectangle.Width - 1, 1)
-                        : new TileIndex(lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
+                        ? new Point(Grid.LaneWidthInTiles / 2, lane.Grid.LaneRectangle.Width - 1)
+                        : new Point(lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0);
 
             var endPosition = lane.Target.Position;
 
-            mBlocked = !lane.PositionProvider.CheckPathExistence(startTile.ToPoint(), endPosition, building.Clone());
+            var buildingMatrix = new ObstacleMatrix(lane.Grid);
+            buildingMatrix.Raster(lane.EntityGraph.Entities<Building>());
+            buildingMatrix.Raster(new[] {building});
+
+            var pathFinder = new AStar(startTile, endPosition, buildingMatrix);
+            mBlocked = !pathFinder.CalculatePath();
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)

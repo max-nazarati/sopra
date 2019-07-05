@@ -26,11 +26,11 @@ namespace KernelPanic.PathPlanning
             return Run(new[] {mStart}).FirstOrDefault(node => node.Position == mTarget);
         }
 
-        internal void CalculatePath()
+        internal bool CalculatePath()
         {
             var goalNode = FindTarget();
             if (goalNode == null)
-                return;
+                return false;
 
             var path = new List<Point> {goalNode.Position};
             var currentNode = goalNode;
@@ -45,6 +45,7 @@ namespace KernelPanic.PathPlanning
 
             path.Reverse();
             Path = path;
+            return true;
         }
 
         public Point? FindNearestField()
