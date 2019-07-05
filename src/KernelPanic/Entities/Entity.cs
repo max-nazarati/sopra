@@ -15,7 +15,7 @@ namespace KernelPanic.Entities
     [DataContract]
     [KnownType(typeof(Unit))]
     [KnownType(typeof(Building))]
-    internal abstract class Entity : IPriced, IBounded
+    internal abstract class Entity : IPriced, IGameObject
     {
         internal Sprite Sprite { get; private set; }
 
@@ -59,22 +59,10 @@ namespace KernelPanic.Entities
 
         #endregion
 
-        #region Removal
-
         /// <summary>
         /// If this flag is <c>true</c> this entity should be removed from the <see cref="EntityGraph"/>.
         /// </summary>
-        internal bool WantsRemoval { get; private set; }
-
-        /// <summary>
-        /// Flags this entity for removal.
-        /// </summary>
-        protected void SetWantsRemoval()
-        {
-            WantsRemoval = true;
-        }
-
-        #endregion
+        public bool WantsRemoval { get; protected set; }
 
         public bool Selected { get; set; }
 
@@ -84,8 +72,8 @@ namespace KernelPanic.Entities
         {
             // do nothing (Troupes walk to the base anyways
         }
-            
-        internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+
+        public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             if (!Selected)
                 return;
@@ -96,7 +84,7 @@ namespace KernelPanic.Entities
             PositionActions(action => action.Update(inputManager, gameTime));
         }
 
-        internal virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Sprite.Draw(spriteBatch, gameTime);
         }

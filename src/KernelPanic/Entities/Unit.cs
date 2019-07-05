@@ -109,7 +109,7 @@ namespace KernelPanic.Entities
         /// </summary>
         protected virtual void DidDie()
         {
-            SetWantsRemoval();
+            WantsRemoval = true;
         }
 
         #endregion
@@ -126,9 +126,9 @@ namespace KernelPanic.Entities
 
         protected abstract void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager);
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            base.Update(positionProvider, gameTime, inputManager);
+            base.Update(positionProvider, inputManager, gameTime);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
 
@@ -173,7 +173,7 @@ namespace KernelPanic.Entities
                 return;
 
             positionProvider.DamageBase(AttackStrength);
-            SetWantsRemoval();
+            WantsRemoval = true;
         }
     }
 }

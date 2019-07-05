@@ -16,9 +16,9 @@ namespace KernelPanic.Entities
             FireTimer.Enabled = false;
         }
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            base.Update(positionProvider, gameTime, inputManager);
+            base.Update(positionProvider, inputManager, gameTime);
 
             foreach (var unit in positionProvider.NearEntities<Unit>(this, Radius))
             {

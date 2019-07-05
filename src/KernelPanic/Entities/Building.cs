@@ -95,7 +95,10 @@ namespace KernelPanic.Entities
                 var action = new PurchasableAction<SellAction>(this);
                 var button = new TextButton(spriteManager) {Title = "Verkaufen"};
                 mButton = new PurchaseButton<TextButton, SellAction>(owner, action, button);
-                action.Purchased += (player, theAction) => building.SetWantsRemoval();
+                action.Purchased += (player, theAction) =>
+                {
+                    building.WantsRemoval = true;
+                };
                 mBuilding = building;
             }
 

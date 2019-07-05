@@ -93,9 +93,9 @@ namespace KernelPanic.Entities
 
         #region Updating
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            base.Update(positionProvider, gameTime, inputManager);
+            base.Update(positionProvider, inputManager, gameTime);
             ChooseTarget(positionProvider);
             RotateToTarget();
 
@@ -189,7 +189,7 @@ namespace KernelPanic.Entities
 
         #endregion
 
-        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
 

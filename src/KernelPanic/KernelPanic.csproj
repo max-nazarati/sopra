@@ -79,6 +79,7 @@
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Firefox.cs" />
     <Compile Include="Entities\Hero.cs" />
+    <Compile Include="Entities\IGameObject.cs" />
     <Compile Include="Entities\Nokia.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Entities\Settings.cs" />

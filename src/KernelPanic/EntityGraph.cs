@@ -68,7 +68,7 @@ namespace KernelPanic
         {
             foreach (var entity in QuadTree)
             {
-                entity.Update(positionProvider, gameTime, inputManager);
+                entity.Update(positionProvider, inputManager, gameTime);
             }
 
             /*

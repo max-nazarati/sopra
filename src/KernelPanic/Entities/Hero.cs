@@ -308,7 +308,7 @@ namespace KernelPanic.Entities
         
         #region Update
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             if (inputManager.KeyPressed(Keys.Space))
             {
@@ -322,7 +322,7 @@ namespace KernelPanic.Entities
             UpdateTarget(positionProvider, gameTime, inputManager);
 
             // base.Update checks for ShouldMove
-            base.Update(positionProvider, gameTime, inputManager);
+            base.Update(positionProvider, inputManager, gameTime);
             
         }
         
@@ -330,7 +330,7 @@ namespace KernelPanic.Entities
 
         #region Draw
 
-        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawAStarPath(spriteBatch, gameTime);
             base.Draw(spriteBatch, gameTime);

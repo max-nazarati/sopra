@@ -39,7 +39,7 @@ namespace KernelPanic.Entities
             FireTimer = new CooldownComponent(FireTimer.TimeSpan, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
         }
 
-        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
             FireTimer.Update(gameTime);

@@ -119,7 +119,7 @@ namespace KernelPanic.Entities
         
         #region Draw
 
-        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
         }
