@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
-using KernelPanic.Data;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Input;
-using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities
 {
-    internal class Ventilator : StrategicTower
+    // This is instantiated via black magic originating from Building.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    internal sealed class Ventilator : StrategicTower
     {
-        private List<Unit> mSlowedDownUnits, mSlowedDownUnitsOld;
-        
-        internal Ventilator(SpriteManager spriteManager
-            , SoundManager sounds) : base(20, 2, new TimeSpan(0,0,0)
-            ,  spriteManager.CreateVentilator(), spriteManager, sounds)
+        private readonly List<Unit> mSlowedDownUnits;
+        private List<Unit> mSlowedDownUnitsOld;
+
+        internal Ventilator(SpriteManager spriteManager, SoundManager sounds)
+            : base(20, 2, TimeSpan.Zero, spriteManager.CreateVentilator(), spriteManager, sounds)
         {
             mSlowedDownUnits = new List<Unit>();
             mSlowedDownUnitsOld = new List<Unit>();

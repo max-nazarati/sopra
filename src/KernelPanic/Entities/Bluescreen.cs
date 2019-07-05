@@ -1,5 +1,5 @@
 using System;
-using Accord.Math;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Entities
 {
+    // This is instantiated via black magic originating from Unit.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Bluescreen : Hero
     {
         private readonly ImageSprite mIndicatorRange;

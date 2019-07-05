@@ -1,5 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace KernelPanic.Entities
 {
+    // This is instantiated via black magic originating from Unit.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Nokia : Troupe
     {
         internal Nokia(SpriteManager spriteManager)

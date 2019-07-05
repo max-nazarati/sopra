@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Data;
 using KernelPanic.Input;
-using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Entities
 {
-    internal class CursorShooter : StrategicTower
+    // This is instantiated via black magic originating from Building.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    internal sealed class CursorShooter : StrategicTower
     {
         internal CursorShooter(SpriteManager spriteManager, SoundManager sounds)
-            : base(price: 20, radius: 4, cooldown: TimeSpan.FromSeconds(1), sprite: spriteManager.CreateCursorShooter()
-            , spriteManager: spriteManager, sounds: sounds)
+            : base(20, 4, TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager, sounds)
         {
             FireTimer.CooledDown += timer =>
             {

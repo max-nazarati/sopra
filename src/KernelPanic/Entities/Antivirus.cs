@@ -1,14 +1,15 @@
 using System;
-using KernelPanic.Sprites;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities
 {
-    internal class Antivirus : StrategicTower
+    // This is instantiated via black magic originating from Building.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    internal sealed class Antivirus : StrategicTower
     {
-        internal Antivirus(SpriteManager spriteManager
-            , SoundManager sounds) : base(price:30, radius:5, cooldown: TimeSpan.FromSeconds(3)
-            , sprite: spriteManager.CreateAntivirus(), spriteManager: spriteManager, sounds: sounds)
+        internal Antivirus(SpriteManager spriteManager , SoundManager sounds)
+            : base(30, 5, TimeSpan.FromSeconds(3), spriteManager.CreateAntivirus(), spriteManager, sounds)
         {
             FireTimer.CooledDown += timer =>
             {
@@ -23,16 +24,16 @@ namespace KernelPanic.Entities
                 var direction = new Vector2(
                     (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
-                mProjectiles.Add(new Projectile(direction, Sprite.Position, Radius, Sprite.Rotation,20
+                Projectiles.Add(new Projectile(direction, Sprite.Position, Radius, Sprite.Rotation,20
                     , 15, 2, spriteManager.CreateCursorShooter()));
                 sounds.PlaySound(SoundManager.Sound.Shoot1);
 
                 // SoundManager.Instance.PlaySound("shoot");
                 // TODO implement updated SoundManager
                 
-                if (mProjectiles.Count > 5)
+                if (Projectiles.Count > 5)
                 {
-                    mProjectiles.RemoveAt(0);
+                    Projectiles.RemoveAt(0);
                 }
 
                 timer.Reset();

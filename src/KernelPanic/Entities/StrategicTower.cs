@@ -16,28 +16,10 @@ namespace KernelPanic.Entities
     {
         [JsonProperty]
         private TowerStrategy mStrategy = TowerStrategy.First;
-        
-        public enum Towers
-        {
-            CursorShooter,
-            WifiRouter,
-            Ventilator,
-            Antivirus,
-            CdThrower,
-            Cable,
-            ShockField
-        }
 
-        internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
+        protected StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
             : base(price, radius, cooldown, sprite, spriteManager, sounds)
         {
-        }
-
-        internal StrategicTower(SpriteManager spriteManager, SoundManager soundManager)
-            : this(0, 0, TimeSpan.Zero, spriteManager.CreateTower(), spriteManager, soundManager)
-        {
-            // TODO: The sprite in the constructor delegation has to be adjusted! Possibly by making subclasses
-            // of this class and adding them in StorageManager.CreateContractResolver.
         }
 
         #region Actions

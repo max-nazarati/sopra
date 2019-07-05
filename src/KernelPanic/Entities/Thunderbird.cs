@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities
 {
+    // This is instantiated via black magic originating from Unit.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Thunderbird : Troupe
     {
         internal Thunderbird(SpriteManager spriteManager)

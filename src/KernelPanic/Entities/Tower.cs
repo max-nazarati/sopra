@@ -1,7 +1,6 @@
 using System.Runtime.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -14,9 +13,10 @@ namespace KernelPanic.Entities
 {
     internal abstract class Tower : Building
     {
-        [DataMember] protected readonly float Radius;
-        [DataMember] protected readonly CooldownComponent FireTimer;
-        [JsonIgnore] protected List<Projectile> mProjectiles = new List<Projectile>(); 
+        [DataMember] protected float Radius { get; set; }
+        [DataMember] protected CooldownComponent FireTimer { get; }
+        [JsonIgnore] protected List<Projectile> Projectiles { get; private set; } = new List<Projectile>();
+
         protected Sprite mRadiusSprite;
         protected bool mInRange;
 
@@ -44,14 +44,14 @@ namespace KernelPanic.Entities
         {
             base.CompleteClone();
             mRadiusSprite = mRadiusSprite.Clone();
-            mProjectiles = new List<Projectile>(mProjectiles);
+            Projectiles = new List<Projectile>();
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
 
-            foreach (var projectile in mProjectiles)
+            foreach (var projectile in Projectiles)
             {
                 projectile.Draw(spriteBatch, gameTime);
             }
@@ -97,10 +97,10 @@ namespace KernelPanic.Entities
             }
 
             FireTimer.Update(gameTime);
-            foreach (var projectile in new List<Projectile>(mProjectiles))
+            foreach (var projectile in new List<Projectile>(Projectiles))
             {
                 if (projectile.mHasHit)
-                    mProjectiles.Remove(projectile);
+                    Projectiles.Remove(projectile);
                 else
                     projectile.Update(positionProvider);
             }   

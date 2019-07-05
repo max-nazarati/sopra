@@ -1,20 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Data;
 using KernelPanic.Input;
-using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Entities
 {
-    internal class CdThrower : StrategicTower
+    // This is instantiated via black magic originating from Building.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    internal sealed class CdThrower : StrategicTower
     {
         [JsonIgnore] private readonly List<Projectile> mProjectiles = new List<Projectile>();
-        internal CdThrower(SpriteManager spriteManager
-            , SoundManager sounds) : base(price:20, radius: 4, cooldown: TimeSpan.FromSeconds(2)
-            , sprite: spriteManager.CreateCdThrower(), spriteManager: spriteManager, sounds: sounds)
+        internal CdThrower(SpriteManager spriteManager, SoundManager sounds)
+            : base(20, 4, TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager, sounds)
         {
             FireTimer.CooledDown += timer =>
             {

@@ -1,8 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Sprites;
 
 namespace KernelPanic.Entities
 {
+    // This is instantiated via black magic originating from Unit.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Settings : Hero
     {
         private readonly ImageSprite mIndicator;

@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Data;
 using KernelPanic.Input;
-using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Entities
 {
-    internal class WifiRouter : StrategicTower
+    // This is instantiated via black magic originating from Building.Create.
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    internal sealed class WifiRouter : StrategicTower
     {
-        [JsonIgnore] private List<WifiProjectile> mProjectiles = new List<WifiProjectile>();
-        internal WifiRouter(SpriteManager spriteManager
-            , SoundManager sounds) : base(40, radius:3, cooldown: TimeSpan.FromSeconds(1)
-            , sprite: spriteManager.CreateWifiRouter(), spriteManager: spriteManager, sounds: sounds)
+        [JsonIgnore] private readonly List<WifiProjectile> mProjectiles = new List<WifiProjectile>();
+
+        internal WifiRouter(SpriteManager spriteManager, SoundManager sounds)
+            : base(40, 3, TimeSpan.FromSeconds(1), spriteManager.CreateWifiRouter(), spriteManager, sounds)
         {
             FireTimer.CooledDown += timer =>
             {
