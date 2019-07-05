@@ -28,7 +28,7 @@ namespace KernelPanic
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
             mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager.Sound);
-            mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
+            mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane, gameStateManager.Sprite);
             SaveSlot = saveSlot;
 
             var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
@@ -75,7 +75,7 @@ namespace KernelPanic
         {
             mBoard.Draw(spriteBatch, gameTime);
             mBuildingBuyer.Draw(spriteBatch, gameTime);
-            mSelectionManager.Selection?.DrawActions(spriteBatch, gameTime);
+            mSelectionManager.Draw(spriteBatch, gameTime);
         }
 
         #region Serialization

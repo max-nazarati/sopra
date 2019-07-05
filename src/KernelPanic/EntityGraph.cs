@@ -18,18 +18,15 @@ namespace KernelPanic
 
         [DataMember] internal QuadTree<Entity> QuadTree { get; }
 
-        private readonly ImageSprite mSelectionBorder;
-
         #endregion
 
         #region Constructor
 
-        public EntityGraph(Rectangle bounds, SpriteManager spriteManager)
+        public EntityGraph(Rectangle bounds)
         {
             // Adjust for bounds which might (due to float/int conversions) be slightly bigger than the containing lane.
             bounds.Inflate(10, 10);
             QuadTree = new QuadTree<Entity>(bounds);
-            mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
         #endregion
@@ -89,11 +86,6 @@ namespace KernelPanic
         {
             foreach (var entity in QuadTree)
             {
-                if (entity.Selected)
-                {
-                    mSelectionBorder.Position = entity.Sprite.Position;
-                    mSelectionBorder.Draw(spriteBatch, gameTime);
-                }
                 entity.Draw(spriteBatch, gameTime);
             }
         }

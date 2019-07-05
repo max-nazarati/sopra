@@ -115,7 +115,7 @@ namespace KernelPanic.Table
             mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
             ObstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
+            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide));
             UnitSpawner = new UnitSpawner(mGrid, EntityGraph.Add);
             BuildingSpawner = new BuildingSpawner(mGrid, mHeatMap, EntityGraph.Add);
             

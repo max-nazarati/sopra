@@ -3,7 +3,10 @@ using System.Runtime.Serialization;
 using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Players;
+using KernelPanic.Sprites;
 using KernelPanic.Table;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Selection
 {
@@ -24,13 +27,16 @@ namespace KernelPanic.Selection
         /// </summary>
         private readonly Lane mEnemyLane;
 
+        private readonly Sprite mSelectionBorder;
+
         [DataMember]
         private Entity mSelection;
 
-        internal SelectionManager(Lane ownedLane, Lane enemyLane)
+        internal SelectionManager(Lane ownedLane, Lane enemyLane, SpriteManager spriteManager)
         {
             mOwnedLane = ownedLane;
             mEnemyLane = enemyLane;
+            mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
         internal Entity Selection
@@ -91,6 +97,16 @@ namespace KernelPanic.Selection
                 // The click was inside a lane but not on an entity => deselect any selected entities.
                 Selection = null;
             }
+        }
+
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (Selection == null)
+                return;
+
+            mSelectionBorder.Position = Selection.Sprite.Position;
+            mSelectionBorder.Draw(spriteBatch, gameTime);
+            Selection.DrawActions(spriteBatch, gameTime);
         }
     }
 }
