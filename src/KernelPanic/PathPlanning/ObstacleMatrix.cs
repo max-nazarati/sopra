@@ -168,7 +168,6 @@ namespace KernelPanic.PathPlanning
         #region Enumerating through the tiles
 
         internal IEnumerable<TileIndex> Obstacles => EnumerateIndices(true);
-        internal IEnumerable<TileIndex> Walkables => EnumerateIndices(false);
 
         private IEnumerable<TileIndex> EnumerateIndices(bool obstacles)
         {
