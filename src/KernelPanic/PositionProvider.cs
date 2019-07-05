@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
-    internal class PositionProvider
+    internal sealed class PositionProvider
     {
         private readonly SpriteManager mSpriteManager;
         private readonly EntityGraph mEntities;
@@ -88,6 +88,11 @@ namespace KernelPanic
         public Vector2 MovementVectorThunderbird(Point point)
         {
             return mVectorFieldThunderbird[point];
+        }
+
+        internal int? TileHeat(Point point)
+        {
+            return (int?) mVectorField.HeatMap[point];
         }
 
         internal AStar MakePathFinding(Entity entity, Point start, Point target)

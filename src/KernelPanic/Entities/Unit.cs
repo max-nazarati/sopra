@@ -46,7 +46,7 @@ namespace KernelPanic.Entities
         /// Stores the current/remaining LP. If this goes to zero or below, this unit is considered to be dead.
         /// </summary>
         [DataMember]
-        private int RemainingLife { get; set; }
+        internal int RemainingLife { get; set; }
 
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 

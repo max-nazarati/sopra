@@ -18,7 +18,6 @@ namespace KernelPanic.Entities
         {
             mSlowedDownUnits = new List<Unit>();
             mSlowedDownUnitsOld = new List<Unit>();
-            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
         internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)

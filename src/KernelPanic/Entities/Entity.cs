@@ -96,7 +96,7 @@ namespace KernelPanic.Entities
             PositionActions(action => action.Update(inputManager, gameTime));
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        internal virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Sprite.Draw(spriteBatch, gameTime);
         }

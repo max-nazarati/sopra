@@ -330,7 +330,7 @@ namespace KernelPanic.Entities
 
         #region Draw
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        internal override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             DrawAStarPath(spriteBatch, gameTime);
             base.Draw(spriteBatch, gameTime);

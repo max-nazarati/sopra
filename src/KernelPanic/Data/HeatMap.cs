@@ -169,10 +169,10 @@ namespace KernelPanic.Data
 
         internal void SetCost(Point point, float cost) => this[point] = cost;
 
-        private float? this[Point point]
+        internal float? this[Point point]
         {
             get => Contains(point) ? (float?) mMap[point.Y, point.X] : null;
-            set
+            private set
             {
                 if (Contains(point) && value is float val)
                     mMap[point.Y, point.X] = val;

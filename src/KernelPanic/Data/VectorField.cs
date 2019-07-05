@@ -7,6 +7,8 @@ namespace KernelPanic.Data
 {
     internal sealed class VectorField
     {
+        internal HeatMap HeatMap { get; }
+    
         private readonly Vector2[,] mVectorField;
         private int Height => mVectorField.GetLength(0);
         private int Width => mVectorField.GetLength(1);
@@ -34,6 +36,7 @@ namespace KernelPanic.Data
         /// <param name="heatMap">The heat map.</param>
         internal VectorField(HeatMap heatMap)
         {
+            HeatMap = heatMap;
             mVectorField = new Vector2[heatMap.Height, heatMap.Width];
             for (var row = 0; row < heatMap.Height; ++row)
             {
