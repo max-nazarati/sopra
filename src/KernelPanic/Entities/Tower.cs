@@ -43,9 +43,14 @@ namespace KernelPanic.Entities
         {
             base.Draw(spriteBatch, gameTime);
             FireTimer.Update(gameTime);
+        }
 
-            if (Selected)
-                mRadiusSprite.Draw(spriteBatch, gameTime);
+        internal override void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            base.DrawActions(spriteBatch, gameTime);
+
+            mRadiusSprite.Position = Sprite.Position;
+            mRadiusSprite.Draw(spriteBatch, gameTime);
         }
     }
 }

@@ -101,7 +101,7 @@ namespace KernelPanic.Entities
             Sprite.Draw(spriteBatch, gameTime);
         }
 
-        internal void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
+        internal virtual void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
         {
             foreach (var action in mStoredActions)
             {
