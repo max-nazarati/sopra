@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Players;
@@ -56,7 +55,7 @@ namespace KernelPanic.ArtificialIntelligence
         {
             // for now we are only splitting the money equal between attack and defence
             mAttackMoney = (int)(Bitcoins * 0.5);
-            mDefenceMoney = (int)(Bitcoins * 0.5);;
+            mDefenceMoney = (int)(Bitcoins * 0.5);
         }
 
         private void SetAttackData()

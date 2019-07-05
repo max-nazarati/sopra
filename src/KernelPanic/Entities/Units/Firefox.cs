@@ -7,7 +7,6 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
 namespace KernelPanic.Entities.Units
 {
@@ -119,11 +118,6 @@ namespace KernelPanic.Entities.Units
         
         #region Draw
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            base.Draw(spriteBatch, gameTime);
-        }
-        
         protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.DrawAbility(spriteBatch, gameTime);

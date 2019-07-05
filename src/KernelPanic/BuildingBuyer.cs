@@ -15,7 +15,7 @@ namespace KernelPanic
     {
         private readonly Player mPlayer;
         private readonly SoundManager mSoundManager;
-        private bool mBlocked = false;
+        private bool mBlocked;
 
         private Building mBuilding;
 

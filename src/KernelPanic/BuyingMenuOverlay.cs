@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using KernelPanic.Input;
 using KernelPanic.Players;
-using KernelPanic.Purchasing;
 using KernelPanic.Table;
 
 namespace KernelPanic
@@ -51,7 +49,5 @@ namespace KernelPanic
                 element.Draw(spriteBatch, gameTime);
             }
         }
-
-        internal abstract Dictionary<Type, PurchasableAction<TResource>> BuyingActions { get; }
     }
 }

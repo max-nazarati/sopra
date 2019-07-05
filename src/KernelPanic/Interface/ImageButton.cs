@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using KernelPanic.Input;
-using KernelPanic.Sprites;
+﻿using KernelPanic.Sprites;
 
 namespace KernelPanic.Interface
 {

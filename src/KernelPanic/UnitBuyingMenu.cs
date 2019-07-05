@@ -85,7 +85,7 @@ namespace KernelPanic
             {
                 var unit = Unit.Create<TUnit>(spriteManager);
                 // Can we have units with an other sprite type than an animated sprite?
-                var image = ((AnimatedSprite)unit.Sprite).getSingleFrame(spriteManager);
+                var image = ((AnimatedSprite)unit.Sprite).GetSingleFrame();
                 var action = new PurchasableAction<Unit>(unit);
                 action.Purchased += waveManager.Add;
                 var button = new ImageButton(spriteManager, image, 70, 70);
@@ -109,7 +109,7 @@ namespace KernelPanic
                 CreateElement<Bluescreen>());
         }
 
-        internal override Dictionary<Type, PurchasableAction<Unit>> BuyingActions
+        internal Dictionary<Type, PurchasableAction<Unit>> BuyingActions
         {
             get
             {

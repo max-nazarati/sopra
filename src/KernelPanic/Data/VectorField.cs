@@ -1,4 +1,3 @@
-using Accord.Math;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;

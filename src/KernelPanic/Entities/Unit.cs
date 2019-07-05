@@ -4,8 +4,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
-using KernelPanic.Table;
-using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

@@ -132,8 +132,7 @@ namespace KernelPanic.Table
 
         internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
         {
-            // It seems we can't use pattern matching here because of compiler-limitations.
-            var gridTile = Grid.TileFromWorldPoint(inputManager.TranslatedMousePosition);
+            // Maybe we want to do this only when new buildings were placed.
             UpdateHeatMap();
 
             var positionProvider = new PositionProvider(Grid, EntityGraph, mSpriteManager, mVectorField, Target, owner);

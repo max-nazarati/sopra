@@ -22,7 +22,7 @@ namespace KernelPanic.Entities.Projectiles
             mSprite3 = sprite.Clone();
             mSprite2.SetOrigin(RelativePosition.Center);
             mSprite3.SetOrigin(RelativePosition.Center);
-            mSprite3.Rotation = (float)(rotation % (Math.PI * 2)-0.4);;
+            mSprite3.Rotation = (float)(rotation % (Math.PI * 2)-0.4);
             mDirection2 = new Vector2(
                 (float) Math.Sin(rotation % (Math.PI * 2)+0.4),
                 -(float) Math.Cos(rotation % (Math.PI * 2)+0.4));
