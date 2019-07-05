@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
@@ -7,7 +6,6 @@ using KernelPanic.Input;
 using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -50,7 +48,7 @@ namespace KernelPanic.Table
         internal EntityGraph EntityGraph { get; private set; }
         internal UnitSpawner UnitSpawner { get; private set; }
         internal BuildingSpawner BuildingSpawner { get; private set; }
-	    internal ObstacleMatrix ObstacleMatrix { get; private set; } // For checking path existance after building placement
+	    internal ObstacleMatrix ObstacleMatrix { get; private set; } // For checking path existence after building placement
         internal PositionProvider PositionProvider { get; private set; } // as above
         internal Grid Grid => mGrid;
 
@@ -205,7 +203,7 @@ namespace KernelPanic.Table
         private void BeforeSerialization(StreamingContext context)
         {
             // Store the current entities.
-            mEntitiesSerializing = new List<Entity>(EntityGraph);
+            mEntitiesSerializing = new List<Entity>(EntityGraph.AllEntities);
         }
 
         [OnSerialized]

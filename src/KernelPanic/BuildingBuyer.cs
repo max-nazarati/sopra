@@ -99,7 +99,7 @@ namespace KernelPanic
 
             var endPosition = lane.Target.Position;
 
-            mBlocked = !lane.PositionProvider.CheckPathExistance(startTile.ToPoint(), endPosition, building.Clone());
+            mBlocked = !lane.PositionProvider.CheckPathExistence(startTile.ToPoint(), endPosition, building.Clone());
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)

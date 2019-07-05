@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Table;
 using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Entities;
 using KernelPanic.Upgrades;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Players
@@ -49,9 +47,9 @@ namespace KernelPanic.Players
             mUpgrades.Add(upgrade);
 
             // Apply the new upgrade to all existing entities.
-            foreach (var unit in AttackingLane.EntityGraph.OfType<Unit>())
+            foreach (var unit in AttackingLane.EntityGraph.Entities<Unit>())
                 upgrade.Apply(unit);
-            foreach (var building in DefendingLane.EntityGraph.OfType<Building>())
+            foreach (var building in DefendingLane.EntityGraph.Entities<Building>())
                 upgrade.Apply(building);
         }
 

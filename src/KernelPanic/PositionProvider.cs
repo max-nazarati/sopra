@@ -98,27 +98,21 @@ namespace KernelPanic
         internal AStar MakePathFinding(Entity entity, Point start, Point target)
         {
             var matrixObstacles = new ObstacleMatrix(Grid);
-            matrixObstacles.Raster(mEntities, e => e != entity);
+            matrixObstacles.Raster(mEntities.AllEntities, e => e != entity);
             var aStar = new AStar(start, target, matrixObstacles);
             aStar.CalculatePath();
             return aStar;
         }
 
-        internal bool CheckPathExistance(Point? start, Point? target, Building building)
+        internal bool CheckPathExistence(Point start, Point target, Building building)
         {
-            if (start == null || target == null)
-                return false;
-
             var matrixObstacles = new ObstacleMatrix(Grid);
-            var tmpEntities = mEntities.ToList();
-            tmpEntities.Add(building);
-            matrixObstacles.Raster(tmpEntities, e => !(e is Unit));
-            var aStar = new AStar((Point)start, (Point)target, matrixObstacles);
+            matrixObstacles.Raster(mEntities.Entities<Building>());
+            matrixObstacles.Raster(new[] {building});
+            var aStar = new AStar(start, target, matrixObstacles);
             aStar.CalculatePath();
 
-            if (aStar.Path != null && aStar.Path[aStar.Path.Count - 1] == target)
-                return true;
-            return false;
+            return aStar.Path != null && aStar.Path[aStar.Path.Count - 1] == target;
         }
 
         #endregion

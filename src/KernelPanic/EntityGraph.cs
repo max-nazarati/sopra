@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
-using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -12,11 +11,11 @@ using Newtonsoft.Json;
 namespace KernelPanic
 {
     [JsonArray]
-    internal sealed class EntityGraph : IEnumerable<Entity>
+    internal sealed class EntityGraph
     {
         #region Properties
 
-        [DataMember] internal QuadTree<Entity> QuadTree { get; }
+        [DataMember] internal QuadTree<IGameObject> QuadTree { get; }
 
         #endregion
 
@@ -26,7 +25,7 @@ namespace KernelPanic
         {
             // Adjust for bounds which might (due to float/int conversions) be slightly bigger than the containing lane.
             bounds.Inflate(10, 10);
-            QuadTree = new QuadTree<Entity>(bounds);
+            QuadTree = new QuadTree<IGameObject>(bounds);
         }
 
         #endregion
@@ -54,7 +53,7 @@ namespace KernelPanic
 
         internal IEnumerable<Entity> EntitiesAt(Vector2 point)
         {
-            return QuadTree.EntitiesAt(point);
+            return QuadTree.EntitiesAt(point).OfType<Entity>();
         }
         
         #endregion
@@ -94,15 +93,9 @@ namespace KernelPanic
 
         #region Enumerable
 
-        public IEnumerator<Entity> GetEnumerator()
-        {
-            return QuadTree.GetEnumerator();
-        }
+        internal IEnumerable<Entity> AllEntities => QuadTree.OfType<Entity>();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable) QuadTree).GetEnumerator();
-        }
+        internal IEnumerable<T> Entities<T>() where T : Entity => QuadTree.OfType<T>();
 
         #endregion
     }

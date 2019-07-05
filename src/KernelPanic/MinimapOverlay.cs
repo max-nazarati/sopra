@@ -185,9 +185,7 @@ namespace KernelPanic
             var drawSelected = false;
             var selectedIndex = 0;
             
-            var entities = lane.EntityGraph.QuadTree;
-
-            foreach (var entity in entities)
+            foreach (var entity in lane.EntityGraph.AllEntities)
             {
                 var index = CalculateMapIndexPosition(entity.Sprite.Position);
                 var color = mColorBackground;
