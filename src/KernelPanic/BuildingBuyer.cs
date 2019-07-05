@@ -94,8 +94,8 @@ namespace KernelPanic
 
             var startTile =
                 lane.Grid.LaneSide == Lane.Side.Left
-                        ? new Point(Grid.LaneWidthInTiles / 2, lane.Grid.LaneRectangle.Width - 1)
-                        : new Point(lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0);
+                        ? new Point(lane.Grid.LaneRectangle.Width - 1, Grid.LaneWidthInTiles / 2)
+                        : new Point(0, lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2);
 
             var endPosition = lane.Target.Position;
 
