@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using Autofac.Core.Lifetime;
-using KernelPanic.Input;
+﻿using KernelPanic.Input;
 using KernelPanic.Sprites;
-using KernelPanic.Table;
 using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 
@@ -13,7 +7,7 @@ namespace KernelPanic.Entities
 {
     internal abstract class Troupe : Unit
     {
-        private Vector2 mLastMovement;
+        protected Vector2 mLastMovement;
 
         protected Troupe(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
