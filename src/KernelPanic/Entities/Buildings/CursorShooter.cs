@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Entities.Projectiles;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Buildings
 {
     // This is instantiated via black magic originating from Building.Create.
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]

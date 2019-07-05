@@ -14,7 +14,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic.Entities
 {
     [DataContract]
-    [KnownType(typeof(Tower))]
     internal abstract class Building : Entity
     {
         protected Building(int price, Sprite sprite, SpriteManager spriteManager) : base(price, sprite, spriteManager)

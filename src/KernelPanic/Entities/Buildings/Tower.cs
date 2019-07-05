@@ -6,7 +6,7 @@ using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Buildings
 {
     internal abstract class Tower : Building
     {

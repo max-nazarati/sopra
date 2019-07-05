@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Net;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using KernelPanic.Players;
 using KernelPanic.Sprites;

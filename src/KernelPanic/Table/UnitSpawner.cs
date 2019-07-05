@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Units;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Table

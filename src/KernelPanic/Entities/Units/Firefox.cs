@@ -9,7 +9,7 @@ using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Units
 {
     [DataContract]
     internal sealed class Firefox : Hero

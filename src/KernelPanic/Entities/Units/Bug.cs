@@ -1,4 +1,4 @@
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Units
 {
     internal sealed class Bug : Troupe
     {

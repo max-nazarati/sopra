@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Units;
 using KernelPanic.Table;
 using KernelPanic.Upgrades;
 using Newtonsoft.Json;

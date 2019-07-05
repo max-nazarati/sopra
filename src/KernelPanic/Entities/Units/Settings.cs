@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Sprites;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Units
 {
     // This is instantiated via black magic originating from Unit.Create.
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]

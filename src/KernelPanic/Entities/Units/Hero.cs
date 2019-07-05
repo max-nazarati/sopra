@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Units
 {
     [DataContract]
     [KnownType(typeof(Firefox))]

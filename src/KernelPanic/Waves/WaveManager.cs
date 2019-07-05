@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Units;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 

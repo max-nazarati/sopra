@@ -1,6 +1,6 @@
-
 using System.Collections.Generic;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Units;
 using KernelPanic.Players;
 
 namespace KernelPanic.Waves

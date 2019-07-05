@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
+using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Players;
@@ -12,7 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Buildings
 {
     internal abstract class StrategicTower : Tower
     {

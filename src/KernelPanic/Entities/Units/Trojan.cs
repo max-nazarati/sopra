@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Units
 {
     internal sealed class Trojan : Troupe
     {

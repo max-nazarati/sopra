@@ -4,7 +4,7 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Projectiles
 {
     internal sealed class WifiProjectile : Projectile
     {

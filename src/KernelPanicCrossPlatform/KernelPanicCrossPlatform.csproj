@@ -126,80 +126,80 @@
     <Compile Include="..\KernelPanic\DebugSettings.cs">
       <Link>DebugSettings.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\Antivirus.cs">
-      <Link>Entities\Antivirus.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Bluescreen.cs">
-      <Link>Entities\Bluescreen.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Bug.cs">
-      <Link>Entities\Bug.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Entities\Building.cs">
       <Link>Entities\Building.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\Cable.cs">
-      <Link>Entities\Cable.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Buildings\Antivirus.cs">
+      <Link>Entities\Buildings\Antivirus.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\CdThrower.cs">
-      <Link>Entities\CdThrower.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Buildings\Cable.cs">
+      <Link>Entities\Buildings\Cable.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\CursorShooter.cs">
-      <Link>Entities\CursorShooter.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Buildings\CdThrower.cs">
+      <Link>Entities\Buildings\CdThrower.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Buildings\CursorShooter.cs">
+      <Link>Entities\Buildings\CursorShooter.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Buildings\ShockField.cs">
+      <Link>Entities\Buildings\ShockField.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Buildings\StrategicTower.cs">
+      <Link>Entities\Buildings\StrategicTower.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Buildings\Tower.cs">
+      <Link>Entities\Buildings\Tower.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Buildings\Ventilator.cs">
+      <Link>Entities\Buildings\Ventilator.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Buildings\WifiRouter.cs">
+      <Link>Entities\Buildings\WifiRouter.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Entity.cs">
       <Link>Entities\Entity.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\Firefox.cs">
-      <Link>Entities\Firefox.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Hero.cs">
-      <Link>Entities\Hero.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Entities\IGameObject.cs">
       <Link>Entities\IGameObject.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\Nokia.cs">
-      <Link>Entities\Nokia.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Projectiles\Projectile.cs">
+      <Link>Entities\Projectiles\Projectile.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\Projectile.cs">
-      <Link>Entities\Projectile.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Settings.cs">
-      <Link>Entities\Settings.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\ShockField.cs">
-      <Link>Entities\ShockField.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\StrategicTower.cs">
-      <Link>Entities\StrategicTower.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Thunderbird.cs">
-      <Link>Entities\Thunderbird.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Tower.cs">
-      <Link>Entities\Tower.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Trojan.cs">
-      <Link>Entities\Trojan.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Troupe.cs">
-      <Link>Entities\Troupe.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Projectiles\WifiProjectile.cs">
+      <Link>Entities\Projectiles\WifiProjectile.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Unit.cs">
       <Link>Entities\Unit.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\Ventilator.cs">
-      <Link>Entities\Ventilator.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Units\Bluescreen.cs">
+      <Link>Entities\Units\Bluescreen.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\Virus.cs">
-      <Link>Entities\Virus.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Units\Bug.cs">
+      <Link>Entities\Units\Bug.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\WifiProjectile.cs">
-      <Link>Entities\WifiProjectile.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Units\Firefox.cs">
+      <Link>Entities\Units\Firefox.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Entities\WifiRouter.cs">
-      <Link>Entities\WifiRouter.cs</Link>
+    <Compile Include="..\KernelPanic\Entities\Units\Hero.cs">
+      <Link>Entities\Units\Hero.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Units\Nokia.cs">
+      <Link>Entities\Units\Nokia.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Units\Settings.cs">
+      <Link>Entities\Units\Settings.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Units\Thunderbird.cs">
+      <Link>Entities\Units\Thunderbird.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Units\Trojan.cs">
+      <Link>Entities\Units\Trojan.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Units\Troupe.cs">
+      <Link>Entities\Units\Troupe.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Units\Virus.cs">
+      <Link>Entities\Units\Virus.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\EntityGraph.cs">
       <Link>EntityGraph.cs</Link>

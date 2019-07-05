@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Buildings
 {
     // This is instantiated via black magic originating from Building.Create.
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]

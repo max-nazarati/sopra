@@ -3,7 +3,7 @@ using KernelPanic.Sprites;
 using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Units
 {
     internal abstract class Troupe : Unit
     {

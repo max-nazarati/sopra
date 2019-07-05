@@ -5,7 +5,7 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic.Entities
+namespace KernelPanic.Entities.Units
 {
     // This is instantiated via black magic originating from Unit.Create.
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]

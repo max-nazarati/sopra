@@ -13,8 +13,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic.Entities
 {
     [DataContract]
-    [KnownType(typeof(Troupe))]
-    [KnownType(typeof(Hero))]
     internal abstract class Unit : Entity
     {
         [DataMember]

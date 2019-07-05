@@ -1,5 +1,5 @@
 using System;
-using KernelPanic.Entities;
+using KernelPanic.Entities.Units;
 
 namespace KernelPanic.Waves
 {

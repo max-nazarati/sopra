@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Accord.MachineLearning.Performance;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Purchasing;
@@ -10,6 +8,7 @@ using KernelPanic.Entities;
 using KernelPanic.Sprites;
 using KernelPanic.Input;
 using KernelPanic.Data;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Players;
 using KernelPanic.Table;
 
