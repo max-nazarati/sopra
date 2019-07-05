@@ -34,8 +34,8 @@ namespace KernelPanic.Table
 
         #region Properties
 
-        internal readonly SpriteManager mSpriteManager;
-        private readonly SoundManager mSounds;
+        internal readonly SpriteManager mSpriteManager; // TODO write getonly property
+        internal readonly SoundManager mSounds; // TODO write getonly property
 
         [JsonProperty]
         internal Base Target { get; /* required for deserialization */ private set; }
@@ -50,10 +50,10 @@ namespace KernelPanic.Table
         internal EntityGraph EntityGraph { get; private set; }
         internal UnitSpawner UnitSpawner { get; private set; }
         internal BuildingSpawner BuildingSpawner { get; private set; }
+	    internal ObstacleMatrix ObstacleMatrix { get; private set; } // For checking path existance after building placement
+        internal PositionProvider PositionProvider { get; private set; } // as above
+        internal Grid Grid => mGrid;
 
-        internal Rectangle GridRectangle() => mGrid.LaneRectangle;
-        internal int LaneWidthInTiles() => Grid.LaneWidthInTiles;
-        
         // private BuildingSpawner mBuildingSpawner;
 
         #endregion
@@ -114,7 +114,7 @@ namespace KernelPanic.Table
         {
             mGrid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             mHeatMap = new HeatMap(mGrid.LaneRectangle.Width, mGrid.LaneRectangle.Height);
-            var obstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
+            ObstacleMatrix = new ObstacleMatrix(mGrid, 1, false);
             EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide), mSpriteManager);
             UnitSpawner = new UnitSpawner(mGrid, EntityGraph.Add);
             BuildingSpawner = new BuildingSpawner(mGrid, mHeatMap, EntityGraph.Add);
@@ -122,10 +122,10 @@ namespace KernelPanic.Table
             if (entities?.Count > 0)
             {
                 EntityGraph.Add(entities);
-                obstacleMatrix.Rasterize(entities, mGrid.Bounds, entity => entity is Building);
+                ObstacleMatrix.Raster(entities, entity => entity is Building);
             }
 
-            foreach (var tileIndex in obstacleMatrix.Obstacles)
+            foreach (var tileIndex in ObstacleMatrix.Obstacles)
                 mHeatMap.Block(tileIndex.ToPoint());
 
             UpdateHeatMap();
@@ -138,35 +138,12 @@ namespace KernelPanic.Table
         internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
         {
             // It seems we can't use pattern matching here because of compiler-limitations.
-            var gridPoint = mGrid.GridPointFromWorldPoint(inputManager.TranslatedMousePosition);
-            if (gridPoint != null && inputManager.KeyPressed(Keys.T))
-            {
-                var (position, size) = gridPoint.Value;
-                if (!EntityGraph.HasEntityAt(position))
-                {
-                    mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
-                        , StrategicTower.Towers.CursorShooter));
-                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
-                    UpdateHeatMap();
-                }
-            }
-            
-            if (gridPoint != null && inputManager.KeyPressed(Keys.R))
-            {
-                var (position, size) = gridPoint.Value;
-                if (!EntityGraph.HasEntityAt(position))
-                {
-                    mSounds.PlaySound(SoundManager.Sound.TowerPlacement);
-                    EntityGraph.Add(Tower.CreateTower(position, size, mSpriteManager, mSounds
-                        , StrategicTower.Towers.WifiRouter));
-                    mHeatMap.Block(Grid.CoordinatePositionFromScreen(position));
-                    UpdateHeatMap();
-                }
-            }
+            var gridTile = mGrid.TileFromWorldPoint(inputManager.TranslatedMousePosition);
+            UpdateHeatMap();
 
-            var positionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
-            EntityGraph.Update(positionProvider, gameTime, inputManager);
+            PositionProvider = new PositionProvider(mGrid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
+            EntityGraph.Update(PositionProvider, gameTime, inputManager);
+            UnitSpawner.Update(gameTime);
         }
 
         #endregion
@@ -178,11 +155,6 @@ namespace KernelPanic.Table
             mGrid.Draw(spriteBatch, gameTime);
             if (mGrid.LaneSide == Side.Left) Visualize(spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
-        }
-        
-        public void DrawMinimap(SpriteBatch spriteBatch, Rectangle rectangle)
-        {    
-            throw new NotImplementedException();
         }
 
         #endregion

@@ -3,6 +3,7 @@ using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Selection;
 using KernelPanic.Serialization;
@@ -17,10 +18,8 @@ namespace KernelPanic
     {
         private readonly Board mBoard;
         private readonly SelectionManager mSelectionManager;
-
-        private PurchaseButton<TextButton, Unit, PurchasableAction<Unit>> mPurchaseDemoButton1;
-        private PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>> mPurchaseDemoButton2;
-        private TextButton mPurchaseDemoReset;
+        private readonly BuildingBuyer mBuildingBuyer;
+        private readonly InGameOverlay mHud;
 
         internal int SaveSlot { get; }
 
@@ -32,118 +31,78 @@ namespace KernelPanic
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
+            mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager.Sound);
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
             SaveSlot = saveSlot;
 
-            var entityGraph = mBoard.LeftLane.EntityGraph;
-            InitializePurchaseButtonDemo(entityGraph, gameStateManager.Sprite, gameStateManager.Sound);
+            var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
+            var buildingMenu = BuildingBuyingMenu.Create(mBoard.PlayerA, mBuildingBuyer, gameStateManager.Sprite, gameStateManager.Sound);
+            mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager);
+
+            /*
+             after pulling turrets dont shoot anymore,
+             im kinda certain i merged correctly...
+             feel free to delete this commented code when its fixed
+            mBoard.PlayerB.InitializePlanners(
+<<<<<<< HEAD
+                unitMenu.BuyingActions,
+=======
+                mHud.UnitBuyingMenu.BuyingActions,
+                mBuildingBuyer, // TODO implement this, just added it like this so i can build :) 
+>>>>>>> [BuildingPlanner] First half of Changing the structure
+                upgradeId => mBoard.mUpgradePool[upgradeId]
+            );
+            */
+            
+            mBoard.PlayerB.InitializePlanners(
+                unitMenu.BuyingActions,
+                mBuildingBuyer, // TODO implement this, just added it like this so i can build :)
+                upgradeId => mBoard.mUpgradePool[upgradeId]
+                );
         }
 
         internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)
         {
             var game = new InGameState(storage, saveSlot, gameStateManager);
-            var hud = new InGameOverlay(game.mBoard.PlayerA, game.mBoard.PlayerB, game.mSelectionManager, gameStateManager);
             gameStateManager.Restart(game);
-            gameStateManager.Push(hud);
-        }
-
-        private void InitializePurchaseButtonDemo(EntityGraph entityGraph, SpriteManager sprites, SoundManager sounds)
-        {
-            var player = mBoard.PlayerB;
-            var nextPosition = new Vector2(50, 150);
-
-            mPurchaseDemoButton1 = new PurchaseButton<TextButton, Unit, PurchasableAction<Unit>>(player,
-                new PurchasableAction<Unit>(new Firefox(sprites)),
-                new TextButton(sprites))
-            {
-                Button = { Title = "Firefox" }
-            };
-
-            mPurchaseDemoButton2 = new PurchaseButton<TextButton, Tower, SinglePurchasableAction<Tower>>(player,
-                new SinglePurchasableAction<Tower>(Tower.CreateTower(Vector2.Zero, Grid.KachelSize, sprites
-                    , sounds, StrategicTower.Towers.CursorShooter)),
-                new TextButton(sprites))
-            {
-                Button = { Title = "Turm" }
-            };
-
-            mPurchaseDemoReset = new TextButton(sprites);
-            mPurchaseDemoReset.Clicked += (button, input) =>
-            {
-                player.Bitcoins = 9999;
-                UpdateResetTitle();
-            };
-
-            void UpdateResetTitle()
-            {
-                mPurchaseDemoReset.Title = player.Bitcoins.ToString();
-            }
-
-            void OnPurchase(Player buyer, Entity resource)
-            {
-                UpdateResetTitle();
-                resource.Sprite.Position = nextPosition;
-                entityGraph.Add(resource);
-                nextPosition.Y += 100;
-                mPurchaseDemoButton1.Action.ResetResource(new Firefox(sprites));
-            }
-
-            mPurchaseDemoButton1.Action.Purchased += OnPurchase;
-            mPurchaseDemoButton2.Action.Purchased += OnPurchase;
-
-            UpdateResetTitle();
-
-            var sprite1 = mPurchaseDemoButton1.Button.Sprite;
-            sprite1.SetOrigin(RelativePosition.BottomLeft);
-            sprite1.Position = Vector2.Zero;
-
-            var sprite2 = mPurchaseDemoButton2.Button.Sprite;
-            sprite2.SetOrigin(RelativePosition.BottomLeft);
-            sprite2.Position = sprite1.Position + new Vector2(sprite1.Width, 0);
-
-            var sprite3 = mPurchaseDemoReset.Sprite;
-            sprite3.SetOrigin(RelativePosition.BottomLeft);
-            sprite3.Position = sprite2.Position + new Vector2(sprite2.Width, 0);
+            gameStateManager.Push(game.mHud);
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
             , GraphicsDeviceManager graphics)
         {
-            if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive)
+            if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.ScoreOverlay.Pause)
             {
                 GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, graphics));
+                mHud.ScoreOverlay.Pause = false;
                 return;
             }
 
             mSelectionManager.Update(inputManager);
+            mBuildingBuyer.Update(inputManager);
+
             mBoard.Update(gameTime, inputManager);
             var gameState = mBoard.CheckGameState();
-            if (gameState != Board.GameState.Playing)
-            {
-                GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager, graphics));
-                GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager, graphics));
+            if (gameState == Board.GameState.Playing)
                 return;
-            }
 
-            mPurchaseDemoButton1.Update(inputManager, gameTime);
-            mPurchaseDemoButton2.Update(inputManager, gameTime);
-            mPurchaseDemoReset.Update(inputManager, gameTime);
+            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager, graphics));
+            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager, graphics));
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mBoard.Draw(spriteBatch, gameTime);
+            mBuildingBuyer.Draw(spriteBatch, gameTime);
             mSelectionManager.Selection?.DrawActions(spriteBatch, gameTime);
-            mPurchaseDemoButton1.Draw(spriteBatch, gameTime);
-            mPurchaseDemoButton2.Draw(spriteBatch, gameTime);
-            mPurchaseDemoReset.Draw(spriteBatch, gameTime);
         }
 
         #region Serialization
 
         internal Storage Data => new Storage
         {
-            Board = mBoard
+            Board = mBoard,
+            GameTime = mHud.ScoreOverlay.Time
         };
 
         #endregion

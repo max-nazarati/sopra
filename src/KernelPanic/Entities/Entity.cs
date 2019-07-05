@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Players;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -49,7 +50,7 @@ namespace KernelPanic.Entities
         /// </example>
         /// <typeparam name="T">Should be the type of <c>this</c>.</typeparam>
         /// <returns>A copy of the object.</returns>
-        protected T Clone<T>() where T: Entity
+        protected internal T Clone<T>() where T: Entity
         {
             var copy = (T) MemberwiseClone();
             copy.CompleteClone();

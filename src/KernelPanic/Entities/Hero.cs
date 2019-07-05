@@ -8,6 +8,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.PathPlanning;
+using KernelPanic.Players;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -41,7 +42,7 @@ namespace KernelPanic.Entities
 
         [DataMember]
         protected CooldownComponent Cooldown { get; }
-        internal AStar AStar; // save the AStar for path-drawing
+        internal AStar mAStar; // save the AStar for path-drawing
         private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
         protected AbilityState AbilityStatus { get; set; }
@@ -77,37 +78,37 @@ namespace KernelPanic.Entities
             
             // set the start Position for the AStar (something like the current position should do great)
             var start = Sprite.Position;
-            var startPoint = Grid.CoordinatePositionFromScreen(start);
+            var startPoint = positionProvider.RequireTile(start).ToPoint();
             
             // set the target Position for the AStar (latest updated target should be saved in mTarget
-            var target = Grid.CoordinatePositionFromScreen(targetVector);
+            var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
-            AStar = positionProvider.MakePathFinding(this, startPoint, target);
-            mPathVisualizer = positionProvider.Visualize(AStar);
-            var path = AStar.Path;
+            mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+            mPathVisualizer = positionProvider.Visualize(mAStar);
+            var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
-                AStar = positionProvider.MakePathFinding(this, startPoint, target);
-                mPathVisualizer = positionProvider.Visualize(AStar);
-                path = AStar.Path;
+                mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+                mPathVisualizer = positionProvider.Visualize(mAStar);
+                path = mAStar.Path;
             }
 
             if (path.Count > 2)
             {
-                MoveTarget = positionProvider.TilePoint(path[1]);
+                MoveTarget = positionProvider.Grid.GetTile(new TileIndex(path[1], 1)).Position;
             }
             else
             {
-                MoveTarget = positionProvider.TilePoint(target);
+                MoveTarget = positionProvider.Grid.GetTile(new TileIndex(target, 1)).Position;
                 MoveTargetReached += MoveTargetReachedHandler;
             }
         }
 
         private void MoveTargetReachedHandler(Vector2 target)
         {
-            AStar = null;
+            mAStar = null;
             mTarget = null;
             mPathVisualizer = null;
             MoveTargetReached -= MoveTargetReachedHandler;
@@ -132,7 +133,7 @@ namespace KernelPanic.Entities
             if (!inputManager.MousePressed(InputManager.MouseButton.Right)) return;
 
             var mouse = inputManager.TranslatedMousePosition;
-            if (positionProvider.GridCoordinate(mouse) == null) return;
+            if (positionProvider.Grid.GridPointFromWorldPoint(mouse, 1)?.Position == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
             ShouldMove = true;
             MoveTargetReached -= MoveTargetReachedHandler;
@@ -140,7 +141,7 @@ namespace KernelPanic.Entities
 
         private Point FindNearestWalkableField(Point target)
         {
-            var result = AStar.FindNearestField();
+            var result = mAStar.FindNearestField();
             return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);
         }
         
@@ -203,7 +204,7 @@ namespace KernelPanic.Entities
                 
                 case AbilityState.Indicating:
                     // sets the next AbilityState if wanted.
-                    IndicateAbility(inputManager);
+                    IndicateAbility(positionProvider, inputManager);
                     break;
 
                 case AbilityState.Starting:
@@ -218,9 +219,7 @@ namespace KernelPanic.Entities
 
                 case AbilityState.Finished:
                     // finally cleaning up has to be done and starting to cool down
-                    ShouldMove = true;
-                    AbilityStatus = AbilityState.CoolingDown;
-                    Cooldown.Reset();
+                    FinishAbility();
                     break;
 
                 case AbilityState.CoolingDown:
@@ -243,7 +242,7 @@ namespace KernelPanic.Entities
             return Selected  && Cooldown.Ready && (inputManager.KeyPressed(Keys.Q) || inputManager.MousePressed(InputManager.MouseButton.Middle) || button);
         }
 
-        protected virtual void IndicateAbility(InputManager inputManager)
+        protected virtual void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // just quit indicating when not selected anymore
             if (!Selected)
@@ -267,7 +266,7 @@ namespace KernelPanic.Entities
             }
         }
 
-        protected virtual void StartAbility(PositionProvider positionProvider, InputManager inputManager, Vector2? jumpTarget=null)
+        protected virtual void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             #region DEBUG
 #if DEBUG
@@ -285,6 +284,13 @@ namespace KernelPanic.Entities
             // Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
             AbilityStatus = AbilityState.Finished;
         }
+
+        protected virtual void FinishAbility()
+        {
+            ShouldMove = true;
+            AbilityStatus = AbilityState.CoolingDown;
+            Cooldown.Reset();
+        }
         
         #endregion Ability
 
@@ -292,10 +298,9 @@ namespace KernelPanic.Entities
 
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
         {
-            var startPoint = Grid.CoordinatePositionFromScreen(Sprite.Position);
-            var target = Grid.ScreenPositionFromCoordinate(basePosition);
-            mTarget = target;
-            AStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
+            var startPoint = positionProvider.RequireTile(this).ToPoint();
+            mTarget = positionProvider.RequireTile(basePosition.ToVector2()).ToPoint();
+            mAStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
             ShouldMove = true;
         }
 

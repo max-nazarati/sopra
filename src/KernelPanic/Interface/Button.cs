@@ -13,7 +13,9 @@ namespace KernelPanic.Interface
         protected ImageSprite mBackground;
         private bool mMouseDown;
 
-        protected bool ViewEnabled => !mMouseDown && Enabled;
+        internal bool ViewPressed { get; set; }
+
+        protected bool ViewEnabled => !ViewPressed && !mMouseDown && Enabled;
 
         public override void Update(InputManager inputManager, GameTime gameTime)
         {

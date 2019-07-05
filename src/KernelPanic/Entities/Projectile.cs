@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using KernelPanic.Data;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -10,15 +12,20 @@ namespace KernelPanic.Entities
         protected readonly Vector2 mDirection, mStartPoint;
         protected readonly ImageSprite mSprite;
         protected readonly float mRadius;
+        protected readonly int mSpeed, mDamage;
+        private List<Entity> mHasHitted;
         public bool mHasHit;
-        
+
         public Projectile(Vector2 direction, Vector2 startPoint, float radius, float rotation
-            , int size, ImageSprite sprite)
+            , int size, int speed, int damage, ImageSprite sprite)
         {
             mStartPoint = startPoint;
             mDirection = direction;
             mRadius = radius;
+            mSpeed = speed;
+            mDamage = damage;
             mHasHit = false;
+            mHasHitted = new List<Entity>();
 
             mSprite = sprite;
             mSprite.Position = startPoint;
@@ -38,13 +45,18 @@ namespace KernelPanic.Entities
 
         public void Update(PositionProvider positionProvider)
         {
-            mSprite.X += mDirection.X * 7;
-            mSprite.Y += mDirection.Y * 7;
+            mSprite.X += mDirection.X * mSpeed;
+            mSprite.Y += mDirection.Y * mSpeed;
             foreach (var entity in positionProvider.NearEntities<Unit>(new Vector2(mSprite.X, mSprite.Y), mRadius))
             {
                 if (!entity.Bounds.Intersects(mSprite.Bounds)) continue;
                 mHasHit = true;
-                entity.DealDamage(2);
+                if (!mHasHitted.Contains(entity))
+                {
+                    entity.DealDamage(mDamage);
+                    mHasHitted.Add(entity);
+                }
+
                 break;
             }
         }

@@ -27,8 +27,8 @@ namespace KernelPanic.Data
         [DataMember(Name = "Objects")]
         private readonly List<T> mObjects;
         
-        [DataMember(Name = "Childs")]
-        private QuadTree<T>[] mChilds;
+        [DataMember(Name = "Children")]
+        private QuadTree<T>[] mChildren;
 
         internal int Count { get; private set; }
 
@@ -93,11 +93,11 @@ namespace KernelPanic.Data
 
         private SquareIndex? CalculatePosition(Rectangle bounds)
         {
-            if (mChilds == null)
+            if (mChildren == null)
                 throw new InvalidOperationException("Can't use CalculateBounds before Split.");
 
             SquareIndex index = 0;
-            foreach (var child in mChilds)
+            foreach (var child in mChildren)
             {
                 if (child.mBounds.Contains(bounds))
                     return index;
@@ -112,21 +112,21 @@ namespace KernelPanic.Data
         #region Adding & Removing
 
         /// <summary>
-        /// Splits the current node into 4 childs
+        /// Splits the current node into 4 children
         /// </summary>
         private void Split()
         {
-            if (mChilds != null)
+            if (mChildren != null)
                 throw new InvalidOperationException("Can't split an already split quad-tree.");
 
             int halfWidth = mBounds.Width / 2, halfHeight = mBounds.Height / 2;
             void Assign(SquareIndex square, int x, int y)
             {
                 var bounds = new Rectangle(mBounds.X + x, mBounds.Y + y, halfWidth, halfHeight);
-                mChilds[(int) square] = new QuadTree<T>(mLevel + 1, bounds);
+                mChildren[(int) square] = new QuadTree<T>(mLevel + 1, bounds);
             }
 
-            mChilds = new QuadTree<T>[4];
+            mChildren = new QuadTree<T>[4];
             Assign(SquareIndex.TopLeft, 0, 0);
             Assign(SquareIndex.TopRight, halfWidth, 0);
             Assign(SquareIndex.BottomLeft, 0, halfHeight);
@@ -146,18 +146,15 @@ namespace KernelPanic.Data
 
             Count++;
 
-            if (mChilds != null)
+            if (mChildren != null && CalculatePosition(entity) is SquareIndex index)
             {
-                if (CalculatePosition(entity) is SquareIndex index)
-                {
-                    mChilds[(int) index].Add(entity);
-                    return;
-                }
+                mChildren[(int) index].Add(entity);
+                return;
             }
 
             mObjects.Add(entity);
 
-            if (mLevel >= MaximumDepth || mObjects.Count <= MaxObjects || mChilds != null)
+            if (mLevel >= MaximumDepth || mObjects.Count <= MaxObjects || mChildren != null)
             {
                 // Don't split this level up if either
                 //    * the maximum depth is reached
@@ -173,7 +170,7 @@ namespace KernelPanic.Data
             {
                 if (CalculatePosition(value) is SquareIndex square)
                 {
-                    mChilds[(int) square].Add(value);
+                    mChildren[(int) square].Add(value);
                     mObjects.Remove(value);
                 }
             }
@@ -202,7 +199,7 @@ namespace KernelPanic.Data
         /*internal*/ private void Clear()
         {
             mObjects.Clear();
-            mChilds = null;
+            mChildren = null;
             Count = 0;
         }
 
@@ -230,9 +227,9 @@ namespace KernelPanic.Data
                 }
 
                 // Move one level down.
-                if (tree.mChilds != null && tree.CalculatePosition(point) is SquareIndex square)
+                if (tree.mChildren != null && tree.CalculatePosition(point) is SquareIndex square)
                 {
-                    tree = tree.mChilds[(int) square];
+                    tree = tree.mChildren[(int) square];
                 }
                 else
                 {
@@ -252,28 +249,6 @@ namespace KernelPanic.Data
             return EntitiesAt(point).Any();
         }
 
-        /// <summary>
-        /// returns list of all entitys near to an entity
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        internal IEnumerable<T> NearObjects(T entity)
-        {
-            var entities = new List<T>();
-            NearObjects(entity, entities);
-            return entities;
-        }
-
-        private void NearObjects(T entity, List<T> nearEntities)
-        {
-            if (mChilds != null && CalculatePosition(entity) is SquareIndex index)
-            {
-                mChilds[(int) index].NearObjects(entity, nearEntities);
-            }
-            
-            nearEntities.AddRange(mObjects);
-        }
-
         internal IEnumerable<T> NearEntities(Vector2 point, float radius)
         {
             var rectangle = Bounds.ContainingRectangle(point - new Vector2(radius), new Vector2(radius*2));
@@ -290,10 +265,10 @@ namespace KernelPanic.Data
                     yield return o;
             }
 
-            if (mChilds == null)
+            if (mChildren == null)
                 yield break;
 
-            foreach (var child in mChilds)
+            foreach (var child in mChildren)
             {
                 foreach (var o in child.Overlapping(point, radius, rectangle))
                 {
@@ -319,18 +294,18 @@ namespace KernelPanic.Data
 
         private IEnumerable<(T, T)> ChildOverlaps(T[] parentElements, int parentCount)
         {
-            if (mChilds == null)
+            if (mChildren == null)
                 return Enumerable.Empty<(T, T)>();
 
             // TODO: We can elide these copies in some cases (e.g. parentElements empty or null, or all the children's mObjects empty).
-            var additionalCount = mChilds.Max(t => t.mObjects.Count);
+            var additionalCount = mChildren.Max(t => t.mObjects.Count);
             var parentElementsCopy = new T[parentCount + additionalCount];
             if (parentElements != null)
             {
                 Array.Copy(parentElements, parentElementsCopy, parentCount);
             }
 
-            return mChilds.SelectMany(tree =>
+            return mChildren.SelectMany(tree =>
             {
                 tree.mObjects.CopyTo(parentElementsCopy, parentCount);
                 return tree
@@ -368,8 +343,8 @@ namespace KernelPanic.Data
 
         public IEnumerator<T> GetEnumerator()
         {
-            // If mChilds is null enumerate only through mObjects, otherwise go through mObjects and then continue with the children.
-            return (mChilds == null ? mObjects : mObjects.Concat(mChilds.SelectMany(c => c))).GetEnumerator();
+            // If mChildren is null enumerate only through mObjects, otherwise go through mObjects and then continue with the children.
+            return (mChildren == null ? mObjects : mObjects.Concat(mChildren.SelectMany(c => c))).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -411,7 +386,7 @@ namespace KernelPanic.Data
                     .Append('\n');
             }
 
-            foreach (var child in mChilds?.AsEnumerable() ?? Enumerable.Empty<QuadTree<T>>())
+            foreach (var child in mChildren?.AsEnumerable() ?? Enumerable.Empty<QuadTree<T>>())
             {
                 child.ToString(indent, output);
             }

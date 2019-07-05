@@ -33,6 +33,7 @@ namespace KernelPanic
             Bluescreen,
             Settings,
             Antivirus,
+            Cable,
             CdThrower,
             Cd,
             Cursor,
@@ -41,7 +42,6 @@ namespace KernelPanic
             Mouse,
             Router,
             ShockField,
-            Wires,
             Bug,
             Nokia,
             Thunderbird,
@@ -83,6 +83,7 @@ namespace KernelPanic
                 Texture(Image.Base1, "base_1"),
                 Texture(Image.Base2, "base_2"),
                 Texture(Image.Bluescreen, "heroes/bluescreen"),
+                Texture(Image.Cable, "towers/wires"),
                 Texture(Image.Cd, "towers/cd"),
                 Texture(Image.CdThrower, "towers/cd_thrower"),
                 Texture(Image.Cursor, "towers/cursor"),
@@ -93,7 +94,6 @@ namespace KernelPanic
                 Texture(Image.Settings, "heroes/settings"),
                 Texture(Image.ShockField, "towers/shock_field"),
                 Texture(Image.Skill, "skill_tile"),
-                Texture(Image.Wires, "towers/wires"),
                 Texture(Image.Bug, "troupes/bug"),
                 Texture(Image.Nokia, "troupes/nokia"),
                 Texture(Image.Thunderbird, "troupes/thunderbird"),
@@ -143,7 +143,9 @@ namespace KernelPanic
         internal ImageSprite CreatePause()
         {
             var texture = Lookup(Image.Pause);
-            return new ImageSprite(texture);
+            var sprite = new ImageSprite(texture);
+            sprite.DestinationRectangle = new Rectangle(0, 0, 40, 40);
+            return sprite;
         }
 
         internal TextSprite CreateText(string text = "")
@@ -200,11 +202,11 @@ namespace KernelPanic
             };*/
         }
 
-        internal (Sprite, ImageSprite, TextSprite) CreateTextButton()
+        internal (Sprite, ImageSprite, TextSprite) CreateTextButton(int width, int height)
         {
             var background = new ImageSprite(Lookup(Image.ButtonBackground))
             {
-                DestinationRectangle = new Rectangle(0, 0, 250, 70)
+                DestinationRectangle = new Rectangle(0, 0, width, height)
             };
 
             var titleSprite = AutoCenteredTextSprite(Lookup(Font.Button), background);
@@ -235,15 +237,15 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
         internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower));
-        
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
-        
-        internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Tower));
-        
+        internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Fan));
         internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
-        
-        internal ImageSprite CreateCDThrower() => new ImageSprite(Lookup(Image.CdThrower));
+        internal ImageSprite CreateCable() => new ImageSprite(Lookup(Image.Cable));
+        internal ImageSprite CreateShockField() => new ImageSprite(Lookup(Image.ShockField));
+        internal ImageSprite CreateCdThrower() => new ImageSprite(Lookup(Image.CdThrower));
+        internal ImageSprite CreateCursorShooter() => new ImageSprite(Lookup(Image.Mouse));
         internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile));
+        internal ImageSprite CreateCdProjectile() => new ImageSprite(Lookup(Image.Cd));
         internal ImageSprite CreateWifiProjectile() => new ImageSprite(Lookup(Image.WifiProjectile));
 
 
@@ -256,12 +258,12 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite Right, TextSprite RightMoney, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
+        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
         {
             var texture = Lookup(Image.ButtonBackground);
             var font = Lookup(Font.Hud);
-            var pauseTexture = Lookup(Image.Pause);
             var secondLine = new Point(0, powerIndicatorSize.Y);
+            var thirdLine = new Point(0, 2*powerIndicatorSize.Y);
 
             var leftBackground = new ImageSprite(texture)
             {
@@ -272,6 +274,10 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
             };
+            var leftEPBackground = new ImageSprite(texture)
+            {
+                DestinationRectangle = new Rectangle(thirdLine, powerIndicatorSize)
+            };
             var rightBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
@@ -281,6 +287,10 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
             };
+            var rightEPBackground = new ImageSprite(texture)
+            {
+                DestinationRectangle = new Rectangle(thirdLine, powerIndicatorSize)
+            };
             var clockBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(Point.Zero, clockSize)
@@ -288,17 +298,21 @@ namespace KernelPanic
 
             var leftText = AutoCenteredTextSprite(font, leftBackground);
             var leftMoneyText = AutoCenteredTextSprite(font, leftMoneyBackground);
+            var leftEPText = AutoCenteredTextSprite(font, leftEPBackground);
             leftMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
+            leftEPText.Y = (float)(2.5 * powerIndicatorSize.Y);
             var rightText = AutoCenteredTextSprite(font, rightBackground);
             var rightMoneyText = AutoCenteredTextSprite(font, rightMoneyBackground);
+            var rightEPText = AutoCenteredTextSprite(font, rightEPBackground);
             rightMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
+            rightEPText.Y = (float)(2.5 * powerIndicatorSize.Y);
             var clockText = AutoCenteredTextSprite(font, clockBackground);
 
             var left = new CompositeSprite
             {
                 X = (ScreenSize.X - clockSize.X) / 2f,
                 Y = 0,
-                Children = { leftBackground, leftText, leftMoneyBackground, leftMoneyText }
+                Children = { leftBackground, leftText, leftMoneyBackground, leftMoneyText, leftEPBackground, leftEPText }
             };
             left.SetOrigin(RelativePosition.TopRight);
 
@@ -306,7 +320,7 @@ namespace KernelPanic
             {
                 X = (ScreenSize.X + clockSize.X) / 2f,
                 Y = 0,
-                Children = { rightBackground, rightText, rightMoneyBackground, rightMoneyText }
+                Children = { rightBackground, rightText, rightMoneyBackground, rightMoneyText, rightEPBackground, rightEPText }
             };
             right.SetOrigin(RelativePosition.TopLeft);
 
@@ -322,7 +336,7 @@ namespace KernelPanic
             {
                 Children = { left, right, middle }
             };
-            return (sprite, leftText, leftMoneyText, rightText, rightMoneyText, clockText);
+            return (sprite, leftText, leftMoneyText, leftEPText, rightText, rightMoneyText, rightEPText, clockText);
         }
 
         #region Troupes
@@ -469,7 +483,7 @@ namespace KernelPanic
                 Plot();
 
                 // We have reached 45°.
-                if (x == y)
+                if (x <= y)
                     break;
 
                 // Y always increases.
@@ -509,11 +523,21 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal ImageSprite CreateEmpIndicator(float radius)
+        internal ImageSprite CreateEmpIndicatorRange(int abilityRange)
         {
-            if (Math.Abs(radius) < 0.00001)
+            if (Math.Abs(abilityRange) < 0.00001)
                 return null;
-            var sprite = new ImageSprite(CreateCircleTexture((int) radius, Color.Blue));
+            var sprite = new ImageSprite(CreateCircleTexture((int) abilityRange, Color.Blue));
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
+        }
+        
+        public ImageSprite CreateEmpIndicatorTarget(int gridRadius = Grid.KachelSize / 2)
+        {
+            if (Math.Abs(gridRadius) < 0.00001)
+                return null;
+            var sprite = new ImageSprite(CreateCircleTexture(gridRadius, Color.Blue));
+            sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
         
@@ -588,7 +612,5 @@ namespace KernelPanic
             text.SizeChanged += s => s.Origin = new Vector2(s.Width / 2, s.Height / 2);
             return text;
         }
-
-
     }
 }

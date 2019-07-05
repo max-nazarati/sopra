@@ -1,6 +1,11 @@
+using System.Runtime.Serialization;
+using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Data;
 using KernelPanic.Input;
+using KernelPanic.Players;
 using KernelPanic.Sprites;
+using KernelPanic.Upgrades;
+using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -15,9 +20,16 @@ namespace KernelPanic.Table
         [JsonProperty]
         internal Player PlayerA { get; /* required for deserialization */ private set; }
         [JsonProperty]
-        internal Player PlayerB { get; /* required for deserialization */ private set; }
+        internal ArtificialPlayer PlayerB { get; /* required for deserialization */ private set; }
+
+        [JsonProperty]
+        internal UpgradePool mUpgradePool;
+        
+        internal WaveManager WaveManager { get; /* required for deserialization */ private set; }
 
         private readonly Sprite mBase;
+
+        private readonly BitcoinManager mBitcoinManager;
 
         internal enum GameState
         {
@@ -38,20 +50,41 @@ namespace KernelPanic.Table
 
         #region Constructing a Board
 
-        internal Board(SpriteManager content, SoundManager sounds, bool deserializing = false)
+        internal Board(SpriteManager spriteManager, SoundManager soundManager, bool deserializing = false)
         {
-            mBase = CreateBase(content);
+            mBase = CreateBase(spriteManager);
             if (deserializing)
             {
                 // If this is object is deserialized the other properties are set automatically later.
                 return;
             }
 
-            var leftLane = new Lane(Lane.Side.Left, content, sounds);
-            var rightLane = new Lane(Lane.Side.Right, content, sounds);
+            var leftLane = new Lane(Lane.Side.Left, spriteManager, soundManager);
+            var rightLane = new Lane(Lane.Side.Right, spriteManager, soundManager);
             
             PlayerA = new Player(leftLane, rightLane);
-            PlayerB = new Player(rightLane, leftLane, false);
+            PlayerB = new ArtificialPlayer(rightLane, leftLane, 9999, spriteManager, soundManager);
+
+            mUpgradePool = new UpgradePool(PlayerA, spriteManager);
+            LayOutUpgradePool();
+            
+            WaveManager = new WaveManager(new PlayerIndexed<Player>(PlayerA, PlayerB));
+
+            mBitcoinManager = new BitcoinManager(PlayerA, PlayerB);
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            LayOutUpgradePool();
+        }
+
+        private void LayOutUpgradePool()
+        {
+            var centerLeft = Lane.LeftBounds.At(RelativePosition.CenterRight);
+            var centerRight = Lane.RightBounds.At(RelativePosition.CenterLeft);
+            var middle = centerLeft + (centerRight - centerLeft) / 2;
+            mUpgradePool.Position = middle - mUpgradePool.Size / 2;
         }
 
         private static Sprite CreateBase(SpriteManager spriteManager)
@@ -67,8 +100,10 @@ namespace KernelPanic.Table
         {
             PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
             PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
-            PlayerA.Update(gameTime);
             PlayerB.Update(gameTime);
+            mUpgradePool.Update(inputManager, gameTime);
+            WaveManager.Update(gameTime);
+            mBitcoinManager.Update(gameTime);
         }
 
         internal GameState CheckGameState()
@@ -88,6 +123,7 @@ namespace KernelPanic.Table
         {
             LeftLane.Draw(spriteBatch, gameTime);
             RightLane.Draw(spriteBatch, gameTime);
+            mUpgradePool.Draw(spriteBatch, gameTime);
             mBase.Draw(spriteBatch, gameTime);
         }
     }

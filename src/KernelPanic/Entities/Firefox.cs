@@ -16,6 +16,7 @@ namespace KernelPanic.Entities
     {
         private Stack<Vector2> mAbility = new Stack<Vector2>();
         private Vector2 mAbilityTarget;
+        private Vector2? mJumpTarget;
         private readonly ImageSprite mIndicator;
         private const int JumpDuration = 10;
         private const int JumpSegmentLength = 30;
@@ -28,25 +29,26 @@ namespace KernelPanic.Entities
 
         protected override void CompleteClone()
         {
+            base.CompleteClone();
             mAbility = new Stack<Vector2>(mAbility);
         }
 
         #region Ability 
 
-        protected override void IndicateAbility(InputManager inputManager)
+        protected override void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             mAbilityTarget = inputManager.TranslatedMousePosition;
-            base.IndicateAbility(inputManager);
+            base.IndicateAbility(positionProvider, inputManager);
             
         }
 
-        protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager, Vector2? jumpTarget)
+        protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // debug
-            base.StartAbility(positionProvider, inputManager, jumpTarget);
+            base.StartAbility(positionProvider, inputManager);
 
             // calculate the jump direction
-            var mouse = jumpTarget ?? inputManager.TranslatedMousePosition;
+            var mouse = mJumpTarget ?? inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
             var jumpSegment = direction * JumpSegmentLength;
@@ -73,7 +75,7 @@ namespace KernelPanic.Entities
             }
             
             // jump was too long
-            while (!positionProvider.Contains(goal) || positionProvider.HasEntityAt(goal))
+            while (!positionProvider.Grid.Contains(goal) || positionProvider.HasEntityAt(goal))
             {
                 goal -= mAbility.Pop();
             }
@@ -104,11 +106,11 @@ namespace KernelPanic.Entities
             if (MoveTarget != null && Cooldown.Ready)
             {
                 // just jump the next steps
-                if (AStar.Path is List<Point> path && path.Count >= 2)
+                if (mAStar.Path is List<Point> path && path.Count >= 2)
                 {
-                    var jumpTarget = Grid.ScreenPositionFromCoordinate(path[2]).ToVector2();
+                    mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[2], 1)).Position;
                     TryActivateAbility(inputManager, true);
-                    StartAbility(positionProvider, inputManager, jumpTarget);
+                    StartAbility(positionProvider, inputManager);
                 }
             }
         }

@@ -12,10 +12,11 @@ namespace KernelPanic.Entities
     internal class WifiRouter : StrategicTower
     {
         [JsonIgnore] private List<WifiProjectile> mProjectiles = new List<WifiProjectile>();
-        internal WifiRouter(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites
-            , SoundManager sounds) : base(price, radius, cooldown, sprite, sprites, sounds)
+        internal WifiRouter(SpriteManager spriteManager
+            , SoundManager sounds) : base(40, radius:3, cooldown: TimeSpan.FromSeconds(1)
+            , sprite: spriteManager.CreateWifiRouter(), spriteManager: spriteManager, sounds: sounds)
         {
-            mFireTimer.CooledDown += timer =>
+            FireTimer.CooledDown += timer =>
             {
                 if (!mInRange)
                 {
@@ -28,9 +29,8 @@ namespace KernelPanic.Entities
                 var direction = new Vector2(
                     (float) Math.Sin(Sprite.Rotation % (Math.PI * 2)),
                     -(float) Math.Cos(Sprite.Rotation % (Math.PI * 2)));
-                Console.WriteLine(direction);
-                mProjectiles.Add(new WifiProjectile(direction, Sprite.Position, mRadius, Sprite.Rotation, 40
-                    , sprites.CreateWifiProjectile()));
+                mProjectiles.Add(new WifiProjectile(direction, Sprite.Position, Radius, Sprite.Rotation
+                    , 40, 3, 1, spriteManager.CreateWifiProjectile()));
                 // sounds.PlaySound(SoundManager.Sound.Shoot1);
                 
                 if (mProjectiles.Count > 5)
@@ -41,12 +41,7 @@ namespace KernelPanic.Entities
                 timer.Reset();
             };
 
-            mRadiusSprite = sprites.CreateTowerRadiusIndicator(radius);
-        }
-
-        internal WifiRouter(SpriteManager spriteManager, SoundManager soundManager)
-            : base(spriteManager, soundManager)
-        {
+            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -69,7 +64,7 @@ namespace KernelPanic.Entities
         {
             base.Update(positionProvider, gameTime, inputManager);
 
-            if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= mRadius)
+            if (Target(positionProvider) is Vector2 target && Vector2.Distance(target, Sprite.Position) <= Radius)
             {
                 // Turn into the direction of the target.
                 mInRange = true;
@@ -79,10 +74,10 @@ namespace KernelPanic.Entities
             {
                 // If no unit is in range we wiggle the tower.
                 mInRange = false;
-                Sprite.Rotation = (float) Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10 % (2 * Math.PI)) / 2;
+                Sprite.Rotation = (float) (gameTime.TotalGameTime.TotalSeconds % (2 * Math.PI));
             }
 
-            mFireTimer.Update(gameTime);
+            FireTimer.Update(gameTime);
             foreach (var projectile in new List<WifiProjectile>(mProjectiles))
             {
                 if (projectile.mHasHit && projectile.mHasHit2 && projectile.mHasHit3)

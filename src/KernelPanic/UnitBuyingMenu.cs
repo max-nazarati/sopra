@@ -1,20 +1,25 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
+using KernelPanic.Waves;
 
 namespace KernelPanic
 {
-    internal sealed class UnitBuyingMenu : BuyingMenuOverlay<UnitBuyingMenu.Element>
+    internal sealed class UnitBuyingMenu : BuyingMenuOverlay<UnitBuyingMenu.Element, Unit>
     {
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
+            internal Type UnitType { get; }
             private readonly PurchaseButton<ImageButton, Unit> mButton;
             private readonly TextSprite mCounterSprite;
             private int mCounter;
@@ -31,24 +36,28 @@ namespace KernelPanic
                 }
             }
 
-            Vector2 IPositioned.Size => mButton.Button.Sprite.Size;
+            Vector2 IPositioned.Size => mButton.Button.Size;
 
-            internal Element(PurchaseButton<ImageButton, Unit> button, SpriteManager spriteManager)
+            internal Element(Type unitType, PurchaseButton<ImageButton, Unit> button, SpriteManager spriteManager)
             {
-                mCounterSprite = spriteManager.CreateText();
+                UnitType = unitType;
+                mCounter = 0;
+                mCounterSprite = spriteManager.CreateText("0");
                 mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterRight);
-                Reset();
 
                 // When a unit is purchased, increase its counter.
                 mButton = button;
-                mButton.Action.Purchased += (buyer, resource) => mCounterSprite.Text = (++mCounter).ToString();
+                mButton.Action.Purchased += PurchasedUnit;
                 mButton.Button.Sprite.SetOrigin(RelativePosition.TopRight);
             }
 
-            internal void Reset()
+            private void PurchasedUnit(IPlayerDistinction buyer, Unit resource)
             {
-                mCounter = 0;
-                mCounterSprite.Text = "0";
+                // Only increment the counter if the buyer is the active player.
+                if (buyer.Select(mCounterSprite, null) is TextSprite sprite)
+                {
+                    sprite.Text = (++mCounter).ToString();
+                }
             }
 
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -61,42 +70,55 @@ namespace KernelPanic
             {
                 mButton.Update(inputManager, gameTime);
             }
+
+            internal PurchasableAction<Unit> BuyingAction => mButton.Action;
         }
 
-        private UnitBuyingMenu(Player player, SpriteManager spriteManager, params PurchaseButton<ImageButton, Unit>[] buttons)
-            : base(MenuPosition(Lane.Side.Right, spriteManager), player, buttons.Select(b => new Element(b, spriteManager)))
+        private UnitBuyingMenu(Player player, SpriteManager spriteManager, params Element[] elements)
+            : base(MenuPosition(Lane.Side.Right, spriteManager), player, elements)
         {
         }
 
-        internal static UnitBuyingMenu Create(Player player, SpriteManager spriteManager)
+        internal static UnitBuyingMenu Create(WaveManager waveManager, SpriteManager spriteManager)
         {
-            void UnitBought(Player buyer, Unit unit)
+            PurchaseButton<ImageButton, Unit> CreateButton<TUnit>() where TUnit : Unit
             {
-                buyer.AttackingLane.UnitSpawner.Register(unit.Clone());
-            }
-
-            PurchaseButton<ImageButton, Unit> CreateButton(Unit unit, AnimatedSprite sprite)
-            {
+                var unit = Unit.Create<TUnit>(spriteManager);
+                // Can we have units with an other sprite type than an animated sprite?
+                var image = ((AnimatedSprite)unit.Sprite).getSingleFrame(spriteManager);
                 var action = new PurchasableAction<Unit>(unit);
-                action.Purchased += UnitBought;
-                var button = new ImageButton(spriteManager, sprite.getSingleFrame(spriteManager), 70, 70);
-                return new PurchaseButton<ImageButton, Unit>(player, action, button);
+                action.Purchased += waveManager.Add;
+                var button = new ImageButton(spriteManager, image, 70, 70);
+                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, action, button);
             }
 
-            var bug = CreateButton(new Bug(spriteManager), spriteManager.CreateBug());
-            var trojan = CreateButton(new Trojan(spriteManager), spriteManager.CreateTrojan());
-            var firefox = CreateButton(new Firefox(spriteManager), spriteManager.CreateFirefox());
-            return new UnitBuyingMenu(player, spriteManager, bug, trojan, firefox);
+            Element CreateElement<TUnit>() where TUnit : Unit
+            {
+                var button = CreateButton<TUnit>();
+                return new Element(typeof(TUnit), button, spriteManager);
+            }
+
+            return new UnitBuyingMenu(waveManager.Players.A, spriteManager, 
+                CreateElement<Bug>(),
+                CreateElement<Virus>(),
+                CreateElement<Trojan>(),
+                CreateElement<Thunderbird>(),
+                CreateElement<Nokia>(),
+                CreateElement<Firefox>(),
+                CreateElement<Settings>(),
+                CreateElement<Bluescreen>());
         }
 
-        /// <summary>
-        /// Resets the counter of each element to zero.
-        /// </summary>
-        internal void ResetCounts()
+        internal override Dictionary<Type, PurchasableAction<Unit>> BuyingActions
         {
-            foreach (var element in Elements)
+            get
             {
-                element.Reset();
+                var dict = new Dictionary<Type, PurchasableAction<Unit>>(Elements.Length);
+                foreach (var element in Elements)
+                {
+                    dict[element.UnitType] = element.BuyingAction;
+                }
+                return dict;
             }
         }
     }

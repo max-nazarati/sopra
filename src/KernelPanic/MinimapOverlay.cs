@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Input;
+using KernelPanic.Players;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -15,8 +18,7 @@ namespace KernelPanic
         #region Member Variables
         
         private Sprite mSprite;
-        private readonly Player mPlayerA;
-        private readonly Player mPlayerB;
+        private readonly PlayerIndexed<Player> mPlayers;
         private readonly SpriteManager mSpriteManager;
         private readonly float mRelativeSize; // how much of the screen should be the minimap [0, 1]
         private int mSize;
@@ -31,7 +33,7 @@ namespace KernelPanic
         private readonly Color mColorPlayerA = Color.Lime;
         private readonly Color mColorPlayerB = Color.Red;
         private readonly Color mColorLaneA = Color.SlateGray;
-        private readonly Color mColorLaneB = Color.LightGray;
+        private readonly Color mColorLaneB = Color.SlateGray;
         private readonly Color mColorSelected = Color.Coral;
         
         #endregion
@@ -43,7 +45,7 @@ namespace KernelPanic
 
         #region Konstruktor
         
-        internal MinimapOverlay(Player player1, Player player2, SpriteManager spriteManager, float relativeSize = 0.3f)
+        internal MinimapOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager, float relativeSize = 0.3f)
         {
             var screenSizeX = spriteManager.ScreenSize.X;
             var screenSizeY = spriteManager.ScreenSize.Y;
@@ -51,8 +53,7 @@ namespace KernelPanic
             mRelativeSize = relativeSize;
             mSize = (int)(Math.Min(screenSizeX, screenSizeY) * mRelativeSize);
             mPosition = new Vector2(screenSizeX - mSize, screenSizeY - mSize);
-            mPlayerA = player1;
-            mPlayerB = player2;
+            mPlayers = players;
             mSpriteManager = spriteManager;
 
             // filling the minimap with background color
@@ -105,18 +106,18 @@ namespace KernelPanic
         
         private void InitializeScale()
         {
-            // we should not assume that minX = 0 and minY = 0 although it will probably be
-            var laneRectangleA = mPlayerA.DefendingLane.GridRectangle();
-            var minX = laneRectangleA.X;
-            var minY = laneRectangleA.Y;
+            var laneLeft = mPlayers.A.DefendingLane.Grid;
+            var laneRight = mPlayers.B.DefendingLane.Grid;
             
-            var laneRectangleB = mPlayerB.DefendingLane.GridRectangle();
-            var maxX = laneRectangleB.X + laneRectangleB.Width;
-            var maxY = laneRectangleB.Y + laneRectangleB.Height;
+            var pointTopLeft = new TileIndex(0, 0, 1);
+            var pointBottomRight = new TileIndex(laneRight.LaneRectangle.Size - new Point(1), 1);
             
-            var bottomRight = Grid.ScreenPositionFromCoordinate(new Point(maxX-minX, maxY-minY));
+
+            var topLeft = laneLeft.GetTile(pointTopLeft, RelativePosition.TopLeft).Position;
+            var bottomRight = laneRight.GetTile(pointBottomRight, RelativePosition.BottomRight).Position;
+
+            mScale = Math.Max(bottomRight.X, bottomRight.Y) / mSize;
             
-            mScale = Math.Max(bottomRight.X, bottomRight.Y) / (float)mSize;
             Console.WriteLine("There will be " + mScale + " x " + mScale + " Pixel represented by 1 minimap Pixel");
             // Console.WriteLine("There are a total of " + mSize * mSize + " Pixel.");
             
@@ -159,31 +160,33 @@ namespace KernelPanic
                 mData[i] = mInitializedData[i];
             }
             
-            SetEntityColor();
+            SetEntityColor(mPlayers.A.DefendingLane);
+            SetEntityColor(mPlayers.B.DefendingLane);
         }
 
         private Color LaneColor(int i)
         {
             Point point = CalculateWorldPosition(i);
             // Console.WriteLine(point);
-            if (mPlayerA.DefendingLane.Contains(new Vector2(point.X, point.Y)))
+            if (mPlayers.A.DefendingLane.Contains(new Vector2(point.X, point.Y)))
             {
                 return mColorLaneA;
             }
-            if (mPlayerB.DefendingLane.Contains(new Vector2(point.X, point.Y)))
+            if (mPlayers.B.DefendingLane.Contains(new Vector2(point.X, point.Y)))
             {
                 return mColorLaneB;
             }
 
             return mColorBackground;
         }
-
-        private void SetEntityColor()
+        
+        private void SetEntityColor(Lane lane)
         {
             var drawSelected = false;
             var selectedIndex = 0;
             
-            var entities = mPlayerB.AttackingLane.EntityGraph.QuadTree;
+            var entities = lane.EntityGraph.QuadTree;
+
             foreach (var entity in entities)
             {
                 var index = CalculateMapIndexPosition(entity.Sprite.Position);
@@ -240,32 +243,7 @@ namespace KernelPanic
             mSprite = mSpriteManager.CreateColoredRectangle(mSize, mSize, mData);
             mSprite.Position = mPosition;
         }
-
-        #region Debug
         
-        private void DebugInformation()
-        {
-            var sizePerLane = mSize / 2;
-            var laneGridA = mPlayerA.DefendingLane.GridRectangle();
-            var laneGridB = mPlayerB.DefendingLane.GridRectangle();
-
-            var horizontalPlaceNeeded = laneGridA.Width;
-
-            var topLeftPointA = Grid.ScreenPositionFromCoordinate(new Point(laneGridA.X, laneGridA.Y));
-            var topLeftPointB = Grid.ScreenPositionFromCoordinate(new Point(laneGridB.X, laneGridB.Y));
-            Console.WriteLine("bottom right: " + topLeftPointA);
-            Console.WriteLine("top left: " + topLeftPointB);
-            
-            var rectangleSizeA = new Point(laneGridA.Width, laneGridA.Height);
-            var rectangleSizeB = new Point(laneGridB.Width, laneGridB.Height);
-            Console.WriteLine("Rectangle Size A: " + rectangleSizeA);
-            Console.WriteLine("Rectangle Size B: " + rectangleSizeB);
-
-            var bottomRight = Grid.ScreenPositionFromCoordinate(new Point(laneGridB.X + laneGridB.Width, laneGridB.Y + laneGridB.Height));
-            Console.WriteLine("bottomRight: " + bottomRight);
-        }
-        
-        #endregion
         
         #endregion
 

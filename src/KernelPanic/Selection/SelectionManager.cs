@@ -79,7 +79,7 @@ namespace KernelPanic.Selection
             if (ProcessLane(mOwnedLane) || ProcessLane(mEnemyLane))
                 return;
 
-            if (!mOwnedLane.Contains(mouse) && !mEnemyLane.Contains(mouse))
+            if (mSelection == null || !mOwnedLane.Contains(mouse) && !mEnemyLane.Contains(mouse))
                 return;
 
             if (inputManager.MousePressed(InputManager.MouseButton.Left))

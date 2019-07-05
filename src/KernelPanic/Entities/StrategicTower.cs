@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Players;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,11 +23,13 @@ namespace KernelPanic.Entities
             WifiRouter,
             Ventilator,
             Antivirus,
-            CdThrower
+            CdThrower,
+            Cable,
+            ShockField
         }
 
-        internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager sprites, SoundManager sounds)
-            : base(price, radius, cooldown, sprite, sprites, sounds)
+        internal StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
+            : base(price, radius, cooldown, sprite, spriteManager, sounds)
         {
         }
 

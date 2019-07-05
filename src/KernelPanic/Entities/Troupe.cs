@@ -6,6 +6,7 @@ using Autofac.Core.Lifetime;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
+using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities
@@ -21,9 +22,12 @@ namespace KernelPanic.Entities
             Speed = speed;
         }
 
+        internal WaveReference Wave { get; set; }
+
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            Vector2 movementDirection = positionProvider.GetVector(Grid.CoordinatePositionFromScreen(Sprite.Position));
+            var currentTile = positionProvider.RequireTile(this);
+            var movementDirection = positionProvider.MovementVector(currentTile.ToPoint());
             if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
             {
                 movementDirection = mLastMovement;
@@ -34,5 +38,7 @@ namespace KernelPanic.Entities
             }
             MoveTarget = Sprite.Position + Speed * movementDirection;
         }
+        
+        internal new Troupe Clone() => Clone<Troupe>();
     }
 }

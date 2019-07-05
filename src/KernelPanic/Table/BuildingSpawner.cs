@@ -1,10 +1,11 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 using KernelPanic.Entities;
 using KernelPanic.Data;
 
 namespace KernelPanic.Table
 {
-    class BuildingSpawner
+    internal sealed class BuildingSpawner
     {
         private readonly Action<Building> mSpawnAction;
         private readonly Grid mGrid;
@@ -17,15 +18,11 @@ namespace KernelPanic.Table
             mHeatMap = heatMap;
         }
 
-        internal void Register(Building unit)
+        internal void Register(Building building, Point tile)
         {
-            var spawnTile =
-                mGrid.LaneSide == Lane.Side.Left
-                    ? new TileIndex(1 + Grid.LaneWidthInTiles / 2, mGrid.LaneRectangle.Width - 1, 1)
-                    : new TileIndex(mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
-            unit.Sprite.Position = mGrid.GetTile(spawnTile).Position;
-            mSpawnAction(unit);
-            mHeatMap.Block(Grid.CoordinatePositionFromScreen(unit.Sprite.Position));
+            building.Sprite.Position = mGrid.GetTile(new TileIndex(tile, 1)).Position;
+            mHeatMap.Block(tile);
+            mSpawnAction(building);
         }
     }
 }

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Accord.MachineLearning.DecisionTrees;
-using System.Data;
-using System.IO;
+﻿using Accord.MachineLearning.DecisionTrees;
 using Accord.MachineLearning.DecisionTrees.Learning;
 using Accord.MachineLearning.DecisionTrees.Rules;
 using Accord.Math;
 using Accord.Math.Optimization.Losses;
 using Accord.Statistics.Filters;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 
 namespace KernelPanic.ArtificialIntelligence
 {
@@ -33,7 +31,7 @@ namespace KernelPanic.ArtificialIntelligence
         string[] labels = mDataSet.ToArray<String>("Aktion");
         mCodebook = new Codification("Aktion", labels);
         int[] yTrain = mCodebook.Transform("Aktion", labels);
-
+        
         // train decision tree model
         C45Learning teacher = new C45Learning();
         mModel = teacher.Learn(xTrain, yTrain);
@@ -112,6 +110,38 @@ namespace KernelPanic.ArtificialIntelligence
                 System.Globalization.CultureInfo.InvariantCulture);
             return result;
         }
+
+        /// <summary>
+        /// Predict single label, e.g.:
+        /// Bitcoins,Bug,Virus,Trojaner,Nokia,Thunderbird,Settings,Firefox,Bluescreen,Kabel,Mauszeigerschütze,CD-Werfer,Antivirusprogramm,Lüftung,Wifi-Router,Schockfeld
+        /// 1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+        /// </summary>
+        /// <param name="input">feature values stored in double[]</param>
+        /// <returns>decoded prediction value</returns>
+        public int Predict(double[] input)
+        {
+            double[][] formattedInput = {input};
+            int[] predictions = mModel.Decide(formattedInput);
+            int prediction = predictions[0];
+            return prediction;
+        }
+
+        public double Score(double[][] xTest, string[] yTest)
+        {
+            int[] decodedYTest = mCodebook.Transform("Aktion", yTest);
+            int[] predictions = mModel.Decide(xTest);
+            double error = new ZeroOneLoss(decodedYTest).Loss(predictions);
+
+            return error;
+        }
+
+        public int[] PredictMulti(double[][] input)
+        {
+            int[] predictions = mModel.Decide(input);
+            return predictions;
+        }
+
+        public string Revert(int prediction) => mCodebook.Revert("Aktion", prediction);
 
         public Codification Codebook { get => mCodebook; set => mCodebook = value; }
         public DecisionTree Model { get => mModel; set => mModel = value; }

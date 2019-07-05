@@ -5,6 +5,7 @@ namespace KernelPanic.Data
 {
     internal static class Geometry
     {
+        /*
         private static bool DistancePointToLine(Vector2 center, float radius, Vector2 start, Vector2 end)
         {
             // distance between center and line start to end
@@ -29,6 +30,13 @@ namespace KernelPanic.Data
                    DistancePointToLine(center, radius, p2, p4) ||
                    DistancePointToLine(center, radius, p3, p4) ||
                    DistancePointToLine(center, radius, p3, p1);
+        }
+        */
+        internal static bool CircleIntersect(Vector2 center, float radius, Rectangle rectangle)
+        {
+            var deltaX = center.X - Math.Max(rectangle.X, Math.Min(center.X, rectangle.X + rectangle.Width));
+            var deltaY = center.Y - Math.Max(rectangle.Y, Math.Min(center.Y, rectangle.Y + rectangle.Height));
+            return (deltaX * deltaX + deltaY * deltaY) < (radius * radius);
         }
 
         /// <summary>

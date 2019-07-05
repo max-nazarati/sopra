@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using KernelPanic.Input;
+using KernelPanic.Players;
+using KernelPanic.Purchasing;
 using KernelPanic.Table;
 
 namespace KernelPanic
 {
-    internal class BuyingMenuOverlay<TElement> where TElement : class, IPositioned, IUpdatable, IDrawable
+    internal abstract class BuyingMenuOverlay<TElement, TResource>
+        where TElement : class, IPositioned, IUpdatable, IDrawable
+        where TResource : IPriced
     {
         internal Player Player { get; }
         internal TElement[] Elements { get; }
@@ -46,5 +51,7 @@ namespace KernelPanic
                 element.Draw(spriteBatch, gameTime);
             }
         }
+
+        internal abstract Dictionary<Type, PurchasableAction<TResource>> BuyingActions { get; }
     }
 }

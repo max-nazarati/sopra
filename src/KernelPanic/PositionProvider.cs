@@ -12,16 +12,16 @@ namespace KernelPanic
     internal class PositionProvider
     {
         private readonly SpriteManager mSpriteManager;
-        private readonly Grid mGrid;
         private readonly EntityGraph mEntities;
         private readonly VectorField mVectorField;
 
+        internal Grid Grid { get; }
         internal Owner Owner { get; }
         internal Base Target { get; }
 
         internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager spriteManager, VectorField vectorField, Base target, Owner owner)
         {
-            mGrid = grid;
+            Grid = grid;
             mEntities = entities;
             mSpriteManager = spriteManager;
             mVectorField = vectorField;
@@ -31,25 +31,24 @@ namespace KernelPanic
 
         #region Position Calculations
 
-        internal Vector2? GridCoordinate(Vector2 position, int subTileCount = 1)
-        {
-            return mGrid.GridPointFromWorldPoint(position, subTileCount)?.Position;
-        }
-
-        internal bool Contains(Vector2 point)
-        {
-            return mGrid.Contains(point);
-        }
-
         internal Rectangle TileBounds(Point tile)
         {
-            var (position, size) = mGrid.GetTile(new TileIndex(tile, 1));
+            var (position, size) = Grid.GetTile(new TileIndex(tile, 1));
             return Bounds.ContainingRectangle(position, new Vector2(size));
         }
 
-        internal Vector2 TilePoint(Point tile)
+        internal TileIndex RequireTile(Entity entity)
         {
-            return mGrid.GetTile(new TileIndex(tile, 1)).Position;
+            return RequireTile(entity.Sprite.Position);
+        }
+
+        internal TileIndex RequireTile(Vector2 position)
+        {
+            if (Grid.TileFromWorldPoint(position) is TileIndex tile)
+                return tile;
+
+            throw new InvalidOperationException(
+                $"Required a tile for {position} but it is not inside the lane {Grid.Bounds}");
         }
 
         #endregion
@@ -79,18 +78,35 @@ namespace KernelPanic
 
         #region Path Finding
 
-        public Vector2 GetVector(Point point)
+        public Vector2 MovementVector(Point point)
         {
             return mVectorField[point];
         }
 
         internal AStar MakePathFinding(Entity entity, Point start, Point target)
         {
-            var matrixObstacles = new ObstacleMatrix(mGrid);
-            matrixObstacles.Rasterize(mEntities, mGrid.Bounds, e => e != entity);
+            var matrixObstacles = new ObstacleMatrix(Grid);
+            matrixObstacles.Raster(mEntities, e => e != entity);
             var aStar = new AStar(start, target, matrixObstacles);
             aStar.CalculatePath();
             return aStar;
+        }
+
+        internal bool CheckPathExistance(Point? start, Point? target, Building building)
+        {
+            if (start == null || target == null)
+                return false;
+
+            var matrixObstacles = new ObstacleMatrix(Grid);
+            var tmpEntities = mEntities.ToList();
+            tmpEntities.Add(building);
+            matrixObstacles.Raster(tmpEntities, e => !(e is Unit));
+            var aStar = new AStar((Point)start, (Point)target, matrixObstacles);
+            aStar.CalculatePath();
+
+            if (aStar.Path != null && aStar.Path[aStar.Path.Count - 1] == target)
+                return true;
+            return false;
         }
 
         #endregion
@@ -99,7 +115,7 @@ namespace KernelPanic
 
         internal Visualizer Visualize(AStar pathPlanner)
         {
-            return pathPlanner.CreateVisualization(mGrid, mSpriteManager);
+            return pathPlanner.CreateVisualization(Grid, mSpriteManager);
         }
 
         #endregion
