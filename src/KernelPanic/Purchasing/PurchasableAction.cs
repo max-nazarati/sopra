@@ -8,25 +8,27 @@ namespace KernelPanic.Purchasing
         public delegate void Delegate(Player buyer, TResource resource);
 
         public event Delegate Purchased;
-        private TResource mResource;
+        private readonly TResource mResource;
 
-        internal PurchasableAction(TResource resource = default(TResource))
+        internal PurchasableAction(TResource resource)
         {
             mResource = resource;
         }
 
         /// <summary>
-        /// Returns <c>true</c> if the resource is not <c>null</c>.
+        /// Creates a <see cref="PurchasableAction{TResource}"/> on which
+        /// <see cref="TryPurchase(KernelPanic.Players.Player)"/> is executed.
+        ///
+        /// <para>
+        /// This can be useful in situations where you have to construct a local <see cref="PurchasableAction{TResource}"/>.
+        /// </para>
         /// </summary>
-        internal bool HasResource => mResource != null;
-
-        /// <summary>
-        /// Overwrites <see cref="mResource"/> with a new value.
-        /// </summary>
-        /// <param name="newResource">The new resource which will be purchased.</param>
-        internal void ResetResource(TResource newResource = default(TResource))
+        /// <param name="buyer">The <see cref="Player"/> which buys the resource.</param>
+        /// <param name="resource">The resource which is bought.</param>
+        /// <returns><c>true</c> if the purchase was successful, otherwise <c>false</c>.</returns>
+        internal static bool TryPurchase(Player buyer, TResource resource)
         {
-            mResource = newResource;
+            return new PurchasableAction<TResource>(resource).TryPurchase(buyer);
         }
 
         /// <summary>
@@ -81,6 +83,5 @@ namespace KernelPanic.Purchasing
                     throw new InvalidOperationException();
             }
         }
-
     }
 }

@@ -14,7 +14,6 @@ namespace KernelPanic
     internal sealed class BuildingBuyer
     {
         private readonly Player mPlayer;
-        private readonly PurchasableAction<Building> mBuyAction;
         private readonly SoundManager mSoundManager;
         private bool mBlocked = false;
 
@@ -25,7 +24,6 @@ namespace KernelPanic
             set
             {
                 mBuilding = value;
-                mBuyAction.ResetResource(value);
 
                 if (mBuilding != null)
                 {
@@ -39,26 +37,30 @@ namespace KernelPanic
         internal BuildingBuyer(Player player, SoundManager soundManager)
         {
             mPlayer = player;
-            mBuyAction = new PurchasableAction<Building>();
-            mBuyAction.Purchased += PurchasedBuilding;
             mSoundManager = soundManager;
         }
 
         internal void Update(InputManager input)
         {
-            if (!mBuyAction.HasResource)
+            if (mBuilding == null)
                 return;
 
             UpdatePosition(input);
-            checkPath(mPlayer.DefendingLane, mBuilding);
+            CheckPath(mPlayer.DefendingLane, mBuilding);
 
             if (!input.MousePressed(InputManager.MouseButton.Left))
                 return;
 
-            if (mPosition == null || mBlocked || !mBuyAction.TryPurchase(mPlayer))
+            if (mBlocked || !(mPosition is Point point) || !PurchasableAction<Building>.TryPurchase(mPlayer, mBuilding))
             {
                 // TODO: Play failure sound.
+                return;
             }
+
+            var clone = mBuilding.Clone();
+            TintEntity(clone, Color.White);
+            mPlayer.DefendingLane.BuildingSpawner.Register(clone, point);
+            mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
         }
 
         private void UpdatePosition(InputManager inputManager)
@@ -82,13 +84,14 @@ namespace KernelPanic
             mBuilding.Sprite.Position = tilePoint;
         }
 
-        private bool checkPath(Lane lane, Building building)
+        private void CheckPath(Lane lane, Building building)
         {
             if (mBuilding == null)
             {
                 mBlocked = false;
-                return true;
+                return;
             }
+
             var startTile =
                 lane.Grid.LaneSide == Lane.Side.Left
                         ? new TileIndex(Grid.LaneWidthInTiles / 2, lane.Grid.LaneRectangle.Width - 1, 1)
@@ -96,30 +99,7 @@ namespace KernelPanic
 
             var endPosition = lane.Target.Position;
 
-            if (lane.PositionProvider.CheckPathExistance(startTile.ToPoint(), endPosition, building.Clone()))
-            {
-                mBlocked = false;
-                return true;
-            }
-            else
-            {
-                mBlocked = true;
-                return false;
-            }
-        }
-
-        private void PurchasedBuilding(Player buyer, Building building)
-        {
-            if (!(mPosition is Point point))
-                throw new InvalidOperationException("Can't purchase the building if the position is null.");
-  
-            if (!mBlocked)
-            {
-                var clone = building.Clone();
-                TintEntity(clone, Color.White);
-                buyer.DefendingLane.BuildingSpawner.Register(clone, point);
-                mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
-            }
+            mBlocked = !lane.PositionProvider.CheckPathExistance(startTile.ToPoint(), endPosition, building.Clone());
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
