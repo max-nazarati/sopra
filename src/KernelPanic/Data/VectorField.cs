@@ -1,3 +1,4 @@
+using Accord.Math;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -43,6 +44,81 @@ namespace KernelPanic.Data
             }
         }
 
+        private VectorField(Vector2[,] vectorField)
+        {
+            mVectorField = vectorField;
+        }
+        
+        internal static VectorField GetVectorFieldThunderbird(VectorField vectorField, Lane.Side laneSide)
+        {
+            var left = new Vector2(-1, 0);
+            var right = new Vector2(1, 0);
+            var up = new Vector2(0, -1);
+            var down = new Vector2(0, 1);
+
+            var laneWidth = 10;
+            var thunderBirdField = new Vector2[vectorField.Height, vectorField.Width];
+            for (var row = 0; row < vectorField.Height; ++row)
+            {
+                for (var col = 0; col < vectorField.Width; ++col)
+                {
+                    if (laneSide == Lane.Side.Right)
+                    {
+                        if (row < laneWidth && col <= 1)
+                        {
+                            // go upwards to hit the base tile
+                            thunderBirdField[row, col] = up;
+                        }
+                        else if (row + col < 18)
+                        {
+                            // distance to left, top
+                            thunderBirdField[row, col] = left;
+                        }
+
+                        else if (vectorField.Height - row + col < 18)
+                        {
+                            // distance to left, bottom
+                            thunderBirdField[row, col] = right;
+                        }
+                        else
+                        {
+                            thunderBirdField[row, col] = up;
+                        }
+                    }
+
+                    if (laneSide == Lane.Side.Left)
+                    {
+                        if (row > vectorField.Height - laneWidth && col >= vectorField.Width - 1)
+                        {
+                            // go downwards to hit the base tile
+                            thunderBirdField[row, col] = down;
+                        }
+                        else if (row + (vectorField.Width - 1) - col < 18)
+                        {
+                            // distance to right, top
+                            thunderBirdField[row, col] = left;
+                        }
+
+                        else if (vectorField.Height - row + (vectorField.Width - 1) - col < 18)
+                        {
+                            // distance to right, bottom
+                            thunderBirdField[row, col] = right;
+                        }
+
+                        else
+                        {
+                            thunderBirdField[row, col] = down;
+                        }
+                        
+                    }
+
+                }
+            }
+            var res = new VectorField(thunderBirdField);
+            return res;
+        }
+        
+        
         public Vector2 this[Point point]
         {
             get
