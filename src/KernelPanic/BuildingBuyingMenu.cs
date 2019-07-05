@@ -20,7 +20,7 @@ namespace KernelPanic
 
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
-            internal Button Button;
+            internal Button Button { get; }
             internal Building Building { get; }
 
             Vector2 IPositioned.Position
