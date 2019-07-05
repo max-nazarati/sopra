@@ -18,6 +18,7 @@ namespace KernelPanic.ArtificialIntelligence
         public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions) : base(player)
         {
             mActions = actions;
+            BuyEntity<Thunderbird>();
             FastWave();
         }
         
