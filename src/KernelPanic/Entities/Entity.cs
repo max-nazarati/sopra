@@ -59,6 +59,8 @@ namespace KernelPanic.Entities
 
         #endregion
 
+        public abstract int DrawLevel { get; }
+
         /// <summary>
         /// If this flag is <c>true</c> this entity should be removed from the <see cref="EntityGraph"/>.
         /// </summary>

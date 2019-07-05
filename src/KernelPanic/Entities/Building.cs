@@ -47,11 +47,13 @@ namespace KernelPanic.Entities
                 null);
         }
 
+        internal Building Clone() => Clone<Building>();
+
+        public override int DrawLevel => 0;    // Buildings have the lowest level.
+
         private int BitcoinWorth { get; set; }
 
         internal State StateProperty { get; set; }
-
-        internal Building Clone() => Clone<Building>();
 
         internal enum State
         {

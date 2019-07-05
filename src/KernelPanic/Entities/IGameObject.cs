@@ -6,6 +6,8 @@ namespace KernelPanic.Entities
 {
     internal interface IGameObject : IBounded, IDrawable
     {
+        int DrawLevel { get; }
+
         bool WantsRemoval { get; }
     
         void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime);

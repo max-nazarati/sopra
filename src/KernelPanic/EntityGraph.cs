@@ -17,6 +17,8 @@ namespace KernelPanic
 
         [DataMember] internal QuadTree<IGameObject> QuadTree { get; }
 
+        private SortedDictionary<int, List<IGameObject>> mDrawObjects = new SortedDictionary<int, List<IGameObject>>(); 
+
         #endregion
 
         #region Constructor
@@ -35,11 +37,27 @@ namespace KernelPanic
         internal void Add(Entity entity)
         {
             QuadTree.Add(entity);
+            AddDrawObject(entity);
         }
 
         internal void Add(IEnumerable<Entity> entities)
         {
-            QuadTree.Add(entities);
+            foreach (var entity in entities)
+            {
+                QuadTree.Add(entity);
+                AddDrawObject(entity);
+            }
+        }
+
+        private void AddDrawObject(IGameObject gameObject)
+        {
+            if (mDrawObjects.TryGetValue(gameObject.DrawLevel, out var objects))
+            {
+                objects.Add(gameObject);
+                return;
+            }
+
+            mDrawObjects[gameObject.DrawLevel] = new List<IGameObject> {gameObject};
         }
         
         #endregion
@@ -74,7 +92,21 @@ namespace KernelPanic
                     $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime} [BOUNDS:] {a.Bounds} {b.Bounds}");
             }
             */
+
+            var oldCount = QuadTree.Count;
             QuadTree.Rebuild(entity => !entity.WantsRemoval);
+            var newCount = QuadTree.Count;
+
+            if (oldCount == newCount)
+            {
+                // If there were no removals, there is no need to traverse the draw objects.
+                return;
+            }
+
+            foreach (var objects in mDrawObjects.Values)
+            {
+                objects.RemoveAll(@object => @object.WantsRemoval);
+            }
         }
 
         #endregion
@@ -83,9 +115,9 @@ namespace KernelPanic
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var entity in QuadTree)
+            foreach (var gameObject in mDrawObjects.SelectMany(kv => kv.Value))
             {
-                entity.Draw(spriteBatch, gameTime);
+                gameObject.Draw(spriteBatch, gameTime);
             }
         }
 
