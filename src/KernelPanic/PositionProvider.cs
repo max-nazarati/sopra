@@ -14,6 +14,7 @@ namespace KernelPanic
         private readonly SpriteManager mSpriteManager;
         private readonly EntityGraph mEntities;
         private readonly VectorField mVectorField;
+        private readonly VectorField mVectorFieldThunderbird;
 
         internal Grid Grid { get; }
         internal Owner Owner { get; }
@@ -25,6 +26,7 @@ namespace KernelPanic
             mEntities = entities;
             mSpriteManager = spriteManager;
             mVectorField = vectorField;
+            mVectorFieldThunderbird = VectorField.GetVectorFieldThunderbird(vectorField, grid.LaneSide);
             Target = target;
             Owner = owner;
         }
@@ -81,6 +83,11 @@ namespace KernelPanic
         public Vector2 MovementVector(Point point)
         {
             return mVectorField[point];
+        }
+
+        public Vector2 MovementVectorThunderbird(Point point)
+        {
+            return mVectorFieldThunderbird[point];
         }
 
         internal AStar MakePathFinding(Entity entity, Point start, Point target)
