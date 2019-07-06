@@ -1,3 +1,4 @@
+using System;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Players;
@@ -7,25 +8,26 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class DefencePlanner : Planner
     {
-        
-        private readonly BuildingBuyer mBuildingBuyer;
+        private readonly SpriteManager mSpriteManager;
+        private readonly SoundManager mSoundManager;
         private bool mFirstTime = true;
-        
-        public DefencePlanner(Player player, BuildingBuyer buildingBuyer) : base(player)
+
+        public DefencePlanner(Player player, SpriteManager spriteManager, SoundManager soundManager) : base(player)
         {
-            mBuildingBuyer = buildingBuyer;
+            mSpriteManager = spriteManager;
+            mSoundManager = soundManager;
         }
 
-        private void BuyBuilding<T>(Point point) where T : Building
+        private void BuyBuilding<T>(Point tile) where T : Building
         {
-            // mActions[typeof(T)].TryPurchase(mPlayer);
-
+            if (!BuildingBuyer.Buy(mPlayer, Building.Create<T>(mSpriteManager, mSoundManager), tile, mSoundManager))
+                Console.WriteLine("Wanted to build " + typeof(T) + " at " + tile + " which is not possible.");
         }
 
         public void Update(int[] defenceData, GameTime gameTime)
         {
             base.Update();
-            // BuySingleTower();
+            BuySingleTower();
         }
 
         private void BuySingleTower()

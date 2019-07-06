@@ -40,17 +40,18 @@ namespace KernelPanic
         }
 
         public SpriteManager Sprite { get; }
-        
+        internal GraphicsDeviceManager GraphicsDeviceManager { get; }
+
         public SoundManager Sound { get; }
         private readonly Stack<GameStateInfo> mGameStates = new Stack<GameStateInfo>();
 
         internal Action ExitAction { get; }
 
-        public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds
-            , GraphicsDeviceManager mGraphics)
+        public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds, GraphicsDeviceManager graphics)
         {
             Sprite = sprites;
             Sound = sounds;
+            GraphicsDeviceManager = graphics;
             ExitAction = exitAction;
         }
 
@@ -83,8 +84,7 @@ namespace KernelPanic
             Push(newGameState);
         }
 
-        public void Update(RawInputState rawInput, GameTime gameTime, SoundManager soundManager
-            , GraphicsDeviceManager mGraphics)
+        public void Update(RawInputState rawInput, GameTime gameTime, SoundManager soundManager)
         {
             foreach (var info in ActiveStates())
             {
@@ -96,7 +96,7 @@ namespace KernelPanic
                     rawInput.Claim(requiredClaim);
 
                 // Do the actual update.
-                state.Update(input, gameTime, soundManager, mGraphics);
+                state.Update(input, gameTime, soundManager);
 
                 // The call to Update filled newClickTargets via the reference in the InputManager.
                 info.ClickTargets = QuadTree<ClickTarget>.Create(newClickTargets);

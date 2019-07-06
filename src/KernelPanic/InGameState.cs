@@ -21,7 +21,7 @@ namespace KernelPanic
         private InGameState(Storage? storage, int saveSlot, GameStateManager gameStateManager)
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
-            mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
+            mBoard = storage?.Board ?? new Board(gameStateManager.Sprite);
             mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager.Sound);
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane, gameStateManager.Sprite);
             SaveSlot = saveSlot;
@@ -31,10 +31,10 @@ namespace KernelPanic
             mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager);
 
             mBoard.PlayerB.InitializePlanners(
-                unitMenu.BuyingActions,
-                mBuildingBuyer, // TODO implement this, just added it like this so i can build :)
-                upgradeId => mBoard.mUpgradePool[upgradeId]
-                );
+                unitMenu.BuyingActions, // TODO implement this, just added it like this so i can build :)
+                upgradeId => mBoard.mUpgradePool[upgradeId],
+                gameStateManager.Sprite,
+                gameStateManager.Sound);
         }
 
         internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)
@@ -44,12 +44,11 @@ namespace KernelPanic
             gameStateManager.Push(game.mHud);
         }
 
-        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
-            , GraphicsDeviceManager graphics)
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
         {
             if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.ScoreOverlay.Pause)
             {
-                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, graphics));
+                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager));
                 mHud.ScoreOverlay.Pause = false;
                 return;
             }
@@ -62,8 +61,8 @@ namespace KernelPanic
             if (gameState == Board.GameState.Playing)
                 return;
 
-            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager, graphics));
-            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager, graphics));
+            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager));
+            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager));
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

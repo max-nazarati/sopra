@@ -98,8 +98,8 @@ namespace KernelPanic.Serialization
             RegisterBuilding<StrategicTower>();     // TODO: Remove this when there are no more direct instances.
 
             // Register further classes.
-            builder.Register(c => new Board(manager.Sprite, manager.Sound, true));
-            builder.Register(c => new Lane(manager.Sprite, manager.Sound));
+            builder.Register(c => new Board(manager.Sprite, true));
+            builder.Register(c => new Lane(manager.Sprite));
             builder.Register(c => new UpgradePool(null, manager.Sprite));
 
             return new AutofacContractResolver(builder.Build());

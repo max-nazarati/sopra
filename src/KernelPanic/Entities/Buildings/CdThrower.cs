@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Projectiles;
 using Microsoft.Xna.Framework;
@@ -18,14 +19,14 @@ namespace KernelPanic.Entities.Buildings
         {
         }
 
-        protected override Projectile CreateProjectile(Vector2 direction)
+        protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
-            return new Projectile(direction,
+            yield return new Disc(direction,
                 Sprite.Position,
                 Radius,
-                40,
                 7,
                 1,
+                ShootsBoomerang,
                 SpriteManager.CreateCdProjectile());
         }
     }

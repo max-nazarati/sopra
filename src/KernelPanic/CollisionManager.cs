@@ -1,24 +1,26 @@
-﻿using System.Collections.Generic;
-using KernelPanic.Entities;
+﻿using KernelPanic.Entities;
+using KernelPanic.Entities.Projectiles;
 
 namespace KernelPanic
 {
-    internal sealed class CollisionManager
+    internal static class CollisionManager
     {
-        private readonly List<Entity> mObjectList;
-
-        public CollisionManager()
+        internal static void Handle(IGameObject object1, IGameObject object2)
         {
-            mObjectList = new List<Entity>();
+            if (TryHandle(object1, object2) || TryHandle(object2, object1))
+            {
+            }
         }
 
-        public void CreatedObject(Entity Object)
+        private static bool TryHandle(IGameObject object1, IGameObject object2)
         {
-            mObjectList.Add(Object);
-        }
+            if (object1 is Projectile projectile && object2 is Unit unit)
+            {
+                projectile.Hit(unit);
+                return true;
+            }
 
-        public void Update()
-        {
+            return false;
         }
     }
 }

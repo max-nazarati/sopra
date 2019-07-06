@@ -12,7 +12,7 @@ namespace KernelPanic
 {
     internal sealed class SpriteManager
     {
-        public GraphicsDevice GraphicsDevice { get; }
+        private GraphicsDevice GraphicsDevice { get; }
 
         private enum Image
         {
@@ -127,19 +127,6 @@ namespace KernelPanic
             return texture;
         }
 
-        internal ImageSprite FrameToImageSprite(Color[] colors, int width, int height)
-        {
-            var texture = new Texture2D(GraphicsDevice, width, height);
-            texture.SetData<Color>(colors);
-            return new ImageSprite(texture);
-        }
-
-        internal ImageSprite CreateStandingFox()
-        {
-            var texture  = Lookup(Image.StandingFox);
-            return new ImageSprite(texture);
-        }
-
         internal ImageSprite CreatePause()
         {
             var texture = Lookup(Image.Pause);
@@ -190,9 +177,15 @@ namespace KernelPanic
             );
         }
 
+        #region Lane
+
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
-        internal ImageSprite CreateTower() => new ImageSprite(Lookup(Image.Tower));
+
+        #endregion
+
+        #region Buildings
+
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
         internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Fan));
         internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
@@ -200,12 +193,40 @@ namespace KernelPanic
         internal ImageSprite CreateShockField() => new ImageSprite(Lookup(Image.ShockField));
         internal ImageSprite CreateCdThrower() => new ImageSprite(Lookup(Image.CdThrower));
         internal ImageSprite CreateCursorShooter() => new ImageSprite(Lookup(Image.Mouse));
-        internal ImageSprite CreateProjectile() => new ImageSprite(Lookup(Image.Projectile));
-        internal ImageSprite CreateCdProjectile() => new ImageSprite(Lookup(Image.Cd));
-        internal ImageSprite CreateWifiProjectile() => new ImageSprite(Lookup(Image.WifiProjectile));
 
+        #endregion
 
-        internal ImageSprite CreateCursorProjectile() => new ImageSprite(Lookup(Image.Cursor));
+        #region Projectiles
+
+        internal ImageSprite CreateCdProjectile()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Cd));
+            sprite.SetOrigin(RelativePosition.Center);
+            sprite.ScaleToWidth(40);
+            return sprite;
+        }
+
+        internal ImageSprite CreateWifiProjectile()
+        {
+            var sprite = new ImageSprite(Lookup(Image.WifiProjectile))
+            {
+                DestinationRectangle = new Rectangle(0, 0, 40, 3)
+            };
+            sprite.SetOrigin(RelativePosition.Center);
+            //sprite.ScaleToWidth(40);
+            return sprite;
+        }
+
+        internal ImageSprite CreateCursorProjectile()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Cursor));
+            sprite.SetOrigin(RelativePosition.Center);
+            sprite.ScaleToWidth(20);
+            return sprite;
+        }
+
+        #endregion
+
         internal ImageSprite CreateVectorArrow()
         {
             var sprite = new ImageSprite(Lookup(Image.VectorArrow));
@@ -230,7 +251,7 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
             };
-            var leftEPBackground = new ImageSprite(texture)
+            var leftEpBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(thirdLine, powerIndicatorSize)
             };
@@ -243,7 +264,7 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
             };
-            var rightEPBackground = new ImageSprite(texture)
+            var rightEpBackground = new ImageSprite(texture)
             {
                 DestinationRectangle = new Rectangle(thirdLine, powerIndicatorSize)
             };
@@ -254,21 +275,21 @@ namespace KernelPanic
 
             var leftText = AutoCenteredTextSprite(font, leftBackground);
             var leftMoneyText = AutoCenteredTextSprite(font, leftMoneyBackground);
-            var leftEPText = AutoCenteredTextSprite(font, leftEPBackground);
+            var leftEpText = AutoCenteredTextSprite(font, leftEpBackground);
             leftMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
-            leftEPText.Y = (float)(2.5 * powerIndicatorSize.Y);
+            leftEpText.Y = (float)(2.5 * powerIndicatorSize.Y);
             var rightText = AutoCenteredTextSprite(font, rightBackground);
             var rightMoneyText = AutoCenteredTextSprite(font, rightMoneyBackground);
-            var rightEPText = AutoCenteredTextSprite(font, rightEPBackground);
+            var rightEpText = AutoCenteredTextSprite(font, rightEpBackground);
             rightMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
-            rightEPText.Y = (float)(2.5 * powerIndicatorSize.Y);
+            rightEpText.Y = (float)(2.5 * powerIndicatorSize.Y);
             var clockText = AutoCenteredTextSprite(font, clockBackground);
 
             var left = new CompositeSprite
             {
                 X = (ScreenSize.X - clockSize.X) / 2f,
                 Y = 0,
-                Children = { leftBackground, leftText, leftMoneyBackground, leftMoneyText, leftEPBackground, leftEPText }
+                Children = { leftBackground, leftText, leftMoneyBackground, leftMoneyText, leftEpBackground, leftEpText }
             };
             left.SetOrigin(RelativePosition.TopRight);
 
@@ -276,7 +297,7 @@ namespace KernelPanic
             {
                 X = (ScreenSize.X + clockSize.X) / 2f,
                 Y = 0,
-                Children = { rightBackground, rightText, rightMoneyBackground, rightMoneyText, rightEPBackground, rightEPText }
+                Children = { rightBackground, rightText, rightMoneyBackground, rightMoneyText, rightEpBackground, rightEpText }
             };
             right.SetOrigin(RelativePosition.TopLeft);
 
@@ -292,41 +313,38 @@ namespace KernelPanic
             {
                 Children = { left, right, middle }
             };
-            return (sprite, leftText, leftMoneyText, leftEPText, rightText, rightMoneyText, rightEPText, clockText);
+            return (sprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText);
         }
 
         #region Troupes
 
         internal AnimatedSprite CreateTrojan() =>
-            new AnimatedSprite(Lookup(Image.Trojan), new TimeSpan(0, 0, 0, 0, 300));
+            new AnimatedSprite(Lookup(Image.Trojan), TimeSpan.FromMilliseconds(300));
         
         internal AnimatedSprite CreateNokia() =>
-            new AnimatedSprite(Lookup(Image.Nokia), new TimeSpan(0, 0, 0, 0, 300));
+            new AnimatedSprite(Lookup(Image.Nokia), TimeSpan.FromMilliseconds(300));
         
         internal AnimatedSprite CreateThunderbird() =>
-            new AnimatedSprite(Lookup(Image.Thunderbird), new TimeSpan(0, 0, 0, 0, 300));
+            new AnimatedSprite(Lookup(Image.Thunderbird), TimeSpan.FromMilliseconds(300));
         
         internal AnimatedSprite CreateVirus() =>
-            new AnimatedSprite(Lookup(Image.Virus), new TimeSpan(0, 0, 0, 0, 300));
+            new AnimatedSprite(Lookup(Image.Virus), TimeSpan.FromMilliseconds(300));
 
         internal AnimatedSprite CreateBug() =>
-            new AnimatedSprite(Lookup(Image.Bug), new TimeSpan(0, 0, 0, 0, 300));
+            new AnimatedSprite(Lookup(Image.Bug), TimeSpan.FromMilliseconds(300));
         
         #endregion
 
         #region Heroes
 
         internal AnimatedSprite CreateFirefox() =>
-            new AnimatedSprite(Lookup(Image.Firefox), new TimeSpan(0, 0, 0, 0, 100));
-
-        internal AnimatedSprite CreateFirefoxJump() =>
-            new AnimatedSprite(Lookup(Image.FoxJump), new TimeSpan(0, 0, 0, 0, 100));
+            new AnimatedSprite(Lookup(Image.Firefox), TimeSpan.FromMilliseconds(100));
 
         internal AnimatedSprite CreateSettings() =>
-            new AnimatedSprite(Lookup(Image.Settings), new TimeSpan(0, 0, 0, 0, 100));
+            new AnimatedSprite(Lookup(Image.Settings), TimeSpan.FromMilliseconds(100));
 
         internal AnimatedSprite CreateBluescreen() =>
-            new AnimatedSprite(Lookup(Image.Bluescreen), new TimeSpan(0, 0, 0, 0, 100));
+            new AnimatedSprite(Lookup(Image.Bluescreen), TimeSpan.FromMilliseconds(100));
         
         #endregion
 
@@ -483,7 +501,7 @@ namespace KernelPanic
         {
             if (Math.Abs(abilityRange) < 0.00001)
                 return null;
-            var sprite = new ImageSprite(CreateCircleTexture((int) abilityRange, Color.Blue));
+            var sprite = new ImageSprite(CreateCircleTexture(abilityRange, Color.Blue));
             sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
@@ -509,41 +527,18 @@ namespace KernelPanic
         
         #endregion
 
-        internal ImageSprite CreateColoredPixel(Color color)
-        {
-            var texture = new Texture2D(GraphicsDevice, 1, 1);
-            texture.SetData(new [] { color });
-            return new ImageSprite(texture);
-        }
-
-        internal ImageSprite CreateColoredRectangle(int width, int height, Color color)
-        {
-            var texture = new Texture2D(GraphicsDevice, width, height);
-            var data = new Color[width * height];
-            for(var pixel=0; pixel<data.Count();pixel++)
-            {
-                data[pixel] = color;
-            }
-            texture.SetData(data);
-            return new ImageSprite(texture);
-        }
-        
         internal ImageSprite CreateColoredRectangle(int width, int height, Color[] color)
         {
             if (color.Length != width * height)
             {
                 throw new Exception("not enough colors to fill the rectangle");
             }
+
             var texture = new Texture2D(GraphicsDevice, width, height);
-            var data = new Color[width * height];
-            for(var pixel=0; pixel<data.Count();pixel++)
-            {
-                data[pixel] = color[pixel];
-            }
-            texture.SetData(data);
+            texture.SetData(color);
             return new ImageSprite(texture);
         }
-        
+
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
 
         /// <summary>

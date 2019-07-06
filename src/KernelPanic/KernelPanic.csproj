@@ -81,8 +81,8 @@
     <Compile Include="Entities\Buildings\WifiRouter.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\IGameObject.cs" />
+    <Compile Include="Entities\Projectiles\Disc.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
-    <Compile Include="Entities\Projectiles\WifiProjectile.cs" />
     <Compile Include="Entities\Unit.cs" />
     <Compile Include="Entities\Units\Bluescreen.cs" />
     <Compile Include="Entities\Units\Bug.cs" />

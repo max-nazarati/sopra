@@ -39,8 +39,7 @@ namespace KernelPanic
 
         public override void Update(InputManager inputManager,
             GameTime gameTime,
-            SoundManager soundManager,
-            GraphicsDeviceManager graphics)
+            SoundManager soundManager)
         {
             ScoreOverlay.Update(inputManager, gameTime);
             mUnitBuyingMenu.Update(inputManager, gameTime);

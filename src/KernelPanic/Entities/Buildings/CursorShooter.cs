@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Projectiles;
 using Microsoft.Xna.Framework;
@@ -16,15 +17,17 @@ namespace KernelPanic.Entities.Buildings
         {
         }
 
-        protected override Projectile CreateProjectile(Vector2 direction)
+        protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
-            return new Projectile(direction,
+            yield return new Projectile(direction,
                 Sprite.Position,
                 Radius,
-                20,
                 10,
                 2,
-                SpriteManager.CreateCursorProjectile());
+                SpriteManager.CreateCursorProjectile())
+            {
+                SingleTarget = true
+            };
         }
     }
 }

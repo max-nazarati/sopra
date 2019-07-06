@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
 using KernelPanic.Entities;
 using KernelPanic.Data;
 
@@ -18,10 +17,10 @@ namespace KernelPanic.Table
             mHeatMap = heatMap;
         }
 
-        internal void Register(Building building, Point tile)
+        internal void Register(Building building, TileIndex tile)
         {
-            building.Sprite.Position = mGrid.GetTile(new TileIndex(tile, 1)).Position;
-            mHeatMap.Block(tile);
+            building.Sprite.Position = mGrid.GetTile(tile).Position;
+            mHeatMap.Block(tile.ToPoint());
             mSpawnAction(building);
         }
     }

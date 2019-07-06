@@ -22,24 +22,20 @@ namespace KernelPanic.ArtificialIntelligence
 
         private int[] mOwnTroupeAmount;
 
-        private Planner[] mPlanners;
-
-        internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins, SpriteManager spriteManager, SoundManager soundManager) : base(defendingLane, attackingLane, bitcoins)
+        internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins) : base(defendingLane, attackingLane, bitcoins)
         {
-            mPlanners = new Planner[] {mAttackPlanner, mDefencePlanner, mUpgradePlanner};
             mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
         }
 
-        
-
         internal void InitializePlanners(
             Dictionary<Type, PurchasableAction<Unit>> unitBuyingActions,
-            BuildingBuyer buildingBuyer,
-            Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup)
+            Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup,
+            SpriteManager spriteManager,
+            SoundManager soundManager)
         {
             mAttackPlanner = new AttackPlanner(this, unitBuyingActions);
-            mDefencePlanner = new DefencePlanner(this, buildingBuyer);
             mUpgradePlanner = new UpgradePlanner(this, upgradeLookup);
+            mDefencePlanner = new DefencePlanner(this, spriteManager, soundManager);
         }
 
         #region Data

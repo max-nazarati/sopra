@@ -34,8 +34,7 @@ namespace KernelPanic.Table
 
         #region Properties
 
-        internal readonly SpriteManager mSpriteManager; // TODO write getonly property
-        internal readonly SoundManager mSounds; // TODO write getonly property
+        private readonly SpriteManager mSpriteManager;
 
         [JsonProperty]
         internal Base Target { get; /* required for deserialization */ private set; }
@@ -90,17 +89,16 @@ namespace KernelPanic.Table
 
         #region Constructors
 
-        public Lane(Side laneSide, SpriteManager sprites, SoundManager sounds) : this(sprites, sounds)
+        public Lane(Side laneSide, SpriteManager sprites) : this(sprites)
         {
             mLaneSide = laneSide;
             Target = new Base(BasePosition(laneSide));
             Initialize();
         }
 
-        internal Lane(SpriteManager sprites, SoundManager sounds)
+        internal Lane(SpriteManager sprites)
         {
             mSpriteManager = sprites;
-            mSounds = sounds;
         }
 
         /// <summary>

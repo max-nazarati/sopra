@@ -30,7 +30,7 @@ namespace KernelPanic.Data
         [DataMember(Name = "Children")]
         private QuadTree<T>[] mChildren;
 
-        internal int Count { get; private set; }
+        /*internal*/ private int Count { get; /*private*/ set; }
 
         #endregion
 
@@ -289,32 +289,39 @@ namespace KernelPanic.Data
         /// <returns>All pairs of overlapping elements.</returns>
         internal IEnumerable<(T, T)> Overlaps()
         {
-            return LocalOverlaps(null, 0).Concat(ChildOverlaps(null, 0));
+            return LocalOverlaps(Array.Empty<T>()).Concat(ChildOverlaps(Array.Empty<T>()));
         }
 
-        private IEnumerable<(T, T)> ChildOverlaps(T[] parentElements, int parentCount)
+        private IEnumerable<(T, T)> ChildOverlaps(IReadOnlyCollection<T> parentElements)
         {
             if (mChildren == null)
                 return Enumerable.Empty<(T, T)>();
 
-            // TODO: We can elide these copies in some cases (e.g. parentElements empty or null, or all the children's mObjects empty).
-            var additionalCount = mChildren.Max(t => t.mObjects.Count);
-            var parentElementsCopy = new T[parentCount + additionalCount];
-            if (parentElements != null)
-            {
-                Array.Copy(parentElements, parentElementsCopy, parentCount);
-            }
+            var parentElementsCount = parentElements.Count;
+            var parentElementsCopy = parentElementsCount == 0 ? null : new List<T>(parentElements);
 
             return mChildren.SelectMany(tree =>
             {
-                tree.mObjects.CopyTo(parentElementsCopy, parentCount);
-                return tree
-                    .LocalOverlaps(parentElements, parentCount)
-                    .Concat(tree.ChildOverlaps(parentElementsCopy, parentCount + additionalCount));
+                if (parentElementsCopy != null)
+                {
+                    var removeCount = parentElementsCopy.Count - parentElementsCount;
+                    parentElementsCopy.RemoveRange(parentElementsCount, removeCount);
+                    parentElementsCopy.AddRange(tree.mObjects);
+                }
+
+                var locals = tree.LocalOverlaps(parentElements);
+                var children = tree.ChildOverlaps(parentElementsCopy ?? tree.mObjects);
+                return locals.Concat(children);
             });
         }
 
-        private IEnumerable<(T, T)> LocalOverlaps(T[] parentElements, int count)
+        /// <summary>
+        /// Enumerates through all overlaps between elements in <see cref="mObjects"/> and through overlaps between
+        /// elements in <see cref="mObjects"/> and <paramref name="parentElements"/>.
+        /// </summary>
+        /// <param name="parentElements">Elements from upper levels which might overlap with elements from this level.</param>
+        /// <returns>All overlaps.</returns>
+        private IEnumerable<(T, T)> LocalOverlaps(IReadOnlyCollection<T> parentElements)
         {
             for (var i = 0; i < mObjects.Count; ++i)
             {
@@ -326,10 +333,7 @@ namespace KernelPanic.Data
                         yield return (x, y);
                 }
 
-                if (parentElements == null)
-                    continue;
-
-                foreach (var z in parentElements.Take(count))
+                foreach (var z in parentElements)
                 {
                     if (x.Bounds.Intersects(z.Bounds))
                         yield return (x, z);
@@ -343,8 +347,9 @@ namespace KernelPanic.Data
 
         public IEnumerator<T> GetEnumerator()
         {
-            // If mChildren is null enumerate only through mObjects, otherwise go through mObjects and then continue with the children.
-            return (mChildren == null ? mObjects : mObjects.Concat(mChildren.SelectMany(c => c))).GetEnumerator();
+            // If mChildren is null we will enumerate only through mObjects, otherwise we will go through mObjects and
+            // then continue with the children.
+            return (mChildren == null ? mObjects : mObjects.Concat(mChildren.Flatten())).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

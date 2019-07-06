@@ -1,6 +1,9 @@
 using System.Runtime.Serialization;
 using System;
+using System.Data;
 using KernelPanic.Data;
+using KernelPanic.Entities.Projectiles;
+using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -12,6 +15,7 @@ namespace KernelPanic.Entities.Buildings
     {
         [DataMember] protected float Radius { get; set; }
         [DataMember] protected CooldownComponent FireTimer { get; private set; }
+        internal Action<Projectile> FireAction { get; set; }
 
         private Sprite mRadiusSprite;
 
@@ -39,9 +43,9 @@ namespace KernelPanic.Entities.Buildings
             FireTimer = new CooldownComponent(FireTimer.TimeSpan, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            base.Draw(spriteBatch, gameTime);
+            base.Update(positionProvider, inputManager, gameTime);
             FireTimer.Update(gameTime);
         }
 

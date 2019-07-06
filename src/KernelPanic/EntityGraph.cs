@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,9 @@ namespace KernelPanic
         private readonly SortedDictionary<int, List<IGameObject>> mDrawObjects =
             new SortedDictionary<int, List<IGameObject>>();
 
+        private bool mMidUpdate;
+        private readonly List<IGameObject> mMidUpdateBuffer = new List<IGameObject>();
+
         #endregion
 
         #region Constructor
@@ -35,19 +39,39 @@ namespace KernelPanic
 
         #region Modifying
 
-        internal void Add(Entity entity)
+        internal void Add(IGameObject gameObject)
         {
-            QuadTree.Add(entity);
-            AddDrawObject(entity);
+            if (mMidUpdate)
+            {
+                mMidUpdateBuffer.Add(gameObject);
+            }
+            else
+            {
+                RealAdd(gameObject);
+            }
         }
 
-        internal void Add(IEnumerable<Entity> entities)
+        internal void Add(IEnumerable<IGameObject> gameObjects)
         {
-            foreach (var entity in entities)
+            if (mMidUpdate)
             {
-                QuadTree.Add(entity);
-                AddDrawObject(entity);
+                mMidUpdateBuffer.AddRange(gameObjects);
+                return;
             }
+
+            foreach (var entity in gameObjects)
+            {
+                RealAdd(entity);
+            }
+        }
+
+        private void RealAdd(IGameObject gameObject)
+        {
+            if (gameObject is Tower tower)
+                tower.FireAction = Add;
+
+            QuadTree.Add(gameObject);
+            AddDrawObject(gameObject);
         }
 
         private void AddDrawObject(IGameObject gameObject)
@@ -81,33 +105,42 @@ namespace KernelPanic
 
         public void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            foreach (var entity in QuadTree)
+            // ABOUT UPDATING, DRAWING & REMOVAL OF GAME OBJECTS
+            //
+            // It seems we have to rebuild the quad-tree twice:
+            //     1. After the movements are complete to determine the overlaps correctly.
+            //     2. After handling the overlaps, because some units might have died.
+            //
+            // For now we can save us the second rebuilding step but in loops in the Update & Draw functions we have
+            // to skip those game objects which have the WantsRemoval flag set. During the next quad-tree-rebuilding in
+            // Update they get removed completely.
+
+            mMidUpdate = true;
+
+            foreach (var entity in QuadTree.Where(entity => !entity.WantsRemoval))
             {
                 entity.Update(positionProvider, inputManager, gameTime);
             }
 
-            /*
+            // Rebuild the quad-tree after movements are done so that the overlaps can be determined correctly.
+            QuadTree.Rebuild(entity => !entity.WantsRemoval);
+
+            mMidUpdate = false;
+            Add(mMidUpdateBuffer);
+            mMidUpdateBuffer.Clear();
+            mMidUpdate = true;
+
             foreach (var (a, b) in QuadTree.Overlaps())
             {
-                Console.WriteLine(
-                    $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime} [BOUNDS:] {a.Bounds} {b.Bounds}");
-            }
-            */
-
-            var oldCount = QuadTree.Count;
-            QuadTree.Rebuild(entity => !entity.WantsRemoval);
-            var newCount = QuadTree.Count;
-
-            if (oldCount == newCount)
-            {
-                // If there were no removals, there is no need to traverse the draw objects.
-                return;
+                CollisionManager.Handle(a, b);
             }
 
             foreach (var objects in mDrawObjects.Values)
             {
                 objects.RemoveAll(@object => @object.WantsRemoval);
             }
+
+            mMidUpdate = false;
         }
 
         #endregion
