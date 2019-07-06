@@ -33,7 +33,40 @@ namespace KernelPanic.ArtificialIntelligence
         private void BuySingleTower()
         {
             if (!mFirstTime) return;
-            BuyBuilding<CursorShooter>(new Point(5));
+            // 2nd wall
+            BuyBuilding<CdThrower>(new Point(9, 29));
+            BuyBuilding<CdThrower>(new Point(10, 29));
+            BuyBuilding<CdThrower>(new Point(11, 29));
+            BuyBuilding<CdThrower>(new Point(12, 29));
+            BuyBuilding<CdThrower>(new Point(13, 29));
+            BuyBuilding<CdThrower>(new Point(14, 29));
+            BuyBuilding<CdThrower>(new Point(15, 29));
+            BuyBuilding<CdThrower>(new Point(16, 29));
+            BuyBuilding<CdThrower>(new Point(17, 29));
+
+            // first wall
+            BuyBuilding<CdThrower>(new Point(8, 31));
+            BuyBuilding<CdThrower>(new Point(9, 31));
+            BuyBuilding<CdThrower>(new Point(10, 31));
+            BuyBuilding<CdThrower>(new Point(11, 31));
+            BuyBuilding<CdThrower>(new Point(12, 31));
+            BuyBuilding<CdThrower>(new Point(13, 31));
+            BuyBuilding<CdThrower>(new Point(14, 31));
+            BuyBuilding<CdThrower>(new Point(15, 31));
+            BuyBuilding<CdThrower>(new Point(16, 31));
+            
+            // anti aircraft defende
+            BuyBuilding<CdThrower>(new Point(4, 37));
+            BuyBuilding<CdThrower>(new Point(5, 37));
+            BuyBuilding<CdThrower>(new Point(6, 37));
+            BuyBuilding<CdThrower>(new Point(7, 37));
+            BuyBuilding<CdThrower>(new Point(8, 37));
+            BuyBuilding<CdThrower>(new Point(9, 37));
+            BuyBuilding<CdThrower>(new Point(10, 37));
+            BuyBuilding<CdThrower>(new Point(11, 37));
+            BuyBuilding<CdThrower>(new Point(12, 37));
+            BuyBuilding<CdThrower>(new Point(13, 37));
+            
             mFirstTime = false;
         }
     }
