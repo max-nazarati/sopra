@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
@@ -133,6 +135,14 @@ namespace KernelPanic.Table
         internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
         {
             // Maybe we want to do this only when new buildings were placed.
+            // remove heatmap grids that are marked as "Blocked" if building is sold
+            IEnumerable<Building> buildings = EntityGraph.Entities<Building>();
+            foreach (var building in buildings.Where(building => building.WantsRemoval))
+            {
+                Vector2 position = building.Sprite.Position;
+                TileIndex tileIndex = Grid.TileFromWorldPoint(position).GetValueOrDefault();
+                mHeatMap.Unblock(tileIndex.ToPoint());
+            }
             UpdateHeatMap();
 
             var positionProvider = new PositionProvider(Grid, EntityGraph, mSpriteManager, mVectorField, Target, owner);

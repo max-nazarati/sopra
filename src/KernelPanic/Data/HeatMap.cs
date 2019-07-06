@@ -168,6 +168,8 @@ namespace KernelPanic.Data
 
         internal void Block(Point point) => this[point] = -1;
 
+        internal void Unblock(Point point) => this[point] = 0;
+
         internal void SetCost(Point point, float cost) => this[point] = cost;
 
         internal float? this[Point point]
