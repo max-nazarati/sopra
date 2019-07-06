@@ -343,8 +343,9 @@ namespace KernelPanic.Data
 
         public IEnumerator<T> GetEnumerator()
         {
-            // If mChildren is null enumerate only through mObjects, otherwise go through mObjects and then continue with the children.
-            return (mChildren == null ? mObjects : mObjects.Concat(mChildren.SelectMany(c => c))).GetEnumerator();
+            // If mChildren is null we will enumerate only through mObjects, otherwise we will go through mObjects and
+            // then continue with the children.
+            return (mChildren == null ? mObjects : mObjects.Concat(mChildren.Flatten())).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
