@@ -1,4 +1,4 @@
-using Accord.Math;
+using System;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -8,8 +8,9 @@ namespace KernelPanic.Data
     internal sealed class VectorField
     {
         internal HeatMap HeatMap { get; }
-    
+
         private readonly Vector2[,] mVectorField;
+        private readonly RelativePosition?[,] mRelativeField;
         private int Height => mVectorField.GetLength(0);
         private int Width => mVectorField.GetLength(1);
 
@@ -38,12 +39,102 @@ namespace KernelPanic.Data
         {
             HeatMap = heatMap;
             mVectorField = new Vector2[heatMap.Height, heatMap.Width];
+            mRelativeField = new RelativePosition?[heatMap.Height, heatMap.Width];
             for (var row = 0; row < heatMap.Height; ++row)
             {
                 for (var col = 0; col < heatMap.Width; ++col)
                 {
-                    mVectorField[row, col] = heatMap.Gradient(new Point(col, row));
+                    var direction = heatMap.Gradient(new Point(col, row));
+                    mVectorField[row, col] = direction;
+                    AddRelativePosition(ref mRelativeField, new Point(col, row), direction);
+
                 }
+            }
+        }
+
+        private void AddRelativePosition(ref RelativePosition?[,] arr, Point point, Vector2 direction)
+        {
+            if (direction.X is float.NaN || direction.Y is float.NaN)
+            {
+                arr[point.Y, point.X] = null;
+            }
+            else if (direction.X == 0 && direction.Y > 0)
+            {
+                arr[point.Y, point.X] = RelativePosition.CenterBottom;
+            }
+            else if (direction.X > 0 && direction.Y > 0)
+            {
+                arr[point.Y, point.X] = RelativePosition.BottomRight;
+            }
+            else if (direction.X > 0 && direction.Y == 0)
+            {
+                arr[point.Y, point.X] = RelativePosition.CenterRight;
+            }
+            else if (direction.X > 0 && direction.Y < 0)
+            {
+                arr[point.Y, point.X] = RelativePosition.TopRight;
+            }
+            else if (direction.X == 0 && direction.Y < 0)
+            {
+                arr[point.Y, point.X] = RelativePosition.CenterTop;
+            }
+            else if (direction.X < 0 && direction.Y > 0)
+            {
+                arr[point.Y, point.X] = RelativePosition.BottomLeft;
+            }
+            else if (direction.X < 0 && direction.Y == 0)
+            {
+                arr[point.Y, point.X] = RelativePosition.CenterLeft;
+            }
+            else if (direction.X < 0 && direction.Y < 0)
+            {
+                arr[point.Y, point.X] = RelativePosition.TopLeft;
+            }
+        }
+
+        internal Vector2 GetRelativeShift(Point point)
+        {
+            float width = 100;
+            float height = 100;
+            var pos = mRelativeField[point.Y, point.X];
+
+            if (pos == RelativePosition.CenterTop)
+            {
+                return new Vector2(0, -height); 
+            }
+
+            else if (pos == RelativePosition.CenterRight)
+            {
+                return new Vector2(width, 0);
+            }
+
+            else if (pos == RelativePosition.CenterBottom)
+            {
+                return new Vector2(0, height);
+            }
+            else if (pos == RelativePosition.CenterLeft)
+            {
+               return new Vector2(-width, 0);
+            }
+            else if (pos == RelativePosition.BottomLeft)
+            {
+                return new Vector2(-width, height / 2);
+            }
+            else if (pos == RelativePosition.BottomRight)
+            {
+                return new Vector2(width, height / 2);
+            }
+            else if (pos == RelativePosition.TopLeft)
+            {
+                return new Vector2(-width, -height / 2);
+            }
+            else if (pos == RelativePosition.TopRight)
+            {
+                return new Vector2(width, height / 2);
+            }
+            else
+            {
+                return Vector2.Zero;
             }
         }
 
@@ -122,6 +213,11 @@ namespace KernelPanic.Data
         }
         
         
+        public Vector2 RelativeShift(Point point)
+        {
+            return GetRelativeShift(point);
+        }
+
         public Vector2 this[Point point]
         {
             get
