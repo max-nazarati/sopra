@@ -124,13 +124,14 @@ namespace KernelPanic.Data
                 return;
             }
 
+            
             var blockedDiagonal =
-                    gradient.X < 0 && gradient.Y < 0 && Blocked(-1, -1) ||
-                    gradient.X < 0 && gradient.Y > 0 && Blocked(-1, 1) ||
-                    gradient.X > 0 && gradient.Y < 0 && Blocked(1, -1) ||
-                    gradient.X > 0 && gradient.Y > 0 && Blocked(1, 1);
+                    gradient.X < -0.001 && gradient.Y < -0.001 && Blocked(-1, -1) ||
+                    gradient.X < -0.001 && gradient.Y > 0.001 && Blocked(-1, 1) ||
+                    gradient.X > 0.001 && gradient.Y < -0.001 && Blocked(1, -1) ||
+                    gradient.X > 0.001 && gradient.Y > 0.001 && Blocked(1, 1);
             if (blockedDiagonal)
-            {
+            { 
                 // Set one coordinate to zero. Which one doesn't matter (at least I think so).
                 gradient.X = 0;
             }
