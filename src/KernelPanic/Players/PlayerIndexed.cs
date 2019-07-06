@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.Contracts;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Players
 {
@@ -10,9 +11,13 @@ namespace KernelPanic.Players
     /// <typeparam name="T">The type of value stored.</typeparam>
     internal struct PlayerIndexed<T>
     {
+        [JsonProperty]
         internal T A { get; set; }
+
+        [JsonProperty]
         internal T B { get; set; }
 
+        [JsonConstructor]
         internal PlayerIndexed(T a, T b)
         {
             A = a;

@@ -5,21 +5,28 @@ using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Waves
 {
     internal sealed class WaveManager
     {
+        [JsonProperty]
         private PlayerIndexed<List<Troupe>> mTroupes;
+
+        [JsonProperty]
         internal PlayerIndexed<Player> Players { get; }
 
+        [JsonProperty]
         private TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(10);
 
+        [JsonProperty]
         private int mLastIndex;
 
         /// <summary>
         /// All the waves where at least one player still has units.
         /// </summary>
+        [JsonProperty]
         private readonly List<Wave> mAliveWaves = new List<Wave>();
 
         /// <summary>
@@ -27,6 +34,7 @@ namespace KernelPanic.Waves
         /// </summary>
         private Wave CurrentWave => mAliveWaves.Count == 0 ? null : mAliveWaves[mAliveWaves.Count - 1];
 
+        [JsonConstructor]
         public WaveManager(PlayerIndexed<Player> players)
         {
             mTroupes = new PlayerIndexed<List<Troupe>>(new List<Troupe>(), new List<Troupe>());

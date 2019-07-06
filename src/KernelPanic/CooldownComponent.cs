@@ -15,6 +15,9 @@ namespace KernelPanic
         [JsonProperty]
         internal bool Ready { get; private set; }
 
+        [JsonProperty]
+        internal bool Enabled { get; set; }
+
         [JsonIgnore]
         internal TimeSpan TimeSpan => mCooldown;
 
@@ -26,11 +29,16 @@ namespace KernelPanic
             Ready = !isHot;
         }
 
+        /// <summary>
+        /// Used for deserialization.
+        /// </summary>
+        private CooldownComponent()
+        {
+        }
+
         internal delegate void CooledDownDelegate(CooldownComponent cooldownComponent);
 
         internal event CooledDownDelegate CooledDown;
-
-        internal bool Enabled { get; set; }
         
         internal void Reset()
         {

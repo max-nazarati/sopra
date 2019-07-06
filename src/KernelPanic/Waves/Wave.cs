@@ -2,12 +2,16 @@ using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
 using KernelPanic.Players;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Waves
 {
     internal sealed class Wave
     {
+        [JsonProperty]
         internal int Index { get; }
+
+        [JsonProperty]
         private readonly PlayerIndexed<List<Troupe>> mUnits;
 
         /// <summary>
@@ -15,6 +19,7 @@ namespace KernelPanic.Waves
         /// </summary>
         /// <param name="index">The <see cref="Wave"/>'s index.</param>
         /// <param name="units">The <see cref="Unit"/>'s initially in this wave.</param>
+        [JsonConstructor]
         internal Wave(int index, PlayerIndexed<List<Troupe>> units)
         {
             Index = index;

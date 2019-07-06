@@ -6,6 +6,7 @@ using KernelPanic.Purchasing;
 using KernelPanic.Table;
 using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace KernelPanic.ArtificialIntelligence
 {
@@ -22,6 +23,7 @@ namespace KernelPanic.ArtificialIntelligence
 
         private int[] mOwnTroupeAmount;
 
+        [JsonConstructor]
         internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins) : base(defendingLane, attackingLane, bitcoins)
         {
             mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            

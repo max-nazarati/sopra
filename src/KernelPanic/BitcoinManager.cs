@@ -1,48 +1,62 @@
 ﻿using System;
+using System.Security.Cryptography;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace KernelPanic
 {
-
     internal sealed class BitcoinManager
     {
-        private readonly Player mPlayerA;
-        private readonly Player mPlayerB;
+        [JsonProperty("players")]
+        private readonly PlayerIndexed<Player> mPlayers;
 
-        private readonly CooldownComponent mCooldownA;
-        private readonly CooldownComponent mCooldownB;
+        [JsonProperty("cooldown")]
+        private readonly PlayerIndexed<CooldownComponent> mCooldown;
 
-        public BitcoinManager(Player playerA, Player playerB)
+        internal BitcoinManager(PlayerIndexed<Player> players) : this(players, InitialCooldown())
         {
-            mPlayerA = playerA;
-            mPlayerB = playerB;
+        }
+
+        private static PlayerIndexed<CooldownComponent> InitialCooldown()
+        {
             var oneSecond = new TimeSpan(0, 0, 1);
-            mCooldownA = new CooldownComponent(oneSecond);
-            mCooldownB = new CooldownComponent(oneSecond);
-            mCooldownA.CooledDown += component => mPlayerA.Bitcoins++;
-            mCooldownB.CooledDown += component => mPlayerB.Bitcoins++;
-            mCooldownA.CooledDown += component => mCooldownA.Reset();
-            mCooldownB.CooledDown += component => mCooldownB.Reset();
+            return new PlayerIndexed<CooldownComponent>(
+                new CooldownComponent(oneSecond), 
+                new CooldownComponent(oneSecond)
+            );
+        }
+
+        [JsonConstructor]
+        private BitcoinManager(PlayerIndexed<Player> players, PlayerIndexed<CooldownComponent> cooldown)
+        {
+            mPlayers = players;
+            mCooldown = cooldown;
+
+            Subscribe(players.A);
+            Subscribe(players.B);
+        }
+
+        private void Subscribe(Player player)
+        {
+            mCooldown.Select(player).CooledDown += component =>
+            {
+                player.Bitcoins++;
+                component.Reset();
+            };
         }
 
         public void Upgrade(Player player)
         {
             var upgradeInterval = new TimeSpan(0, 0, 0, 0, 909);
-            if (player.Equals(mPlayerA))
-            {
-                mCooldownA.Reset(upgradeInterval);
-            }
-            else if (player.Equals(mPlayerB))
-            {
-                mCooldownB.Reset(upgradeInterval);
-            }
+            mCooldown.Select(player).Reset(upgradeInterval);
         }
 
         public void Update(GameTime gameTime)
         {
-            mCooldownA.Update(gameTime);
-            mCooldownB.Update(gameTime);
+            mCooldown.A.Update(gameTime);
+            mCooldown.B.Update(gameTime);
         }
     }
 }

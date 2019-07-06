@@ -90,12 +90,12 @@ namespace KernelPanic.Serialization
             RegisterUnit<Settings>();
             
             RegisterBuilding<Cable>();
+            RegisterBuilding<Antivirus>();
             RegisterBuilding<CdThrower>();
             RegisterBuilding<ShockField>();
             RegisterBuilding<Ventilator>();
             RegisterBuilding<WifiRouter>();
             RegisterBuilding<CursorShooter>();
-            RegisterBuilding<StrategicTower>();     // TODO: Remove this when there are no more direct instances.
 
             // Register further classes.
             builder.Register(c => new Board(manager.Sprite, true));

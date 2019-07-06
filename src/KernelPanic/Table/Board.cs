@@ -21,15 +21,18 @@ namespace KernelPanic.Table
         internal Player PlayerA { get; /* required for deserialization */ private set; }
         [JsonProperty]
         internal ArtificialPlayer PlayerB { get; /* required for deserialization */ private set; }
+        private PlayerIndexed<Player> Players => new PlayerIndexed<Player>(PlayerA, PlayerB);
 
         [JsonProperty]
         internal UpgradePool mUpgradePool;
         
+        [JsonProperty]
         internal WaveManager WaveManager { get; /* required for deserialization */ private set; }
 
-        private readonly Sprite mBase;
-
+        [JsonProperty]
         private readonly BitcoinManager mBitcoinManager;
+
+        private readonly Sprite mBase;
 
         internal enum GameState
         {
@@ -67,10 +70,9 @@ namespace KernelPanic.Table
 
             mUpgradePool = new UpgradePool(PlayerA, spriteManager);
             LayOutUpgradePool();
-            
-            WaveManager = new WaveManager(new PlayerIndexed<Player>(PlayerA, PlayerB));
 
-            mBitcoinManager = new BitcoinManager(PlayerA, PlayerB);
+            WaveManager = new WaveManager(Players);
+            mBitcoinManager = new BitcoinManager(Players);
         }
 
         [OnDeserialized]
