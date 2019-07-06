@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Upgrades
@@ -170,7 +171,8 @@ namespace KernelPanic.Upgrades
                     NotImplemented();
                     break;
                 case Id.CdBoomerang:
-                    NotImplemented();
+                    if (entity is CdThrower cdThrower)
+                        cdThrower.ShootsBoomerang = true;
                     break;
                 case Id.IncreaseGsNokia:
                     NotImplemented();
@@ -196,11 +198,6 @@ namespace KernelPanic.Upgrades
                     throw new InvalidOperationException("Invalid upgrade ID " + Kind);
             }
         }
-
-        internal static IEnumerable<Upgrade> All =>
-            Enumerable
-                .Range((int) Id.BeginningTier1, Id.EndOfUpgrades - Id.BeginningTier1)
-                .Select(id => new Upgrade {Kind = (Id) id});
 
         internal static IEnumerable<IEnumerable<Upgrade>> Matrix =>
             new[]

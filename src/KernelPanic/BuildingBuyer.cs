@@ -117,6 +117,7 @@ namespace KernelPanic
             var clone = mBuilding.Clone();
             TintEntity(clone, Color.White);
             mPlayer.DefendingLane.BuildingSpawner.Register(clone, tile);
+            mPlayer.ApplyUpgrades(clone);
             return true;
         }
 
