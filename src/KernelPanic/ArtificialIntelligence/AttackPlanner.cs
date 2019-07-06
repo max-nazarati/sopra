@@ -19,6 +19,7 @@ namespace KernelPanic.ArtificialIntelligence
             mActions = actions;
             BuyEntity<Thunderbird>();
             FastWave();
+            FastAndFurious();
         }
         
         #endregion
