@@ -146,6 +146,7 @@
     <Compile Include="CollisionManager.cs" />
     <Compile Include="CooldownComponent.cs" />
     <Compile Include="Sprites\AnimatedSprite.cs" />
+    <Compile Include="Statistics.cs" />
     <Compile Include="Table\Base.cs" />
     <Compile Include="Table\Board.cs" />
     <Compile Include="Table\BuildingSpawner.cs" />

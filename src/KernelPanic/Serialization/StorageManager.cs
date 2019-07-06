@@ -58,6 +58,28 @@ namespace KernelPanic.Serialization
                 return (Storage.Info) CreateSerializer(gameStateManager).Deserialize(file, typeof(Storage.Info));
         }
 
+        internal static Statistics.Data? LoadStatistics()
+        {
+            try
+            {
+                using (var file = File.OpenText(StatisticsPath))
+                    return (Statistics.Data) CreateSerializer().Deserialize(file, typeof(Statistics.Data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to load statistics: " + e.Message);
+                return null;
+            }
+        }
+
+        internal static void SaveStatistics(Statistics.Data data)
+        {
+            Directory.CreateDirectory(sFolder);
+
+            using (var file = File.CreateText(StatisticsPath))
+                CreateSerializer().Serialize(file, data);
+        }
+
         #endregion
 
         #region Private Helpers
@@ -116,9 +138,19 @@ namespace KernelPanic.Serialization
             };
         }
 
+        private static JsonSerializer CreateSerializer()
+        {
+            return new JsonSerializer
+            {
+                Formatting = Formatting.Indented
+            };
+        }
+
         private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
         private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
         private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
+
+        private static string StatisticsPath => Path.Combine(sFolder, "statistics.json");
 
         #endregion
 

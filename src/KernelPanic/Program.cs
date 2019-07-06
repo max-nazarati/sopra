@@ -14,7 +14,8 @@ namespace KernelPanic
         [STAThread]
         private static void Main()
         {
-            using (var game = new Game1())
+            using (var statistics = new Statistics())
+            using (var game = new Game1(statistics))
                 game.Run();
         }
     }

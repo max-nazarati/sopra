@@ -345,6 +345,9 @@
     <Compile Include="..\KernelPanic\Sprites\TextSprite.cs">
       <Link>Sprites\TextSprite.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Statistics.cs">
+      <Link>Statistics.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Table\Base.cs">
       <Link>Table\Base.cs</Link>
     </Compile>
