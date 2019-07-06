@@ -43,15 +43,14 @@ namespace KernelPanic
             mCooldown.Select(player).CooledDown += component =>
             {
                 player.Bitcoins++;
-                component.Reset();
+                component.Reset(TimerInterval(player));
             };
         }
 
-        public void Upgrade(Player player)
-        {
-            var upgradeInterval = new TimeSpan(0, 0, 0, 0, 909);
-            mCooldown.Select(player).Reset(upgradeInterval);
-        }
+        private static TimeSpan TimerInterval(Player player) =>
+            player.IncreasedBitcoins
+                ? TimeSpan.FromMilliseconds(909)
+                : TimeSpan.FromSeconds(1);
 
         public void Update(GameTime gameTime)
         {

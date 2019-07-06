@@ -168,7 +168,7 @@ namespace KernelPanic.Upgrades
                     NotImplemented();
                     break;
                 case Id.IncreaseBitcoins:
-                    NotImplemented();
+                    // Nothing to do here for this upgrade.
                     break;
                 case Id.CdBoomerang:
                     if (entity is CdThrower cdThrower)

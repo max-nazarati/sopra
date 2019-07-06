@@ -18,6 +18,9 @@ namespace KernelPanic.Players
 
         [DataMember]
         public int Bitcoins { get; set; }
+        
+        [DataMember]
+        internal bool IncreasedBitcoins { get; private set; }
 
         [DataMember]
         private readonly List<Upgrade> mUpgrades = new List<Upgrade>();
@@ -44,6 +47,12 @@ namespace KernelPanic.Players
 
         internal void AddUpgrade(Upgrade upgrade)
         {
+            if (upgrade.Kind == Upgrade.Id.IncreaseBitcoins)
+            {
+                IncreasedBitcoins = true;
+                return;
+            }
+        
             mUpgrades.Add(upgrade);
 
             // Apply the new upgrade to all existing entities.
