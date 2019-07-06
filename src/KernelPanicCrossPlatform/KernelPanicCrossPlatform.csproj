@@ -162,11 +162,11 @@
     <Compile Include="..\KernelPanic\Entities\IGameObject.cs">
       <Link>Entities\IGameObject.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Entities\Projectiles\Disc.cs">
+      <Link>Entities\Projectiles\Disc.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Projectiles\Projectile.cs">
       <Link>Entities\Projectiles\Projectile.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\Entities\Projectiles\WifiProjectile.cs">
-      <Link>Entities\Projectiles\WifiProjectile.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Unit.cs">
       <Link>Entities\Unit.cs</Link>

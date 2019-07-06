@@ -198,9 +198,32 @@ namespace KernelPanic
 
         #region Projectiles
 
-        internal ImageSprite CreateCdProjectile() => new ImageSprite(Lookup(Image.Cd));
-        internal ImageSprite CreateWifiProjectile() => new ImageSprite(Lookup(Image.WifiProjectile));
-        internal ImageSprite CreateCursorProjectile() => new ImageSprite(Lookup(Image.Cursor));
+        internal ImageSprite CreateCdProjectile()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Cd));
+            sprite.SetOrigin(RelativePosition.Center);
+            sprite.ScaleToWidth(40);
+            return sprite;
+        }
+
+        internal ImageSprite CreateWifiProjectile()
+        {
+            var sprite = new ImageSprite(Lookup(Image.WifiProjectile))
+            {
+                DestinationRectangle = new Rectangle(0, 0, 40, 3)
+            };
+            sprite.SetOrigin(RelativePosition.Center);
+            //sprite.ScaleToWidth(40);
+            return sprite;
+        }
+
+        internal ImageSprite CreateCursorProjectile()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Cursor));
+            sprite.SetOrigin(RelativePosition.Center);
+            sprite.ScaleToWidth(20);
+            return sprite;
+        }
 
         #endregion
 

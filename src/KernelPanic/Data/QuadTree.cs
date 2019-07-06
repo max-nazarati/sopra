@@ -30,7 +30,7 @@ namespace KernelPanic.Data
         [DataMember(Name = "Children")]
         private QuadTree<T>[] mChildren;
 
-        internal int Count { get; private set; }
+        /*internal*/ private int Count { get; /*private*/ set; }
 
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Projectiles;
 using Microsoft.Xna.Framework;
@@ -16,16 +17,21 @@ namespace KernelPanic.Entities.Buildings
         {
         }
 
-        protected override Projectile CreateProjectile(Vector2 direction)
+        protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
-            return new WifiProjectile(direction,
-                Sprite.Position,
-                Radius,
-                Sprite.Rotation,
-                40,
-                3,
-                1,
-                SpriteManager.CreateWifiProjectile());
+            direction = Vector2.Normalize(direction);
+            for (var i = 0; i < 3; ++i)
+            {
+                yield return new Projectile(direction,
+                    Sprite.Position + 4 * i * direction,
+                    Radius,
+                    3,
+                    1,
+                    SpriteManager.CreateWifiProjectile())
+                {
+                    SingleTarget = true
+                };
+            }
         }
     }
 }

@@ -20,8 +20,6 @@ namespace KernelPanic.Entities.Buildings
         [JsonProperty]
         private TowerStrategy mStrategy = TowerStrategy.First;
 
-        [JsonIgnore] private List<Projectile> Projectiles { get; set; } = new List<Projectile>();
-
         /// <summary>
         /// <c>true</c> if the tower should be rotated in the direction of the unit.
         /// </summary>
@@ -40,20 +38,22 @@ namespace KernelPanic.Entities.Buildings
         protected override void CompleteClone()
         {
             base.CompleteClone();
-            Projectiles = new List<Projectile>();
             FireTimer.CooledDown += ShootNow;
         }
 
         #region Shooting
 
-        protected abstract Projectile CreateProjectile(Vector2 direction);
+        protected abstract IEnumerable<Projectile> CreateProjectiles(Vector2 direction);
         
         private void ShootNow(CooldownComponent timer)
         {
             if (NextTarget == null)
                 return;
 
-            Projectiles.Add(CreateProjectile(NextTarget.Sprite.Position - Sprite.Position));
+            foreach (var projectile in CreateProjectiles(NextTarget.Sprite.Position - Sprite.Position))
+            {
+                FireAction(projectile);
+            }
             timer.Reset();
         }
 
@@ -99,15 +99,6 @@ namespace KernelPanic.Entities.Buildings
             base.Update(positionProvider, inputManager, gameTime);
             ChooseTarget(positionProvider);
             RotateToTarget();
-
-            FireTimer.Update(gameTime);
-
-            foreach (var projectile in Projectiles)
-            {
-                projectile.Update(positionProvider);
-            }
-
-            Projectiles.RemoveAll(projectile => projectile.mHasHit);
         }
 
         private void RotateToTarget()
@@ -189,16 +180,6 @@ namespace KernelPanic.Entities.Buildings
         }
 
         #endregion
-
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            base.Draw(spriteBatch, gameTime);
-
-            foreach (var projectile in Projectiles)
-            {
-                projectile.Draw(spriteBatch, gameTime);
-            }
-        }
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
