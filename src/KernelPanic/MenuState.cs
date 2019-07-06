@@ -6,6 +6,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Serialization;
+using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -147,9 +148,9 @@ namespace KernelPanic
             };
         }
 
-        private static Button TurnSoundsOnOff(TextButton soundOnOffButton, SoundManager soundManager)
+        private static void TurnSoundsOnOff(TextButton soundOnOffButton, SoundManager soundManager)
         {
-            switch (soundOnOffButton.Title) // TODO: when SoundManager is updated: Interaction with SoundManager
+            switch (soundOnOffButton.Title)
             {
                 case "an":
                     soundOnOffButton.Title = "aus"; 
@@ -158,14 +159,11 @@ namespace KernelPanic
                 case "aus":
                     soundOnOffButton.Title = "an";
                     soundManager.PlaySong(SoundManager.Music.BackgroundMusic1);
-                    // TODO implement updated SoundManager
                     break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
                     break;
             }
-
-            return soundOnOffButton;
         }
         
         private static Button ChangeScreenSize(TextButton fullScreenButton, GraphicsDeviceManager graphics)
@@ -323,25 +321,20 @@ namespace KernelPanic
             };
         }
 
-        public static MenuState CreateGameOverScreen(GameStateManager stateManager, Table.Board.GameState result
-           , SoundManager soundManager, GraphicsDeviceManager graphics)
+        public static MenuState CreateGameOverScreen(GameStateManager stateManager,
+            Table.Board.GameState result,
+            SoundManager soundManager,
+            GraphicsDeviceManager graphics)
         {
             var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
-            mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager
-                , soundManager, graphics));
+            mainMenuButton.Clicked += (button, input) =>
+                stateManager.Restart(CreateMainMenu(stateManager, soundManager, graphics));
 
-            Sprites.TextSprite text;
-            if (result == Table.Board.GameState.AWon)
-            {
-                text = stateManager.Sprite.CreateText("Du hast gewonnen!");
-            }
-            else
-            {
-                text = stateManager.Sprite.CreateText("Game over!");
-            }
+            var text = stateManager.Sprite.CreateText(result == Table.Board.GameState.AWon
+                ? "Du hast gewonnen!"
+                : "Game over!");
             text.ScaleToWidth(400);
             text.Position = new Vector2(10, 10);
-
 
             return new MenuState(stateManager)
             {
@@ -354,45 +347,45 @@ namespace KernelPanic
             };
         }
 
+        public static MenuState CreatePauseMenu(GameStateManager stateManager,
+            InGameState inGameState,
+            SoundManager soundManager,
+            GraphicsDeviceManager graphics)
+        {
+            var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
+            backButton.Clicked += (button, input) => stateManager.Pop();
 
-        public static MenuState CreatePauseMenu(GameStateManager stateManager, InGameState inGameState
-           , SoundManager soundManager, GraphicsDeviceManager graphics) 
-       {
-           var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
-           backButton.Clicked += (button, input) => stateManager.Pop();
+            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
+            optionsButton.Clicked += (button, input) =>
+                stateManager.Push(CreateOptionsMenu(stateManager, soundManager, graphics));
 
-           var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
-           optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager
-               , soundManager, graphics));
+            var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
+            saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);
 
-           var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
-           saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);
+            var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
+            mainMenuButton.Clicked += (button, input) =>
+                stateManager.Restart(CreateMainMenu(stateManager, soundManager, graphics));
 
-           var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
-           mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager
-               , soundManager, graphics));
-           
-           return new MenuState(stateManager)
-           {
-               mComponents = new InterfaceComponent[]
-               {
-                   CreateBackground(stateManager.Sprite),
-                   optionsButton,
-                   saveButton,
-                   mainMenuButton,
-                   backButton
-               }
-           }; 
-       }
+            return new MenuState(stateManager)
+            {
+                mComponents = new InterfaceComponent[]
+                {
+                    CreateBackground(stateManager.Sprite),
+                    optionsButton,
+                    saveButton,
+                    mainMenuButton,
+                    backButton
+                }
+            };
+        }
 
-       private static StaticComponent CreateBackground(SpriteManager sprites)
+        private static StaticComponent CreateBackground(SpriteManager sprites)
         {
             return new StaticComponent(sprites.CreateMenuBackground());
         }
-        
+
         private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
         {
-            // TODO: Change Text Color on Buttons
             var button = new TextButton(sprites) {Title = title};
             button.Sprite.X = sprites.ScreenSize.X / 2.0f - button.Sprite.Width / 2.0f - shiftPositionX;
             button.Sprite.Y = positionY;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Media;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;

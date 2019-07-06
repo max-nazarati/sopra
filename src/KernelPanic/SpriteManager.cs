@@ -143,9 +143,7 @@ namespace KernelPanic
         internal ImageSprite CreatePause()
         {
             var texture = Lookup(Image.Pause);
-            var sprite = new ImageSprite(texture);
-            sprite.DestinationRectangle = new Rectangle(0, 0, 40, 40);
-            return sprite;
+            return new ImageSprite(texture) {DestinationRectangle = new Rectangle(0, 0, 40, 40)};
         }
 
         internal TextSprite CreateText(string text = "")
@@ -156,50 +154,8 @@ namespace KernelPanic
         internal Sprite CreateMenuBackground()
         {
             var texture = Lookup(Image.MenuBackground);
-            var sprite = new ImageSprite(texture);
-            sprite.DestinationRectangle = new Rectangle(Point.Zero, ScreenSize);
+            var sprite = new ImageSprite(texture) {DestinationRectangle = new Rectangle(Point.Zero, ScreenSize)};
             return sprite;
-            /*var fullRows = ScreenSize.Y / texture.Height;
-            var fullCols = ScreenSize.X / texture.Width;
-            var bottomRem = ScreenSize.Y - fullRows * texture.Height;
-            var rightRem = ScreenSize.X - fullCols * texture.Width;
-
-            var fullTile = new ImageSprite(texture);
-            var pattern = new PatternSprite(fullTile, fullRows, fullCols);
-
-            var bottomTile = new ImageSprite(texture)
-            {
-                SourceRectangle = new Rectangle(0, 0, texture.Width, bottomRem)
-            };
-            var rightTile = new ImageSprite(texture)
-            {
-                SourceRectangle = new Rectangle(0, 0, rightRem, texture.Height)
-            };
-            var cornerTile = new ImageSprite(texture)
-            {
-                X = pattern.Width,
-                Y = pattern.Height,
-                SourceRectangle = new Rectangle(0, 0, rightRem, bottomRem)
-            };
-
-            return new CompositeSprite
-            {
-                Children =
-                {
-                    pattern,
-                    new PatternSprite(bottomTile, 1, fullCols)
-                    {
-                        X = 0,
-                        Y = pattern.Height
-                    },
-                    new PatternSprite(rightTile, fullRows, 1)
-                    {
-                        X = pattern.Width,
-                        Y = 0
-                    },
-                    cornerTile
-                }
-            };*/
         }
 
         internal (Sprite, ImageSprite, TextSprite) CreateTextButton(int width, int height)

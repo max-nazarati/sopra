@@ -6,7 +6,6 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {

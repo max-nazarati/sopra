@@ -187,10 +187,11 @@ namespace KernelPanic.Entities.Units
             }
 
             Console.WriteLine("################################################################################"+'\n'); 
+
+            SwitchAbilityState:
 #endif
             #endregion
             
-            SwitchAbilityState:
             switch (AbilityStatus)
             {
                 case AbilityState.Ready:

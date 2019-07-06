@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using KernelPanic.Entities;
-using KernelPanic.Interface;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Upgrades

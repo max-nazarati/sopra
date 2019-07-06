@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 namespace KernelPanic
 {
 
-    internal class BitcoinManager
+    internal sealed class BitcoinManager
     {
         private readonly Player mPlayerA;
         private readonly Player mPlayerB;

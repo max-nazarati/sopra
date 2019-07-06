@@ -16,8 +16,6 @@ namespace KernelPanic
 {
     internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element, Building>
     {
-        private Button mSelected;
-
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
             internal Button Button { get; }
@@ -53,23 +51,29 @@ namespace KernelPanic
         private BuildingBuyingMenu(Player player, BuildingBuyer buildingBuyer, SpriteManager spriteManager, params Element[] elements)
             : base(MenuPosition(Lane.Side.Left, spriteManager), player, elements)
         {
+            Button selectedButton = null;
+
             foreach (var element in Elements)
             {
                 element.Button.Clicked += (button, input) =>
                 {
-                    if (mSelected != null)
-                        mSelected.ViewPressed = false;
+                    if (selectedButton != null)
+                    {
+                        // ReSharper disable once PossibleNullReferenceException
+                        // ReSharper does not understand the check above.
+                        selectedButton.ViewPressed = false;
+                    }
 
-                    if (button == mSelected)
+                    if (button == selectedButton)
                     {
                         buildingBuyer.Building = null;
-                        mSelected = null;
+                        selectedButton = null;
                         return;
                     }
 
+                    button.ViewPressed = true;
+                    selectedButton = button;
                     buildingBuyer.Building = element.Building;
-                    mSelected = button;
-                    mSelected.ViewPressed = true;
                 };
             }
         }
@@ -89,8 +93,5 @@ namespace KernelPanic
                 CreateElement<Antivirus>(),
                 CreateElement<Ventilator>());
         }
-
-        internal override Dictionary<Type, PurchasableAction<Building>> BuyingActions =>
-            null; // throw new NotImplementedException();
     }
 }

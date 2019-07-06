@@ -1,4 +1,3 @@
-using System;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework.Input;
 

@@ -17,7 +17,8 @@ namespace KernelPanic
 
         [DataMember] internal QuadTree<IGameObject> QuadTree { get; }
 
-        private SortedDictionary<int, List<IGameObject>> mDrawObjects = new SortedDictionary<int, List<IGameObject>>(); 
+        private readonly SortedDictionary<int, List<IGameObject>> mDrawObjects =
+            new SortedDictionary<int, List<IGameObject>>();
 
         #endregion
 
