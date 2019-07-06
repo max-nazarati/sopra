@@ -94,6 +94,7 @@
     <Compile Include="Entities\Units\Trojan.cs" />
     <Compile Include="Entities\Units\Troupe.cs" />
     <Compile Include="Entities\Units\Virus.cs" />
+    <Compile Include="Events\Event.cs" />
     <Compile Include="InGameOverlay.cs" />
     <Compile Include="InGameState.cs" />
     <Compile Include="Input\ClickTarget.cs" />

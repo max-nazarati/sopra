@@ -204,6 +204,9 @@
     <Compile Include="..\KernelPanic\EntityGraph.cs">
       <Link>EntityGraph.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Events\Event.cs">
+      <Link>Events\Event.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Game1.cs">
       <Link>Game1.cs</Link>
     </Compile>
