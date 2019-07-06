@@ -1,4 +1,3 @@
-using System;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
