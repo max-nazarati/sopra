@@ -21,7 +21,7 @@ namespace KernelPanic
         private InGameState(Storage? storage, int saveSlot, GameStateManager gameStateManager)
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
-            mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
+            mBoard = storage?.Board ?? new Board(gameStateManager.Sprite);
             mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager.Sound);
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane, gameStateManager.Sprite);
             SaveSlot = saveSlot;
@@ -31,10 +31,10 @@ namespace KernelPanic
             mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager);
 
             mBoard.PlayerB.InitializePlanners(
-                unitMenu.BuyingActions,
-                mBuildingBuyer, // TODO implement this, just added it like this so i can build :)
-                upgradeId => mBoard.mUpgradePool[upgradeId]
-                );
+                unitMenu.BuyingActions, // TODO implement this, just added it like this so i can build :)
+                upgradeId => mBoard.mUpgradePool[upgradeId],
+                gameStateManager.Sprite,
+                gameStateManager.Sound);
         }
 
         internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)

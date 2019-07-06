@@ -50,7 +50,7 @@ namespace KernelPanic.Table
 
         #region Constructing a Board
 
-        internal Board(SpriteManager spriteManager, SoundManager soundManager, bool deserializing = false)
+        internal Board(SpriteManager spriteManager, bool deserializing = false)
         {
             mBase = CreateBase(spriteManager);
             if (deserializing)
@@ -59,11 +59,11 @@ namespace KernelPanic.Table
                 return;
             }
 
-            var leftLane = new Lane(Lane.Side.Left, spriteManager, soundManager);
-            var rightLane = new Lane(Lane.Side.Right, spriteManager, soundManager);
+            var leftLane = new Lane(Lane.Side.Left, spriteManager);
+            var rightLane = new Lane(Lane.Side.Right, spriteManager);
             
             PlayerA = new Player(leftLane, rightLane);
-            PlayerB = new ArtificialPlayer(rightLane, leftLane, 9999, spriteManager, soundManager);
+            PlayerB = new ArtificialPlayer(rightLane, leftLane, 999);
 
             mUpgradePool = new UpgradePool(PlayerA, spriteManager);
             LayOutUpgradePool();
