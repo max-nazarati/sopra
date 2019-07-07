@@ -125,15 +125,26 @@ namespace KernelPanic.Events
             Damage
         }
 
-        internal Id Kind { get; }
+        #region Creating events
 
-        private readonly Dictionary<Key, object> mPayload = new Dictionary<Key, object>();
-
-        internal Event(Id id)
+        private Event(Id id)
         {
             Kind = id;
         }
 
+        internal static Event GameWon() => new Event(Id.GameWon);
+        internal static Event GameLost() => new Event(Id.GameLost);
+
+        #endregion
+
+        #region Event data
+
+        internal Id Kind { get; }
+
+        private readonly Dictionary<Key, object> mPayload = new Dictionary<Key, object>();
+
         internal T Get<T>(Key key) => (T) mPayload[key];
+
+        #endregion
     }
 }

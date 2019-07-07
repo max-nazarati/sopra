@@ -1,4 +1,5 @@
 ﻿using KernelPanic.Camera;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Selection;
 using KernelPanic.Serialization;
@@ -64,6 +65,7 @@ namespace KernelPanic
             if (gameState == Board.GameState.Playing)
                 return;
 
+            EventCenter.Default.Send(gameState == Board.GameState.AWon ? Event.GameWon() : Event.GameLost());
             GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager));
             GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager));
         }
