@@ -84,6 +84,7 @@
     <Compile Include="Entities\IGameObject.cs" />
     <Compile Include="Entities\LaneBorder.cs" />
     <Compile Include="Entities\Projectiles\Disc.cs" />
+    <Compile Include="Entities\Projectiles\Emp.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
     <Compile Include="Entities\Unit.cs" />
     <Compile Include="Entities\Units\Bluescreen.cs" />

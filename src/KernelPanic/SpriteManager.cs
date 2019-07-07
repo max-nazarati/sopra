@@ -523,6 +523,12 @@ namespace KernelPanic
             return sprite;
         }
         
+        internal ImageSprite CreateEmp()
+        {
+            var sprite = new ImageSprite(CreateCircleTexture(Grid.KachelSize / 2, Color.Pink));
+            return sprite;
+        }
+        
         #endregion
         
         #endregion

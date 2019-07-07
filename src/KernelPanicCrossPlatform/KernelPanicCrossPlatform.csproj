@@ -171,6 +171,9 @@
     <Compile Include="..\KernelPanic\Entities\Projectiles\Disc.cs">
       <Link>Entities\Projectiles\Disc.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Entities\Projectiles\Emp.cs">
+      <Link>Entities\Projectiles\Emp.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Projectiles\Projectile.cs">
       <Link>Entities\Projectiles\Projectile.cs</Link>
     </Compile>
