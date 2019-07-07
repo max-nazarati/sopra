@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using KernelPanic.Camera;
 using KernelPanic.Data;
@@ -14,6 +15,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
+    [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "The Strings are in German")]
     internal sealed class MenuState : AGameState
     {
         private InterfaceComponent[] mComponents;
