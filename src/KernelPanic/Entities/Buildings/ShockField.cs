@@ -7,8 +7,8 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class ShockField : Tower
     {
-        internal ShockField(SpriteManager spriteManager, SoundManager soundManager) 
-            : base(1, 0, TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager, soundManager)
+        internal ShockField(SpriteManager spriteManager, SoundManager soundManager)
+            : base(1, 0, 2, TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager, soundManager)
         {
         }
     }

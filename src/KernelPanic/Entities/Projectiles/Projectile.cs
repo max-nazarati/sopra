@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using KernelPanic.Data;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -10,7 +11,7 @@ namespace KernelPanic.Entities.Projectiles
     internal class Projectile : IGameObject
     {
         private readonly float mRadius;
-        private readonly int mDamage;
+        internal int Damage { get; }
 
         protected ImageSprite Sprite { get; }
 
@@ -20,16 +21,20 @@ namespace KernelPanic.Entities.Projectiles
 
         internal bool SingleTarget { private get; set; }
 
-        public Projectile(Vector2 direction, Vector2 startPoint, float radius, int speed, int damage, ImageSprite sprite)
-        {
-            StartPoint = startPoint;
-            mRadius = radius;
-            mDamage = damage;
+        internal StrategicTower Origin { get; }
 
-            MoveVector = Vector2.Normalize(direction) * speed;
+        internal Projectile(StrategicTower origin, Vector2 direction, float speed, ImageSprite sprite, float offset = 0)
+        {
+            Origin = origin;
+            mRadius = origin.Radius;
+            Damage = origin.Damage;
+
+            direction.Normalize();
+            StartPoint = origin.Sprite.Position + offset * direction;
+            MoveVector = direction * speed;
 
             Sprite = sprite;
-            Sprite.Position = startPoint;
+            Sprite.Position = StartPoint;
             Sprite.Rotation = direction.Angle(0.5);
         }
 
@@ -79,7 +84,7 @@ namespace KernelPanic.Entities.Projectiles
         /// <param name="unit">The <see cref="Unit"/> hit by this <see cref="Projectile"/>.</param>
         private /*virtual*/ void HandleHit(Unit unit)
         {
-            unit.DealDamage(mDamage);
+            unit.DealDamage(Damage);
 
             if (SingleTarget)
                 WantsRemoval = true;

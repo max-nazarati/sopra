@@ -1,4 +1,5 @@
 using System;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 
@@ -8,10 +9,10 @@ namespace KernelPanic.Entities.Projectiles
     {
         private bool Boomerang { get; set; }
 
-        internal Disc(Vector2 direction, Vector2 startPoint, float radius, int speed, int damage, bool boomerang, ImageSprite sprite)
-            : base(direction, startPoint, radius, speed, damage, sprite)
+        internal Disc(CdThrower cdThrower, Vector2 direction, float speed, ImageSprite sprite)
+            : base(cdThrower, direction, speed, sprite)
         {
-            Boomerang = boomerang;
+            Boomerang = cdThrower.ShootsBoomerang;
         }
 
         protected override void RadiusReached()

@@ -12,22 +12,16 @@ namespace KernelPanic.Entities.Buildings
     {
         protected override bool WantsRotation => true;
 
-        internal bool ShootsBoomerang { private get; set; }
+        internal bool ShootsBoomerang { get; set; }
 
         internal CdThrower(SpriteManager spriteManager, SoundManager sounds)
-            : base(20, 4, TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager, sounds)
+            : base(20, 4, 5, TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager, sounds)
         {
         }
 
         protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
-            yield return new Disc(direction,
-                Sprite.Position,
-                Radius,
-                7,
-                1,
-                ShootsBoomerang,
-                SpriteManager.CreateCdProjectile());
+            yield return new Disc(this, direction, 7, SpriteManager.CreateCdProjectile());
         }
     }
 }

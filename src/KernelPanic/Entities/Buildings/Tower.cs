@@ -13,17 +13,24 @@ namespace KernelPanic.Entities.Buildings
 {
     internal abstract class Tower : Building
     {
-        [DataMember] protected float Radius { get; set; }
+        [DataMember] internal float Radius { get; set; }
+        [DataMember] internal int Damage { get; set; }
         [DataMember] protected CooldownComponent FireTimer { get; private set; }
         internal Action<Projectile> FireAction { get; set; }
 
         private Sprite mRadiusSprite;
 
-        internal Tower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
-            : base(price, sprite, spriteManager)
+        internal Tower(int price,
+            float radius,
+            int damage,
+            TimeSpan cooldown,
+            Sprite sprite,
+            SpriteManager spriteManager,
+            SoundManager sounds) : base(price, sprite, spriteManager, sounds)
         {
             FireTimer = new CooldownComponent(cooldown);
             Radius = radius * Grid.KachelSize;
+            Damage = damage;
             sprite.ScaleToHeight(64);
             sprite.SetOrigin(RelativePosition.Center);
 

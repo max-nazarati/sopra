@@ -6,10 +6,8 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Cable : Building
     {
-        // The parameters are required for Building.Create to work!
-        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         internal Cable(SpriteManager spriteManager, SoundManager soundManager)
-            : base(10, spriteManager.CreateCable(), spriteManager)
+            : base(10, spriteManager.CreateCable(), spriteManager, soundManager)
         {
         }
     }

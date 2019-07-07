@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -16,7 +18,11 @@ namespace KernelPanic.Entities
     [DataContract]
     internal abstract class Building : Entity
     {
-        protected Building(int price, Sprite sprite, SpriteManager spriteManager) : base(price, sprite, spriteManager)
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification =
+            "Ensures that all buildings take a SoundManager in their constructor, which is required for Building.Create to work."
+        )]
+        protected Building(int price, Sprite sprite, SpriteManager spriteManager, SoundManager soundManager)
+            : base(price, sprite, spriteManager)
         {
             BitcoinWorth = price;
             sprite.ScaleToWidth(Table.Grid.KachelSize);
@@ -99,6 +105,7 @@ namespace KernelPanic.Entities
                 action.Purchased += (player, theAction) =>
                 {
                     building.WantsRemoval = true;
+                    EventCenter.Default.Send(Event.BuildingSold(player, building));
                 };
                 mBuilding = building;
             }

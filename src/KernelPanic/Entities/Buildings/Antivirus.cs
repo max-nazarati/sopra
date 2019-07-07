@@ -13,7 +13,7 @@ namespace KernelPanic.Entities.Buildings
         protected override bool WantsRotation => false;
 
         internal Antivirus(SpriteManager spriteManager, SoundManager sounds)
-            : base(30, 5, TimeSpan.FromSeconds(3), spriteManager.CreateAntivirus(), spriteManager, sounds)
+            : base(30, 5, 8, TimeSpan.FromSeconds(3), spriteManager.CreateAntivirus(), spriteManager, sounds)
         {
         }
 
@@ -21,7 +21,7 @@ namespace KernelPanic.Entities.Buildings
         {
             var image = SpriteManager.CreateCursorShooter();
             image.ScaleToWidth(20);
-            yield return new Projectile(direction, Sprite.Position, Radius, 15, 2, image)
+            yield return new Projectile(this, direction, 15, image)
             {
                 SingleTarget = true
             };

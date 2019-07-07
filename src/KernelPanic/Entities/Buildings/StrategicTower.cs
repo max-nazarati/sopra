@@ -29,8 +29,14 @@ namespace KernelPanic.Entities.Buildings
         [JsonIgnore]
         private Unit NextTarget { get; set; }
 
-        protected StrategicTower(int price, float radius, TimeSpan cooldown, Sprite sprite, SpriteManager spriteManager, SoundManager sounds)
-            : base(price, radius, cooldown, sprite, spriteManager, sounds)
+        protected StrategicTower(int price,
+            float radius,
+            int damage,
+            TimeSpan cooldown,
+            Sprite sprite,
+            SpriteManager spriteManager,
+            SoundManager sounds)
+            : base(price, radius, damage, cooldown, sprite, spriteManager, sounds)
         {
             FireTimer.CooledDown += ShootNow;
         }

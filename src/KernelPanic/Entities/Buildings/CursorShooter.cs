@@ -13,18 +13,13 @@ namespace KernelPanic.Entities.Buildings
         protected override bool WantsRotation => true;
 
         internal CursorShooter(SpriteManager spriteManager, SoundManager sounds)
-            : base(20, 4, TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager, sounds)
+            : base(20, 4, 2, TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager, sounds)
         {
         }
 
         protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
-            yield return new Projectile(direction,
-                Sprite.Position,
-                Radius,
-                10,
-                2,
-                SpriteManager.CreateCursorProjectile())
+            yield return new Projectile(this, direction, 10, SpriteManager.CreateCursorProjectile())
             {
                 SingleTarget = true
             };

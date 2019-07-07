@@ -10,7 +10,7 @@ namespace KernelPanic.Entities.Buildings
     internal sealed class Ventilator : Tower
     {
         internal Ventilator(SpriteManager spriteManager, SoundManager sounds)
-            : base(20, 2, TimeSpan.Zero, spriteManager.CreateVentilator(), spriteManager, sounds)
+            : base(20, 2, 0, TimeSpan.Zero, spriteManager.CreateVentilator(), spriteManager, sounds)
         {
             // The fire timer is not used by the Ventilator.
             FireTimer.Enabled = false;
