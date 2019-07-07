@@ -19,8 +19,15 @@ namespace KernelPanic.Table
 
         internal void Register(Building building, TileIndex tile)
         {
+            building.State = BuildingState.Inactive;
             building.Sprite.Position = mGrid.GetTile(tile).Position;
             mHeatMap.Block(tile.ToPoint());
+            Spawn(building);
+        }
+
+        private void Spawn(Building building)
+        {
+            building.State = BuildingState.Active;
             mSpawnAction(building);
         }
     }

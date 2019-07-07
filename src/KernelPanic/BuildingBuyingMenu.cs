@@ -65,14 +65,14 @@ namespace KernelPanic
 
                     if (button == selectedButton)
                     {
-                        buildingBuyer.Building = null;
+                        buildingBuyer.SetBuilding(null);
                         selectedButton = null;
                         return;
                     }
 
                     button.ViewPressed = true;
                     selectedButton = button;
-                    buildingBuyer.Building = element.Building;
+                    buildingBuyer.SetBuilding(element.Building);
                 };
             }
         }
