@@ -19,6 +19,9 @@ namespace KernelPanic.Entities.Buildings
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             base.Update(positionProvider, inputManager, gameTime);
+            
+            if (State != BuildingState.Active)
+                return;
 
             foreach (var unit in positionProvider.NearEntities<Unit>(this, Radius))
             {

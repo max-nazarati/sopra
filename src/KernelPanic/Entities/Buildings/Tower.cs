@@ -54,7 +54,9 @@ namespace KernelPanic.Entities.Buildings
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             base.Update(positionProvider, inputManager, gameTime);
-            FireTimer.Update(gameTime);
+
+            if (State == BuildingState.Active)
+                FireTimer.Update(gameTime);
         }
 
         internal override void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
