@@ -7,10 +7,10 @@ namespace KernelPanic
     internal sealed class CooldownComponent
     {
         [JsonProperty]
-        private TimeSpan mCooldown;
+        internal TimeSpan Cooldown { get; set; }
 
         [JsonProperty]
-        private TimeSpan mRemainingCooldown;
+        internal TimeSpan RemainingCooldown { get; private set; }
 
         [JsonProperty]
         internal bool Ready { get; private set; }
@@ -18,13 +18,10 @@ namespace KernelPanic
         [JsonProperty]
         internal bool Enabled { get; set; }
 
-        [JsonIgnore]
-        internal TimeSpan TimeSpan => mCooldown;
-
         internal CooldownComponent(TimeSpan time, bool isHot = true)
         {
-            mCooldown = time;
-            mRemainingCooldown = isHot ? time : TimeSpan.Zero;
+            Cooldown = time;
+            RemainingCooldown = isHot ? time : TimeSpan.Zero;
             Enabled = isHot;
             Ready = !isHot;
         }
@@ -43,7 +40,7 @@ namespace KernelPanic
         internal void Reset()
         {
             Enabled = true;
-            mRemainingCooldown = mCooldown;
+            RemainingCooldown = Cooldown;
             Ready = false;
         }
 
@@ -51,18 +48,18 @@ namespace KernelPanic
         internal void Reset(TimeSpan time)
         {
             Enabled = true;
-            mCooldown = time;
-            mRemainingCooldown = time;
+            Cooldown = time;
+            RemainingCooldown = time;
             Ready = false;
         }
 
         internal void Update(GameTime time)
         {
             if (!Enabled) { return; }
-            mRemainingCooldown -= time.ElapsedGameTime;
+            RemainingCooldown -= time.ElapsedGameTime;
             // check if time is over
-            if (mRemainingCooldown > TimeSpan.Zero) return;
-            mRemainingCooldown = TimeSpan.Zero;
+            if (RemainingCooldown > TimeSpan.Zero) return;
+            RemainingCooldown = TimeSpan.Zero;
             Enabled = false;
             Ready = true;
             CooledDown?.Invoke(this);

@@ -5,8 +5,7 @@ namespace KernelPanic.Entities.Units
 {
     internal sealed class Trojan : Troupe
     {
-        [JsonProperty]
-        internal bool SpawnsDouble { get; set; }
+        [JsonProperty] internal int ChildCount { get; set; } = 5;
 
         internal Trojan(SpriteManager spriteManager)
             : base(20, 3, 30, 6, spriteManager.CreateTrojan(), spriteManager)
@@ -17,7 +16,7 @@ namespace KernelPanic.Entities.Units
         {
             if (Wave.IsValid)
             {
-                for (var i = 0; i < (SpawnsDouble ? 10 : 5); ++i)
+                for (var i = 0; i < ChildCount; ++i)
                     Wave.SpawnChild(new Bug(SpriteManager) {Sprite = {Position = Sprite.Position}});
             }
             else

@@ -16,7 +16,7 @@ namespace KernelPanic.Entities.Buildings
     {
         [DataMember] internal float Radius { get; set; }
         [DataMember] internal int Damage { get; set; }
-        [DataMember] protected CooldownComponent FireTimer { get; private set; }
+        [DataMember] internal CooldownComponent FireTimer { get; private set; }
         internal Action<Projectile> FireAction { get; set; }
 
         private Sprite mRadiusSprite;
@@ -48,7 +48,7 @@ namespace KernelPanic.Entities.Buildings
         {
             base.CompleteClone();
             mRadiusSprite = mRadiusSprite.Clone();
-            FireTimer = new CooldownComponent(FireTimer.TimeSpan, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
+            FireTimer = new CooldownComponent(FireTimer.Cooldown, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
         }
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)

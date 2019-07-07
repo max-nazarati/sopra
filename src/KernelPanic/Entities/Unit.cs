@@ -21,7 +21,7 @@ namespace KernelPanic.Entities
         /// The speed (GS) of this unit.
         /// </summary>
         [DataMember]
-        protected int Speed { get; set; }
+        internal float Speed { get; set; }
 
         /// <summary>
         /// The AS of this Unit. This is the damage dealt to the enemy's base if reached.
