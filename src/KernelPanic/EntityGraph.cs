@@ -132,7 +132,7 @@ namespace KernelPanic
 
             foreach (var (a, b) in QuadTree.Overlaps())
             {
-                CollisionManager.Handle(a, b);
+                CollisionManager.Handle(a, b, positionProvider);
             }
 
             foreach (var objects in mDrawObjects.Values)

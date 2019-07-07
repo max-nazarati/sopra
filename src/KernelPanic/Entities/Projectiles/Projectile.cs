@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -68,12 +70,12 @@ namespace KernelPanic.Entities.Projectiles
             Sprite.Draw(spriteBatch, gameTime);
         }
 
-        internal void Hit(Unit unit)
+        internal void Hit(Unit unit, PositionProvider positionProvider)
         {
             if (!unit.WantsRemoval || mHitUnits.Add(unit))
             {
                 // The unit is still alive and wasn't hit before by this projectile.
-                HandleHit(unit);
+                HandleHit(unit, positionProvider.Owner);
             }
         }
 
@@ -82,9 +84,12 @@ namespace KernelPanic.Entities.Projectiles
         /// in other ways to a hit. Called only when <paramref name="unit"/> was not hit before by this <see cref="Projectile"/>.
         /// </summary>
         /// <param name="unit">The <see cref="Unit"/> hit by this <see cref="Projectile"/>.</param>
-        private /*virtual*/ void HandleHit(Unit unit)
+        /// <param name="owner">To determine who owns the <paramref name="unit"/>.</param>
+        private /*virtual*/ void HandleHit(Unit unit, Owner owner)
         {
-            unit.DealDamage(Damage);
+            EventCenter.Default.Send(Event.DamagedUnit(owner, this, unit));
+            if (unit.DealDamage(Damage))
+                EventCenter.Default.Send(Event.KilledUnit(owner, this, unit));
 
             if (SingleTarget)
                 WantsRemoval = true;

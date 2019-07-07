@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using KernelPanic.Input;
 using KernelPanic.Entities;
+using KernelPanic.Events;
 using KernelPanic.PathPlanning;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
@@ -142,6 +143,7 @@ namespace KernelPanic
 
             // TODO: Play a different sound when the AI places a tower.
             soundManager.PlaySound(SoundManager.Sound.TowerPlacement);
+            EventCenter.Default.Send(Event.BuildingPlaced(player, building));
             return true;
         }
     }

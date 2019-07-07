@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
+using KernelPanic.Events;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -78,17 +79,18 @@ namespace KernelPanic.Waves
 
         internal void Add(IPlayerDistinction player, Unit unit)
         {
-            var clone = unit.Clone();
+            var buyer = Players.Select(player);
+            EventCenter.Default.Send(Event.BoughtUnit(buyer, unit));
 
+            var clone = unit.Clone();
             if (clone is Troupe troupe)
             {
                 mTroupes.Select(player).Add(troupe);
                 return;
             }
 
-            var player1 = Players.Select(player);
-            player1.ApplyUpgrades(clone);
-            player1.AttackingLane.UnitSpawner.Register(clone);
+            buyer.ApplyUpgrades(clone);
+            buyer.AttackingLane.UnitSpawner.Register(clone);
         }
 
         internal void Update(GameTime gameTime)

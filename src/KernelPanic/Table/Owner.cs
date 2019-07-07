@@ -29,5 +29,7 @@ namespace KernelPanic.Table
                 }
             }
         }
+
+        internal Owner Swapped => new Owner(mDefender, mAttacker);
     }
 }

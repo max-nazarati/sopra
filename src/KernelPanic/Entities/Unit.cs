@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -26,7 +27,7 @@ namespace KernelPanic.Entities
         /// The AS of this Unit. This is the damage dealt to the enemy's base if reached.
         /// </summary>
         [DataMember]
-        private int AttackStrength { get; set; }
+        internal int AttackStrength { get; set; }
 
         /// <summary>
         /// Stores the initial/maximum LP. Kept to ensure,
@@ -95,11 +96,15 @@ namespace KernelPanic.Entities
         /// </para>
         /// </summary>
         /// <param name="damage">The number of life-points to subtract.</param>
-        public void DealDamage(int damage)
+        /// <returns><c>true</c> if this <see cref="Unit"/> died, <c>false</c> otherwise.</returns>
+        public bool DealDamage(int damage)
         {
             RemainingLife = Math.Min(MaximumLife, RemainingLife - damage);
-            if (RemainingLife <= 0)
-                DidDie();
+            if (RemainingLife > 0)
+                return false;
+
+            DidDie();
+            return true;
         }
 
         /// <summary>
@@ -170,6 +175,7 @@ namespace KernelPanic.Entities
             if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
                 return;
 
+            EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
             positionProvider.DamageBase(AttackStrength);
             WantsRemoval = true;
         }

@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using KernelPanic.Table;
 using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Entities;
+using KernelPanic.Events;
 using KernelPanic.Upgrades;
 using Newtonsoft.Json;
 
@@ -47,6 +48,8 @@ namespace KernelPanic.Players
 
         internal void AddUpgrade(Upgrade upgrade)
         {
+            EventCenter.Default.Send(Event.UpgradeBought(this, upgrade));
+
             if (upgrade.Kind == Upgrade.Id.IncreaseBitcoins)
             {
                 IncreasedBitcoins = true;
