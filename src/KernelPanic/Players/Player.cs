@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Table;
-using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Entities;
 using KernelPanic.Events;
 using KernelPanic.Upgrades;
@@ -85,9 +84,11 @@ namespace KernelPanic.Players
         #endregion
 
         /// <inheritdoc />
-        public T Select<T>(T ifActive, T ifPassive)
+        public virtual T Select<T>(T ifActive, T ifPassive)
         {
-            return this is ArtificialPlayer ? ifPassive : ifActive;
+            // A player is active. If it is passive it is of type ArtificialPlayer
+            // where this function is overriden accordingly.
+            return ifActive;
         }
     }
 }
