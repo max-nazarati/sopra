@@ -83,12 +83,12 @@ namespace KernelPanic.Entities.Units
             mAbilityDurationLeft = mAbilityDurationTotal;
             if (mAbilityTargetOne is Tower first)
             {
-                mEmps[0] = new Emp(first, mEmpSprite);
+                mEmps[0] = new Emp(first, TimeSpan.FromSeconds(2) ,mEmpSprite);
             }
 
             if (mAbilityTargetTwo is Tower second)
             { 
-                mEmps[1] = new Emp(second, mEmpSprite);
+                mEmps[1] = new Emp(second, TimeSpan.FromSeconds(2), mEmpSprite);
             }
         }
 

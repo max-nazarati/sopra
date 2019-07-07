@@ -10,7 +10,7 @@ namespace KernelPanic.Entities.Projectiles
     {
         private TimeSpan mTimeToLive;
         
-        internal Emp(Tower origin, ImageSprite sprite, TimeSpan timeToLive) : base(origin, Vector2.Zero, 0, sprite, 0)
+        internal Emp(Tower origin, TimeSpan timeToLive, ImageSprite sprite) : base(origin, Vector2.Zero, 0, sprite, 0)
         {
             mTimeToLive = timeToLive;
         }
