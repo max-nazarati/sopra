@@ -23,9 +23,9 @@ namespace KernelPanic.Entities.Projectiles
 
         internal bool SingleTarget { private get; set; }
 
-        internal StrategicTower Origin { get; }
+        internal Tower Origin { get; }
 
-        internal Projectile(StrategicTower origin, Vector2 direction, float speed, ImageSprite sprite, float offset = 0)
+        internal Projectile(Tower origin, Vector2 direction, float speed, ImageSprite sprite, float offset = 0)
         {
             Origin = origin;
             mRadius = origin.Radius;

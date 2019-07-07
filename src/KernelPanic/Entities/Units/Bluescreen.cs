@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -15,8 +16,8 @@ namespace KernelPanic.Entities.Units
         private readonly ImageSprite mIndicatorRange;
         private ImageSprite mIndicatorTarget;
         private ImageSprite mEmpSprite;
-        private Vector2? mAbilityTargetOne;
-        private Vector2? mAbilityTargetTwo;
+        private Tower mAbilityTargetOne;
+        private Tower mAbilityTargetTwo;
         private TimeSpan mAbilityDurationTotal;
         private TimeSpan mAbilityDurationLeft;
         private readonly int mAbilityRange;
@@ -50,9 +51,9 @@ namespace KernelPanic.Entities.Units
             mAbilityTargetTwo = null;
             double shortestDistance = mAbilityRange + 1;
             double secondShortestDistance = mAbilityRange + 2;
-            foreach (var building in positionProvider.NearEntities<Building>(Sprite.Position, mAbilityRange))
+            foreach (var tower in positionProvider.NearEntities<Tower>(Sprite.Position, mAbilityRange))
             {
-                var distance = Distance(building.Sprite.Position, Sprite.Position);
+                var distance = Distance(tower.Sprite.Position, Sprite.Position);
                 if (distance < shortestDistance)
                 {
                     // shift the old closest turret to the second place
@@ -61,13 +62,13 @@ namespace KernelPanic.Entities.Units
                     
                     // set the new closest turret
                     shortestDistance = distance;
-                    mAbilityTargetOne = building.Sprite.Position;
+                    mAbilityTargetOne = tower;
                 }
                 else if (distance < secondShortestDistance)
                 {
                     // just replace the second place
                     secondShortestDistance = distance;
-                    mAbilityTargetTwo = building.Sprite.Position;
+                    mAbilityTargetTwo = tower;
                 }
             }
 
@@ -80,12 +81,12 @@ namespace KernelPanic.Entities.Units
             // debug
             base.StartAbility(positionProvider, inputManager);
             mAbilityDurationLeft = mAbilityDurationTotal;
-            if (mAbilityTargetOne is Vector2 first)
+            if (mAbilityTargetOne is Tower first)
             {
                 mEmps[0] = new Emp(first, mEmpSprite);
             }
 
-            if (mAbilityTargetTwo is Vector2 second)
+            if (mAbilityTargetTwo is Tower second)
             { 
                 mEmps[1] = new Emp(second, mEmpSprite);
             }
@@ -127,13 +128,13 @@ namespace KernelPanic.Entities.Units
 
             if (mAbilityTargetOne != null)
             {
-                mIndicatorTarget.Position = (Vector2) mAbilityTargetOne;
+                mIndicatorTarget.Position = mAbilityTargetOne.Sprite.Position;
                 mIndicatorTarget.Draw(spriteBatch, gameTime);
             }
 
             if (mAbilityTargetTwo != null && TargetsTwoTower)
             {
-                mIndicatorTarget.Position = (Vector2) mAbilityTargetTwo;
+                mIndicatorTarget.Position = mAbilityTargetTwo.Sprite.Position;
                 mIndicatorTarget.Draw(spriteBatch, gameTime);
             }
         }

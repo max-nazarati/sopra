@@ -1,4 +1,7 @@
 ﻿using KernelPanic.Entities;
+using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 
 namespace KernelPanic
@@ -22,10 +25,15 @@ namespace KernelPanic
                 case Projectile projectile when object2 is LaneBorder:
                     projectile.RadiusReached();
                     return true;
-
+                
+                case Emp emp when object2 is Tower tower:
+                    // emp.Hit(tower, positionProvider);
+                    return true;
+                
                 default:
                     return false;
             }
+
         }
     }
 }
