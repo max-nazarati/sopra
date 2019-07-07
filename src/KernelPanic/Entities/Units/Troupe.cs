@@ -22,7 +22,7 @@ namespace KernelPanic.Entities.Units
         {
             var currentTile = positionProvider.RequireTile(this);
             var movementDirection = positionProvider.MovementVector(currentTile.ToPoint());
-            var shift = positionProvider.MovememtShift(currentTile.ToPoint());
+            // var shift = positionProvider.MovememtShift(currentTile.ToPoint());
             if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
             {
                 movementDirection = mLastMovement;
@@ -31,7 +31,8 @@ namespace KernelPanic.Entities.Units
             {
                 mLastMovement = movementDirection;
             }
-            MoveTarget = Sprite.Position + Speed * movementDirection + shift;
+
+            MoveTarget = Sprite.Position + Speed * movementDirection;// + shift;
         }
         
         internal new Troupe Clone() => Clone<Troupe>();
