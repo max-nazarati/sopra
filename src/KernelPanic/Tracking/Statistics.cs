@@ -13,15 +13,15 @@ namespace KernelPanic.Tracking
     {
         internal struct Data
         {
-            [JsonProperty] internal int NumberOfWins { get; set; }
-            [JsonProperty] internal int NumberOfLoses { get; set; }
+            [JsonProperty] internal ulong NumberOfWins { get; set; }
+            [JsonProperty] internal ulong NumberOfLoses { get; set; }
 
-            [JsonProperty] internal int DamageDealt { get; set; }
-            [JsonProperty] internal int NumberOfKilledUnits { get; set; }
+            [JsonProperty] internal ulong DamageDealt { get; set; }
+            [JsonProperty] internal ulong NumberOfKilledUnits { get; set; }
 
-            [JsonProperty] internal int AttackInvestments { get; set; }
-            [JsonProperty] internal int DefenceInvestments { get; set; }
-            [JsonProperty] internal int UpgradeInvestments { get; set; }
+            [JsonProperty] internal ulong AttackInvestments { get; set; }
+            [JsonProperty] internal ulong DefenceInvestments { get; set; }
+            [JsonProperty] internal ulong UpgradeInvestments { get; set; }
 
             [JsonProperty] internal TimeSpan OverallPlayTime { get; set; }
         }
@@ -40,16 +40,16 @@ namespace KernelPanic.Tracking
             eventCenter.Subscribe(Event.Id.GameLost, e => mData.NumberOfLoses++);
 
             eventCenter.Subscribe(Event.Id.DamagedUnit, isDefender,
-                e => mData.DamageDealt += e.Get<int>(Event.Key.Damage));
+                e => mData.DamageDealt += (ulong) e.Get<int>(Event.Key.Damage));
             eventCenter.Subscribe(Event.Id.KilledUnit, isDefender,
                 e => mData.NumberOfKilledUnits++);
 
             eventCenter.Subscribe(Event.Id.BoughtUnit, isBuyer,
-                e => mData.AttackInvestments += e.Get<int>(Event.Key.Price));
+                e => mData.AttackInvestments += (ulong) e.Get<int>(Event.Key.Price));
             eventCenter.Subscribe(new[] {Event.Id.BuildingPlaced, Event.Id.BuildingImproved}, isBuyer,
-                e => mData.DefenceInvestments += e.Get<int>(Event.Key.Price));
+                e => mData.DefenceInvestments += (ulong) e.Get<int>(Event.Key.Price));
             eventCenter.Subscribe(Event.Id.UpgradeBought, isBuyer,
-                e => mData.UpgradeInvestments += e.Get<int>(Event.Key.Price));
+                e => mData.UpgradeInvestments += (ulong) e.Get<int>(Event.Key.Price));
         }
 
         private static Func<Event, bool> IsActive(Event.Key key)
