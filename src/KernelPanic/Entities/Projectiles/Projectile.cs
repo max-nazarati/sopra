@@ -46,7 +46,7 @@ namespace KernelPanic.Entities.Projectiles
         
         public bool WantsRemoval { get; protected set; }
 
-        public void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             Sprite.Position += MoveVector;
 
