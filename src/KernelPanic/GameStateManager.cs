@@ -12,18 +12,6 @@ namespace KernelPanic
     [DataContract]
     internal sealed class GameStateManager
     {
-        /*
-        public AGameState ActiveState { get; }
-        public InputManager Input { get; }
-        //public Settings Settings { get; }
-        public SoundManager Sounds { get; }
-        public void Switch(AGameState newGameState)
-        {
-            mGameStates.Pop();
-            mGameStates.Push(newGameState);
-        }
-        */
-
         /// <summary>
         /// Stores a <see cref="AGameState"/> together with the current quad-tree of click targets.
         /// </summary>
