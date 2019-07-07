@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    [DataContract]
     internal sealed class GameStateManager : Disposable
     {
         /// <summary>

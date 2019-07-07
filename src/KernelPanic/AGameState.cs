@@ -6,9 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    [DataContract]
-    [KnownType(typeof(InGameState))]
-    [KnownType(typeof(MenuState))]
     internal abstract class AGameState
     {
         internal GameStateManager GameStateManager { get; }

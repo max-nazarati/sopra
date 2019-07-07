@@ -14,7 +14,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    [DataContract]
     internal sealed class MenuState : AGameState
     {
         private InterfaceComponent[] mComponents;
