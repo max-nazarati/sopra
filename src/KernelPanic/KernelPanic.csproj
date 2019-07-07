@@ -60,6 +60,7 @@
     <Compile Include="Camera\Change.cs" />
     <Compile Include="Camera\ICamera.cs" />
     <Compile Include="Camera\StaticCamera.cs" />
+    <Compile Include="Data\CompositeDisposable.cs" />
     <Compile Include="Data\EnumerableExtensions.cs" />
     <Compile Include="Data\Geometry.cs" />
     <Compile Include="Data\HeatMap.cs" />

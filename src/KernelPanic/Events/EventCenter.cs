@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using KernelPanic.Data;
 
 namespace KernelPanic.Events
 {
@@ -23,29 +24,6 @@ namespace KernelPanic.Events
                 void IDisposable.Dispose()
                 {
                     mBag.mHandlers.Remove(mKey);
-                }
-            }
-            
-            internal struct MultiToken : IDisposable
-            {
-                private List<IDisposable> mTokens;
-
-                internal MultiToken(List<IDisposable> tokens)
-                {
-                    mTokens = tokens;
-                }
-
-                void IDisposable.Dispose()
-                {
-                    if (mTokens == null)
-                        return;
-
-                    foreach (var token in mTokens) using (token)
-                    {
-                        // The tokens are automatically disposed.
-                    }
-
-                    mTokens = null;
                 }
             }
 
@@ -80,8 +58,7 @@ namespace KernelPanic.Events
         {
         }
 
-        private static readonly EventCenter sDefaultCenter = new EventCenter();
-        internal static EventCenter Default => sDefaultCenter;
+        internal static EventCenter Default { get; } = new EventCenter();
 
         #endregion
 
@@ -91,8 +68,8 @@ namespace KernelPanic.Events
         /// Subscribes to the events with id <paramref name="id"/>. Every time such an event occurs,
         /// <paramref name="handler"/> is invoked.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="handler"></param>
+        /// <param name="id">The <see cref="Event.Id"/> of the event to be notified of.</param>
+        /// <param name="handler">The function to invoke when such an event occurs.</param>
         /// <returns>An <see cref="IDisposable"/> which unsubscribes <paramref name="handler"/> from the event stream.</returns>
         internal IDisposable Subscribe(Event.Id id, Action<Event> handler)
         {
@@ -104,10 +81,16 @@ namespace KernelPanic.Events
             return bag.Add(handler);
         }
 
+        /// <summary>
+        /// Subscribes to the events with an id in <paramref name="ids"/>. Every time such an event occurs,
+        /// <paramref name="handler"/> is invoked.
+        /// </summary>
+        /// <param name="ids">A list of <see cref="Event.Id"/> of the events to be notified of.</param>
+        /// <param name="handler">The function to invoke when such an event occurs.</param>
+        /// <returns>An <see cref="IDisposable"/> which unsubscribes <paramref name="handler"/> from the event stream.</returns>
         internal IDisposable Subscribe(IEnumerable<Event.Id> ids, Action<Event> handler)
         {
-            var tokens = ids.Select(id => Subscribe(id, handler)).ToList();
-            return new HandlerBag.MultiToken(tokens);
+            return ids.Aggregate(new CompositeDisposable(), (current, id) => current + Subscribe(id, handler));
         }
 
         #endregion
