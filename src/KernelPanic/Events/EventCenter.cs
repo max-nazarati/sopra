@@ -121,6 +121,8 @@ namespace KernelPanic.Events
                     handler(@event);
                 }
             }
+
+            mEventsBuffer.Clear();
         }
 
         #endregion
