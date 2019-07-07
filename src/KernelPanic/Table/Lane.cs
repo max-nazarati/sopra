@@ -88,7 +88,7 @@ namespace KernelPanic.Table
         {
             get
             {
-                var borders = new List<LaneBorder>();
+                var borders = new List<LaneBorder>(8);
                 borders.AddRange(LaneBorder.Borders(Grid.Bounds, Grid.KachelSize, true));
                 borders.AddRange(LaneBorder.Borders(Grid.PixelCutout, Grid.KachelSize, false));
                 return borders;
