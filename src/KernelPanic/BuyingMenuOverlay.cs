@@ -3,27 +3,27 @@ using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using KernelPanic.Input;
-using KernelPanic.Players;
 using KernelPanic.Table;
 
 namespace KernelPanic
 {
-    internal abstract class BuyingMenuOverlay<TElement, TResource>
+    internal abstract class BuyingMenuOverlay<TElement>
         where TElement : class, IPositioned, IUpdatable, IDrawable
-        where TResource : IPriced
     {
-        internal Player Player { get; }
         internal TElement[] Elements { get; }
 
-        protected BuyingMenuOverlay(Vector2 startPosition, Player player, IEnumerable<TElement> elements)
+        protected BuyingMenuOverlay(Vector2 startPosition, IEnumerable<TElement> elements)
         {
-            Player = player;
             Elements = elements.ToArray();
 
+            int i = 1;
             foreach (var element in Elements)
             {
                 element.Position = startPosition;
-                startPosition.Y += element.Size.Y;
+                // calculate spacing between buttons
+                // add bigger space after first five units to seperate heroes from troupes
+                startPosition.Y += (i == 5 && element is UnitBuyingMenu.Element) ? element.Size.Y + 20 : element.Size.Y;
+                i++;
             }
         }
 

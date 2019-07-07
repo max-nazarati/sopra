@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
@@ -85,6 +84,17 @@ namespace KernelPanic.Table
 
         internal bool Contains(Vector2 point) => Grid.Contains(point);
 
+        private List<LaneBorder> LaneBorders
+        {
+            get
+            {
+                var borders = new List<LaneBorder>();
+                borders.AddRange(LaneBorder.Borders(Grid.Bounds, Grid.KachelSize, true));
+                borders.AddRange(LaneBorder.Borders(Grid.PixelCutout, Grid.KachelSize, false));
+                return borders;
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -109,7 +119,7 @@ namespace KernelPanic.Table
         {
             Grid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             mHeatMap = new HeatMap(Grid.LaneRectangle.Width, Grid.LaneRectangle.Height);
-            EntityGraph = new EntityGraph(LaneBoundsInPixel(mLaneSide));
+            EntityGraph = new EntityGraph(LaneBorders);
             UnitSpawner = new UnitSpawner(Grid, EntityGraph.Add);
             BuildingSpawner = new BuildingSpawner(Grid, mHeatMap, EntityGraph.Add);
             

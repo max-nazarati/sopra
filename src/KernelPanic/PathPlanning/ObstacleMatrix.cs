@@ -141,8 +141,8 @@ namespace KernelPanic.PathPlanning
 
         /// <summary>
         /// Adds all elements from <paramref name="elements"/> for which the predicate returns <c>true</c> as obstacles
-        /// into this <see cref="ObstacleMatrix"/>. Every tile—even if only intersected by a small part—is marked as an
-        /// obstacle.
+        /// into this <see cref="ObstacleMatrix"/>. Only those tiles containing the center of an entity are marked as
+        /// blocked.
         /// </summary>
         /// <param name="elements">The elements to add, can be a <see cref="QuadTree{T}"/>.</param>
         /// <param name="predicate">A predicate to filter the elements.</param>

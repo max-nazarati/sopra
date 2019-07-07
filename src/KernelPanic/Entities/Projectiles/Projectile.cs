@@ -23,10 +23,11 @@ namespace KernelPanic.Entities.Projectiles
 
         internal bool SingleTarget { private get; set; }
 
-        internal StrategicTower Origin { get; }
-
-        internal Projectile(StrategicTower origin, Vector2 direction, float speed, ImageSprite sprite, float offset = 0)
+        internal Tower Origin { get; }
+        
+        internal Projectile(Tower origin, Vector2 direction, float speed, ImageSprite sprite, float offset = 0)
         {
+            // calling this with direction == Vector.Zero will not work -> game crash (out of bound, entityG.)
             Origin = origin;
             mRadius = origin.Radius;
             Damage = origin.Damage;
@@ -42,11 +43,11 @@ namespace KernelPanic.Entities.Projectiles
 
         public Rectangle Bounds => Sprite.Bounds;
 
-        public int DrawLevel => 2;    // Above all units and buildings.
+        public int? DrawLevel => 2;    // Above all units and buildings.
         
         public bool WantsRemoval { get; protected set; }
 
-        public void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             Sprite.Position += MoveVector;
 
@@ -60,7 +61,7 @@ namespace KernelPanic.Entities.Projectiles
         /// Called when this <see cref="Projectile"/> has reached its radius. The default implementation flags this
         /// projectile for removal.
         /// </summary>
-        protected virtual void RadiusReached()
+        internal virtual void RadiusReached()
         {
             WantsRemoval = true;
         }

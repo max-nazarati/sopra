@@ -82,7 +82,9 @@
     <Compile Include="Entities\Buildings\WifiRouter.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\IGameObject.cs" />
+    <Compile Include="Entities\LaneBorder.cs" />
     <Compile Include="Entities\Projectiles\Disc.cs" />
+    <Compile Include="Entities\Projectiles\Emp.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
     <Compile Include="Entities\Unit.cs" />
     <Compile Include="Entities\Units\Bluescreen.cs" />
@@ -123,11 +125,11 @@
     <Compile Include="Game1.cs" />
     <Compile Include="GameStateManager.cs" />
     <Compile Include="IDrawable.cs" />
-    <Compile Include="IPriced.cs" />
     <Compile Include="IUpdatable.cs" />
     <Compile Include="MenuState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Purchasing\IPriced.cs" />
     <Compile Include="Purchasing\PurchasableAction.cs" />
     <Compile Include="Purchasing\PurchaseButton.cs" />
     <Compile Include="Purchasing\SinglePurchasableAction.cs" />

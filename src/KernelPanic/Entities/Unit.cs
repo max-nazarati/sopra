@@ -82,7 +82,7 @@ namespace KernelPanic.Entities
 
         internal Unit Clone() => Clone<Unit>();
 
-        public override int DrawLevel => 1;    // Units are between buildings and projectiles.
+        public override int? DrawLevel => 1;    // Units are between buildings and projectiles.
 
         #region Taking damage
 

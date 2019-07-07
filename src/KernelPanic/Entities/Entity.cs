@@ -6,6 +6,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Players;
+using KernelPanic.Purchasing;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -59,7 +60,7 @@ namespace KernelPanic.Entities
 
         #endregion
 
-        public abstract int DrawLevel { get; }
+        public abstract int? DrawLevel { get; }
 
         /// <summary>
         /// If this flag is <c>true</c> this entity should be removed from the <see cref="EntityGraph"/>.

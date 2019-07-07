@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Sprites
 {
-    public sealed class PatternSprite: Sprite
+    internal sealed class PatternSprite: Sprite
     {
         private int Rows { get; set; }
         private int Columns { get; set; }
@@ -19,7 +19,13 @@ namespace KernelPanic.Sprites
 
         protected override float UnscaledWidth => Sprite.Width * Columns;
         protected override float UnscaledHeight => Sprite.Height * Rows;
-        
+
+        internal override Color TintColor
+        {
+            get => Sprite.TintColor;
+            set => Sprite.TintColor = value;
+        }
+
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
             Vector2 position,

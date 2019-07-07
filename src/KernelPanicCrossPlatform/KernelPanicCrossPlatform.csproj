@@ -165,8 +165,14 @@
     <Compile Include="..\KernelPanic\Entities\IGameObject.cs">
       <Link>Entities\IGameObject.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Entities\LaneBorder.cs">
+      <Link>Entities\LaneBorder.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Projectiles\Disc.cs">
       <Link>Entities\Projectiles\Disc.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Projectiles\Emp.cs">
+      <Link>Entities\Projectiles\Emp.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Projectiles\Projectile.cs">
       <Link>Entities\Projectiles\Projectile.cs</Link>
@@ -255,9 +261,6 @@
     <Compile Include="..\KernelPanic\IPositioned.cs">
       <Link>IPositioned.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\IPriced.cs">
-      <Link>IPriced.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\IUpdatable.cs">
       <Link>IUpdatable.cs</Link>
     </Compile>
@@ -302,6 +305,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Purchasing\IPriced.cs">
+      <Link>Purchasing\IPriced.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Purchasing\PurchasableAction.cs">
       <Link>Purchasing\PurchasableAction.cs</Link>

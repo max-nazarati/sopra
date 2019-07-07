@@ -1,11 +1,9 @@
-﻿using System.Runtime.Serialization;
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Sprites
 {
-    [DataContract]
     internal sealed class AnimatedSprite : Sprite
     {
         private const int DefaultFrameSize = 64;
@@ -31,7 +29,7 @@ namespace KernelPanic.Sprites
         /// </summary>
         private readonly TimeSpan mFrameDuration;
 
-        /*internal*/ private Color TintColor { get; /*set;*/ } = Color.White;
+        internal override Color TintColor { get; set; } = Color.White;
 
         protected override float UnscaledWidth => DefaultFrameSize;
         protected override float UnscaledHeight => DefaultFrameSize;

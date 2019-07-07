@@ -3,6 +3,7 @@ using System;
 using System.Data;
 using KernelPanic.Data;
 using KernelPanic.Entities.Projectiles;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -62,6 +63,16 @@ namespace KernelPanic.Entities.Buildings
 
             mRadiusSprite.Position = Sprite.Position;
             mRadiusSprite.Draw(spriteBatch, gameTime);
+        }
+        
+        internal void HitByEmp()
+        {
+            State = BuildingState.Disabled;
+        }
+
+        internal void EmpIsGone()
+        {
+            State = BuildingState.Active;
         }
     }
 }

@@ -6,13 +6,12 @@ using KernelPanic.Sprites;
 using KernelPanic.Input;
 using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
-using KernelPanic.Players;
 using KernelPanic.Table;
 using System;
 
 namespace KernelPanic
 {
-    internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element, Building>
+    internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element>
     {
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
@@ -48,8 +47,8 @@ namespace KernelPanic
             }
         }
 
-        private BuildingBuyingMenu(Player player, BuildingBuyer buildingBuyer, SpriteManager spriteManager, params Element[] elements)
-            : base(MenuPosition(Lane.Side.Left, spriteManager), player, elements)
+        private BuildingBuyingMenu(BuildingBuyer buildingBuyer, SpriteManager spriteManager, params Element[] elements)
+            : base(MenuPosition(Lane.Side.Left, spriteManager), elements)
         {
             Button selectedButton = null;
 
@@ -66,27 +65,26 @@ namespace KernelPanic
 
                     if (button == selectedButton)
                     {
-                        buildingBuyer.Building = null;
+                        buildingBuyer.SetBuilding(null);
                         selectedButton = null;
                         return;
                     }
 
                     button.ViewPressed = true;
                     selectedButton = button;
-                    buildingBuyer.Building = element.Building;
+                    buildingBuyer.SetBuilding(element.Building);
                 };
             }
         }
 
-        internal static BuildingBuyingMenu Create(Player player,
-            BuildingBuyer buildingBuyer,
+        internal static BuildingBuyingMenu Create(BuildingBuyer buildingBuyer,
             SpriteManager spriteManager,
             SoundManager sounds)
         {
             Element CreateElement<TBuilding>() where TBuilding : Building =>
                 new Element(Building.Create<TBuilding>(spriteManager, sounds), spriteManager);
 
-            return new BuildingBuyingMenu(player, buildingBuyer, spriteManager,
+            return new BuildingBuyingMenu(buildingBuyer, spriteManager,
                 CreateElement<CursorShooter>(),
                 CreateElement<WifiRouter>(),
                 CreateElement<CdThrower>(),

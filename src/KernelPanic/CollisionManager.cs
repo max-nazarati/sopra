@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using KernelPanic.Entities;
+﻿using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 
 namespace KernelPanic
@@ -12,16 +12,26 @@ namespace KernelPanic
                 TryHandle(object2, object1, positionProvider);
         }
 
-        [SuppressMessage("ReSharper", "InvertIf")]
         private static bool TryHandle(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
         {
-            if (object1 is Projectile projectile && object2 is Unit unit)
+            switch (object1)
             {
-                projectile.Hit(unit, positionProvider);
-                return true;
+                case Projectile projectile when object2 is Unit unit:
+                    projectile.Hit(unit, positionProvider);
+                    return true;
+
+                case Projectile projectile when object2 is LaneBorder:
+                    projectile.RadiusReached();
+                    return true;
+                
+                case Emp emp when object2 is Tower tower:
+                    emp.Hit(tower);
+                    return true;
+                
+                default:
+                    return false;
             }
 
-            return false;
         }
     }
 }

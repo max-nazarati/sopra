@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -12,11 +14,19 @@ namespace KernelPanic.Entities.Units
     internal sealed class Bluescreen : Hero
     {
         private readonly ImageSprite mIndicatorRange;
-        private ImageSprite mIndicatorTarget;
-        private Vector2? mAbilityTarget;
-        private TimeSpan mAbilityDurationTotal;
+        private readonly ImageSprite mIndicatorTarget;
+        private readonly ImageSprite mEmpSpriteOne;
+        private readonly ImageSprite mEmpSpriteTwo;
+        private Tower mAbilityTargetOne;
+        private Tower mAbilityTargetTwo;
+        private readonly TimeSpan mAbilityDurationTotal;
         private TimeSpan mAbilityDurationLeft;
         private readonly int mAbilityRange;
+        private readonly Emp[] mEmps;
+        private static readonly double sEmpDuration = 2;
+        internal float mEmpDurationAmplifier = 1;
+
+        internal bool TargetsTwoTower { private get; set; }
 
         internal Bluescreen(SpriteManager spriteManager)
             : base(50, 9, 15, 0, TimeSpan.FromSeconds(5), spriteManager.CreateBluescreen(), spriteManager)
@@ -24,8 +34,11 @@ namespace KernelPanic.Entities.Units
             mAbilityRange = 1000;
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
             mIndicatorTarget = spriteManager.CreateEmpIndicatorTarget();
-            mAbilityDurationTotal = TimeSpan.FromSeconds(2);
+            mEmpSpriteOne = spriteManager.CreateEmp();
+            mEmpSpriteTwo = spriteManager.CreateEmp();
+            mAbilityDurationTotal = TimeSpan.FromSeconds(5);
             mAbilityDurationLeft = TimeSpan.Zero;
+            mEmps = new Emp[2];
         }
         
         #region Ability 
@@ -38,15 +51,28 @@ namespace KernelPanic.Entities.Units
         protected override void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // find nearest Tower in Range
-            mAbilityTarget = null;
+            mAbilityTargetOne = null;
+            mAbilityTargetTwo = null;
             double shortestDistance = mAbilityRange + 1;
-            foreach (var building in positionProvider.NearEntities<Building>(Sprite.Position, mAbilityRange))
+            double secondShortestDistance = mAbilityRange + 2;
+            foreach (var tower in positionProvider.NearEntities<Tower>(Sprite.Position, mAbilityRange))
             {
-                var distance = Distance(building.Sprite.Position, Sprite.Position);
+                var distance = Distance(tower.Sprite.Position, Sprite.Position);
                 if (distance < shortestDistance)
                 {
+                    // shift the old closest turret to the second place
+                    secondShortestDistance = shortestDistance;
+                    mAbilityTargetTwo = mAbilityTargetOne;
+                    
+                    // set the new closest turret
                     shortestDistance = distance;
-                    mAbilityTarget = building.Sprite.Position;
+                    mAbilityTargetOne = tower;
+                }
+                else if (distance < secondShortestDistance)
+                {
+                    // just replace the second place
+                    secondShortestDistance = distance;
+                    mAbilityTargetTwo = tower;
                 }
             }
 
@@ -58,7 +84,19 @@ namespace KernelPanic.Entities.Units
         {
             // debug
             base.StartAbility(positionProvider, inputManager);
+            
             mAbilityDurationLeft = mAbilityDurationTotal;
+            if (mAbilityTargetOne is Tower first)
+            {
+                var empOne = new Emp(first, TimeSpan.FromSeconds(sEmpDuration * mEmpDurationAmplifier), mEmpSpriteOne);
+                positionProvider.AddProjectile(empOne);
+            }
+
+            if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
+            {
+                var empTwo = new Emp(second, TimeSpan.FromSeconds(sEmpDuration * mEmpDurationAmplifier), mEmpSpriteTwo);
+                positionProvider.AddProjectile(empTwo);
+            }
         }
 
         protected override void ContinueAbility(GameTime gameTime)
@@ -66,16 +104,40 @@ namespace KernelPanic.Entities.Units
             mAbilityDurationLeft -= gameTime.ElapsedGameTime;
             if (mAbilityDurationLeft > TimeSpan.Zero)
             {
-                
             }
             else
             {
                 AbilityStatus = AbilityState.Finished;
             }
-
         }
+        
+        protected override void FinishAbility()
+        {
+            base.FinishAbility();
+            // Projectiles in mEmp will clear themselves and should not be deleted here
+        }
+        
         #endregion Ability
 
+        #region Update
+
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        {
+            base.Update(positionProvider, inputManager, gameTime);
+            if (mEmps[0] is Emp empOne)
+            {
+                empOne.Update(positionProvider, inputManager, gameTime);
+            }
+            if (mEmps[1] is Emp empTwo)
+            {
+                empTwo.Update(positionProvider, inputManager, gameTime);
+            }
+        }
+
+        #endregion
+        
+        #region Draw
+        
         protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.DrawAbility(spriteBatch, gameTime);
@@ -83,24 +145,36 @@ namespace KernelPanic.Entities.Units
             {
                 DrawIndicator(spriteBatch, gameTime);
             }
+            
+            // Drawing the Emps needs to get moved, so the emp doesnt die together with the bluescreen
+            if (mEmps[0] is Emp empOne)
+            {
+                empOne.Draw(spriteBatch, gameTime);
+            }
+            if (mEmps[1] is Emp empTwo)
+            {
+                empTwo.Draw(spriteBatch, gameTime);
+            }
         }
 
         private void DrawIndicator(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            // var direction = mAbilityTarget - Sprite.Position;
-            // direction.Normalize();
-            // var rotation = direction.Angle(0.5);
-
             mIndicatorRange.Position = Sprite.Position;
-            // mIndicator.Rotation = rotation;
-            // mIndicator.ScaleToHeight(JumpDuration * JumpSegmentLength);
             mIndicatorRange.Draw(spriteBatch, gameTime);
 
-            if (mAbilityTarget != null)
+            if (mAbilityTargetOne != null)
             {
-                mIndicatorTarget.Position = (Vector2) mAbilityTarget;
+                mIndicatorTarget.Position = mAbilityTargetOne.Sprite.Position;
+                mIndicatorTarget.Draw(spriteBatch, gameTime);
+            }
+
+            if (mAbilityTargetTwo != null && TargetsTwoTower)
+            {
+                mIndicatorTarget.Position = mAbilityTargetTwo.Sprite.Position;
                 mIndicatorTarget.Draw(spriteBatch, gameTime);
             }
         }
+        
+        #endregion
     }
 }

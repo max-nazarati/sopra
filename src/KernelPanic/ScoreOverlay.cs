@@ -20,7 +20,7 @@ namespace KernelPanic
         private readonly TextSprite mTextTime;
         private readonly ImageButton mPauseButton;
 
-        internal bool Pause;
+        internal bool Pause { get; set; }
 
         private static Point PowerIndicatorSize => new Point(100, 30);
         private static Point ClockSize => new Point(100, 20);

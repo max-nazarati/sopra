@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -28,11 +29,9 @@ namespace KernelPanic
 
         #region Constructor
 
-        public EntityGraph(Rectangle bounds)
+        public EntityGraph(ICollection<LaneBorder> borders)
         {
-            // Adjust for bounds which might (due to float/int conversions) be slightly bigger than the containing lane.
-            bounds.Inflate(10, 10);
-            QuadTree = new QuadTree<IGameObject>(bounds);
+            QuadTree = QuadTree<IGameObject>.Create(borders);
         }
 
         #endregion
@@ -76,13 +75,16 @@ namespace KernelPanic
 
         private void AddDrawObject(IGameObject gameObject)
         {
-            if (mDrawObjects.TryGetValue(gameObject.DrawLevel, out var objects))
+            if (!(gameObject.DrawLevel is int level))
+                return;
+
+            if (mDrawObjects.TryGetValue(level, out var objects))
             {
                 objects.Add(gameObject);
                 return;
             }
 
-            mDrawObjects[gameObject.DrawLevel] = new List<IGameObject> {gameObject};
+            mDrawObjects[level] = new List<IGameObject> {gameObject};
         }
         
         #endregion
