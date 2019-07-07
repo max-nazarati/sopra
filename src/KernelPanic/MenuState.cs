@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
 using KernelPanic.Camera;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Serialization;
-using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -18,7 +16,7 @@ namespace KernelPanic
     [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "The Strings are in German")]
     internal sealed class MenuState : AGameState
     {
-        private InterfaceComponent[] mComponents;
+        private ICollection<InterfaceComponent> mComponents;
         private readonly Action mEscapeAction;
 
         private MenuState(GameStateManager gameStateManager, Action escapeAction = null)
@@ -239,16 +237,35 @@ namespace KernelPanic
                 stateManager.Statistics.Reset();
                 stateManager.Switch(CreateStatisticsMenu(stateManager));
             };
-            
-            return new MenuState(stateManager)
+
+            var components = new List<InterfaceComponent>
             {
-                mComponents = new InterfaceComponent[]
-                {
-                    CreateBackground(stateManager.Sprite),
-                    backButton,
-                    resetButton
-                }
-            };   
+                CreateBackground(stateManager.Sprite),
+                backButton,
+                resetButton
+            };
+
+            var y = 50f;
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            foreach (var (title, value) in stateManager.Statistics.UserRepresentation)
+            {
+                var titleText = stateManager.Sprite.CreateText(title);
+                var valueText = stateManager.Sprite.CreateText(value);
+                
+                titleText.SetOrigin(RelativePosition.TopRight);
+                valueText.SetOrigin(RelativePosition.TopLeft);
+
+                // TODO: Better layout.
+                titleText.X = screenMid - 10;
+                valueText.X = screenMid + 10;
+                titleText.Y = valueText.Y = y;
+                y += titleText.Height + 20;
+
+                components.Add(new StaticComponent(titleText));
+                components.Add(new StaticComponent(valueText));
+            }
+
+            return new MenuState(stateManager) {mComponents = components};
         }
 
         private static MenuState CreateAchievementsMenu(GameStateManager stateManager)

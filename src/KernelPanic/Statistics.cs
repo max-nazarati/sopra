@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Events;
 using KernelPanic.Serialization;
 using Microsoft.Xna.Framework;
@@ -58,6 +60,31 @@ namespace KernelPanic
         internal void Reset()
         {
             mData = new Data();
+        }
+
+        [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "Strings are in German.")]
+        internal IEnumerable<(string title, string value)> UserRepresentation =>
+            new[]
+            {
+                Get("Siege", d => d.NumberOfWins),
+                Get("Niederlagen", d => d.NumberOfLoses),
+                Get("Verursachter Schaden", d => d.DamageDealt),
+                Get("Besiegte Einheiten", d => d.NumberOfKilledUnits),
+                Get("Investitionen in den Angriff", d => d.AttackInvestments + " BTC"),
+                Get("Investitionen in die Verteidigung", d => d.DefenceInvestments + " BTC"),
+                Get("Investitionen in Upgrades", d => d.UpgradeInvestments + " EP"),
+                Get("Spielzeit", d => d.OverallPlayTime, "hh':'mm':'ss")
+            };
+
+        private (string, string) Get<T>(string title, Func<Data, T> f, string format = null)
+            where T : IFormattable
+        {
+            return (title, f(mData).ToString(format, null));
+        }
+
+        private (string, string) Get(string title, Func<Data, string> f)
+        {
+            return (title, f(mData));
         }
     }
 }
