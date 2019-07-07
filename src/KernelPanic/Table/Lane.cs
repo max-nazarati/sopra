@@ -121,8 +121,9 @@ namespace KernelPanic.Table
             mHeatMap = new HeatMap(Grid.LaneRectangle.Width, Grid.LaneRectangle.Height);
             EntityGraph = new EntityGraph(LaneBorders);
             UnitSpawner = new UnitSpawner(Grid, EntityGraph.Add);
-            BuildingSpawner = new BuildingSpawner(Grid, mHeatMap, EntityGraph.Add);
-            
+            BuildingSpawner = new BuildingSpawner(Grid, mHeatMap, EntityGraph.Add, 
+                entities?.OfType<Building>().Where(building => building.State == BuildingState.Inactive));
+
             var obstacleMatrix = new ObstacleMatrix(Grid, 1, false);
             if (entities?.Count > 0)
             {
@@ -156,6 +157,7 @@ namespace KernelPanic.Table
             var positionProvider = new PositionProvider(Grid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
             UnitSpawner.Update(gameTime);
+            BuildingSpawner.Update(positionProvider);
         }
 
         #endregion

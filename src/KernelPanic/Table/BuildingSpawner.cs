@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Data;
 
@@ -9,12 +11,16 @@ namespace KernelPanic.Table
         private readonly Action<Building> mSpawnAction;
         private readonly Grid mGrid;
         private readonly HeatMap mHeatMap;
+        private readonly List<Building> mInactive = new List<Building>();
 
-        public BuildingSpawner(Grid grid, HeatMap heatMap, Action<Building> spawnAction)
+        public BuildingSpawner(Grid grid, HeatMap heatMap, Action<Building> spawnAction, IEnumerable<Building> inactive)
         {
             mGrid = grid;
             mSpawnAction = spawnAction;
             mHeatMap = heatMap;
+
+            if (inactive != null)
+                mInactive.AddRange(inactive);
         }
 
         internal void Register(Building building, TileIndex tile)
@@ -22,13 +28,19 @@ namespace KernelPanic.Table
             building.State = BuildingState.Inactive;
             building.Sprite.Position = mGrid.GetTile(tile).Position;
             mHeatMap.Block(tile.ToPoint());
-            Spawn(building);
+            mInactive.Add(building);
+            mSpawnAction(building);
         }
 
-        private void Spawn(Building building)
+        internal void Update(PositionProvider positionProvider)
         {
-            building.State = BuildingState.Active;
-            mSpawnAction(building);
+            foreach (var building in mInactive)
+            {
+                 if (!positionProvider.EntitiesAt<Unit>(building).Any())
+                    building.State = BuildingState.Active;
+            }
+
+            mInactive.RemoveAll(building => building.State != BuildingState.Inactive);
         }
     }
 }
