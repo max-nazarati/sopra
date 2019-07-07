@@ -147,7 +147,6 @@
     <Compile Include="CollisionManager.cs" />
     <Compile Include="CooldownComponent.cs" />
     <Compile Include="Sprites\AnimatedSprite.cs" />
-    <Compile Include="Statistics.cs" />
     <Compile Include="Table\Base.cs" />
     <Compile Include="Table\Board.cs" />
     <Compile Include="Table\BuildingSpawner.cs" />
@@ -156,6 +155,7 @@
     <Compile Include="Table\Owner.cs" />
     <Compile Include="Table\TileIndex.cs" />
     <Compile Include="Table\UnitSpawner.cs" />
+    <Compile Include="Tracking\Statistics.cs" />
     <Compile Include="UnitBuyingMenu.cs" />
     <Compile Include="Upgrades\Upgrade.cs" />
     <Compile Include="Upgrades\UpgradePool.cs" />

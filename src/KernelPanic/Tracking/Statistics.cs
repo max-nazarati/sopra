@@ -7,7 +7,7 @@ using KernelPanic.Serialization;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
-namespace KernelPanic
+namespace KernelPanic.Tracking
 {
     internal sealed class Statistics : IDisposable
     {
