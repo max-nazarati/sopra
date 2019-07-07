@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Autofac.Util;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
@@ -10,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic
 {
     [DataContract]
-    internal sealed class GameStateManager
+    internal sealed class GameStateManager : Disposable
     {
         /// <summary>
         /// Stores a <see cref="AGameState"/> together with the current quad-tree of click targets.
@@ -35,12 +36,20 @@ namespace KernelPanic
 
         internal Action ExitAction { get; }
 
+        internal Statistics Statistics { get; } = new Statistics();
+
         public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds, GraphicsDeviceManager graphics)
         {
             Sprite = sprites;
             Sound = sounds;
             GraphicsDeviceManager = graphics;
             ExitAction = exitAction;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            Statistics.Dispose();
+            base.Dispose(disposing);
         }
 
         public void Pop()

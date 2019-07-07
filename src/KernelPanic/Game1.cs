@@ -17,9 +17,8 @@ namespace KernelPanic
         private GameStateManager mGameStateManager;
         private readonly RawInputState mInputState;
         private SoundManager mSoundManager;
-        private readonly Statistics mStatistics;
 
-        public Game1(Statistics statistics)
+        public Game1()
         {
             Content.RootDirectory = "Content";
 
@@ -33,7 +32,17 @@ namespace KernelPanic
             // https://stackoverflow.com/a/11287316/1592765
 
             mInputState = new RawInputState();
-            mStatistics = statistics;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                mGameStateManager?.Dispose();
+                mGameStateManager = null;
+            }
+
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -83,8 +92,6 @@ namespace KernelPanic
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
             mGameStateManager.Update(mInputState, gameTime, mSoundManager);
             DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
-
-            mStatistics.Update(gameTime);
             EventCenter.Default.Run();
 
             base.Update(gameTime);

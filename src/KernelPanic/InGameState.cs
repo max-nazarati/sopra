@@ -53,6 +53,9 @@ namespace KernelPanic
                 return;
             }
 
+            // Update the overall play time.
+            GameStateManager.Statistics.Update(gameTime);
+
             mSelectionManager.Update(inputManager);
             mBuildingBuyer.Update(inputManager);
 
