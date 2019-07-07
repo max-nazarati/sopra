@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Units;
 using KernelPanic.Purchasing;
 using Newtonsoft.Json;
 
@@ -41,6 +42,7 @@ namespace KernelPanic.Upgrades
 
             // Tier 4
             BeginningTier4,
+            EmpDuration,
             // ...
             
             // Tier 5
@@ -110,6 +112,8 @@ namespace KernelPanic.Upgrades
 
                 case Id.BeginningTier4:
                     return "TODO";
+                case Id.EmpDuration:
+                    return "+40% Dauer EMP";
                     
                 case Id.BeginningTier5:
                     return "TODO";
@@ -184,8 +188,10 @@ namespace KernelPanic.Upgrades
                 case Id.MoreTrojanChildren:
                     NotImplemented();
                     break;
-                case Id.BeginningTier4:
-                    NotImplemented();
+                // case Id.BeginningTier4:
+                case Id.EmpDuration:
+                    if (entity is Bluescreen bluescreen)
+                        bluescreen.mEmpDurationAmplifier += 0.4f;
                     break;
                 case Id.BeginningTier5:
                     NotImplemented();

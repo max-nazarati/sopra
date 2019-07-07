@@ -23,8 +23,10 @@ namespace KernelPanic.Entities.Units
         private TimeSpan mAbilityDurationLeft;
         private readonly int mAbilityRange;
         private readonly Emp[] mEmps;
-        
-        internal bool TargetsTwoTower { private get; set; } = true;
+        private static readonly double sEmpDuration = 2;
+        internal float mEmpDurationAmplifier = 1;
+
+        internal bool TargetsTwoTower { private get; set; }
 
         internal Bluescreen(SpriteManager spriteManager)
             : base(50, 9, 15, 0, TimeSpan.FromSeconds(5), spriteManager.CreateBluescreen(), spriteManager)
@@ -86,13 +88,13 @@ namespace KernelPanic.Entities.Units
             mAbilityDurationLeft = mAbilityDurationTotal;
             if (mAbilityTargetOne is Tower first)
             {
-                var empOne = new Emp(first, TimeSpan.FromSeconds(5), mEmpSpriteOne);
+                var empOne = new Emp(first, TimeSpan.FromSeconds(sEmpDuration * mEmpDurationAmplifier), mEmpSpriteOne);
                 positionProvider.AddProjectile(empOne);
             }
 
-            if (mAbilityTargetTwo is Tower second)
+            if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
             {
-                var empTwo = new Emp(second, TimeSpan.FromSeconds(5), mEmpSpriteTwo);
+                var empTwo = new Emp(second, TimeSpan.FromSeconds(sEmpDuration * mEmpDurationAmplifier), mEmpSpriteTwo);
                 positionProvider.AddProjectile(empTwo);
             }
         }
@@ -102,7 +104,6 @@ namespace KernelPanic.Entities.Units
             mAbilityDurationLeft -= gameTime.ElapsedGameTime;
             if (mAbilityDurationLeft > TimeSpan.Zero)
             {
-                
             }
             else
             {
