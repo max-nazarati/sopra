@@ -34,6 +34,18 @@ namespace KernelPanic.Sprites
         public override Rectangle Bounds =>
             Children.Union(Position - Origin);
 
+        internal override Color TintColor
+        {
+            get => Children.Count == 0 ? Color.White : Children[0].TintColor;
+            set
+            {
+                foreach (var child in Children)
+                {
+                    child.TintColor = value;
+                }
+            }
+        }
+
         protected override void Draw(SpriteBatch spriteBatch,
             GameTime gameTime,
             Vector2 position,

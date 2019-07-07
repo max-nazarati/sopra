@@ -1,10 +1,8 @@
-﻿using System.Runtime.Serialization;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Sprites
 {
-    [DataContract]
     internal sealed class ImageSprite : Sprite
     {
         private Texture2D Texture { get; }
@@ -16,7 +14,7 @@ namespace KernelPanic.Sprites
         /// </summary>
         public Rectangle? DestinationRectangle { /*internal*/ private get; set; }
 
-        public Color TintColor { /*internal*/ private get; set; } = Color.White;
+        internal override Color TintColor { get; set; } = Color.White;
 
         public SpriteEffects SpriteEffect { private get; set; } = SpriteEffects.None;
 

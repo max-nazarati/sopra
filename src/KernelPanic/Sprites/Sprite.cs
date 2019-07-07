@@ -1,14 +1,10 @@
-﻿using System.Runtime.Serialization;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Sprites
 {
-    [DataContract]
-    [KnownType(typeof(AnimatedSprite))]
-    [KnownType(typeof(ImageSprite))]
     public abstract class Sprite: IBounded, IPositioned
     {
         #region Properties
@@ -48,6 +44,14 @@ namespace KernelPanic.Sprites
         //       But maybe we don't even want this but the current behaviour.
         public virtual Rectangle Bounds =>
             KernelPanic.Data.Bounds.ContainingRectangle(Position - Scale * Origin, Size);
+
+        /// <summary>
+        /// A color mixed into the texture when drawing it. On a <see cref="TextSprite"/> this is the same as using
+        /// <see cref="TextSprite.TextColor"/>. On a <see cref="CompositeSprite"/> without any children
+        /// <see cref="Color.White"/> is returned, if it has children the <see cref="TintColor"/> of the first child is
+        /// returned.
+        /// </summary>
+        internal abstract Color TintColor { get; set; }
 
         #endregion
 

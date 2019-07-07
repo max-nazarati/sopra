@@ -130,7 +130,7 @@ namespace KernelPanic
 
         private static void TintEntity(Entity building, Color color)
         {
-            ((ImageSprite) building.Sprite).TintColor = color;
+            building.Sprite.TintColor = color;
         }
 
         internal static bool Buy(Player player, Building building, Point tile, SoundManager soundManager)
