@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Data;
+using KernelPanic.Entities.Units;
 
 namespace KernelPanic.Table
 {
@@ -36,7 +37,8 @@ namespace KernelPanic.Table
         {
             foreach (var building in mInactive)
             {
-                 if (!positionProvider.EntitiesAt<Unit>(building).Any())
+                // When the only units overlapping with the new building are Thunderbirds we can activate it.
+                if (positionProvider.EntitiesAt<Unit>(building).All(unit => unit is Thunderbird))
                     building.State = BuildingState.Active;
             }
 
