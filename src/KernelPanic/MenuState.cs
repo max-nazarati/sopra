@@ -228,16 +228,24 @@ namespace KernelPanic
 
         private static MenuState CreateStatisticsMenu(GameStateManager stateManager)
         {
-            // TODO: Collecting and processing game statistics. 
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
             backButton.Clicked += (button, input) => stateManager.Pop();
+
+            var resetButton = CreateButton(stateManager.Sprite, "Zurücksetzen", 800);
+            resetButton.Clicked += (button, input) =>
+            {
+                // Reset the statistics and recreate the statistics menu.
+                stateManager.Statistics.Reset();
+                stateManager.Switch(CreateStatisticsMenu(stateManager));
+            };
             
             return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
                 {
                     CreateBackground(stateManager.Sprite),
-                    backButton
+                    backButton,
+                    resetButton
                 }
             };   
         }

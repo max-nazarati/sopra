@@ -54,5 +54,10 @@ namespace KernelPanic
         {
             mData.OverallPlayTime += gameTime.ElapsedGameTime;
         }
+
+        internal void Reset()
+        {
+            mData = new Data();
+        }
     }
 }
