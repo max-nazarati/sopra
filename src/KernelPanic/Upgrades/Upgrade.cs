@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
@@ -42,12 +43,12 @@ namespace KernelPanic.Upgrades
 
             // Tier 4
             BeginningTier4,
-            EmpDuration,
+            EmpDuration = BeginningTier4,
             // ...
             
             // Tier 5
             BeginningTier5,
-            EmpTwoTargets,
+            EmpTwoTargets = BeginningTier5,
             // ...
 
             EndOfUpgrades
@@ -80,6 +81,7 @@ namespace KernelPanic.Upgrades
 
         internal string Label => IdLabel(Kind);
 
+        [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "Strings are in German")]
         private static string IdLabel(Id id)
         {
             switch (id)
@@ -111,13 +113,9 @@ namespace KernelPanic.Upgrades
                 case Id.MoreTrojanChildren:
                     return "+5 Einheiten bei Trojaner";
 
-                case Id.BeginningTier4:
-                    return "TODO";
                 case Id.EmpDuration:
                     return "+40% Dauer EMP";
                     
-                case Id.BeginningTier5:
-                    return "TODO";
                 case Id.EmpTwoTargets:
                     return "Bluescreen trifft 2 Türme";
 
@@ -191,22 +189,20 @@ namespace KernelPanic.Upgrades
                 case Id.MoreTrojanChildren:
                     NotImplemented();
                     break;
-                
-                case Id.BeginningTier4:
-                    NotImplemented();
-                    break;
+
                 case Id.EmpDuration:
+                {
                     if (entity is Bluescreen bluescreen)
                         bluescreen.mEmpDurationAmplifier += 0.4f;
                     break;
-                
-                case Id.BeginningTier5:
-                    NotImplemented();
-                    break;
+                }
+
                 case Id.EmpTwoTargets:
-                    if (entity is Bluescreen blue)
-                        blue.TargetsTwoTower = true;
+                {
+                    if (entity is Bluescreen bluescreen)
+                        bluescreen.TargetsTwoTower = true;
                     break;
+                }
 
                 case Id.EndOfUpgrades:
                     goto default;
