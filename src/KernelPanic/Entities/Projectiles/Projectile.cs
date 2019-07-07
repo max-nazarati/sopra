@@ -24,9 +24,10 @@ namespace KernelPanic.Entities.Projectiles
         internal bool SingleTarget { private get; set; }
 
         internal Tower Origin { get; }
-
+        
         internal Projectile(Tower origin, Vector2 direction, float speed, ImageSprite sprite, float offset = 0)
         {
+            // calling this with direction == Vector.Zero will not work -> game crash (out of bound, entityG.)
             Origin = origin;
             mRadius = origin.Radius;
             Damage = origin.Damage;

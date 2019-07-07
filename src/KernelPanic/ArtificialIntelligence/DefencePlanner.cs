@@ -55,10 +55,7 @@ namespace KernelPanic.ArtificialIntelligence
             BuyBuilding<CdThrower>(new Point(15, 31));
             BuyBuilding<CdThrower>(new Point(16, 31));
             
-            // anti aircraft defende
-            BuyBuilding<CdThrower>(new Point(4, 37));
-            BuyBuilding<CdThrower>(new Point(5, 37));
-            BuyBuilding<CdThrower>(new Point(6, 37));
+            // anti aircraft defence
             BuyBuilding<CdThrower>(new Point(7, 37));
             BuyBuilding<CdThrower>(new Point(8, 37));
             BuyBuilding<CdThrower>(new Point(9, 37));

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Projectiles;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -121,5 +122,10 @@ namespace KernelPanic
         #endregion
 
         public void DamageBase(int damage) => Target.Power = Math.Max(0, Target.Power - damage);
+
+        internal void AddProjectile(Projectile projectile)
+        {
+            mEntities.Add(projectile);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using KernelPanic.Data;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
@@ -53,7 +54,7 @@ namespace KernelPanic.Entities.Buildings
         
         private void ShootNow(CooldownComponent timer)
         {
-            if (NextTarget == null)
+            if (NextTarget == null || State != BuildingState.Active)
                 return;
 
             foreach (var projectile in CreateProjectiles(NextTarget.Sprite.Position - Sprite.Position))

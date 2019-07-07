@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Entities.Projectiles;
 using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -129,11 +130,6 @@ namespace KernelPanic.Entities
         }
 
         #endregion
-
-        public void HitByEmp()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     internal enum BuildingState

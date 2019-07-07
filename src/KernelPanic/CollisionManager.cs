@@ -1,6 +1,4 @@
 ﻿using KernelPanic.Entities;
-using System.Diagnostics.CodeAnalysis;
-using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 
@@ -27,7 +25,7 @@ namespace KernelPanic
                     return true;
                 
                 case Emp emp when object2 is Tower tower:
-                    // emp.Hit(tower, positionProvider);
+                    emp.Hit(tower);
                     return true;
                 
                 default:

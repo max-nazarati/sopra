@@ -9,20 +9,17 @@ namespace KernelPanic.Entities.Projectiles
     internal sealed class Emp : Projectile
     {
         private TimeSpan mTimeToLive;
+        private Tower mHitTower;
         
-        internal Emp(Tower origin, TimeSpan timeToLive, ImageSprite sprite) : base(origin, Vector2.Zero, 0, sprite, 0)
+        internal Emp(Tower origin, TimeSpan timeToLive, ImageSprite sprite) : base(origin, Vector2.One, 0, sprite, 0)
         {
             mTimeToLive = timeToLive;
         }
-        
-        internal void Hit(Building building)
+
+        internal void Hit(Tower tower)
         {
-            HandleHit(building);
-        }
-        
-        private void HandleHit(Building building)
-        {
-            // building.HitByEmp();
+            tower.HitByEmp();
+            mHitTower = tower;
         }
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
@@ -31,6 +28,7 @@ namespace KernelPanic.Entities.Projectiles
             if (mTimeToLive <= TimeSpan.Zero)
             {
                 WantsRemoval = true;
+                mHitTower.EmpIsGone();
             }
         }
     }
