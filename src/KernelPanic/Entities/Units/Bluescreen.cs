@@ -14,14 +14,14 @@ namespace KernelPanic.Entities.Units
     internal sealed class Bluescreen : Hero
     {
         private readonly ImageSprite mIndicatorRange;
-        private ImageSprite mIndicatorTarget;
-        private ImageSprite mEmpSprite;
+        private readonly ImageSprite mIndicatorTarget;
+        private readonly ImageSprite mEmpSprite;
         private Tower mAbilityTargetOne;
         private Tower mAbilityTargetTwo;
-        private TimeSpan mAbilityDurationTotal;
+        private readonly TimeSpan mAbilityDurationTotal;
         private TimeSpan mAbilityDurationLeft;
         private readonly int mAbilityRange;
-        private Emp[] mEmps;
+        private readonly Emp[] mEmps;
         
         internal bool TargetsTwoTower { private get; set; } = true;
 
@@ -32,7 +32,7 @@ namespace KernelPanic.Entities.Units
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
             mIndicatorTarget = spriteManager.CreateEmpIndicatorTarget();
             mEmpSprite = spriteManager.CreateEmp();
-            mAbilityDurationTotal = TimeSpan.FromSeconds(2);
+            mAbilityDurationTotal = TimeSpan.FromSeconds(5);
             mAbilityDurationLeft = TimeSpan.Zero;
             mEmps = new Emp[2];
         }
@@ -80,15 +80,16 @@ namespace KernelPanic.Entities.Units
         {
             // debug
             base.StartAbility(positionProvider, inputManager);
+            
             mAbilityDurationLeft = mAbilityDurationTotal;
             if (mAbilityTargetOne is Tower first)
             {
-                mEmps[0] = new Emp(first, TimeSpan.FromSeconds(2) ,mEmpSprite);
+                mEmps[0] = new Emp(first, TimeSpan.FromSeconds(5), mEmpSprite);
             }
 
             if (mAbilityTargetTwo is Tower second)
-            { 
-                mEmps[1] = new Emp(second, TimeSpan.FromSeconds(2), mEmpSprite);
+            {
+                mEmps[1] = new Emp(second, TimeSpan.FromSeconds(5), mEmpSprite);
             }
         }
 
@@ -108,16 +109,46 @@ namespace KernelPanic.Entities.Units
         protected override void FinishAbility()
         {
             base.FinishAbility();
+            // Projectiles in mEmp will clear themselves and should not be deleted here
         }
         
         #endregion Ability
 
+        #region Update
+
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        {
+            base.Update(positionProvider, inputManager, gameTime);
+            if (mEmps[0] is Emp empOne)
+            {
+                empOne.Update(positionProvider, inputManager, gameTime);
+            }
+            if (mEmps[1] is Emp empTwo)
+            {
+                empTwo.Update(positionProvider, inputManager, gameTime);
+            }
+        }
+
+        #endregion
+        
+        #region Draw
+        
         protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.DrawAbility(spriteBatch, gameTime);
             if (AbilityStatus == AbilityState.Indicating)
             {
                 DrawIndicator(spriteBatch, gameTime);
+            }
+            
+            // Drawing the Emps needs to get moved, so the emp doesnt die together with the bluescreen
+            if (mEmps[0] is Emp empOne)
+            {
+                empOne.Draw(spriteBatch, gameTime);
+            }
+            if (mEmps[1] is Emp empTwo)
+            {
+                empTwo.Draw(spriteBatch, gameTime);
             }
         }
 
@@ -138,5 +169,7 @@ namespace KernelPanic.Entities.Units
                 mIndicatorTarget.Draw(spriteBatch, gameTime);
             }
         }
+        
+        #endregion
     }
 }

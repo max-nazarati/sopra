@@ -80,6 +80,9 @@ namespace KernelPanic.Entities
                     case BuildingState.Valid:
                         Sprite.TintColor = Color.Green;
                         break;
+                    case BuildingState.Disabled:
+                        Sprite.TintColor = Color.Chocolate;
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(value), value, null);
                 }
@@ -126,6 +129,11 @@ namespace KernelPanic.Entities
         }
 
         #endregion
+
+        public void HitByEmp()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal enum BuildingState
@@ -148,6 +156,11 @@ namespace KernelPanic.Entities
         /// <summary>
         /// Used during selection of a new place for a building when the current position is allowed.
         /// </summary>
-        Valid
+        Valid,
+        
+        /// <summary>
+        /// Used when hit by the Bluescreen Ability, the building is currently not able to attack
+        /// </summary>
+        Disabled
     }
 }
