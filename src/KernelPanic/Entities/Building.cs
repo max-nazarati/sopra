@@ -82,7 +82,7 @@ namespace KernelPanic.Entities
                         Sprite.TintColor = Color.Green;
                         break;
                     case BuildingState.Disabled:
-                        Sprite.TintColor = Color.Chocolate;
+                        Sprite.TintColor = Color.Black;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(value), value, null);
