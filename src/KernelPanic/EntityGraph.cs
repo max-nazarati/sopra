@@ -134,8 +134,6 @@ namespace KernelPanic
 
             foreach (var (a, b) in QuadTree.Overlaps())
             {
-                if (!a.Bounds.Intersects(b.Bounds))
-                    Console.WriteLine("Invalid overlap found.");
                 CollisionManager.Handle(a, b, positionProvider);
             }
 
