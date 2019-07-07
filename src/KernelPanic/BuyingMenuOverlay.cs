@@ -3,21 +3,17 @@ using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using KernelPanic.Input;
-using KernelPanic.Players;
 using KernelPanic.Table;
 
 namespace KernelPanic
 {
-    internal abstract class BuyingMenuOverlay<TElement, TResource>
+    internal abstract class BuyingMenuOverlay<TElement>
         where TElement : class, IPositioned, IUpdatable, IDrawable
-        where TResource : IPriced
     {
-        internal Player Player { get; }
         internal TElement[] Elements { get; }
 
-        protected BuyingMenuOverlay(Vector2 startPosition, Player player, IEnumerable<TElement> elements)
+        protected BuyingMenuOverlay(Vector2 startPosition, IEnumerable<TElement> elements)
         {
-            Player = player;
             Elements = elements.ToArray();
 
             foreach (var element in Elements)

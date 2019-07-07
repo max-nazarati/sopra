@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Purchasing;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Upgrades

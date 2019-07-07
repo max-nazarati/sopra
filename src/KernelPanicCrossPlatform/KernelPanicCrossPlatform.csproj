@@ -258,9 +258,6 @@
     <Compile Include="..\KernelPanic\IPositioned.cs">
       <Link>IPositioned.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\IPriced.cs">
-      <Link>IPriced.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\IUpdatable.cs">
       <Link>IUpdatable.cs</Link>
     </Compile>
@@ -305,6 +302,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\Program.cs">
       <Link>Program.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Purchasing\IPriced.cs">
+      <Link>Purchasing\IPriced.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Purchasing\PurchasableAction.cs">
       <Link>Purchasing\PurchasableAction.cs</Link>

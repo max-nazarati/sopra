@@ -124,11 +124,11 @@
     <Compile Include="Game1.cs" />
     <Compile Include="GameStateManager.cs" />
     <Compile Include="IDrawable.cs" />
-    <Compile Include="IPriced.cs" />
     <Compile Include="IUpdatable.cs" />
     <Compile Include="MenuState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Purchasing\IPriced.cs" />
     <Compile Include="Purchasing\PurchasableAction.cs" />
     <Compile Include="Purchasing\PurchaseButton.cs" />
     <Compile Include="Purchasing\SinglePurchasableAction.cs" />

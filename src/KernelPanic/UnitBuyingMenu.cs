@@ -15,7 +15,7 @@ using KernelPanic.Waves;
 
 namespace KernelPanic
 {
-    internal sealed class UnitBuyingMenu : BuyingMenuOverlay<UnitBuyingMenu.Element, Unit>
+    internal sealed class UnitBuyingMenu : BuyingMenuOverlay<UnitBuyingMenu.Element>
     {
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
@@ -74,8 +74,8 @@ namespace KernelPanic
             internal PurchasableAction<Unit> BuyingAction => mButton.Action;
         }
 
-        private UnitBuyingMenu(Player player, SpriteManager spriteManager, params Element[] elements)
-            : base(MenuPosition(Lane.Side.Right, spriteManager), player, elements)
+        private UnitBuyingMenu(SpriteManager spriteManager, params Element[] elements)
+            : base(MenuPosition(Lane.Side.Right, spriteManager), elements)
         {
         }
 
@@ -98,7 +98,7 @@ namespace KernelPanic
                 return new Element(typeof(TUnit), button, spriteManager);
             }
 
-            return new UnitBuyingMenu(waveManager.Players.A, spriteManager, 
+            return new UnitBuyingMenu(spriteManager, 
                 CreateElement<Bug>(),
                 CreateElement<Virus>(),
                 CreateElement<Trojan>(),

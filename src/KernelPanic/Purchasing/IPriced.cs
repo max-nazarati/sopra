@@ -1,7 +1,7 @@
 ﻿
-namespace KernelPanic
+namespace KernelPanic.Purchasing
 {
-    interface IPriced
+    internal interface IPriced
     {
         Currency Currency
         {
@@ -14,5 +14,5 @@ namespace KernelPanic
         }
     }
 
-    enum Currency { Bitcoin, Experience };
+    internal enum Currency { Bitcoin, Experience };
 }
