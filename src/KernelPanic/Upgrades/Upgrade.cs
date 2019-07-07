@@ -47,6 +47,7 @@ namespace KernelPanic.Upgrades
             
             // Tier 5
             BeginningTier5,
+            EmpTwoTargets,
             // ...
 
             EndOfUpgrades
@@ -117,6 +118,8 @@ namespace KernelPanic.Upgrades
                     
                 case Id.BeginningTier5:
                     return "TODO";
+                case Id.EmpTwoTargets:
+                    return "Bluescreen trifft 2 Türme";
 
                 case Id.Invalid:
                     goto default;
@@ -188,13 +191,21 @@ namespace KernelPanic.Upgrades
                 case Id.MoreTrojanChildren:
                     NotImplemented();
                     break;
-                // case Id.BeginningTier4:
+                
+                case Id.BeginningTier4:
+                    NotImplemented();
+                    break;
                 case Id.EmpDuration:
                     if (entity is Bluescreen bluescreen)
                         bluescreen.mEmpDurationAmplifier += 0.4f;
                     break;
+                
                 case Id.BeginningTier5:
                     NotImplemented();
+                    break;
+                case Id.EmpTwoTargets:
+                    if (entity is Bluescreen blue)
+                        blue.TargetsTwoTower = true;
                     break;
 
                 case Id.EndOfUpgrades:
