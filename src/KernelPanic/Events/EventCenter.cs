@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac.Core;
+using KernelPanic.Camera;
 using KernelPanic.Data;
 
 namespace KernelPanic.Events
@@ -81,6 +83,11 @@ namespace KernelPanic.Events
             return bag.Add(handler);
         }
 
+        internal IDisposable Subscribe(Event.Id id, Func<Event, bool> condition, Action<Event> handler)
+        {
+            return Subscribe(id, GuardHandler(condition, handler));
+        }
+
         /// <summary>
         /// Subscribes to the events with an id in <paramref name="ids"/>. Every time such an event occurs,
         /// <paramref name="handler"/> is invoked.
@@ -91,6 +98,21 @@ namespace KernelPanic.Events
         internal IDisposable Subscribe(IEnumerable<Event.Id> ids, Action<Event> handler)
         {
             return ids.Aggregate(new CompositeDisposable(), (current, id) => current + Subscribe(id, handler));
+        }
+
+        internal IDisposable Subscribe(IEnumerable<Event.Id> ids, Func<Event, bool> condition, Action<Event> handler)
+        {
+            var realHandler = GuardHandler(condition, handler);
+            return Subscribe(ids, realHandler);
+        }
+
+        private static Action<Event> GuardHandler(Func<Event, bool> condition, Action<Event> handler)
+        {
+            return @event =>
+            {
+                if (condition(@event))
+                    handler(@event);
+            };
         }
 
         #endregion

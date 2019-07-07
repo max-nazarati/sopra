@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Events;
+using KernelPanic.Players;
 using KernelPanic.Serialization;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -32,19 +33,28 @@ namespace KernelPanic
             mData = StorageManager.LoadStatistics().GetValueOrDefault();
 
             var eventCenter = EventCenter.Default;
+            var isDefender = IsActive(Event.Key.Defender);
+            var isBuyer = IsActive(Event.Key.Buyer);
 
             eventCenter.Subscribe(Event.Id.GameWon, e => mData.NumberOfWins++);
             eventCenter.Subscribe(Event.Id.GameLost, e => mData.NumberOfLoses++);
 
-            eventCenter.Subscribe(Event.Id.DamagedUnit, e => mData.DamageDealt += e.Get<int>(Event.Key.Damage));
-            eventCenter.Subscribe(Event.Id.KilledUnit, e => mData.NumberOfKilledUnits++);
+            eventCenter.Subscribe(Event.Id.DamagedUnit, isDefender,
+                e => mData.DamageDealt += e.Get<int>(Event.Key.Damage));
+            eventCenter.Subscribe(Event.Id.KilledUnit, isDefender,
+                e => mData.NumberOfKilledUnits++);
 
-            eventCenter.Subscribe(Event.Id.BoughtUnit,
+            eventCenter.Subscribe(Event.Id.BoughtUnit, isBuyer,
                 e => mData.AttackInvestments += e.Get<int>(Event.Key.Price));
-            eventCenter.Subscribe(new[] {Event.Id.BuildingPlaced, Event.Id.BuildingImproved},
+            eventCenter.Subscribe(new[] {Event.Id.BuildingPlaced, Event.Id.BuildingImproved}, isBuyer,
                 e => mData.DefenceInvestments += e.Get<int>(Event.Key.Price));
-            eventCenter.Subscribe(Event.Id.UpgradeBought,
+            eventCenter.Subscribe(Event.Id.UpgradeBought, isBuyer,
                 e => mData.UpgradeInvestments += e.Get<int>(Event.Key.Price));
+        }
+
+        private static Func<Event, bool> IsActive(Event.Key key)
+        {
+            return @event => @event.Get<Player>(key).Select(true, false);
         }
 
         public void Dispose()
