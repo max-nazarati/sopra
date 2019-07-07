@@ -42,7 +42,7 @@ namespace KernelPanic.Entities.Projectiles
 
         public Rectangle Bounds => Sprite.Bounds;
 
-        public int DrawLevel => 2;    // Above all units and buildings.
+        public int? DrawLevel => 2;    // Above all units and buildings.
         
         public bool WantsRemoval { get; protected set; }
 
@@ -60,7 +60,7 @@ namespace KernelPanic.Entities.Projectiles
         /// Called when this <see cref="Projectile"/> has reached its radius. The default implementation flags this
         /// projectile for removal.
         /// </summary>
-        protected virtual void RadiusReached()
+        internal virtual void RadiusReached()
         {
             WantsRemoval = true;
         }

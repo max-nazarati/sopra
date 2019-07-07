@@ -165,6 +165,9 @@
     <Compile Include="..\KernelPanic\Entities\IGameObject.cs">
       <Link>Entities\IGameObject.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Entities\LaneBorder.cs">
+      <Link>Entities\LaneBorder.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Entities\Projectiles\Disc.cs">
       <Link>Entities\Projectiles\Disc.cs</Link>
     </Compile>

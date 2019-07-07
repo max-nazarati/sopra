@@ -82,6 +82,7 @@
     <Compile Include="Entities\Buildings\WifiRouter.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\IGameObject.cs" />
+    <Compile Include="Entities\LaneBorder.cs" />
     <Compile Include="Entities\Projectiles\Disc.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
     <Compile Include="Entities\Unit.cs" />

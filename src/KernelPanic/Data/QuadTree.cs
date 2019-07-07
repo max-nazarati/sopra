@@ -46,11 +46,11 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="elements">The elements for the <see cref="QuadTree{T}"/></param>
         /// <returns>A new <see cref="QuadTree{T}"/></returns>
-        internal static QuadTree<T> Create(List<T> elements)
+        internal static QuadTree<T> Create<TInitial>(ICollection<TInitial> elements) where TInitial : T
         {
-            return elements.Count == 0 ? Empty : new QuadTree<T>(elements.Union()) {elements};
+            return elements.Count == 0 ? Empty : new QuadTree<T>(elements.Union()) {elements.Cast<T>()};
         }
-        
+
         /// <summary>
         /// Returns a new <see cref="QuadTree{T}"/> without any elements inside. The way this
         /// <see cref="QuadTree{T}"/> is constructed it is not possible to add any values to it.
@@ -176,7 +176,7 @@ namespace KernelPanic.Data
             }
         }
 
-        internal void Add(IEnumerable<T> elements)
+        /*internal*/ private void Add(IEnumerable<T> elements)
         {
             foreach (var element in elements)
             {
@@ -289,7 +289,7 @@ namespace KernelPanic.Data
         /// <returns>All pairs of overlapping elements.</returns>
         internal IEnumerable<(T, T)> Overlaps()
         {
-            return LocalOverlaps(Array.Empty<T>()).Concat(ChildOverlaps(Array.Empty<T>()));
+            return LocalOverlaps(Array.Empty<T>()).Concat(ChildOverlaps(mObjects));
         }
 
         private IEnumerable<(T, T)> ChildOverlaps(IReadOnlyCollection<T> parentElements)

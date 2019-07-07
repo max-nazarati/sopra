@@ -54,7 +54,7 @@ namespace KernelPanic.Entities
 
         internal Building Clone() => Clone<Building>();
 
-        public override int DrawLevel => 0;    // Buildings have the lowest level.
+        public override int? DrawLevel => 0;    // Buildings have the lowest level.
 
         private int BitcoinWorth { get; set; }
 

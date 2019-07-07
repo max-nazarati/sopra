@@ -16,14 +16,12 @@ namespace KernelPanic.Table
         internal Rectangle LaneRectangle { get; }
 
         private Rectangle TileCutout => new Rectangle(
-            
             LaneSide == Lane.Side.Left ? LaneWidthInTiles : 0,
             LaneWidthInTiles,
             LaneRectangle.Width - LaneWidthInTiles,
             LaneRectangle.Height - 2 * LaneWidthInTiles);
-            
 
-            private Rectangle PixelCutout
+        internal Rectangle PixelCutout
         {
             get
             {

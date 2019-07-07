@@ -6,7 +6,11 @@ namespace KernelPanic.Entities
 {
     internal interface IGameObject : IBounded, IDrawable
     {
-        int DrawLevel { get; }
+        /// <summary>
+        /// In which layer should this game object be drawn? Lower values are drawn first, returning <c>null</c>
+        /// won't draw this object.
+        /// </summary>
+        int? DrawLevel { get; }
 
         bool WantsRemoval { get; }
     

@@ -15,7 +15,7 @@ namespace KernelPanic.Entities.Projectiles
             Boomerang = cdThrower.ShootsBoomerang;
         }
 
-        protected override void RadiusReached()
+        internal override void RadiusReached()
         {
             if (!Boomerang)
             {
