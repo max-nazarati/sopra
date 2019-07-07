@@ -16,10 +16,14 @@ namespace KernelPanic
         {
             Elements = elements.ToArray();
 
+            int i = 1;
             foreach (var element in Elements)
             {
                 element.Position = startPosition;
-                startPosition.Y += element.Size.Y;
+                // calculate spacing between buttons
+                // add bigger space after first five units to seperate heroes from troupes
+                startPosition.Y += (i == 5 && element is UnitBuyingMenu.Element) ? element.Size.Y + 20 : element.Size.Y;
+                i++;
             }
         }
 
