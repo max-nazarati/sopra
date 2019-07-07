@@ -80,10 +80,15 @@ namespace KernelPanic.Entities
             if (!Selected)
                 return;
 
+            var owner = positionProvider.Owner[this];
             if (mStoredActions == null)
-                mStoredActions = Actions(positionProvider.Owner[this]).ToArray();
+            {
+                mStoredActions = Actions(owner).ToArray();
+                mDrawActions = owner.Select(true, false);
+            }
 
-            PositionActions(action => action.Update(inputManager, gameTime));
+            if (mDrawActions)
+                PositionActions(action => action.Update(inputManager, gameTime));
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -93,6 +98,9 @@ namespace KernelPanic.Entities
 
         internal virtual void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            if (!mDrawActions)
+                return;
+
             foreach (var action in mStoredActions)
             {
                 action.Draw(spriteBatch, gameTime);
@@ -109,6 +117,7 @@ namespace KernelPanic.Entities
         #region Actions
 
         private IAction[] mStoredActions;
+        private bool mDrawActions;
 
         /// <summary>
         /// Enumerates through all actions supported by this entity. Defaults to no actions.
