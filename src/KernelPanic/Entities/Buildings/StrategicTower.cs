@@ -68,7 +68,7 @@ namespace KernelPanic.Entities.Buildings
             timer.Reset();
         }
         
-        private void updateLevel(SpriteManager spriteManager)
+        private void UpdateLevel(SpriteManager spriteManager)
         {
             Radius *= 1.2f;
             Speed *= 2;
@@ -107,7 +107,7 @@ namespace KernelPanic.Entities.Buildings
                 {
                     tower.mLevel = Enum.GetValues(typeof(TowerLevel)).Cast<TowerLevel>()
                         .SkipWhile(e => e != tower.mLevel).Skip(1).First();
-                    tower.updateLevel(spriteManager);
+                    tower.UpdateLevel(spriteManager);
                 };
                 mIsFinalLevel = () => tower.mLevel == TowerLevel.Third;
                 mTower = tower;

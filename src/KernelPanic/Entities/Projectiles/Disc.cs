@@ -25,6 +25,7 @@ namespace KernelPanic.Entities.Projectiles
 
             ClearHits();
             MoveVector *= -1;
+            Radius = Vector2.Distance(StartPoint, Sprite.Position);
             StartPoint = Sprite.Position;
             Boomerang = false;
         }

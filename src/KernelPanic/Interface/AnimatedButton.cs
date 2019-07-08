@@ -14,13 +14,13 @@ namespace KernelPanic.Interface
         internal AnimatedButton(SpriteManager sprites, Hero hero, int width = 250, int height = 70) : base(sprites, width, height)
         {
             mHero = hero;
-            ButtonOverlay = sprites.CreateAntivirus();
+            ButtonOverlay = sprites.CreateColoredRectangle(1, 1, new Color[]{new Color(0.8f, 0.8f, 0.8f, 0.5f)});
         }
         
         public override void Update(InputManager inputManager, GameTime gameTime)
         {
             base.Update(inputManager, gameTime);
-            var width = (int)(50 * mHero.RemainingCooldownTime);
+            var width = (int) (50 * mHero.RemainingCooldownTime);
             ButtonOverlay.DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, width, 70);
         }
         

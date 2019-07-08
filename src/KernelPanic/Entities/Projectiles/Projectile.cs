@@ -12,12 +12,12 @@ namespace KernelPanic.Entities.Projectiles
 {
     internal class Projectile : IGameObject
     {
-        private readonly float mRadius;
+        protected float Radius { get; set; }
         internal int Damage { get; }
 
         protected ImageSprite Sprite { get; }
 
-        protected Vector2 StartPoint { private get; set; }
+        protected Vector2 StartPoint { get; set; }
         protected Vector2 MoveVector { get; set; }
         private readonly HashSet<Unit> mHitUnits = new HashSet<Unit>();
 
@@ -29,7 +29,7 @@ namespace KernelPanic.Entities.Projectiles
         {
             // calling this with direction == Vector.Zero will not work -> game crash (out of bound, entityG.)
             Origin = origin;
-            mRadius = origin.Radius;
+            Radius = origin.Radius;
             Damage = origin.Damage;
 
             direction.Normalize();
@@ -51,7 +51,7 @@ namespace KernelPanic.Entities.Projectiles
         {
             Sprite.Position += MoveVector;
 
-            if (Vector2.DistanceSquared(Sprite.Position, StartPoint) >= mRadius * mRadius)
+            if (Vector2.DistanceSquared(Sprite.Position, StartPoint) >= Radius * Radius)
             {
                 RadiusReached();
             }
