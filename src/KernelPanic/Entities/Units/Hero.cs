@@ -227,17 +227,11 @@ namespace KernelPanic.Entities.Units
 
                 case AbilityState.CoolingDown:
                     Cooldown.Update(gameTime);
-                    DrawButtonOverlay(Cooldown.RemainingCooldown.TotalSeconds);
                     break;
                 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-        
-        protected void DrawButtonOverlay(double remainingCooldown)
-        {
-            
         }
 
         protected virtual void TryActivateAbility(InputManager inputManager, bool button = false)

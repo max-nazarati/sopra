@@ -12,11 +12,11 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Settings : Hero
     {
-        private ImageSprite mIndicator;
+        private readonly ImageSprite mIndicator;
         private const int AbilityRange = 1000;
         private float mAbilityRangeAmplifier = 1;
-        private List<Troupe> mTroupesInRange;
-        private const int HealValue = -200;
+        private readonly List<Troupe> mTroupesInRange;
+        private const int HealValue = -2;
 
         // Heilt alle zwei Sekunden, Truppen im Radius von 1 Kachel um 2 LP
         internal Settings(SpriteManager spriteManager)
@@ -81,7 +81,7 @@ namespace KernelPanic.Entities.Units
         protected override void TryActivateAbility(InputManager inputManager, bool button = false)
         {
             // TODO show the cooldown and disable the click ability (or make it active i dunno, im just a comment not a cop)
-            Console.WriteLine("TODO: this ability is passive");
+            Console.WriteLine("TODO: settings ability is passive");
         }
 
         
