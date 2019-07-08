@@ -34,6 +34,12 @@ namespace KernelPanic.Entities.Units
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
+        internal override void UpdateInformation()
+        {
+            base.UpdateInformation();
+            mInfoText.Text += $"\nStärke: {AttackStrength}";
+        }
+
         #region Ability 
 
         protected override void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)

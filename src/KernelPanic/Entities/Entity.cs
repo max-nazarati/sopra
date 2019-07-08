@@ -20,7 +20,7 @@ namespace KernelPanic.Entities
     {
         internal Sprite Sprite { get; private set; }
 
-        private TextSprite mInfoText;
+        internal TextSprite mInfoText;
 
         protected SpriteManager SpriteManager { get; }
 
@@ -32,6 +32,7 @@ namespace KernelPanic.Entities
             mInfoText = spriteManager.CreateText($"Preis: {price}");
             mInfoText.SetOrigin(RelativePosition.CenterRight);
             SpriteManager = spriteManager;
+            UpdateInformation();
         }
 
         #region Cloning
@@ -105,7 +106,7 @@ namespace KernelPanic.Entities
 
         internal virtual void UpdateInformation()
         {
-
+            mInfoText.Text = $"Preis: {Price}";
         }
 
         internal virtual void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)

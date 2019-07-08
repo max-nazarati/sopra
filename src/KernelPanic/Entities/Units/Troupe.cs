@@ -18,6 +18,12 @@ namespace KernelPanic.Entities.Units
 
         internal WaveReference Wave { get; set; }
 
+        internal override void UpdateInformation()
+        {
+            base.UpdateInformation();
+            mInfoText.Text += $"\nStärke: {AttackStrength}";
+        }
+
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             var currentTile = positionProvider.RequireTile(this);

@@ -243,6 +243,12 @@ namespace KernelPanic.Entities.Buildings
             }
         }
 
+        internal override void UpdateInformation()
+        {
+            base.UpdateInformation();
+            mInfoText.Text += $"\nStärke: {Damage}";
+        }
+
         #endregion
     }
 

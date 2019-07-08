@@ -170,6 +170,12 @@ namespace KernelPanic.Entities
                 animated.MovementDirection = AnimatedSprite.Direction.Standing;
         }
 
+        internal override void UpdateInformation()
+        {
+            base.UpdateInformation();
+            mInfoText.Text += $"\nLeben: {RemainingLife}";
+        }
+
         private void CheckBaseReached(PositionProvider positionProvider)
         {
             if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))

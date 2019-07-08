@@ -13,5 +13,11 @@ namespace KernelPanic.Entities.Buildings
             // The fire timer is not used by the Shockfield.
             FireTimer.Enabled = false;
         }
+
+        internal override void UpdateInformation()
+        {
+            base.UpdateInformation();
+            mInfoText.Text += $"\nStärke: {Damage}";
+        }
     }
 }
