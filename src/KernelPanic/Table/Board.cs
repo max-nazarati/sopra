@@ -65,7 +65,7 @@ namespace KernelPanic.Table
             var leftLane = new Lane(Lane.Side.Left, spriteManager);
             var rightLane = new Lane(Lane.Side.Right, spriteManager);
             
-            PlayerA = new Player(leftLane, rightLane);
+            PlayerA = new Player(leftLane, rightLane, 999);
             PlayerB = new ArtificialPlayer(rightLane, leftLane, 999);
 
             mUpgradePool = new UpgradePool(PlayerA, spriteManager);

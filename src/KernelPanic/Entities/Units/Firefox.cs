@@ -30,6 +30,8 @@ namespace KernelPanic.Entities.Units
         {
             base.CompleteClone();
             mAbility = new Stack<Vector2>(mAbility);
+            Cooldown = new CooldownComponent(TimeSpan.FromSeconds(5), false);
+            Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
         #region Ability 

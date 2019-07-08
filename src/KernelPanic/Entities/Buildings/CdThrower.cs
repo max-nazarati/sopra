@@ -15,13 +15,13 @@ namespace KernelPanic.Entities.Buildings
         internal bool ShootsBoomerang { get; set; }
 
         internal CdThrower(SpriteManager spriteManager, SoundManager sounds)
-            : base(20, 4, 5, TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager, sounds)
+            : base(20, 4, 5, 7,TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager, sounds)
         {
         }
 
         protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
-            yield return new Disc(this, direction, 7, SpriteManager.CreateCdProjectile());
+            yield return new Disc(this, direction, SpriteManager.CreateCdProjectile());
         }
     }
 }

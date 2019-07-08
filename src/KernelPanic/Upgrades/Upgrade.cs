@@ -239,8 +239,11 @@ namespace KernelPanic.Upgrades
                 }
                 
                 case Id.IncreaseSettingsArea1:
-                    NotImplemented();
+                {
+                    if (entity is Settings settings)
+                        settings.AmplifyAbilityRange(0.5f);
                     break;
+                }
                     
                 case Id.IncreaseSettingsHeal1:
                     NotImplemented();
@@ -259,11 +262,14 @@ namespace KernelPanic.Upgrades
                         bluescreen.TargetsTwoTower = true;
                     break;
                 }
-                
+
                 case Id.IncreaseSettingsArea2:
-                    NotImplemented();
+                {
+                    if (entity is Settings settings)
+                        settings.AmplifyAbilityRange(0.10f);
                     break;
-                    
+                }
+
                 case Id.IncreaseSettingsHeal2:
                     NotImplemented();
                     break;

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using KernelPanic.Purchasing;
 using KernelPanic.Interface;
 using KernelPanic.Entities;
 using KernelPanic.Sprites;
@@ -10,8 +7,9 @@ using KernelPanic.Input;
 using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Table;
+using System;
 
-namespace KernelPanic
+namespace KernelPanic.Hud
 {
     internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element>
     {
@@ -33,6 +31,7 @@ namespace KernelPanic
                 Building = building;
                 var sprite = building.Sprite.Clone();
                 sprite.SetOrigin(RelativePosition.TopLeft);
+                sprite.ScaleToWidth(64); // for some reason cable has a size of 100x100
                 Button = new ImageButton(spriteManager, (ImageSprite)sprite, 70, 70);
             }
 
@@ -89,7 +88,9 @@ namespace KernelPanic
                 CreateElement<WifiRouter>(),
                 CreateElement<CdThrower>(),
                 CreateElement<Antivirus>(),
-                CreateElement<Ventilator>());
+                CreateElement<Ventilator>(),
+                CreateElement<ShockField>(),
+                CreateElement<Cable>());
         }
     }
 }

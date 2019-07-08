@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Accord.Statistics.Kernels;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
@@ -41,10 +42,11 @@ namespace KernelPanic.Entities.Units
         #endregion
 
         [DataMember]
-        protected CooldownComponent Cooldown { get; }
+        protected CooldownComponent Cooldown { get; set; }
         internal AStar mAStar; // save the AStar for path-drawing
         private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
+        internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
         protected Strategy StrategyStatus { get; set; }
 
@@ -232,7 +234,7 @@ namespace KernelPanic.Entities.Units
             }
         }
 
-        protected void TryActivateAbility(InputManager inputManager, bool button = false)
+        protected virtual void TryActivateAbility(InputManager inputManager, bool button = false)
         {
             if (CheckAbilityStart(inputManager, button))
                 AbilityStatus = AbilityState.Indicating;
@@ -356,18 +358,18 @@ namespace KernelPanic.Entities.Units
 
         protected override IEnumerable<IAction> Actions(Player owner) =>
             base.Actions(owner).Extend(new AbilityAction(this, SpriteManager));
-
+        
         private sealed class AbilityAction : IAction
         {
             public Button Button { get; }
 
             internal AbilityAction(Hero hero, SpriteManager sprites)
             {
-                Button = new TextButton(sprites) {Title = "Fähigkeit"};
+                Button = new AnimatedButton(sprites, hero) {Title = "Fähigkeit"};
                 Button.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager, true);
             }
 
-            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) =>
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) => 
                 Button.Update(inputManager, gameTime);
 
             void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using KernelPanic.Input;
 using KernelPanic.Table;
 
-namespace KernelPanic
+namespace KernelPanic.Hud
 {
     internal abstract class BuyingMenuOverlay<TElement>
         where TElement : class, IPositioned, IUpdatable, IDrawable

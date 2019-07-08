@@ -9,7 +9,7 @@ using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KernelPanic
+namespace KernelPanic.Hud
 {
     internal sealed class MinimapOverlay
     {

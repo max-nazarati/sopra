@@ -90,9 +90,6 @@ namespace KernelPanic.Serialization
         [SuppressMessage("ReSharper", "ImplicitlyCapturedClosure")]
         private static AutofacContractResolver CreateContractResolver(GameStateManager manager)
         {
-            const BindingFlags bindingFlags =
-                BindingFlags.Instance | BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
-
             var builder = new ContainerBuilder();
 
             // A unit is assumed to be constructable with a SpriteManager as the only argument.

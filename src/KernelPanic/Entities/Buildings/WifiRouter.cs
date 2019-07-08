@@ -13,7 +13,7 @@ namespace KernelPanic.Entities.Buildings
         protected override bool WantsRotation => true;
 
         internal WifiRouter(SpriteManager spriteManager, SoundManager sounds)
-            : base(40, 3, 1, TimeSpan.FromSeconds(1), spriteManager.CreateWifiRouter(), spriteManager, sounds)
+            : base(40, 3, 1,3, TimeSpan.FromSeconds(1), spriteManager.CreateWifiRouter(), spriteManager, sounds)
         {
         }
 
@@ -22,7 +22,7 @@ namespace KernelPanic.Entities.Buildings
             direction = Vector2.Normalize(direction);
             for (var i = 0; i < 3; ++i)
             {
-                yield return new Projectile(this, direction, 3, SpriteManager.CreateWifiProjectile(), 4 * i)
+                yield return new Projectile(this, direction, SpriteManager.CreateWifiProjectile(), 4 * i)
                 {
                     SingleTarget = true
                 };
