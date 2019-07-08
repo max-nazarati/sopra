@@ -1,5 +1,6 @@
 ﻿using KernelPanic.Camera;
 using KernelPanic.Events;
+using KernelPanic.Hud;
 using KernelPanic.Input;
 using KernelPanic.Selection;
 using KernelPanic.Serialization;

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using KernelPanic.Purchasing;
 using KernelPanic.Interface;
 using KernelPanic.Entities;
 using KernelPanic.Sprites;
@@ -11,7 +8,7 @@ using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Table;
 
-namespace KernelPanic
+namespace KernelPanic.Hud
 {
     internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element>
     {

@@ -13,7 +13,7 @@ using KernelPanic.Sprites;
 using KernelPanic.Table;
 using KernelPanic.Waves;
 
-namespace KernelPanic
+namespace KernelPanic.Hud
 {
     internal sealed class UnitBuyingMenu : BuyingMenuOverlay<UnitBuyingMenu.Element>
     {

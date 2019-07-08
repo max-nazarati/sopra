@@ -81,12 +81,6 @@
     <Compile Include="..\KernelPanic\BuildingBuyer.cs">
       <Link>BuildingBuyer.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\BuildingBuyingMenu.cs">
-      <Link>BuildingBuyingMenu.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\BuyingMenuOverlay.cs">
-      <Link>BuyingMenuOverlay.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Camera\Camera2D.cs">
       <Link>Camera\Camera2D.cs</Link>
     </Compile>
@@ -225,11 +219,26 @@
     <Compile Include="..\KernelPanic\GameStateManager.cs">
       <Link>GameStateManager.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Hud\BuildingBuyingMenu.cs">
+      <Link>Hud\BuildingBuyingMenu.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Hud\BuyingMenuOverlay.cs">
+      <Link>Hud\BuyingMenuOverlay.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Hud\InGameOverlay.cs">
+      <Link>Hud\InGameOverlay.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Hud\MinimapOverlay.cs">
+      <Link>Hud\MinimapOverlay.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Hud\ScoreOverlay.cs">
+      <Link>Hud\ScoreOverlay.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Hud\UnitBuyingMenu.cs">
+      <Link>Hud\UnitBuyingMenu.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\IDrawable.cs">
       <Link>IDrawable.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\InGameOverlay.cs">
-      <Link>InGameOverlay.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\InGameState.cs">
       <Link>InGameState.cs</Link>
@@ -266,9 +275,6 @@
     </Compile>
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\MinimapOverlay.cs">
-      <Link>MinimapOverlay.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\AStar.cs">
       <Link>PathPlanning\AStar.cs</Link>
@@ -317,9 +323,6 @@
     </Compile>
     <Compile Include="..\KernelPanic\Purchasing\SinglePurchasableAction.cs">
       <Link>Purchasing\SinglePurchasableAction.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\ScoreOverlay.cs">
-      <Link>ScoreOverlay.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Selection\SelectionManager.cs">
       <Link>Selection\SelectionManager.cs</Link>
@@ -380,9 +383,6 @@
     </Compile>
     <Compile Include="..\KernelPanic\Tracking\Statistics.cs">
       <Link>Tracking\Statistics.cs</Link>
-    </Compile>
-    <Compile Include="..\KernelPanic\UnitBuyingMenu.cs">
-      <Link>UnitBuyingMenu.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Upgrades\Upgrade.cs">
       <Link>Upgrades\Upgrade.cs</Link>
