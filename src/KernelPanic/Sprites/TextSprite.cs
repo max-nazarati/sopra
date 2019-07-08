@@ -22,13 +22,13 @@ namespace KernelPanic.Sprites
         private SpriteFont Font
         {
             get => mFont;
-            set
+            /*set
             {
                 if (mFont == value)
                     return;
                 mFont = value ?? throw new ArgumentNullException();
                 ResetLazySize();
-            }
+            } */
         }
 
         public string Text

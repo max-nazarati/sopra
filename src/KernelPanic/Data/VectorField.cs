@@ -91,6 +91,7 @@ namespace KernelPanic.Data
             }
         }
 
+        /*
         internal Vector2 GetRelativeShift(Point point)
         {
             float width = 100;
@@ -135,7 +136,7 @@ namespace KernelPanic.Data
             {
                 return Vector2.Zero;
             }
-        }
+        } */
 
         private VectorField(Vector2[,] vectorField)
         {
@@ -211,11 +212,11 @@ namespace KernelPanic.Data
             return res;
         }
         
-        
+        /*
         public Vector2 RelativeShift(Point point)
         {
             return GetRelativeShift(point);
-        }
+        } */
 
         public Vector2 this[Point point]
         {

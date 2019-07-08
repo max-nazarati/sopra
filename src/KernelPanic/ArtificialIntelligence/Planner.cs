@@ -12,10 +12,11 @@ namespace KernelPanic.ArtificialIntelligence
             mPlayer = player;
         }
 
+        /*
         protected static void EntityBought(Player buyer, Entity unit)
         {
             buyer.AttackingLane.UnitSpawner.Register(unit.Clone<Entity>());
-        }
+        } */
         
         public virtual void Update()
         {

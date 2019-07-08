@@ -11,7 +11,7 @@ namespace KernelPanic.Events
     {
         internal enum Id
         {
-            LoadEmptySlot,         // TODO: Not sent yet.
+            // LoadEmptySlot,         // TODO: Not sent yet.
 
             BuildingPlaced,
             BuildingImproved,      // TODO: Not sent yet.
@@ -27,7 +27,7 @@ namespace KernelPanic.Events
             GameWon,
             GameLost,
 
-            FirefoxJump            // TODO: Not sent yet.
+            // FirefoxJump            // TODO: Not sent yet.
         }
 
         internal enum Key

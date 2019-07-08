@@ -86,10 +86,11 @@ namespace KernelPanic
             return mVectorField[point];
         }
 
+        /*
         public Vector2 MovememtShift(Point point)
         {
             return mVectorField.GetRelativeShift(point);
-        }
+        } */
 
         public Vector2 MovementVectorThunderbird(Point point)
         {
