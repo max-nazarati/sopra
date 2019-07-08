@@ -110,6 +110,11 @@ namespace KernelPanic
             var clone = mBuilding.Clone();
             mPlayer.DefendingLane.BuildingSpawner.Register(clone, tile);
             mPlayer.ApplyUpgrades(clone);
+
+            // TODO: Play a different sound when the AI places a tower.
+            mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
+            EventCenter.Default.Send(Event.BuildingPlaced(mPlayer, clone));
+
             return true;
         }
 
@@ -124,13 +129,7 @@ namespace KernelPanic
             var buyer = new BuildingBuyer(player, soundManager) {mBuilding = building};
             buyer.SetPosition(new TileIndex(tile, 1));
             buyer.CheckPath();
-            if (!buyer.TryPurchase())
-                return false;
-
-            // TODO: Play a different sound when the AI places a tower.
-            soundManager.PlaySound(SoundManager.Sound.TowerPlacement);
-            EventCenter.Default.Send(Event.BuildingPlaced(player, building));
-            return true;
+            return buyer.TryPurchase();
         }
     }
 }
