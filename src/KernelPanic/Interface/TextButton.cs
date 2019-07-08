@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Interface
 {
-    internal sealed class TextButton : Button
+    internal class TextButton : Button
     {
         internal override Sprite Sprite { get; }
         

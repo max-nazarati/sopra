@@ -252,6 +252,9 @@
     <Compile Include="..\KernelPanic\Input\RawInputState.cs">
       <Link>Input\RawInputState.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Interface\AnimatedButton.cs">
+      <Link>Interface\AnimatedButton.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Interface\Button.cs">
       <Link>Interface\Button.cs</Link>
     </Compile>
