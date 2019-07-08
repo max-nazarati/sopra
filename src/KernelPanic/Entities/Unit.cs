@@ -173,7 +173,7 @@ namespace KernelPanic.Entities
         internal override void UpdateInformation()
         {
             base.UpdateInformation();
-            mInfoText.Text += $"\nLeben: {RemainingLife}";
+            InfoText.Text += $"\nLeben: {RemainingLife}";
         }
 
         private void CheckBaseReached(PositionProvider positionProvider)

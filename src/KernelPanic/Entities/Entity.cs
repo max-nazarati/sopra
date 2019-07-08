@@ -20,7 +20,7 @@ namespace KernelPanic.Entities
     {
         internal Sprite Sprite { get; private set; }
 
-        internal TextSprite mInfoText;
+        internal readonly TextSprite InfoText;
 
         protected SpriteManager SpriteManager { get; }
 
@@ -29,10 +29,9 @@ namespace KernelPanic.Entities
             Price = price;
             Sprite = sprite;
             Sprite.SetOrigin(RelativePosition.Center);
-            mInfoText = spriteManager.CreateText($"Preis: {price}");
-            mInfoText.SetOrigin(RelativePosition.CenterRight);
+            InfoText = spriteManager.CreateText($"Preis: {price}");
+            InfoText.SetOrigin(RelativePosition.CenterRight);
             SpriteManager = spriteManager;
-            UpdateInformation();
         }
 
         #region Cloning
@@ -94,9 +93,11 @@ namespace KernelPanic.Entities
             }
 
             if (mDrawActions)
+            {
                 PositionActions(action => action.Update(inputManager, gameTime));
+                UpdateInformation();
+            }
 
-            UpdateInformation();
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -106,7 +107,7 @@ namespace KernelPanic.Entities
 
         internal virtual void UpdateInformation()
         {
-            mInfoText.Text = $"Preis: {Price}";
+            InfoText.Text = $"Preis: {Price}";
         }
 
         internal virtual void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
@@ -120,7 +121,7 @@ namespace KernelPanic.Entities
             }
 
             
-            mInfoText.Draw(spriteBatch, gameTime);
+            InfoText.Draw(spriteBatch, gameTime);
         }
 
         #region IPriced
@@ -168,7 +169,7 @@ namespace KernelPanic.Entities
                 body(action);
                 position.Y += action.Button.Sprite.Height;
             }
-            mInfoText.Position = new Vector2(Sprite.Position.X - Sprite.Width, Sprite.Position.Y);
+            InfoText.Position = new Vector2(Sprite.Position.X - Sprite.Width, Sprite.Position.Y);
         }
 
         #endregion
