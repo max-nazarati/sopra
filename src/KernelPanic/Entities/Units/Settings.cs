@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,7 +14,7 @@ namespace KernelPanic.Entities.Units
     internal sealed class Settings : Hero
     {
         private readonly ImageSprite mIndicator;
-        private const int AbilityRange = 1000;
+        private const int AbilityRange = Grid.KachelSize;
         private float mAbilityRangeAmplifier = 1;
         private readonly List<Troupe> mTroupesInRange;
         private const int HealValue = -2;
