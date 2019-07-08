@@ -72,6 +72,17 @@ namespace KernelPanic
                 .OfType<T>();
         }
 
+        /// <summary>
+        /// Enumerates through the entities overlapping with <paramref name="entity"/>.
+        /// </summary>
+        /// <param name="entity">The entity with which the overlaps are required.</param>
+        /// <typeparam name="T">The entities are filtered by this type.</typeparam>
+        /// <returns>An enumerable through entities of type <typeparamref name="T"/> overlapping with <paramref name="entity"/>.</returns>
+        internal IEnumerable<T> EntitiesAt<T>(Entity entity) where T : Entity
+        {
+            return mEntities.QuadTree.EntitiesAt(entity.Bounds).OfType<T>();
+        }
+
         internal bool HasEntityAt(Vector2 point)
         {
             return mEntities.HasEntityAt(point);

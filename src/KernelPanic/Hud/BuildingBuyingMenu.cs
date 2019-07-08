@@ -9,7 +9,7 @@ using KernelPanic.Entities.Buildings;
 using KernelPanic.Table;
 using System;
 
-namespace KernelPanic
+namespace KernelPanic.Hud
 {
     internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element>
     {

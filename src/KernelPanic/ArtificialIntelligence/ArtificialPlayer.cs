@@ -29,6 +29,11 @@ namespace KernelPanic.ArtificialIntelligence
             mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
         }
 
+        public override T Select<T>(T ifActive, T ifPassive)
+        {
+            return ifPassive;
+        }
+
         internal void InitializePlanners(
             Dictionary<Type, PurchasableAction<Unit>> unitBuyingActions,
             Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup,

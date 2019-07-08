@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Table;
-using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Entities;
 using KernelPanic.Events;
 using KernelPanic.Upgrades;
@@ -31,6 +30,9 @@ namespace KernelPanic.Players
 
         internal Base Base => DefendingLane.Target;
 
+        [DataMember]
+        internal int FirefoxMaximum { get; private set; } = 1;
+
         internal Player(Lane defendingLane, Lane attackingLane) : this(defendingLane, attackingLane, 9999)
         {
 
@@ -50,12 +52,18 @@ namespace KernelPanic.Players
         {
             EventCenter.Default.Send(Event.UpgradeBought(this, upgrade));
 
-            if (upgrade.Kind == Upgrade.Id.IncreaseBitcoins)
+            switch (upgrade.Kind)
             {
-                IncreasedBitcoins = true;
-                return;
+                case Upgrade.Id.IncreaseBitcoins:
+                    IncreasedBitcoins = true;
+                    return;
+
+                case Upgrade.Id.AdditionalFirefox1:
+                case Upgrade.Id.AdditionalFirefox2:
+                    FirefoxMaximum++;
+                    return;
             }
-        
+
             mUpgrades.Add(upgrade);
 
             // Apply the new upgrade to all existing entities.
@@ -76,9 +84,11 @@ namespace KernelPanic.Players
         #endregion
 
         /// <inheritdoc />
-        public T Select<T>(T ifActive, T ifPassive)
+        public virtual T Select<T>(T ifActive, T ifPassive)
         {
-            return this is ArtificialPlayer ? ifPassive : ifActive;
+            // A player is active. If it is passive it is of type ArtificialPlayer
+            // where this function is overriden accordingly.
+            return ifActive;
         }
     }
 }

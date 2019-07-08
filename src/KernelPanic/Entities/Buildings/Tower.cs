@@ -16,14 +16,17 @@ namespace KernelPanic.Entities.Buildings
     {
         [DataMember] internal float Radius { get; set; }
         [DataMember] internal int Damage { get; set; }
-        [DataMember] protected CooldownComponent FireTimer { get; private set; }
+        
+        [DataMember] internal int Speed { get; set; }
+        [DataMember] internal CooldownComponent FireTimer { get; private set; }
         internal Action<Projectile> FireAction { get; set; }
 
-        private Sprite mRadiusSprite;
+        protected Sprite mRadiusSprite;
 
         internal Tower(int price,
             float radius,
             int damage,
+            int speed,
             TimeSpan cooldown,
             Sprite sprite,
             SpriteManager spriteManager,
@@ -32,6 +35,7 @@ namespace KernelPanic.Entities.Buildings
             FireTimer = new CooldownComponent(cooldown);
             Radius = radius * Grid.KachelSize;
             Damage = damage;
+            Speed = speed;
             sprite.ScaleToHeight(64);
             sprite.SetOrigin(RelativePosition.Center);
 
@@ -48,13 +52,15 @@ namespace KernelPanic.Entities.Buildings
         {
             base.CompleteClone();
             mRadiusSprite = mRadiusSprite.Clone();
-            FireTimer = new CooldownComponent(FireTimer.TimeSpan, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
+            FireTimer = new CooldownComponent(FireTimer.Cooldown, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
         }
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             base.Update(positionProvider, inputManager, gameTime);
-            FireTimer.Update(gameTime);
+
+            if (State == BuildingState.Active)
+                FireTimer.Update(gameTime);
         }
 
         internal override void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)

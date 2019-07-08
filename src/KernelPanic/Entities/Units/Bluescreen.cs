@@ -13,21 +13,28 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Bluescreen : Hero
     {
+        private readonly int mAbilityRange;
         private readonly ImageSprite mIndicatorRange;
         private readonly ImageSprite mIndicatorTarget;
         private readonly ImageSprite mEmpSpriteOne;
         private readonly ImageSprite mEmpSpriteTwo;
         private Tower mAbilityTargetOne;
         private Tower mAbilityTargetTwo;
+        
+        // prob should delete those two...
         private readonly TimeSpan mAbilityDurationTotal;
         private TimeSpan mAbilityDurationLeft;
-        private readonly int mAbilityRange;
-        private readonly Emp[] mEmps;
-        private static readonly double sEmpDuration = 2;
-        internal float mEmpDurationAmplifier = 1;
+        
+        private Emp[] mEmps;
+
+        #region Upgrades
 
         internal bool TargetsTwoTower { private get; set; }
-
+        private const double EmpDuration = 2;
+        internal float mEmpDurationAmplifier = 1;
+        
+        #endregion
+        
         internal Bluescreen(SpriteManager spriteManager)
             : base(50, 9, 15, 0, TimeSpan.FromSeconds(5), spriteManager.CreateBluescreen(), spriteManager)
         {
@@ -40,6 +47,15 @@ namespace KernelPanic.Entities.Units
             mAbilityDurationLeft = TimeSpan.Zero;
             mEmps = new Emp[2];
         }
+        
+        protected override void CompleteClone()
+        {
+            base.CompleteClone();
+            mEmps = new Emp[2];
+            Cooldown = new CooldownComponent(new TimeSpan(5), false);
+            Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
+        }
+
         
         #region Ability 
 
@@ -88,13 +104,13 @@ namespace KernelPanic.Entities.Units
             mAbilityDurationLeft = mAbilityDurationTotal;
             if (mAbilityTargetOne is Tower first)
             {
-                var empOne = new Emp(first, TimeSpan.FromSeconds(sEmpDuration * mEmpDurationAmplifier), mEmpSpriteOne);
+                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSpriteOne);
                 positionProvider.AddProjectile(empOne);
             }
 
             if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
             {
-                var empTwo = new Emp(second, TimeSpan.FromSeconds(sEmpDuration * mEmpDurationAmplifier), mEmpSpriteTwo);
+                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSpriteTwo);
                 positionProvider.AddProjectile(empTwo);
             }
         }

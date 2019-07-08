@@ -94,18 +94,25 @@ namespace KernelPanic.Data
         private SquareIndex? CalculatePosition(Rectangle bounds)
         {
             if (mChildren == null)
-                throw new InvalidOperationException("Can't use CalculateBounds before Split.");
+                throw new InvalidOperationException("Can't use CalculatePosition before Split.");
 
-            SquareIndex index = 0;
-            foreach (var child in mChildren)
-            {
-                if (child.mBounds.Contains(bounds))
-                    return index;
-                ++index;
-            }
-
-            return null;
+            return Squares
+                .Where(square => square.Tree.mBounds.Contains(bounds))
+                .Select(square => (SquareIndex?) square.Index)
+                .FirstOrDefault();
         }
+
+        private IEnumerable<(SquareIndex Index, Rectangle Rectangle)> OverlappingSquareIndices(Rectangle bounds)
+        {
+            return Squares
+                .Select(square => (Index: square.Index, Rectangle: Rectangle.Intersect(square.Tree.mBounds, bounds)))
+                .Where(square => square.Rectangle.Size != Point.Zero);
+        }
+
+        private IEnumerable<(SquareIndex Index, QuadTree<T> Tree)> Squares =>
+            mChildren == null
+                ? Enumerable.Empty<(SquareIndex, QuadTree<T>)>()
+                : Enumerable.Range(0, mChildren.Length).Select(index => ((SquareIndex) index, mChildren[index]));
 
         #endregion
 
@@ -236,6 +243,23 @@ namespace KernelPanic.Data
                     yield break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns every value in the <see cref="QuadTree{T}"/> that has <see cref="IBounded.Bounds"/>
+        /// intersecting with the given rectangle.
+        /// </summary>
+        /// <param name="rectangle">The rectangle to look at.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> with all matching values.</returns>
+        internal IEnumerable<T> EntitiesAt(Rectangle rectangle)
+        {
+            IEnumerable<T> Locals(QuadTree<T> quadTree) =>
+                quadTree.mObjects.Where(value => rectangle.Intersects(value.Bounds));
+
+            IEnumerable<T> Children((SquareIndex Index, Rectangle Rectangle) square) =>
+                mChildren[(int) square.Index].EntitiesAt(square.Rectangle);
+
+            return Locals(this).Concat(OverlappingSquareIndices(rectangle).SelectMany(Children));
         }
 
         /// <summary>

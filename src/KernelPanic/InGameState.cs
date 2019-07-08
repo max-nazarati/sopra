@@ -1,5 +1,6 @@
 ﻿using KernelPanic.Camera;
 using KernelPanic.Events;
+using KernelPanic.Hud;
 using KernelPanic.Input;
 using KernelPanic.Selection;
 using KernelPanic.Serialization;
@@ -57,8 +58,8 @@ namespace KernelPanic
             // Update the overall play time.
             GameStateManager.Statistics.Update(gameTime);
 
-            mSelectionManager.Update(inputManager);
             mBuildingBuyer.Update(inputManager);
+            mSelectionManager.Update(inputManager);
 
             mBoard.Update(gameTime, inputManager);
             var gameState = mBoard.CheckGameState();

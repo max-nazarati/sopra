@@ -41,7 +41,7 @@ namespace KernelPanic.Entities.Units
         #endregion
 
         [DataMember]
-        protected CooldownComponent Cooldown { get; }
+        protected CooldownComponent Cooldown { get; set; }
         internal AStar mAStar; // save the AStar for path-drawing
         private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;

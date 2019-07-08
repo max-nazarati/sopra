@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
@@ -38,17 +39,22 @@ namespace KernelPanic.Upgrades
             CdBoomerang = BeginningTier3,
             IncreaseGsNokia,
             IncreaseGsFirefox,
-            MoreTrojanChildren,
+            MoreTrojanChildren1,
 
             // Tier 4
             BeginningTier4,
-            EmpDuration,
-            // ...
-            
+            EmpDuration = BeginningTier4,
+            AdditionalFirefox1,
+            IncreaseSettingsArea1,
+            IncreaseSettingsHeal1,
+            MoreTrojanChildren2,
+
             // Tier 5
             BeginningTier5,
-            EmpTwoTargets,
-            // ...
+            EmpTwoTargets = BeginningTier5,
+            AdditionalFirefox2,
+            IncreaseSettingsArea2,
+            IncreaseSettingsHeal2,
 
             EndOfUpgrades
         }
@@ -80,6 +86,7 @@ namespace KernelPanic.Upgrades
 
         internal string Label => IdLabel(Kind);
 
+        [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "Strings are in German")]
         private static string IdLabel(Id id)
         {
             switch (id)
@@ -108,18 +115,28 @@ namespace KernelPanic.Upgrades
                     return "+40% GS bei Nokia";
                 case Id.IncreaseGsFirefox:
                     return "+10% GS bei Firefox";
-                case Id.MoreTrojanChildren:
+                case Id.MoreTrojanChildren1:
                     return "+5 Einheiten bei Trojaner";
 
-                case Id.BeginningTier4:
-                    return "TODO";
                 case Id.EmpDuration:
                     return "+40% Dauer EMP";
-                    
-                case Id.BeginningTier5:
-                    return "TODO";
+                case Id.AdditionalFirefox1:
+                    return "+1 Firefox verfügbar";
+                case Id.IncreaseSettingsArea1:
+                    return "+5% Einzugsbereich von Settings";
+                case Id.IncreaseSettingsHeal1:
+                    return "+5% Heilrate von Settings";
+                case Id.MoreTrojanChildren2:
+                    return "+10 Einheiten bei Trojaner";
+
                 case Id.EmpTwoTargets:
                     return "Bluescreen trifft 2 Türme";
+                case Id.AdditionalFirefox2:
+                    return "+1 Firefox verfügbar";
+                case Id.IncreaseSettingsArea2:
+                    return "+10% Einzugsbereich von Settings";
+                case Id.IncreaseSettingsHeal2:
+                    return "+10% Heilrate von Settings";
 
                 case Id.Invalid:
                     goto default;
@@ -141,71 +158,120 @@ namespace KernelPanic.Upgrades
                 case Id.IncreaseLp1:
                 {
                     if (entity is Unit unit)
-                        unit.MaximumLife = (int) (unit.MaximumLife * 0.05);
+                        unit.MaximumLife = (int) (unit.MaximumLife * 1.05);
                     break;
                 }
 
                 case Id.IncreaseLp2:
                 {
                     if (entity is Unit unit)
-                        unit.MaximumLife = (int) (unit.MaximumLife * 0.05);
+                        unit.MaximumLife = (int) (unit.MaximumLife * 1.10);
                     break;
                 }
 
                 case Id.IncreaseGs1:
                 {
                     if (entity is Unit unit)
-                        unit.MaximumLife = (int) (unit.MaximumLife * 0.05);
+                        unit.Speed *= 1.05f;
                     break;
                 }
 
                 case Id.IncreaseGs2:
                 {
                     if (entity is Unit unit)
-                        unit.MaximumLife = (int) (unit.MaximumLife * 0.05);
+                        unit.Speed *= 1.10f;
                     break;
                 }
 
                 case Id.IncreaseVs1:
-                    NotImplemented();
+                {
+                    if (entity is Tower tower)
+                        tower.Damage = (int) (tower.Damage * 1.05);
                     break;
-                case Id.DecreaseAi1:
-                    NotImplemented();
-                    break;
+                }
+
                 case Id.IncreaseVs2:
-                    NotImplemented();
+                {
+                    if (entity is Tower tower)
+                        tower.Damage = (int) (tower.Damage * 1.10);
                     break;
-                case Id.IncreaseBitcoins:
-                    // Nothing to do here for this upgrade.
+                }
+
+                case Id.DecreaseAi1:
+                {
+                    if (entity is Tower tower)
+                    {
+                        var timer = tower.FireTimer;
+                        timer.Cooldown = new TimeSpan((long) (timer.Cooldown.Ticks * 0.95));
+                        if (timer.RemainingCooldown > timer.Cooldown)
+                            timer.Reset();
+                    }
                     break;
+                }
+
                 case Id.CdBoomerang:
                     if (entity is CdThrower cdThrower)
                         cdThrower.ShootsBoomerang = true;
                     break;
+
                 case Id.IncreaseGsNokia:
-                    NotImplemented();
+                    if (entity is Nokia nokia)
+                        nokia.Speed *= 1.40f;
                     break;
+
                 case Id.IncreaseGsFirefox:
-                    NotImplemented();
+                    if (entity is Firefox firefox)
+                        firefox.Speed *= 1.10f;
                     break;
-                case Id.MoreTrojanChildren:
-                    NotImplemented();
+
+                case Id.MoreTrojanChildren1:
+                {
+                    if (entity is Trojan trojan)
+                        trojan.ChildCount += 5;
                     break;
-                
-                case Id.BeginningTier4:
-                    NotImplemented();
-                    break;
+                }
+
                 case Id.EmpDuration:
+                {
                     if (entity is Bluescreen bluescreen)
                         bluescreen.mEmpDurationAmplifier += 0.4f;
                     break;
+                }
                 
-                case Id.BeginningTier5:
+                case Id.IncreaseSettingsArea1:
                     NotImplemented();
                     break;
+                    
+                case Id.IncreaseSettingsHeal1:
+                    NotImplemented();
+                    break;
+
+                case Id.MoreTrojanChildren2:
+                {
+                    if (entity is Trojan trojan)
+                        trojan.ChildCount += 10;
+                    break;
+                }
+
                 case Id.EmpTwoTargets:
-                    if (entity is Bluescreen blue)
-                        blue.TargetsTwoTower = true;
+                {
+                    if (entity is Bluescreen bluescreen)
+                        bluescreen.TargetsTwoTower = true;
+                    break;
+                }
+                
+                case Id.IncreaseSettingsArea2:
+                    NotImplemented();
+                    break;
+                    
+                case Id.IncreaseSettingsHeal2:
+                    NotImplemented();
+                    break;
+
+                case Id.IncreaseBitcoins:
+                case Id.AdditionalFirefox1:
+                case Id.AdditionalFirefox2:
+                    // Nothing to do here for this upgrade.
                     break;
 
                 case Id.EndOfUpgrades:
