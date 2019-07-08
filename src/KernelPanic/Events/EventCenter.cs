@@ -12,10 +12,10 @@ namespace KernelPanic.Events
         {
             internal struct Token : IDisposable
             {
-                private readonly uint mKey;
+                private readonly ulong mKey;
                 private readonly HandlerBag mBag;
 
-                internal Token(uint key, HandlerBag bag)
+                internal Token(ulong key, HandlerBag bag)
                 {
                     mKey = key;
                     mBag = bag;
@@ -27,12 +27,19 @@ namespace KernelPanic.Events
                 }
             }
 
-            private uint mNextKey;
-            private readonly Dictionary<uint, Action<Event>> mHandlers = new Dictionary<uint, Action<Event>>();
+            private ulong mNextKey;
+            private readonly Dictionary<ulong, Action<Event>> mHandlers = new Dictionary<ulong, Action<Event>>();
 
             internal Token Add(Action<Event> handler)
             {
                 var key = mNextKey++;
+                if (key > mNextKey)
+                {
+                    // We had a wrap-around. Although this last key would still be usable it's quite likely that we
+                    // would want to add another event handler for this event at some point.
+                    throw new InvalidOperationException("Too many event handlers registered.");
+                }
+
                 mHandlers.Add(key, handler);
                 return new Token(key, this);
             }
