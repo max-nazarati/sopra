@@ -240,7 +240,7 @@ namespace KernelPanic.Entities.Units
             
         }
 
-        protected void TryActivateAbility(InputManager inputManager, bool button = false)
+        protected virtual void TryActivateAbility(InputManager inputManager, bool button = false)
         {
             if (CheckAbilityStart(inputManager, button))
                 AbilityStatus = AbilityState.Indicating;
