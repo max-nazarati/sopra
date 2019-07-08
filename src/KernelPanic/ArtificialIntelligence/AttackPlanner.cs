@@ -36,7 +36,7 @@ namespace KernelPanic.ArtificialIntelligence
         
         private void FastWave()
         {
-            BuyEntity<Bug>(1);
+            BuyEntity<Bug>();
         }
         
         private void FastAndFurious()

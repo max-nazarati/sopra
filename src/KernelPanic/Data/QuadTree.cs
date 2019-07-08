@@ -105,7 +105,7 @@ namespace KernelPanic.Data
         private IEnumerable<(SquareIndex Index, Rectangle Rectangle)> OverlappingSquareIndices(Rectangle bounds)
         {
             return Squares
-                .Select(square => (Index: square.Index, Rectangle: Rectangle.Intersect(square.Tree.mBounds, bounds)))
+                .Select(square => (square.Index, Rectangle: Rectangle.Intersect(square.Tree.mBounds, bounds)))
                 .Where(square => square.Rectangle.Size != Point.Zero);
         }
 

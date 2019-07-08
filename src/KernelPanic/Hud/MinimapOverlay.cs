@@ -104,14 +104,14 @@ namespace KernelPanic.Hud
         
         private void InitializeScale()
         {
-            var laneLeft = mPlayers.A.DefendingLane.Grid;
+            // var laneLeft = mPlayers.A.DefendingLane.Grid;
             var laneRight = mPlayers.B.DefendingLane.Grid;
             
             var pointTopLeft = new TileIndex(0, 0, 1);
             var pointBottomRight = new TileIndex(laneRight.LaneRectangle.Size - new Point(1), 1);
             
 
-            var topLeft = laneLeft.GetTile(pointTopLeft, RelativePosition.TopLeft).Position;
+            // var topLeft = laneLeft.GetTile(pointTopLeft, RelativePosition.TopLeft).Position;
             var bottomRight = laneRight.GetTile(pointBottomRight, RelativePosition.BottomRight).Position;
 
             mScale = Math.Max(bottomRight.X, bottomRight.Y) / mSize;

@@ -7,11 +7,11 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal sealed class UpgradePlanner : Planner
     {
-        private readonly Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> mUpgradeLookup;
+        // private readonly Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> mUpgradeLookup;
 
         public UpgradePlanner(Player player, Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup) : base(player)
         {
-            mUpgradeLookup = upgradeLookup;
+           // mUpgradeLookup = upgradeLookup;
         }
     }
 }

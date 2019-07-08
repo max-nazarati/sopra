@@ -56,7 +56,7 @@ namespace KernelPanic.Entities
 
         public override int? DrawLevel => 0;    // Buildings have the lowest level.
 
-        private int BitcoinWorth { get; set; }
+        private int BitcoinWorth { get; } //set; }
 
         private BuildingState mBuildingState;
 

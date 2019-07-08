@@ -186,7 +186,7 @@ namespace KernelPanic.Entities.Buildings
                     .NearEntities<Unit>(this, Radius)
                     .SelectMany(unit =>
                         StrategyMeasure(positionProvider, unit) is int measure
-                            ? new[] {(unit: unit, measure: measure)}
+                            ? new[] {(unit, measure)}
                             : Enumerable.Empty<(Unit unit, int measure)>()
                     );
 
