@@ -87,24 +87,30 @@ namespace KernelPanic.Entities.Buildings
                 new StrategyAction(this, TowerStrategy.First, SpriteManager),
                 new StrategyAction(this, TowerStrategy.Strongest, SpriteManager),
                 new StrategyAction(this, TowerStrategy.Weakest, SpriteManager),
-                new ImprovementAction(this, SpriteManager)
+                new ImprovementAction(this, SpriteManager, owner)
                 );
         
-        private sealed class ImprovementAction : IAction
+        private sealed class ImprovementAction : IAction, IPriced
         {
-            public Button Button { get; private set; }
-            private readonly Func<bool> mIsFinalLevel;
+            public Button Button => mButton.Button;
 
-            internal ImprovementAction(StrategicTower tower, SpriteManager spriteManager)
+            private readonly PurchaseButton<TextButton, ImprovementAction> mButton;
+            private readonly Func<bool> mIsFinalLevel;
+            private readonly Tower mTower;
+
+            internal ImprovementAction(StrategicTower tower, SpriteManager spriteManager, Player owner)
             {
-                Button = new TextButton(spriteManager) {Title = "Update"};
-                Button.Clicked += (button, input) =>
+                var action = new PurchasableAction<ImprovementAction>(this);
+                var button = new TextButton(spriteManager) {Title = "Update"};
+                mButton = new PurchaseButton<TextButton, ImprovementAction>(owner, action, button);
+                action.Purchased += (player, theAction) =>
                 {
                     tower.mLevel = Enum.GetValues(typeof(TowerLevel)).Cast<TowerLevel>()
                         .SkipWhile(e => e != tower.mLevel).Skip(1).First();
                     tower.updateLevel(spriteManager);
                 };
                 mIsFinalLevel = () => tower.mLevel == TowerLevel.Third;
+                mTower = tower;
             }
 
             void IUpdatable.Update(InputManager inputManager, GameTime gameTime)
@@ -115,6 +121,11 @@ namespace KernelPanic.Entities.Buildings
 
             void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
                 Button.Draw(spriteBatch, gameTime);
+
+            public Currency Currency => Currency.Bitcoin;
+
+            // Improving costs 25% of Tower value.
+            public int Price => (int) (mTower.Price * 0.25);
         }
 
 
