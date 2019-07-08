@@ -57,7 +57,11 @@ namespace KernelPanic.Events
 
         private readonly Dictionary<Event.Id, HandlerBag> mSubscribers = new Dictionary<Event.Id, HandlerBag>();
 
-        private readonly List<Event> mEventsBuffer = new List<Event>();
+        private byte mBufferIndex;
+        private readonly List<Event>[] mEventBuffers = {
+            new List<Event>(),
+            new List<Event>()
+        };
 
         #region Singleton
 
@@ -130,7 +134,7 @@ namespace KernelPanic.Events
         /// <param name="event">The <see cref="Event"/> to queue.</param>
         internal void Send(Event @event)
         {
-            mEventsBuffer.Add(@event);
+            mEventBuffers[mBufferIndex].Add(@event);
         }
 
         /// <summary>
@@ -138,18 +142,25 @@ namespace KernelPanic.Events
         /// </summary>
         internal void Run()
         {
-            foreach (var @event in mEventsBuffer)
+            // Process events as long as new events are sent in response to us delivering events.
+            for (var buffer = mEventBuffers[mBufferIndex]; buffer.Count > 0; buffer = mEventBuffers[mBufferIndex])
             {
-                if (!mSubscribers.TryGetValue(@event.Kind, out var handlers))
-                    continue;
+                // mEventBuffers contains two elements, XOR with 1 switch mBufferIndex between 0 and 1.
+                mBufferIndex ^= 1;
 
-                foreach (var handler in handlers)
+                foreach (var @event in buffer)
                 {
-                    handler(@event);
-                }
-            }
+                    if (!mSubscribers.TryGetValue(@event.Kind, out var handlers))
+                        continue;
 
-            mEventsBuffer.Clear();
+                    foreach (var handler in handlers)
+                    {
+                        handler(@event);
+                    }
+                }
+
+                buffer.Clear();
+            }
         }
 
         #endregion
