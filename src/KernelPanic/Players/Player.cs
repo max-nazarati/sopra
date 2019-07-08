@@ -33,13 +33,8 @@ namespace KernelPanic.Players
         [DataMember]
         internal int FirefoxMaximum { get; private set; } = 1;
 
-        internal Player(Lane defendingLane, Lane attackingLane) : this(defendingLane, attackingLane, 9999)
-        {
-
-        }
-
         [JsonConstructor]
-        protected Player(Lane defendingLane, Lane attackingLane, int bitcoins)
+        internal Player(Lane defendingLane, Lane attackingLane, int bitcoins)
         {
             Bitcoins = bitcoins;
             AttackingLane = attackingLane;
