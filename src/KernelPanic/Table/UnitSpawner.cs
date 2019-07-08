@@ -72,13 +72,14 @@ namespace KernelPanic.Table
         }
 
         // maybe this will get somehow transformed into a parent class Spawner
+        /*
         internal void Register(Entity clone, int? x=null, int? y=null)
         {
             if (clone is Unit unit)
             {
                 Register(unit);
             }
-            
+            */
             /*
             if (clone is Building building)
             {
@@ -92,7 +93,7 @@ namespace KernelPanic.Table
                 }
             }
             */
-        }
+        // }
 
         internal void Update(GameTime gameTime)
         {

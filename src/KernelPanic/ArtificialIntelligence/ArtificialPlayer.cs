@@ -21,12 +21,12 @@ namespace KernelPanic.ArtificialIntelligence
         private int mAttackMoney;
         private int mDefenceMoney;
 
-        private int[] mOwnTroupeAmount;
+        // private int[] mOwnTroupeAmount;
 
         [JsonConstructor]
         internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins) : base(defendingLane, attackingLane, bitcoins)
         {
-            mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
+            // mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
         }
 
         public override T Select<T>(T ifActive, T ifPassive)

@@ -134,7 +134,7 @@ namespace KernelPanic.Entities.Units
             if (!inputManager.MousePressed(InputManager.MouseButton.Right)) return;
 
             var mouse = inputManager.TranslatedMousePosition;
-            if (positionProvider.Grid.GridPointFromWorldPoint(mouse, 1)?.Position == null) return;
+            if (positionProvider.Grid.GridPointFromWorldPoint(mouse)?.Position == null) return;
             mTarget = new Point((int)mouse.X, (int)mouse.Y);
             ShouldMove = true;
             MoveTargetReached -= MoveTargetReachedHandler;
