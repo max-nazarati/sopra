@@ -32,7 +32,6 @@ namespace KernelPanic.Hud
                 var sprite = building.Sprite.Clone();
                 sprite.SetOrigin(RelativePosition.TopLeft);
                 sprite.ScaleToWidth(64); // for some reason cable has a size of 100x100
-                Console.WriteLine(sprite.Size);
                 Button = new ImageButton(spriteManager, (ImageSprite)sprite, 70, 70);
             }
 
