@@ -6,6 +6,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Serialization;
+using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -282,8 +283,43 @@ namespace KernelPanic
                     backButton
                 }
             };
-        } 
-        
+        }
+
+        /// <summary>
+        /// Creates a <see cref="MenuState"/> for an “Achievement unlocked” screen.
+        /// </summary>
+        /// <param name="achievement">The unlocked <see cref="Achievement"/>.</param>
+        /// <param name="stateManager"></param>
+        /// <returns>A new <see cref="MenuState"/>.</returns>
+        internal static MenuState CreateAchievementDisplay(Achievement achievement, GameStateManager stateManager)
+        {
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            var titleSprite = stateManager.Sprite.CreateText(achievement.Title());
+            titleSprite.ScaleToHeight(100);
+            titleSprite.SetOrigin(RelativePosition.CenterTop);
+            titleSprite.X = screenMid;
+            titleSprite.Y = 200;
+            
+            var descriptionSprite = stateManager.Sprite.CreateText(achievement.Description());
+            descriptionSprite.SetOrigin(RelativePosition.CenterTop);
+            descriptionSprite.X = screenMid;
+            descriptionSprite.Y = 400;
+
+            var backButton = CreateButton(stateManager.Sprite, "Ok", 800);
+            backButton.Clicked += (button, input) => stateManager.Pop();
+
+            return new MenuState(stateManager)
+            {
+                mComponents = new InterfaceComponent[]
+                {
+                    CreateBackground(stateManager.Sprite),
+                    new StaticComponent(titleSprite),
+                    new StaticComponent(descriptionSprite),
+                    backButton
+                }
+            };
+        }
+
         /*
          * Connect current results of not yet integrated tasks for presentation
          * at sprint meeting with your Button.

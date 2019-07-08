@@ -384,6 +384,9 @@
     <Compile Include="..\KernelPanic\Table\UnitSpawner.cs">
       <Link>Table\UnitSpawner.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Tracking\Achievement.cs">
+      <Link>Tracking\Achievement.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Tracking\Statistics.cs">
       <Link>Tracking\Statistics.cs</Link>
     </Compile>

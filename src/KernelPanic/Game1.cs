@@ -2,6 +2,7 @@
 using KernelPanic.Camera;
 using KernelPanic.Events;
 using KernelPanic.Input;
+using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -53,9 +54,15 @@ namespace KernelPanic
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             IsMouseVisible = true;
             mSoundManager = new SoundManager(Content);
+            EventCenter.Default.Subscribe(Event.Id.AchievementUnlocked, @event =>
+            {
+                var achievement = @event.Get<Achievement>(Event.Key.Achievement);
+                var screen = MenuState.CreateAchievementDisplay(achievement, mGameStateManager);
+                mGameStateManager.Push(screen);
+            });
+
             base.Initialize();
         }
 

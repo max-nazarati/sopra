@@ -159,6 +159,7 @@
     <Compile Include="Table\Owner.cs" />
     <Compile Include="Table\TileIndex.cs" />
     <Compile Include="Table\UnitSpawner.cs" />
+    <Compile Include="Tracking\Achievement.cs" />
     <Compile Include="Tracking\Statistics.cs" />
     <Compile Include="Upgrades\Upgrade.cs" />
     <Compile Include="Upgrades\UpgradePool.cs" />
