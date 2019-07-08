@@ -6,7 +6,7 @@ namespace KernelPanic.PathPlanning
 {
     internal sealed class BreadthFirstSearch : PathPlanner
     {
-        public HeatMap HeatMap { get; }
+        private HeatMap HeatMap { get; }
 
         private BreadthFirstSearch(HeatMap map)
         {

@@ -12,7 +12,7 @@ namespace KernelPanic.Entities.Projectiles
 {
     internal class Projectile : IGameObject
     {
-        protected float Radius { get; set; }
+        internal float Radius { get; set; }
         internal int Damage { get; }
 
         protected ImageSprite Sprite { get; }

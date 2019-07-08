@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Security.Cryptography;
+// using System.Security.Cryptography;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace KernelPanic
 {

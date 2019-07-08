@@ -1,4 +1,3 @@
-using KernelPanic.Entities;
 using KernelPanic.Players;
 
 namespace KernelPanic.ArtificialIntelligence

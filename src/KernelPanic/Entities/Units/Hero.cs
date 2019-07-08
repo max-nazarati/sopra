@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Accord.Statistics.Kernels;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;

@@ -99,7 +99,7 @@ namespace KernelPanic.Input
         /// </summary>
         /// <param name="keys">Keys that should be checked</param>
         /// <returns>True if any of the keys was down</returns>
-        internal bool KeyDown(params Keys[] keys)
+        private bool KeyDown(params Keys[] keys)
         {
             foreach (var key in keys)
             {

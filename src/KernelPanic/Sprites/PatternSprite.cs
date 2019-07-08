@@ -5,8 +5,8 @@ namespace KernelPanic.Sprites
 {
     internal sealed class PatternSprite: Sprite
     {
-        private int Rows { get; set; }
-        private int Columns { get; set; }
+        private int Rows { get; } // set; }
+        private int Columns { get; } // set; }
 
         private Sprite Sprite { get; set; }
 

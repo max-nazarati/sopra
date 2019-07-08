@@ -1,4 +1,3 @@
-using System;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;

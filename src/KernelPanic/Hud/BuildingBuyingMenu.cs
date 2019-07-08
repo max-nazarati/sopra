@@ -7,7 +7,6 @@ using KernelPanic.Input;
 using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Table;
-using System;
 
 namespace KernelPanic.Hud
 {

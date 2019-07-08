@@ -16,7 +16,7 @@ namespace KernelPanic.Data
         internal Node Parent { get; } // set => mParent = value; }
         internal double Cost { get; } // set; }
 
-        private double EstimatedCost { get; }  //set; }
+        // private double EstimatedCost { get; }  //set; }
 
         internal double Key { get; }
 
@@ -25,7 +25,7 @@ namespace KernelPanic.Data
             Position = coordinate;
             Parent = parent;
             Cost = cost;
-            EstimatedCost = estimatedCost;
+            // EstimatedCost = estimatedCost;
             Key = cost + estimatedCost;
         }
     }

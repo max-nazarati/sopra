@@ -5,7 +5,7 @@ namespace KernelPanic.Waves
 {
     internal struct WaveReference
     {
-        internal int Index { get; }
+        private int Index { get; }
         internal Action<Troupe> SpawnChild { get; }
 
         internal bool IsValid => Index > 0;

@@ -1,4 +1,5 @@
-﻿using Accord.MachineLearning.DecisionTrees;
+﻿/*
+using Accord.MachineLearning.DecisionTrees;
 using Accord.MachineLearning.DecisionTrees.Learning;
 using Accord.MachineLearning.DecisionTrees.Rules;
 using Accord.Math;
@@ -8,10 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-
+*/
+/*
 namespace KernelPanic.ArtificialIntelligence
 {
-    /*
     class DecisionTreeClassifier
     {
         private DataTable mDataSet;
@@ -146,5 +147,5 @@ namespace KernelPanic.ArtificialIntelligence
         public Codification Codebook { get => mCodebook; set => mCodebook = value; }
         public DecisionTree Model { get => mModel; set => mModel = value; }
         public DecisionSet Rules { get => mModel.ToRules();}
-    } */
-}
+    }
+} */

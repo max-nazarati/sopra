@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using KernelPanic.Input;
-using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities.Buildings
 {
