@@ -52,7 +52,7 @@ namespace KernelPanic.Entities.Units
         {
             base.CompleteClone();
             mEmps = new Emp[2];
-            Cooldown = new CooldownComponent(new TimeSpan(5), false);
+            Cooldown = new CooldownComponent(TimeSpan.FromSeconds(5), false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
