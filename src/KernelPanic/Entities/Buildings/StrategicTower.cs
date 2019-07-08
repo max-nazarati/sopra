@@ -7,6 +7,7 @@ using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Players;
+using KernelPanic.Purchasing;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -21,6 +22,8 @@ namespace KernelPanic.Entities.Buildings
         [JsonProperty]
         private TowerStrategy mStrategy = TowerStrategy.First;
 
+        private TowerLevel mLevel = TowerLevel.First;
+
         /// <summary>
         /// <c>true</c> if the tower should be rotated in the direction of the unit.
         /// </summary>
@@ -33,11 +36,12 @@ namespace KernelPanic.Entities.Buildings
         protected StrategicTower(int price,
             float radius,
             int damage,
+            int speed,
             TimeSpan cooldown,
             Sprite sprite,
             SpriteManager spriteManager,
             SoundManager sounds)
-            : base(price, radius, damage, cooldown, sprite, spriteManager, sounds)
+            : base(price, radius, damage, speed, cooldown, sprite, spriteManager, sounds)
         {
             FireTimer.CooledDown += ShootNow;
         }
@@ -63,6 +67,16 @@ namespace KernelPanic.Entities.Buildings
             }
             timer.Reset();
         }
+        
+        private void updateLevel(SpriteManager spriteManager)
+        {
+            Radius *= 1.2f;
+            Speed *= 2;
+            // TODO Add reduced cooldown
+            Damage *= 2;
+            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
+        }
+
 
         #endregion
 
@@ -72,8 +86,37 @@ namespace KernelPanic.Entities.Buildings
             base.Actions(owner).Extend(
                 new StrategyAction(this, TowerStrategy.First, SpriteManager),
                 new StrategyAction(this, TowerStrategy.Strongest, SpriteManager),
-                new StrategyAction(this, TowerStrategy.Weakest, SpriteManager)
-            );
+                new StrategyAction(this, TowerStrategy.Weakest, SpriteManager),
+                new ImprovementAction(this, SpriteManager)
+                );
+        
+        private sealed class ImprovementAction : IAction
+        {
+            public Button Button { get; private set; }
+            private readonly Func<bool> mIsFinalLevel;
+
+            internal ImprovementAction(StrategicTower tower, SpriteManager spriteManager)
+            {
+                Button = new TextButton(spriteManager) {Title = "Update"};
+                Button.Clicked += (button, input) =>
+                {
+                    tower.mLevel = Enum.GetValues(typeof(TowerLevel)).Cast<TowerLevel>()
+                        .SkipWhile(e => e != tower.mLevel).Skip(1).First();
+                    tower.updateLevel(spriteManager);
+                };
+                mIsFinalLevel = () => tower.mLevel == TowerLevel.Third;
+            }
+
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime)
+            {
+                Button.Enabled = !mIsFinalLevel();
+                Button.Update(inputManager, gameTime);
+            }
+
+            void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
+                Button.Draw(spriteBatch, gameTime);
+        }
+
 
         private sealed class StrategyAction : IAction
         {
@@ -195,4 +238,6 @@ namespace KernelPanic.Entities.Buildings
 
     [JsonConverter(typeof(StringEnumConverter))]
     internal enum TowerStrategy { First, Strongest, Weakest };
+
+    internal enum TowerLevel {First, Second, Third}
 }

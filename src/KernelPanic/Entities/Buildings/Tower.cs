@@ -16,14 +16,17 @@ namespace KernelPanic.Entities.Buildings
     {
         [DataMember] internal float Radius { get; set; }
         [DataMember] internal int Damage { get; set; }
+        
+        [DataMember] internal int Speed { get; set; }
         [DataMember] internal CooldownComponent FireTimer { get; private set; }
         internal Action<Projectile> FireAction { get; set; }
 
-        private Sprite mRadiusSprite;
+        protected Sprite mRadiusSprite;
 
         internal Tower(int price,
             float radius,
             int damage,
+            int speed,
             TimeSpan cooldown,
             Sprite sprite,
             SpriteManager spriteManager,
@@ -32,6 +35,7 @@ namespace KernelPanic.Entities.Buildings
             FireTimer = new CooldownComponent(cooldown);
             Radius = radius * Grid.KachelSize;
             Damage = damage;
+            Speed = speed;
             sprite.ScaleToHeight(64);
             sprite.SetOrigin(RelativePosition.Center);
 

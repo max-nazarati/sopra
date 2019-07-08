@@ -25,7 +25,7 @@ namespace KernelPanic.Entities.Projectiles
 
         internal Tower Origin { get; }
         
-        internal Projectile(Tower origin, Vector2 direction, float speed, ImageSprite sprite, float offset = 0)
+        internal Projectile(Tower origin, Vector2 direction, ImageSprite sprite, float offset = 0)
         {
             // calling this with direction == Vector.Zero will not work -> game crash (out of bound, entityG.)
             Origin = origin;
@@ -34,7 +34,7 @@ namespace KernelPanic.Entities.Projectiles
 
             direction.Normalize();
             StartPoint = origin.Sprite.Position + offset * direction;
-            MoveVector = direction * speed;
+            MoveVector = direction * origin.Speed;
 
             Sprite = sprite;
             Sprite.Position = StartPoint;
