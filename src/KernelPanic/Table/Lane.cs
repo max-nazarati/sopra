@@ -102,7 +102,7 @@ namespace KernelPanic.Table
         public Lane(Side laneSide, SpriteManager sprites) : this(sprites)
         {
             mLaneSide = laneSide;
-            Target = new Base(BasePosition(laneSide));
+            Target = new Base(LaneBoundsInTiles(laneSide).Size, laneSide);
             Initialize();
         }
 

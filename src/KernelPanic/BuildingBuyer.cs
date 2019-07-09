@@ -87,13 +87,11 @@ namespace KernelPanic
                         ? new Point(Lane.Grid.LaneRectangle.Width - 1, Grid.LaneWidthInTiles / 2)
                         : new Point(0, Lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2);
 
-            var endPosition = Lane.Target.Position;
-
             var buildingMatrix = new ObstacleMatrix(Lane.Grid);
             buildingMatrix.Raster(Lane.EntityGraph.Entities<Building>());
             buildingMatrix.Raster(new[] {mBuilding});
 
-            var pathFinder = new AStar(startTile, endPosition, buildingMatrix);
+            var pathFinder = new AStar(startTile, Lane.Target.HitBox, buildingMatrix);
             mBuilding.State = pathFinder.CalculatePath() ? BuildingState.Valid : BuildingState.Invalid;
         }
 
