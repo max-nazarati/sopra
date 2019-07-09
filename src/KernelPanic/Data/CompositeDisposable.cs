@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace KernelPanic.Data
 {
+/*
     internal struct CompositeDisposable : IDisposable
     {
         private List<IDisposable> mDisposables;
@@ -33,4 +34,5 @@ namespace KernelPanic.Data
             mDisposables.Clear();
         } 
     }
+    */
 }

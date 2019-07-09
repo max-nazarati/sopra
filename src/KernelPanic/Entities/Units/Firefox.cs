@@ -37,7 +37,7 @@ namespace KernelPanic.Entities.Units
         internal override void UpdateInformation()
         {
             base.UpdateInformation();
-            InfoText.Text += $"\nStärke: {AttackStrength}";
+            mInfoText.Text += $"\nStärke: {AttackStrength}";
         }
 
         #region Ability 

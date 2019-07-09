@@ -125,13 +125,13 @@ namespace KernelPanic.Events
             /// </summary>
             Upgrade,
 
-            /// <summary>
-            /// Of type <see cref="int"/>, applies to
-            /// <list type="bullet">
-            /// <item><description><see cref="Id.FirefoxJump"/></description></item>
-            /// </list>
-            /// </summary>
-            CrossedBuildingsCount,
+            // <summary>
+            // Of type <see cref="int"/>, applies to
+            // <list type="bullet">
+            // <item><description><see cref="Id.FirefoxJump"/></description></item>
+            // </list>
+            // </summary>
+            // CrossedBuildingsCount,
 
             /// <summary>
             /// Of type <see cref="int"/>, applies to

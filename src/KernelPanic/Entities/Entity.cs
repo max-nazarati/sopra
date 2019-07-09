@@ -20,7 +20,7 @@ namespace KernelPanic.Entities
     {
         internal Sprite Sprite { get; private set; }
 
-        internal readonly TextSprite InfoText;
+        internal readonly TextSprite mInfoText;
 
         protected SpriteManager SpriteManager { get; }
 
@@ -29,8 +29,8 @@ namespace KernelPanic.Entities
             Price = price;
             Sprite = sprite;
             Sprite.SetOrigin(RelativePosition.Center);
-            InfoText = spriteManager.CreateText($"Preis: {price}");
-            InfoText.SetOrigin(RelativePosition.CenterRight);
+            mInfoText = spriteManager.CreateText($"Preis: {price}");
+            mInfoText.SetOrigin(RelativePosition.CenterRight);
             SpriteManager = spriteManager;
         }
 
@@ -107,7 +107,7 @@ namespace KernelPanic.Entities
 
         internal virtual void UpdateInformation()
         {
-            InfoText.Text = $"Preis: {Price}";
+            mInfoText.Text = $"Preis: {Price}";
         }
 
         internal virtual void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
@@ -121,7 +121,7 @@ namespace KernelPanic.Entities
             }
 
             
-            InfoText.Draw(spriteBatch, gameTime);
+            mInfoText.Draw(spriteBatch, gameTime);
         }
 
         #region IPriced
@@ -169,7 +169,7 @@ namespace KernelPanic.Entities
                 body(action);
                 position.Y += action.Button.Sprite.Height;
             }
-            InfoText.Position = new Vector2(Sprite.Position.X - Sprite.Width, Sprite.Position.Y);
+            mInfoText.Position = new Vector2(Sprite.Position.X - Sprite.Width, Sprite.Position.Y);
         }
 
         #endregion

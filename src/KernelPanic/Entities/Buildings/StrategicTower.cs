@@ -246,7 +246,7 @@ namespace KernelPanic.Entities.Buildings
         internal override void UpdateInformation()
         {
             base.UpdateInformation();
-            InfoText.Text += $"\nStärke: {Damage}";
+            mInfoText.Text += $"\nStärke: {Damage}";
         }
 
         #endregion
@@ -255,5 +255,5 @@ namespace KernelPanic.Entities.Buildings
     [JsonConverter(typeof(StringEnumConverter))]
     internal enum TowerStrategy { First, Strongest, Weakest };
 
-    internal enum TowerLevel {First, Second, Third}
+    internal enum TowerLevel {First,  /*Second,*/ Third}
 }

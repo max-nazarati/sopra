@@ -17,7 +17,7 @@ namespace KernelPanic.Entities.Buildings
         internal override void UpdateInformation()
         {
             base.UpdateInformation();
-            InfoText.Text += $"\nStärke: {Damage}";
+            mInfoText.Text += $"\nStärke: {Damage}";
         }
     }
 }
