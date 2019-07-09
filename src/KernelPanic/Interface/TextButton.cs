@@ -12,7 +12,7 @@ namespace KernelPanic.Interface
 
         internal TextButton(SpriteManager sprites, int width = 250, int height = 70)
         {
-            (Sprite, Background, mTitleSprite) = sprites.CreateTextButton(width, height);
+            (Sprite, mBackground, mTitleSprite) = sprites.CreateTextButton(width, height);
         }
 
         internal string Title

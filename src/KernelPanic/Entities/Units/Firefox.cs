@@ -113,7 +113,7 @@ namespace KernelPanic.Entities.Units
             if (MoveTarget != null && Cooldown.Ready)
             {
                 // just jump the next steps
-                if (AStar.Path is List<Point> path && path.Count >= 2)
+                if (mAStar.Path is List<Point> path && path.Count >= 2)
                 {
                     mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[2], 1)).Position;
                     TryActivateAbility(inputManager, true);

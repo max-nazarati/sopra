@@ -19,11 +19,11 @@ namespace KernelPanic.Entities.Units
             var movementDirection = positionProvider.MovementVectorThunderbird(currentTile.ToPoint());
             if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
             {
-                movementDirection = LastMovement;
+                movementDirection = mLastMovement;
             }
             else
             {
-                LastMovement = movementDirection;
+                mLastMovement = movementDirection;
             }
             MoveTarget = Sprite.Position + Speed * movementDirection;
         }

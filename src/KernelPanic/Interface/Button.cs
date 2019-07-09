@@ -10,7 +10,7 @@ namespace KernelPanic.Interface
         internal delegate void Delegate(Button sender, InputManager inputManager);
 
         internal event Delegate Clicked;
-        protected ImageSprite Background;
+        protected ImageSprite mBackground;
         private bool mMouseDown;
 
         internal bool ViewPressed { get; set; }
@@ -32,7 +32,7 @@ namespace KernelPanic.Interface
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            Background.TintColor = ViewEnabled ? Color.White : Color.Gray;
+            mBackground.TintColor = ViewEnabled ? Color.White : Color.Gray;
             base.Draw(spriteBatch, gameTime);
         }
 

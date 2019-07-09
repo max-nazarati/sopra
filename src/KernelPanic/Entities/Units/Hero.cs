@@ -42,7 +42,7 @@ namespace KernelPanic.Entities.Units
 
         [DataMember]
         protected CooldownComponent Cooldown { get; set; }
-        internal AStar AStar; // save the AStar for path-drawing
+        internal AStar mAStar; // save the AStar for path-drawing
         private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
         internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
@@ -85,15 +85,15 @@ namespace KernelPanic.Entities.Units
             var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
-            AStar = positionProvider.MakePathFinding(this, startPoint, target);
-            mPathVisualizer = positionProvider.Visualize(AStar);
-            var path = AStar.Path;
+            mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+            mPathVisualizer = positionProvider.Visualize(mAStar);
+            var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
-                AStar = positionProvider.MakePathFinding(this, startPoint, target);
-                mPathVisualizer = positionProvider.Visualize(AStar);
-                path = AStar.Path;
+                mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+                mPathVisualizer = positionProvider.Visualize(mAStar);
+                path = mAStar.Path;
             }
 
             if (path.Count > 2)
@@ -109,7 +109,7 @@ namespace KernelPanic.Entities.Units
 
         private void MoveTargetReachedHandler(Vector2 target)
         {
-            AStar = null;
+            mAStar = null;
             mTarget = null;
             mPathVisualizer = null;
             MoveTargetReached -= MoveTargetReachedHandler;
@@ -142,7 +142,7 @@ namespace KernelPanic.Entities.Units
 
         private Point FindNearestWalkableField(Point target)
         {
-            var result = AStar.FindNearestField();
+            var result = mAStar.FindNearestField();
             return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);
         }
         
@@ -302,7 +302,7 @@ namespace KernelPanic.Entities.Units
         {
             var startPoint = positionProvider.RequireTile(this).ToPoint();
             mTarget = positionProvider.RequireTile(basePosition.ToVector2()).ToPoint();
-            AStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
+            mAStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
             ShouldMove = true;
         }
 

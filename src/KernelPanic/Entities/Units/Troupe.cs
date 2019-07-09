@@ -7,12 +7,12 @@ namespace KernelPanic.Entities.Units
 {
     internal abstract class Troupe : Unit
     {
-        protected Vector2 LastMovement;
+        protected Vector2 mLastMovement;
 
         protected Troupe(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
-            LastMovement = new Vector2(0, 0);
+            mLastMovement = new Vector2(0, 0);
             Speed = speed;
         }
 
@@ -31,11 +31,11 @@ namespace KernelPanic.Entities.Units
             // var shift = positionProvider.MovememtShift(currentTile.ToPoint());
             if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
             {
-                movementDirection = LastMovement;
+                movementDirection = mLastMovement;
             }
             else
             {
-                LastMovement = movementDirection;
+                mLastMovement = movementDirection;
             }
 
             MoveTarget = Sprite.Position + Speed * movementDirection;// + shift;

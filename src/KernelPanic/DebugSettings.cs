@@ -5,13 +5,13 @@ namespace KernelPanic
 {
     internal static class DebugSettings
     {
-        private static bool _sVisualizeAStar;
-        private static bool _sVisualizeHeatMap;
-        private static bool _sVisualizeVectors;
+        private static bool sVisualizeAStar;
+        private static bool sVisualizeHeatMap;
+        private static bool sVisualizeVectors;
 
-        internal static bool VisualizeAStar => _sVisualizeAStar;
-        internal static bool VisualizeHeatMap => _sVisualizeHeatMap;
-        internal static bool VisualizeVectors => _sVisualizeVectors;
+        internal static bool VisualizeAStar => sVisualizeAStar;
+        internal static bool VisualizeHeatMap => sVisualizeHeatMap;
+        internal static bool VisualizeVectors => sVisualizeVectors;
 
         internal static void Update(InputManager inputManager)
         {
@@ -21,9 +21,9 @@ namespace KernelPanic
                     b = !b;
             }
 
-            Toggles(Keys.H, ref _sVisualizeHeatMap);
-            Toggles(Keys.G, ref _sVisualizeAStar);
-            Toggles(Keys.V, ref _sVisualizeVectors);
+            Toggles(Keys.H, ref sVisualizeHeatMap);
+            Toggles(Keys.G, ref sVisualizeAStar);
+            Toggles(Keys.V, ref sVisualizeVectors);
         }
     }
 }

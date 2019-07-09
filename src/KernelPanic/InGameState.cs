@@ -37,7 +37,7 @@ namespace KernelPanic
 
             mBoard.PlayerB.InitializePlanners(
                 unitMenu.BuyingActions, // TODO implement this, just added it like this so i can build :)
-                upgradeId => mBoard.UpgradePool[upgradeId],
+                upgradeId => mBoard.mUpgradePool[upgradeId],
                 gameStateManager.Sprite,
                 gameStateManager.Sound);
         }
