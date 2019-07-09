@@ -10,13 +10,32 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.ArtificialIntelligence
 {
-    
+    enum Feature : int
+    {
+        Bitcoins = 0,
+        // Bug = 1,
+        // Virus = 2,
+        // Trojaner = 3,
+        // Nokia = 4,
+        // Thunderbird = 5,
+        // Settings = 6,
+        // Firefox = 7,
+        // Bluescreen = 8,
+        // Kabel = 9,
+        // Mauszeigerschütze = 10,
+        // CDWerfer = 11,
+        // Antivirusprogramm = 12,
+        // Lüftung = 13,
+        // WifiRouter = 14,
+        // Schockfeld = 15
+    }
+
     internal sealed class ArtificialPlayer : Player
     {
         private AttackPlanner mAttackPlanner;
         private DefencePlanner mDefencePlanner;
         private UpgradePlanner mUpgradePlanner;
-        private int[] mDefenceData;
+        private int[] mDefenceData = new int[16];
         private int[] mAttackData;
         private int mAttackMoney;
         private int mDefenceMoney;
@@ -26,6 +45,7 @@ namespace KernelPanic.ArtificialIntelligence
         [JsonConstructor]
         internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins) : base(defendingLane, attackingLane, bitcoins)
         {
+            mDefenceData[(int)Feature.Bitcoins] = bitcoins;
             // mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
         }
 
