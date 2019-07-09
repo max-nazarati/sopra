@@ -3,6 +3,7 @@ using KernelPanic.Entities;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Players;
 using KernelPanic.Table;
+using KernelPanic.Tracking;
 using KernelPanic.Upgrades;
 
 namespace KernelPanic.Events
@@ -11,7 +12,9 @@ namespace KernelPanic.Events
     {
         internal enum Id
         {
-            // LoadEmptySlot,         // TODO: Not sent yet.
+            AchievementUnlocked,
+
+            LoadEmptySlot,         // TODO: Not sent yet.
 
             BuildingPlaced,
             BuildingImproved,      // TODO: Not sent yet.
@@ -126,7 +129,15 @@ namespace KernelPanic.Events
             /// <item><description><see cref="Id.DamagedBase"/></description></item>
             /// </list>
             /// </summary>
-            Damage
+            Damage,
+            
+            /// <summary>
+            /// Of type <see cref="Achievement"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.AchievementUnlocked"/></description></item>
+            /// </list>
+            /// </summary>
+            Achievement
         }
 
         #region Creating events
@@ -216,6 +227,15 @@ namespace KernelPanic.Events
                     [Key.Defender] = owner.Swapped[unit],
                     [Key.Damage] = unit.AttackStrength,
                     [Key.Unit] = unit
+                }
+            };
+
+        internal static Event AchievementUnlocked(Achievement achievement) =>
+            new Event(Id.AchievementUnlocked)
+            {
+                mPayload =
+                {
+                    [Key.Achievement] = achievement
                 }
             };
 
