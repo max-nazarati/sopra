@@ -20,7 +20,7 @@ namespace KernelPanic.ArtificialIntelligence
 
         private void BuyBuilding<T>(Point tile) where T : Building
         {
-            if (!BuildingBuyer.Buy(mPlayer, Building.Create<T>(mSpriteManager, mSoundManager), tile, mSoundManager))
+            if (!BuildingBuyer.Buy(Player, Building.Create<T>(mSpriteManager, mSoundManager), tile, mSoundManager))
                 Console.WriteLine("Wanted to build " + typeof(T) + " at " + tile + " which is not possible.");
         }
 

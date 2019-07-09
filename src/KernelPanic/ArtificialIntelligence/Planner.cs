@@ -4,11 +4,11 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal abstract class Planner
     {
-        protected readonly Player mPlayer;
+        protected readonly Player Player;
 
         protected Planner(Player player)
         {
-            mPlayer = player;
+            Player = player;
         }
 
         /*

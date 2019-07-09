@@ -52,7 +52,7 @@ namespace KernelPanic.PathPlanning
         {
             var result = (Point?) null;
             var bestDistance = double.PositiveInfinity;
-            foreach (var point in mExplored)
+            foreach (var point in Explored)
             {
                 var currentDistance = EstimateCost(point);
                 if (currentDistance >= bestDistance)
@@ -86,7 +86,7 @@ namespace KernelPanic.PathPlanning
         {
             var visualization = TileVisualizer.Border(grid, spriteManager);
             visualization.Append(mObstacles);
-            visualization.Append(mExplored, Color.Yellow);
+            visualization.Append(Explored, Color.Yellow);
             visualization.Append(Path, Color.Green);
             visualization.Append(new[] {mStart}, Color.Turquoise);
             visualization.Append(new[] {mTarget}, Color.Blue);

@@ -8,7 +8,7 @@ namespace KernelPanic.Interface
 
         internal ImageButton(SpriteManager sprites, ImageSprite sprite, int width, int height)
         {
-            (Sprite, mBackground) = sprites.CreateImageButton(sprite, width, height);
+            (Sprite, Background) = sprites.CreateImageButton(sprite, width, height);
         }
     }
 }

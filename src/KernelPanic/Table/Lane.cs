@@ -213,27 +213,27 @@ namespace KernelPanic.Table
         /// Stores/receives the entities during serialization. Don't use it outside of this!
         /// </summary>
         [JsonProperty]
-        internal List<Entity> mEntitiesSerializing;
+        internal List<Entity> EntitiesSerializing;
 
         [OnSerializing]
         private void BeforeSerialization(StreamingContext context)
         {
             // Store the current entities.
-            mEntitiesSerializing = new List<Entity>(EntityGraph.AllEntities);
+            EntitiesSerializing = new List<Entity>(EntityGraph.AllEntities);
         }
 
         [OnSerialized]
         private void AfterSerialization(StreamingContext context)
         {
             // Reset this secondary storage.
-            mEntitiesSerializing = null;
+            EntitiesSerializing = null;
         }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            Initialize(mEntitiesSerializing);
-            mEntitiesSerializing = null;
+            Initialize(EntitiesSerializing);
+            EntitiesSerializing = null;
         }
 
         #endregion

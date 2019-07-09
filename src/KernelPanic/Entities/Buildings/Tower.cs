@@ -21,7 +21,7 @@ namespace KernelPanic.Entities.Buildings
         [DataMember] internal CooldownComponent FireTimer { get; private set; }
         internal Action<Projectile> FireAction { get; set; }
 
-        protected Sprite mRadiusSprite;
+        protected Sprite RadiusSprite;
 
         internal Tower(int price,
             float radius,
@@ -39,19 +39,19 @@ namespace KernelPanic.Entities.Buildings
             sprite.ScaleToHeight(64);
             sprite.SetOrigin(RelativePosition.Center);
 
-            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
+            RadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            mRadiusSprite = SpriteManager.CreateTowerRadiusIndicator(Radius);
+            RadiusSprite = SpriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
         protected override void CompleteClone()
         {
             base.CompleteClone();
-            mRadiusSprite = mRadiusSprite.Clone();
+            RadiusSprite = RadiusSprite.Clone();
             FireTimer = new CooldownComponent(FireTimer.Cooldown, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
         }
 
@@ -67,8 +67,8 @@ namespace KernelPanic.Entities.Buildings
         {
             base.DrawActions(spriteBatch, gameTime);
 
-            mRadiusSprite.Position = Sprite.Position;
-            mRadiusSprite.Draw(spriteBatch, gameTime);
+            RadiusSprite.Position = Sprite.Position;
+            RadiusSprite.Draw(spriteBatch, gameTime);
         }
         
         internal void HitByEmp()

@@ -73,7 +73,7 @@ namespace KernelPanic.Entities.Buildings
             Speed *= 2;
             FireTimer.Cooldown -= new TimeSpan(0, 0, 0,0,300);
             Damage *= 2;
-            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
+            RadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
 

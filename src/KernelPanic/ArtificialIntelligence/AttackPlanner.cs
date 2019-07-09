@@ -28,7 +28,7 @@ namespace KernelPanic.ArtificialIntelligence
         {
             for (var i = 0; i < amount; i++)
             {
-                mActions[typeof(T)].TryPurchase(mPlayer);
+                mActions[typeof(T)].TryPurchase(Player);
             }
         }
         

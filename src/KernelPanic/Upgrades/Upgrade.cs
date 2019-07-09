@@ -234,7 +234,7 @@ namespace KernelPanic.Upgrades
                 case Id.EmpDuration:
                 {
                     if (entity is Bluescreen bluescreen)
-                        bluescreen.mEmpDurationAmplifier += 0.4f;
+                        bluescreen.EmpDurationAmplifier += 0.4f;
                     break;
                 }
                 

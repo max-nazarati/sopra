@@ -22,7 +22,7 @@ namespace KernelPanic.Serialization
 
         internal static void SaveGame(InGameState gameState)
         {
-            Directory.CreateDirectory(sFolder);
+            Directory.CreateDirectory(SFolder);
 
             if (!Slots.Contains(gameState.SaveSlot))
                 throw new InvalidOperationException("InGameState has invalid save-slot " + gameState.SaveSlot);
@@ -37,7 +37,7 @@ namespace KernelPanic.Serialization
 
         internal static Storage LoadGame(int slot, GameStateManager gameStateManager)
         {
-            Directory.CreateDirectory(sFolder);
+            Directory.CreateDirectory(SFolder);
 
             if (!Slots.Contains(slot))
                 throw new ArgumentOutOfRangeException(nameof(slot), slot, "invalid slot value");
@@ -74,7 +74,7 @@ namespace KernelPanic.Serialization
 
         internal static void SaveStatistics(Statistics.Data data)
         {
-            Directory.CreateDirectory(sFolder);
+            Directory.CreateDirectory(SFolder);
 
             using (var file = File.CreateText(StatisticsPath))
                 CreateSerializer().Serialize(file, data);
@@ -143,11 +143,11 @@ namespace KernelPanic.Serialization
             };
         }
 
-        private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
-        private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
-        private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
+        private static readonly string SFolder = "SaveFiles" + Path.DirectorySeparatorChar;
+        private static string DataPath(int slot) => Path.Combine(SFolder, "data" + slot + ".json");
+        private static string InfoPath(int slot) => Path.Combine(SFolder, "info" + slot + ".json");
 
-        private static string StatisticsPath => Path.Combine(sFolder, "statistics.json");
+        private static string StatisticsPath => Path.Combine(SFolder, "statistics.json");
 
         #endregion
 

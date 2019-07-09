@@ -7,7 +7,7 @@ namespace KernelPanic.PathPlanning
     internal abstract class PathPlanner
     {
         private readonly PriorityQueue mQueue = new PriorityQueue();
-        protected readonly HashSet<Point> mExplored = new HashSet<Point>();
+        protected readonly HashSet<Point> Explored = new HashSet<Point>();
 
         protected abstract bool IsWalkable(Point point);
         protected abstract double EstimateCost(Point point);
@@ -36,7 +36,7 @@ namespace KernelPanic.PathPlanning
 
         private bool ExpandNode(Node node)
         {
-            if (!mExplored.Add(node.Position))
+            if (!Explored.Add(node.Position))
                 return false;
 
             foreach (var neighbour in EnumerateNeighbours(node))
@@ -47,7 +47,7 @@ namespace KernelPanic.PathPlanning
         protected IEnumerable<Node> Run(IEnumerable<Point> start)
         {
             mQueue.Clear();
-            mExplored.Clear();
+            Explored.Clear();
 
             foreach (var point in start)
                 mQueue.Insert(new Node(point, null, 0, EstimateCost(point)));

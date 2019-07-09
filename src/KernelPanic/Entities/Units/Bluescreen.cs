@@ -31,7 +31,7 @@ namespace KernelPanic.Entities.Units
 
         internal bool TargetsTwoTower { private get; set; }
         private const double EmpDuration = 2;
-        internal float mEmpDurationAmplifier = 1;
+        internal float EmpDurationAmplifier = 1;
         
         #endregion
         
@@ -104,13 +104,13 @@ namespace KernelPanic.Entities.Units
             mAbilityDurationLeft = mAbilityDurationTotal;
             if (mAbilityTargetOne is Tower first)
             {
-                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSpriteOne);
+                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * EmpDurationAmplifier), mEmpSpriteOne);
                 positionProvider.AddProjectile(empOne);
             }
 
             if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
             {
-                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSpriteTwo);
+                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * EmpDurationAmplifier), mEmpSpriteTwo);
                 positionProvider.AddProjectile(empTwo);
             }
         }
