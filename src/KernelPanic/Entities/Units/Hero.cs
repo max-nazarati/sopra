@@ -126,7 +126,7 @@ namespace KernelPanic.Entities.Units
         {
             if (StrategyStatus == Strategy.Attack)
             {
-                AttackBase(inputManager, positionProvider, positionProvider.Target.Position);
+                AttackBase(inputManager, positionProvider, positionProvider.Target.HitBox[0]);
                 return;
             }
             // only check for new target of selected and Right Mouse Button was pressed

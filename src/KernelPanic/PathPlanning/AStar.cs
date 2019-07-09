@@ -10,20 +10,24 @@ namespace KernelPanic.PathPlanning
     internal sealed class AStar : PathPlanner
     {
         private readonly ObstacleMatrix mObstacles;
-        private readonly Point mTarget;
+        private readonly Point[] mTargets;
         private readonly Point mStart;
         internal List<Point> Path { get; private set; }
 
-        internal AStar(Point start, Point target, ObstacleMatrix obstacles)
+        internal AStar(Point start, Point target, ObstacleMatrix obstacles) : this(start, new []{target}, obstacles)
+        {
+        }
+
+        internal AStar(Point start, Point[] targets, ObstacleMatrix obstacles)
         {
             mObstacles = obstacles;
-            mTarget = target;
+            mTargets = targets;
             mStart = start;
         }
 
         private Node FindTarget()
         {
-            return Run(new[] {mStart}).FirstOrDefault(node => node.Position == mTarget);
+            return Run(new[] {mStart}).FirstOrDefault(node => mTargets.Contains(node.Position));
         }
 
         internal bool CalculatePath()
@@ -72,7 +76,12 @@ namespace KernelPanic.PathPlanning
         protected override double EstimateCost(Point point)
         {
             // Euclidean heuristic.
-            return Math.Sqrt(Math.Pow(point.X - mTarget.X, 2) + Math.Pow(point.Y - mTarget.Y, 2));
+            return mTargets.Select(target =>
+            {
+                var x = point.X - target.X;
+                var y = point.Y - target.Y;
+                return x * x + y * y;
+            }).Min();
             
             // Manhattan heuristic.
             // return Math.Abs(mTarget.X - point.X) + Math.Abs(mTarget.Y - point.Y);
@@ -89,7 +98,7 @@ namespace KernelPanic.PathPlanning
             visualization.Append(mExplored, Color.Yellow);
             visualization.Append(Path, Color.Green);
             visualization.Append(new[] {mStart}, Color.Turquoise);
-            visualization.Append(new[] {mTarget}, Color.Blue);
+            visualization.Append(mTargets, Color.Blue);
             return visualization;
         }
 

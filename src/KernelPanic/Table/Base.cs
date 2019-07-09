@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -6,23 +5,22 @@ namespace KernelPanic.Table
 {
     internal sealed class Base
     {
-        [JsonProperty]
-        public int Power { get; set; }
+        [JsonProperty] public int Power { get; set; } = 100;
+        [JsonProperty] internal Point[] HitBox { get; }
 
-        [JsonProperty]
-        public Point Position { get; set; }
-
-        public Base(Point position)
+        [JsonConstructor]
+        private Base()
         {
-            Power = 50;
-            Position = position;
         }
 
-        internal IEnumerable<Point> HitBox => new[]
+        internal Base(Point laneSize, Lane.Side side)
         {
-            Position,
-            new Point(Position.X + 1, Position.Y), new Point(Position.X - 1, Position.Y),
-            new Point(Position.X, Position.Y + 1), new Point(Position.X, Position.Y - 1)
-        };
+            HitBox = new Point[Grid.LaneWidthInTiles];
+            var offset = side == Lane.Side.Left ? laneSize.Y - Grid.LaneWidthInTiles : 0;
+            for (var i = 0; i < Grid.LaneWidthInTiles; ++i)
+            {
+                HitBox[i] = new Point(laneSize.X - 1, offset + i);
+            }
+        }
     }
 }
