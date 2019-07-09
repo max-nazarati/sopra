@@ -16,9 +16,22 @@ namespace KernelPanic.Players
         [DataMember]
         internal Lane DefendingLane { get; }
 
-        [DataMember]
-        public int Bitcoins { get; set; }
-        
+        [DataMember(Name = "bitcoins")]
+        private int mBitcoin;
+
+        internal int Bitcoins
+        {
+            get => mBitcoin;
+            set
+            {
+                if (mBitcoin == value)
+                    return;
+
+                mBitcoin = value;
+                EventCenter.Default.Send(Event.BitcoinChanged(this));
+            }
+        }
+
         [DataMember]
         internal bool IncreasedBitcoins { get; private set; }
 

@@ -1,11 +1,12 @@
-﻿using KernelPanic.Camera;
+using Autofac.Util;
+using KernelPanic.Camera;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic
 {
-    internal abstract class AGameState
+    internal abstract class AGameState : Disposable
     {
         internal GameStateManager GameStateManager { get; }
         internal virtual bool IsOverlay => false;
@@ -16,7 +17,7 @@ namespace KernelPanic
             GameStateManager = gameStateManager;
             Camera = camera;
         }
-        
+
         public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
 
         public abstract void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager);

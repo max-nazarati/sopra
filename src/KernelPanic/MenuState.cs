@@ -6,6 +6,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Serialization;
+using KernelPanic.Sprites;
 using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -271,18 +272,48 @@ namespace KernelPanic
 
         private static MenuState CreateAchievementsMenu(GameStateManager stateManager)
         {
-            // TODO: Create List with all Achievements with true/false flag.
-            var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
+            var backButton = CreateButton(stateManager.Sprite, "Zurück", 0);
+            backButton.Sprite.SetOrigin(RelativePosition.BottomLeft);
+            backButton.Sprite.Y = stateManager.Sprite.ScreenSize.Y - backButton.Sprite.Height - 20;
             backButton.Clicked += (button, input) => stateManager.Pop();
             
-            return new MenuState(stateManager)
+            var components = new List<InterfaceComponent>
             {
-                mComponents = new InterfaceComponent[]
-                {
-                    CreateBackground(stateManager.Sprite),
-                    backButton
-                }
+                CreateBackground(stateManager.Sprite),
+                backButton,
             };
+
+            // TODO: Better layout.
+            var y = 20f;
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            foreach (var (title, description, value) in stateManager.AchievementPool.UserRepresentation)
+            {
+                var titleText = stateManager.Sprite.CreateText(title);
+                var descText = stateManager.Sprite.CreateText(description);
+                
+                titleText.SetOrigin(RelativePosition.TopRight);
+                descText.SetOrigin(RelativePosition.TopRight);
+                descText.Y = titleText.Height;
+
+                var leftSide = new CompositeSprite
+                {
+                    X = screenMid - 10,
+                    Y = y,
+                    Children = {titleText, descText}
+                };
+
+                var valueText = stateManager.Sprite.CreateText(value);
+                valueText.SetOrigin(RelativePosition.CenterLeft);
+                valueText.X = screenMid + 10;
+                valueText.Y = leftSide.Y + 0.5f * leftSide.Height;
+
+                y += leftSide.Height + 10;
+
+                components.Add(new StaticComponent(leftSide));
+                components.Add(new StaticComponent(valueText));
+            }
+
+            return new MenuState(stateManager) {mComponents = components};
         }
 
         /// <summary>

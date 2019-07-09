@@ -5,6 +5,7 @@ using KernelPanic.Input;
 using KernelPanic.Selection;
 using KernelPanic.Serialization;
 using KernelPanic.Table;
+using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,6 +18,7 @@ namespace KernelPanic
         private readonly SelectionManager mSelectionManager;
         private readonly BuildingBuyer mBuildingBuyer;
         private readonly InGameOverlay mHud;
+        private readonly AchievementPool mAchievementPool;
 
         internal int SaveSlot { get; }
 
@@ -26,6 +28,7 @@ namespace KernelPanic
             mBoard = storage?.Board ?? new Board(gameStateManager.Sprite);
             mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager.Sound);
             mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane, gameStateManager.Sprite);
+            mAchievementPool = new AchievementPool(gameStateManager.AchievementPool, storage?.AchievementData);
             SaveSlot = saveSlot;
 
             var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
@@ -44,6 +47,14 @@ namespace KernelPanic
             var game = new InGameState(storage, saveSlot, gameStateManager);
             gameStateManager.Restart(game);
             gameStateManager.Push(game.mHud);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+                mAchievementPool.Dispose();
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
@@ -66,7 +77,10 @@ namespace KernelPanic
             if (gameState == Board.GameState.Playing)
                 return;
 
-            EventCenter.Default.Send(gameState == Board.GameState.AWon ? Event.GameWon() : Event.GameLost());
+            EventCenter.Default.Send(gameState == Board.GameState.AWon
+                ? Event.GameWon(mBoard.PlayerA, mBoard.PlayerB)
+                : Event.GameLost(mBoard.PlayerB, mBoard.PlayerA));
+
             GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager));
             GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager));
         }
@@ -83,7 +97,8 @@ namespace KernelPanic
         internal Storage Data => new Storage
         {
             Board = mBoard,
-            GameTime = mHud.ScoreOverlay.Time
+            GameTime = mHud.ScoreOverlay.Time,
+            AchievementData = mAchievementPool.TheData
         };
 
         #endregion

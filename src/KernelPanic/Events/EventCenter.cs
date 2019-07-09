@@ -115,8 +115,19 @@ namespace KernelPanic.Events
             return Subscribe(ids, realHandler);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="Action{T}"/> which only passes the value to <paramref name="handler"/> if
+        /// <paramref name="condition"/> returns <c>true</c>. If <paramref name="condition"/> is <c>null</c>
+        /// <paramref name="handler"/> will be returned unmodified.
+        /// </summary>
+        /// <param name="condition">Used to determine if <paramref name="handler"/> should be called.</param>
+        /// <param name="handler">Action which is called if <paramref name="condition"/> returned <c>true</c>.</param>
+        /// <returns>An action.</returns>
         private static Action<Event> GuardHandler(Func<Event, bool> condition, Action<Event> handler)
         {
+            if (condition == null)
+                return handler;
+
             return @event =>
             {
                 if (condition(@event))
@@ -153,7 +164,7 @@ namespace KernelPanic.Events
                     if (!mSubscribers.TryGetValue(@event.Kind, out var handlers))
                         continue;
 
-                    foreach (var handler in handlers)
+                    foreach (var handler in new List<Action<Event>>(handlers))
                     {
                         handler(@event);
                     }

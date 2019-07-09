@@ -37,6 +37,8 @@ namespace KernelPanic
 
         internal Statistics Statistics { get; } = new Statistics();
 
+        internal AchievementPool AchievementPool { get; } = AchievementPool.LoadGlobal();
+
         public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds, GraphicsDeviceManager graphics)
         {
             Sprite = sprites;
@@ -47,16 +49,33 @@ namespace KernelPanic
 
         protected override void Dispose(bool disposing)
         {
-            Statistics.Dispose();
+            if (disposing)
+            {
+                Statistics.Dispose();
+                
+                // TODO: Enable when we can load them.
+                // AchievementPool.Dispose();
+            }
+
             base.Dispose(disposing);
+        }
+
+        private void Clear()
+        {
+            foreach (var info in mGameStates)
+            {
+                info.State.Dispose();
+            }
+            
+            mGameStates.Clear();
         }
 
         public void Pop()
         {
-            if (mGameStates.Count > 0)
-            {
-                mGameStates.Pop();
-            }
+            if (mGameStates.Count <= 0)
+                return;
+
+            mGameStates.Pop().State.Dispose();
         }
 
         public void Push(AGameState newGameState)
@@ -76,7 +95,7 @@ namespace KernelPanic
         /// <param name="newGameState">The new state.</param>
         internal void Restart(AGameState newGameState)
         {
-            mGameStates.Clear();
+            Clear();
             Push(newGameState);
         }
 

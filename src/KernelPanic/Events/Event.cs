@@ -13,6 +13,7 @@ namespace KernelPanic.Events
         internal enum Id
         {
             AchievementUnlocked,
+            AchievementImpossible,
 
             LoadEmptySlot,         // TODO: Not sent yet.
 
@@ -30,11 +31,31 @@ namespace KernelPanic.Events
             GameWon,
             GameLost,
 
-            // FirefoxJump            // TODO: Not sent yet.
+            BitcoinChanged,
+
+            FirefoxJump            // TODO: Not sent yet.
         }
 
         internal enum Key
         {
+            /// <summary>
+            /// Of type <see cref="Player"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.GameWon"/></description></item>
+            /// <item><description><see cref="Id.GameLost"/></description></item>
+            /// </list>
+            /// </summary>
+            Winner,
+
+            /// <summary>
+            /// Of type <see cref="Player"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.GameWon"/></description></item>
+            /// <item><description><see cref="Id.GameLost"/></description></item>
+            /// </list>
+            /// </summary>
+            Loser,
+
             /// <summary>
             /// Of type <see cref="Player"/>, applies to
             /// <list type="bullet">
@@ -43,6 +64,7 @@ namespace KernelPanic.Events
             /// <item><description><see cref="Id.BuildingSold"/></description></item>
             /// <item><description><see cref="Id.UpgradeBought"/></description></item>
             /// <item><description><see cref="Id.BoughtUnit"/></description></item>
+            /// <item><description><see cref="Id.BitcoinChanged"/></description></item>
             /// </list>
             /// </summary>
             Buyer,
@@ -118,6 +140,7 @@ namespace KernelPanic.Events
             /// <item><description><see cref="Id.BuildingPlaced"/></description></item>
             /// <item><description><see cref="Id.BuildingImproved"/></description></item>
             /// <item><description><see cref="Id.UpgradeBought"/></description></item>
+            /// <item><description><see cref="Id.BitcoinChanged"/></description></item>
             /// </list>
             /// </summary>
             Price,
@@ -135,6 +158,7 @@ namespace KernelPanic.Events
             /// Of type <see cref="Achievement"/>, applies to
             /// <list type="bullet">
             /// <item><description><see cref="Id.AchievementUnlocked"/></description></item>
+            /// <item><description><see cref="Id.AchievementImpossible"/></description></item>
             /// </list>
             /// </summary>
             Achievement
@@ -147,8 +171,35 @@ namespace KernelPanic.Events
             Kind = id;
         }
 
-        internal static Event GameWon() => new Event(Id.GameWon);
-        internal static Event GameLost() => new Event(Id.GameLost);
+        internal static Event GameWon(Player winner, Player loser) =>
+            new Event(Id.GameWon)
+            {
+                mPayload =
+                {
+                    [Key.Winner] = winner,
+                    [Key.Loser] = loser
+                }
+            };
+
+        internal static Event GameLost(Player winner, Player loser) =>
+            new Event(Id.GameLost)
+            {
+                mPayload =
+                {
+                    [Key.Winner] = winner,
+                    [Key.Loser] = loser
+                }
+            };
+
+        internal static Event BitcoinChanged(Player player) =>
+            new Event(Id.BitcoinChanged)
+            {
+                mPayload =
+                {
+                    [Key.Buyer] = player,
+                    [Key.Price] = player.Bitcoins
+                }
+            };
 
         internal static Event BuildingPlaced(Player buyer, Building building) =>
             new Event(Id.BuildingPlaced)
@@ -232,6 +283,15 @@ namespace KernelPanic.Events
 
         internal static Event AchievementUnlocked(Achievement achievement) =>
             new Event(Id.AchievementUnlocked)
+            {
+                mPayload =
+                {
+                    [Key.Achievement] = achievement
+                }
+            };
+
+        internal static Event AchievementImpossible(Achievement achievement) =>
+            new Event(Id.AchievementImpossible)
             {
                 mPayload =
                 {

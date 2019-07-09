@@ -79,6 +79,28 @@ namespace KernelPanic.Serialization
             using (var file = File.CreateText(StatisticsPath))
                 CreateSerializer().Serialize(file, data);
         }
+        
+        internal static AchievementPool.Data? LoadAchievements()
+        {
+            try
+            {
+                using (var file = File.OpenText(AchievementsPath))
+                    return (AchievementPool.Data) CreateSerializer().Deserialize(file, typeof(AchievementPool.Data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to load achievements: " + e.Message);
+                return null;
+            }
+        }
+
+        internal static void SaveAchievements(AchievementPool.Data data)
+        {
+            Directory.CreateDirectory(sFolder);
+
+            using (var file = File.CreateText(AchievementsPath))
+                CreateSerializer().Serialize(file, data);
+        }
 
         #endregion
 
@@ -139,7 +161,9 @@ namespace KernelPanic.Serialization
         {
             return new JsonSerializer
             {
-                Formatting = Formatting.Indented
+                TypeNameHandling = TypeNameHandling.Auto,
+                Formatting = Formatting.Indented,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
             };
         }
 
@@ -149,7 +173,8 @@ namespace KernelPanic.Serialization
 
         private static string StatisticsPath => Path.Combine(SFolder, "statistics.json");
 
-        #endregion
+        private static string AchievementsPath => Path.Combine(sFolder, "achievements.json");
 
+        #endregion
     }
 }

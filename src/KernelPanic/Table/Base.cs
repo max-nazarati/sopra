@@ -14,7 +14,7 @@ namespace KernelPanic.Table
 
         public Base(Point position)
         {
-            Power = 50;
+            Power = 1;
             Position = position;
         }
 
