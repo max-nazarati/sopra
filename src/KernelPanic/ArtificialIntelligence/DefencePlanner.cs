@@ -15,11 +15,14 @@ namespace KernelPanic.ArtificialIntelligence
         private DecisionTreeClassifier mDefenseDecisionMaker;
         private int mBuildX;
         private int mBuildY;
+        private int mBoundX = 18;
+        private bool mBuildForward;
 
         public DefencePlanner(Player player, SpriteManager spriteManager, SoundManager soundManager) : base(player)
         {
             mBuildX = 9;
             mBuildY = 9;
+            mBuildForward = true;
             mDefenseDecisionMaker = new DecisionTreeClassifier();
             mDefenseDecisionMaker.ReaderCsv("sopra_defense_train.csv");
             mDefenseDecisionMaker.TrainModel();
@@ -47,49 +50,49 @@ namespace KernelPanic.ArtificialIntelligence
             switch (choice)
             {
                 case "Kabel":
-                    if (mBuildX < 18 && mBuildY < 18)
+                    if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<Cable>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
                     break;
                 case "Mauszeigerschütze":
-                    if (mBuildX < 15 && mBuildY < 18)
+                    if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<CursorShooter>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
                     break;
                 case "CD-Werfer":
-                    if (mBuildX < 18 && mBuildY < 18)
+                    if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<CdThrower>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
                     break;
                 case "Antivirusprogramm":
-                    if (mBuildX < 18 && mBuildY < 18)
+                    if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<Antivirus>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
                     break;
                 case "Lüftung":
-                    if (mBuildX < 18 && mBuildY < 18)
+                    if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<Ventilator>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
                     break;
                 case "Wifi-Router":
-                    if (mBuildX < 18 && mBuildY < 18)
+                    if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<WifiRouter>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
                     break;
                 case "Schockfeld":
-                    if (mBuildX < 18 && mBuildY < 18)
+                    if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<ShockField>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
@@ -136,11 +139,12 @@ namespace KernelPanic.ArtificialIntelligence
 
         private void UpdateBuildPosition()
         {
-            if (mBuildY < 17) mBuildY += 1;
+            if (mBuildX < 17 && mBuildForward) mBuildX += 1;
+            else if (mBuildX > 8 && !mBuildForward) mBuildX -= 1;
             else
             {
-                if (mBuildX < 17) mBuildX += 1;
-                mBuildY = 9;
+                mBuildForward = mBuildForward ? false : true;
+                mBuildY += 2;
             }
         }
     }
