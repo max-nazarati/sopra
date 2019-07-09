@@ -39,17 +39,22 @@ namespace KernelPanic.Tracking
             eventCenter.Subscribe(Event.Id.GameWon, e => mData.NumberOfWins++);
             eventCenter.Subscribe(Event.Id.GameLost, e => mData.NumberOfLoses++);
 
-            eventCenter.Subscribe(Event.Id.DamagedUnit, isDefender,
-                e => mData.DamageDealt += (ulong) e.Get<int>(Event.Key.Damage));
-            eventCenter.Subscribe(Event.Id.KilledUnit, isDefender,
-                e => mData.NumberOfKilledUnits++);
+            eventCenter.Subscribe(Event.Id.DamagedUnit,
+                e => mData.DamageDealt += (ulong) e.Get<int>(Event.Key.Damage),
+                isDefender);
+            eventCenter.Subscribe(Event.Id.KilledUnit,
+                e => mData.NumberOfKilledUnits++,
+                isDefender);
 
-            eventCenter.Subscribe(Event.Id.BoughtUnit, isBuyer,
-                e => mData.AttackInvestments += (ulong) e.Get<int>(Event.Key.Price));
-            eventCenter.Subscribe(new[] {Event.Id.BuildingPlaced, Event.Id.BuildingImproved}, isBuyer,
-                e => mData.DefenceInvestments += (ulong) e.Get<int>(Event.Key.Price));
-            eventCenter.Subscribe(Event.Id.UpgradeBought, isBuyer,
-                e => mData.UpgradeInvestments += (ulong) e.Get<int>(Event.Key.Price));
+            eventCenter.Subscribe(Event.Id.BoughtUnit,
+                e => mData.AttackInvestments += (ulong) e.Get<int>(Event.Key.Price),
+                isBuyer);
+            eventCenter.Subscribe(new[] {Event.Id.BuildingPlaced, Event.Id.BuildingImproved},
+                e => mData.DefenceInvestments += (ulong) e.Get<int>(Event.Key.Price),
+                isBuyer);
+            eventCenter.Subscribe(Event.Id.UpgradeBought,
+                e => mData.UpgradeInvestments += (ulong) e.Get<int>(Event.Key.Price),
+                isBuyer);
         }
 
         private static Func<Event, bool> IsActive(Event.Key key)

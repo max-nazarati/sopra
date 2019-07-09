@@ -33,7 +33,7 @@ namespace KernelPanic.Events
 
             BitcoinChanged,
 
-            FirefoxJump            // TODO: Not sent yet.
+            // FirefoxJump            // TODO: Not sent yet.
         }
 
         internal enum Key

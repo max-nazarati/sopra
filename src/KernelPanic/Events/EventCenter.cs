@@ -92,27 +92,18 @@ namespace KernelPanic.Events
             return bag.Add(handler);
         }
 
-        internal IDisposable Subscribe(Event.Id id, Func<Event, bool> condition, Action<Event> handler)
+        internal IDisposable Subscribe(Event.Id id, Action<Event> handler, Func<Event, bool> condition)
         {
             return Subscribe(id, GuardHandler(condition, handler));
         }
 
-        /// <summary>
-        /// Subscribes to the events with an id in <paramref name="ids"/>. Every time such an event occurs,
-        /// <paramref name="handler"/> is invoked.
-        /// </summary>
-        /// <param name="ids">A list of <see cref="Event.Id"/> of the events to be notified of.</param>
-        /// <param name="handler">The function to invoke when such an event occurs.</param>
-        /// <returns>An <see cref="IDisposable"/> which unsubscribes <paramref name="handler"/> from the event stream.</returns>
-        internal IDisposable Subscribe(IEnumerable<Event.Id> ids, Action<Event> handler)
-        {
-            return ids.Aggregate(new CompositeDisposable(), (current, id) => current + Subscribe(id, handler));
-        }
-
-        internal IDisposable Subscribe(IEnumerable<Event.Id> ids, Func<Event, bool> condition, Action<Event> handler)
+        internal void Subscribe(IEnumerable<Event.Id> ids, Action<Event> handler, Func<Event, bool> condition = null)
         {
             var realHandler = GuardHandler(condition, handler);
-            return Subscribe(ids, realHandler);
+            foreach (var id in ids)
+            {
+                Subscribe(id, realHandler);
+            }
         }
 
         /// <summary>

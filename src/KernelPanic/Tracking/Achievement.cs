@@ -291,7 +291,7 @@ namespace KernelPanic.Tracking
         {
             Progress = progress;
             EventId = eventId;
-            mDisposable = EventCenter.Default.Subscribe(eventId, condition, Handle);
+            mDisposable = EventCenter.Default.Subscribe(eventId, Handle, condition);
         }
 
         protected override void Dispose(bool disposing)
