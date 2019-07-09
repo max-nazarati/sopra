@@ -16,16 +16,8 @@ namespace KernelPanic.Entities.Units
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
             var currentTile = positionProvider.RequireTile(this);
-            var movementDirection = positionProvider.MovementVectorThunderbird(currentTile.ToPoint());
-            if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
-            {
-                movementDirection = mLastMovement;
-            }
-            else
-            {
-                mLastMovement = movementDirection;
-            }
-            MoveTarget = Sprite.Position + Speed * movementDirection;
+            var movement = positionProvider.RelativeMovementThunderbird(currentTile.ToPoint());
+            MoveTarget = Sprite.Position + movement;
         }
     }
 }

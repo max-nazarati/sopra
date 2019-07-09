@@ -5,14 +5,15 @@ namespace KernelPanic.Data
 {
     internal enum RelativePosition
     {
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight,
-        CenterLeft,
+        // Important: This ordering shouldn't be changed because HeatMap.RoundToOctant relies on it!
         CenterRight,
-        CenterTop,
+        BottomRight,
         CenterBottom,
+        BottomLeft,
+        CenterLeft,
+        TopLeft,
+        CenterTop,
+        TopRight,
         Center
     }
     

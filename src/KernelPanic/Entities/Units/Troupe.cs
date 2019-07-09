@@ -26,19 +26,12 @@ namespace KernelPanic.Entities.Units
 
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            var currentTile = positionProvider.RequireTile(this);
-            var movementDirection = positionProvider.MovementVector(currentTile.ToPoint());
-            // var shift = positionProvider.MovememtShift(currentTile.ToPoint());
-            if (movementDirection.X is float.NaN || movementDirection.Y is float.NaN)
-            {
-                movementDirection = mLastMovement;
-            }
-            else
-            {
-                mLastMovement = movementDirection;
-            }
+            if (MoveTarget != null)
+                return;
 
-            MoveTarget = Sprite.Position + Speed * movementDirection;// + shift;
+            var currentTile = positionProvider.RequireTile(this);
+            var movement = positionProvider.RelativeMovement(currentTile.ToPoint());
+            MoveTarget = Sprite.Position + movement;
         }
         
         internal new Troupe Clone() => Clone<Troupe>();
