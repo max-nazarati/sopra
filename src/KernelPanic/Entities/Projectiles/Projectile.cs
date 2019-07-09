@@ -73,7 +73,7 @@ namespace KernelPanic.Entities.Projectiles
 
         internal void Hit(Unit unit, PositionProvider positionProvider)
         {
-            if (!unit.WantsRemoval || mHitUnits.Add(unit))
+            if (!unit.WantsRemoval && mHitUnits.Add(unit))
             {
                 // The unit is still alive and wasn't hit before by this projectile.
                 HandleHit(unit, positionProvider.Owner);
