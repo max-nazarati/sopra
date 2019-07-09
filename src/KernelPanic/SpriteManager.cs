@@ -17,6 +17,7 @@ namespace KernelPanic
         private enum Image
         {
             MenuBackground,
+            MenuWithoutText,
             ButtonBackground,
             LaneTile,
             LaneBorder,
@@ -70,6 +71,7 @@ namespace KernelPanic
             mTextures = new[]
             {
                 Texture(Image.MenuBackground, "Base"),
+                Texture(Image.MenuWithoutText, "menu"),
                 Texture(Image.ButtonBackground, "button"),
                 Texture(Image.LaneTile, "LaneTile"),
                 Texture(Image.LaneBorder, "LaneTileBorder"),
@@ -142,6 +144,13 @@ namespace KernelPanic
         {
             var texture = Lookup(Image.MenuBackground);
             var sprite = new ImageSprite(texture) {DestinationRectangle = new Rectangle(Point.Zero, ScreenSize)};
+            return sprite;
+        }
+
+        internal Sprite CreateMenuBackgroundWithoutText()
+        {
+            var texture = Lookup(Image.MenuWithoutText);
+            var sprite = new ImageSprite(texture) { DestinationRectangle = new Rectangle(Point.Zero, ScreenSize) };
             return sprite;
         }
 

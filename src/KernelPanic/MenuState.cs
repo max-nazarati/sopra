@@ -349,7 +349,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     mainMenuButton,
                     new StaticComponent(text)
                 }
@@ -390,6 +390,11 @@ namespace KernelPanic
         private static StaticComponent CreateBackground(SpriteManager sprites)
         {
             return new StaticComponent(sprites.CreateMenuBackground());
+        }
+
+        private static StaticComponent CreateBackgroundWithoutText(SpriteManager sprites)
+        {
+            return new StaticComponent(sprites.CreateMenuBackgroundWithoutText());
         }
 
         private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
