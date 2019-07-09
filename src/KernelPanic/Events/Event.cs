@@ -31,7 +31,7 @@ namespace KernelPanic.Events
             GameWon,
             GameLost,
 
-            BitcoinChanged,
+            BitcoinChanged
 
             // FirefoxJump            // TODO: Not sent yet.
         }

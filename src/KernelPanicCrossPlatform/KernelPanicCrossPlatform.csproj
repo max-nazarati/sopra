@@ -387,6 +387,12 @@
     <Compile Include="..\KernelPanic\Tracking\Achievement.cs">
       <Link>Tracking\Achievement.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Tracking\AchievementPool.cs">
+      <Link>Tracking\AchievementPool.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Tracking\AchievementProgress.cs">
+      <Link>Tracking\AchievementProgress.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Tracking\Statistics.cs">
       <Link>Tracking\Statistics.cs</Link>
     </Compile>
