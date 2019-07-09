@@ -33,6 +33,7 @@ namespace KernelPanic.Hud
         private readonly Color mColorLaneA = Color.SlateGray;
         private readonly Color mColorLaneB = Color.SlateGray;
         private readonly Color mColorSelected = Color.Coral;
+        private readonly Color mScreenBorder = Color.White;
         
         #endregion
         
@@ -70,6 +71,9 @@ namespace KernelPanic.Hud
 
         /// <summary>
         /// returns the index for data, which needs to be set for a world position
+        /// since there are e.g. 15x15 world pixel for the same minimap pixel
+        /// CalculateMapIndexPosition( (0, 1) ) and CalculateMapIndexPosition( (0, 2) ) will return the same MiniM.
+        /// Data Index
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
@@ -160,6 +164,16 @@ namespace KernelPanic.Hud
             
             SetEntityColor(mPlayers.A.DefendingLane);
             SetEntityColor(mPlayers.B.DefendingLane);
+            SetScreenColor();
+        }
+
+        private void SetScreenColor()
+        {
+            mData[0] = mScreenBorder;
+            mData[1 * mSize] = mScreenBorder;
+            mData[2 * mSize] = mScreenBorder;
+            SetPixelSquare(3 * mSize + 10, Color.Cornsilk);
+
         }
 
         private Color LaneColor(int i)
@@ -200,7 +214,7 @@ namespace KernelPanic.Hud
                 {
                     color = mColorPlayerA;
                 }
-                else if (entity is Tower)
+                else if (entity is Building)
                 {
                     color = mColorPlayerB;
                 }
