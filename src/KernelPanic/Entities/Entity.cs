@@ -55,7 +55,7 @@ namespace KernelPanic.Entities
         /// </example>
         /// <typeparam name="T">Should be the type of <c>this</c>.</typeparam>
         /// <returns>A copy of the object.</returns>
-        protected internal T Clone<T>() where T: Entity
+        protected T Clone<T>() where T: Entity
         {
             var copy = (T) MemberwiseClone();
             copy.CompleteClone();
