@@ -8,10 +8,9 @@ namespace KernelPanic.Data
     {
         internal HeatMap HeatMap { get; }
 
-        private readonly Vector2[,] mVectorField;
-        private readonly RelativePosition?[,] mRelativeField;
-        private int Height => mVectorField.GetLength(0);
-        private int Width => mVectorField.GetLength(1);
+        private readonly RelativePosition[,] mRelativeField;
+        private int Height => mRelativeField.GetLength(0);
+        private int Width => mRelativeField.GetLength(1);
 
         /// <summary>
         /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
@@ -37,121 +36,43 @@ namespace KernelPanic.Data
         internal VectorField(HeatMap heatMap)
         {
             HeatMap = heatMap;
-            mVectorField = new Vector2[heatMap.Height, heatMap.Width];
-            mRelativeField = new RelativePosition?[heatMap.Height, heatMap.Width];
+            mRelativeField = new RelativePosition[heatMap.Height, heatMap.Width];
             for (var row = 0; row < heatMap.Height; ++row)
             {
                 for (var col = 0; col < heatMap.Width; ++col)
                 {
-                    var direction = heatMap.Gradient(new Point(col, row));
-                    mVectorField[row, col] = direction;
-                    AddRelativePosition(ref mRelativeField, new Point(col, row), direction);
-
+                    mRelativeField[row, col] = heatMap.Gradient(new Point(col, row));
                 }
             }
         }
 
-        private void AddRelativePosition(ref RelativePosition?[,] arr, Point point, Vector2 direction)
+        private VectorField(RelativePosition[,] vectorField)
         {
-            if (direction.X is float.NaN || direction.Y is float.NaN)
-            {
-                arr[point.Y, point.X] = null;
-            }
-            else if (direction.X == 0 && direction.Y > 0)
-            {
-                arr[point.Y, point.X] = RelativePosition.CenterBottom;
-            }
-            else if (direction.X > 0 && direction.Y > 0)
-            {
-                arr[point.Y, point.X] = RelativePosition.BottomRight;
-            }
-            else if (direction.X > 0 && direction.Y == 0)
-            {
-                arr[point.Y, point.X] = RelativePosition.CenterRight;
-            }
-            else if (direction.X > 0 && direction.Y < 0)
-            {
-                arr[point.Y, point.X] = RelativePosition.TopRight;
-            }
-            else if (direction.X == 0 && direction.Y < 0)
-            {
-                arr[point.Y, point.X] = RelativePosition.CenterTop;
-            }
-            else if (direction.X < 0 && direction.Y > 0)
-            {
-                arr[point.Y, point.X] = RelativePosition.BottomLeft;
-            }
-            else if (direction.X < 0 && direction.Y == 0)
-            {
-                arr[point.Y, point.X] = RelativePosition.CenterLeft;
-            }
-            else if (direction.X < 0 && direction.Y < 0)
-            {
-                arr[point.Y, point.X] = RelativePosition.TopLeft;
-            }
+            mRelativeField = vectorField;
         }
 
-        /*
-        internal Vector2 GetRelativeShift(Point point)
+        internal void Update(HeatMap heatMap)
         {
-            float width = 100;
-            float height = 100;
-            var pos = mRelativeField[point.Y, point.X];
-
-            if (pos == RelativePosition.CenterTop)
+            for (var row = 0; row < heatMap.Height; ++row)
             {
-                return new Vector2(0, -height); 
+                for (var col = 0; col < heatMap.Width; ++col)
+                {
+                    var relative = heatMap.Gradient(new Point(col, row));
+                    if (relative != RelativePosition.Center)
+                        mRelativeField[row, col] = relative;
+                }
             }
-
-            else if (pos == RelativePosition.CenterRight)
-            {
-                return new Vector2(width, 0);
-            }
-
-            else if (pos == RelativePosition.CenterBottom)
-            {
-                return new Vector2(0, height);
-            }
-            else if (pos == RelativePosition.CenterLeft)
-            {
-               return new Vector2(-width, 0);
-            }
-            else if (pos == RelativePosition.BottomLeft)
-            {
-                return new Vector2(-width, height / 2);
-            }
-            else if (pos == RelativePosition.BottomRight)
-            {
-                return new Vector2(width, height / 2);
-            }
-            else if (pos == RelativePosition.TopLeft)
-            {
-                return new Vector2(-width, -height / 2);
-            }
-            else if (pos == RelativePosition.TopRight)
-            {
-                return new Vector2(width, height / 2);
-            }
-            else
-            {
-                return Vector2.Zero;
-            }
-        } */
-
-        private VectorField(Vector2[,] vectorField)
-        {
-            mVectorField = vectorField;
         }
         
         internal static VectorField GetVectorFieldThunderbird(VectorField vectorField, Lane.Side laneSide)
         {
-            var left = new Vector2(-1, 0);
-            var right = new Vector2(1, 0);
-            var up = new Vector2(0, -1);
-            var down = new Vector2(0, 1);
+            const RelativePosition left = RelativePosition.CenterLeft;
+            const RelativePosition right = RelativePosition.CenterRight;
+            const RelativePosition up = RelativePosition.CenterTop;
+            const RelativePosition down = RelativePosition.CenterBottom;
+            const int laneWidth = Grid.LaneWidthInTiles;
+            var thunderBirdField = new RelativePosition[vectorField.Height, vectorField.Width];
 
-            var laneWidth = 10;
-            var thunderBirdField = new Vector2[vectorField.Height, vectorField.Width];
             for (var row = 0; row < vectorField.Height; ++row)
             {
                 for (var col = 0; col < vectorField.Width; ++col)
@@ -211,27 +132,13 @@ namespace KernelPanic.Data
             var res = new VectorField(thunderBirdField);
             return res;
         }
-        
-        /*
-        public Vector2 RelativeShift(Point point)
-        {
-            return GetRelativeShift(point);
-        } */
 
-        public Vector2 this[Point point]
-        {
-            get
-            {
-                if (point.X >= Width || point.Y >= Height) return new Vector2(float.NaN);
-                if (point.X < 0 || point.Y < 0) return new Vector2(float.NaN);
-                return mVectorField[point.Y, point.X];
-            }
-        }
+        public RelativePosition this[Point point] => mRelativeField[point.Y, point.X];
 
         internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
         {
             var visualizer = new ArrowVisualizer(grid, spriteManager);
-            visualizer.Append(mVectorField);
+            visualizer.Append(mRelativeField);
             return visualizer;
         }
     }

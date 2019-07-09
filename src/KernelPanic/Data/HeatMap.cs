@@ -59,10 +59,10 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="point">(x, y) point of the gradient to be computed</param>
         /// <returns></returns>
-        internal Vector2 Gradient(Point point)
+        internal RelativePosition Gradient(Point point)
         {
             if (!(this[point] is float heatHere) || heatHere < 0)
-                return new Vector2(float.NaN);
+                return RelativePosition.Center;
 
             float LookupHeat(int xOffset, int yOffset)
             {
@@ -77,8 +77,7 @@ namespace KernelPanic.Data
 
             var gradient = new Vector2(heatLeft - heatRight, heatUp - heatDown);
             AdjustGradientToWalls(point, ref gradient);
-            RoundToOctant(ref gradient);
-            return gradient;
+            return RoundToOctant2(gradient);
         }
 
         /// <summary>
@@ -141,29 +140,27 @@ namespace KernelPanic.Data
         /// Modifies <paramref name="gradient"/> so that it points at an angle which is a multiple of 45° (π/4).
         /// </summary>
         /// <param name="gradient">The gradient to adjust.</param>
-        private static void RoundToOctant(ref Vector2 gradient)
+        private static RelativePosition RoundToOctant2(Vector2 gradient)
         {
             const float octant = (float) (2 * Math.PI / 8);
-            var index = 0;
+            var index = RelativePosition.CenterRight;
             var angle = gradient.Angle();
 
             if (angle < 0)
                 angle += 2 * (float) Math.PI;
 
             angle -= octant / 2;
-            if (angle > 0)
+            if (!(angle > 0))
+                return index;
+
+            ++index;
+            while (angle > octant)
             {
-                ++index;
-                while (angle > octant)
-                {
-                    angle -= octant;
-                    index++;
-                }
+                angle -= octant;
+                index++;
             }
 
-            angle = index * octant;
-            gradient.X = (float) Math.Cos(angle);
-            gradient.Y = (float) Math.Sin(angle);
+            return index;
         }
 
         internal void Block(Point point) => this[point] = -1;

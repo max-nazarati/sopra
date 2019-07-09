@@ -92,20 +92,16 @@ namespace KernelPanic
 
         #region Path Finding
 
-        public Vector2 MovementVector(Point point)
+        public Vector2 RelativeMovement(Point point)
         {
-            return mVectorField[point];
+            var rectangle = new Rectangle(new Point(-Grid.KachelSize), new Point(Grid.KachelSize * 2));
+            return rectangle.At(mVectorField[point]);
         }
 
-        /*
-        public Vector2 MovememtShift(Point point)
+        public Vector2 RelativeMovementThunderbird(Point point)
         {
-            return mVectorField.GetRelativeShift(point);
-        } */
-
-        public Vector2 MovementVectorThunderbird(Point point)
-        {
-            return mVectorFieldThunderbird[point];
+            var rectangle = new Rectangle(new Point(-Grid.KachelSize), new Point(Grid.KachelSize * 2));
+            return rectangle.At(mVectorFieldThunderbird[point]);
         }
 
         internal int? TileHeat(Point point)
