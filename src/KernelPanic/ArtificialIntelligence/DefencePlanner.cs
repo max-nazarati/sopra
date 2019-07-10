@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Players;
@@ -11,11 +10,10 @@ namespace KernelPanic.ArtificialIntelligence
     {
         private readonly SpriteManager mSpriteManager;
         private readonly SoundManager mSoundManager;
-        private bool mFirstTime = true;
-        private DecisionTreeClassifier mDefenseDecisionMaker;
+        private readonly DecisionTreeClassifier mDefenseDecisionMaker;
         private int mBuildX;
         private int mBuildY;
-        private int mBoundX = 18;
+        private readonly int mBoundX = 18;
         private bool mBuildForward;
 
         public DefencePlanner(Player player, SpriteManager spriteManager, SoundManager soundManager) : base(player)
@@ -39,8 +37,8 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData, GameTime gameTime)
         {
             base.Update();
-            int choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => x));
-            string choice = mDefenseDecisionMaker.Revert(choiceEncoded);
+            var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => x));
+            var choice = mDefenseDecisionMaker.Revert(choiceEncoded);
             BuySingleTower(choice);
         }
 
@@ -55,13 +53,15 @@ namespace KernelPanic.ArtificialIntelligence
                         BuyBuilding<Cable>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
+
                     break;
-                case "Mauszeigerschütze":
+                case "MauszeigerschÃ¼tze":
                     if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<CursorShooter>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
+
                     break;
                 case "CD-Werfer":
                     if (mBuildX < mBoundX && mBuildY < 18)
@@ -69,6 +69,7 @@ namespace KernelPanic.ArtificialIntelligence
                         BuyBuilding<CdThrower>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
+
                     break;
                 case "Antivirusprogramm":
                     if (mBuildX < mBoundX && mBuildY < 18)
@@ -76,13 +77,15 @@ namespace KernelPanic.ArtificialIntelligence
                         BuyBuilding<Antivirus>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
+
                     break;
-                case "Lüftung":
+                case "LÃ¼ftung":
                     if (mBuildX < mBoundX && mBuildY < 18)
                     {
                         BuyBuilding<Ventilator>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
+
                     break;
                 case "Wifi-Router":
                     if (mBuildX < mBoundX && mBuildY < 18)
@@ -90,6 +93,7 @@ namespace KernelPanic.ArtificialIntelligence
                         BuyBuilding<WifiRouter>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
+
                     break;
                 case "Schockfeld":
                     if (mBuildX < mBoundX && mBuildY < 18)
@@ -97,44 +101,9 @@ namespace KernelPanic.ArtificialIntelligence
                         BuyBuilding<ShockField>(new Point(mBuildX, mBuildY));
                         UpdateBuildPosition();
                     }
+
                     break;
-                default: break;
             }
-            // 2nd wall
-            /*
-            BuyBuilding<CdThrower>(new Point(9, 29));
-            BuyBuilding<CdThrower>(new Point(10, 29));
-            BuyBuilding<CdThrower>(new Point(11, 29));
-            BuyBuilding<CdThrower>(new Point(12, 29));
-            BuyBuilding<CdThrower>(new Point(13, 29));
-            BuyBuilding<CdThrower>(new Point(14, 29));
-            BuyBuilding<CdThrower>(new Point(15, 29));
-            BuyBuilding<CdThrower>(new Point(16, 29));
-            BuyBuilding<CdThrower>(new Point(17, 29));
-            */
-            // first wall
-            /*
-            BuyBuilding<CdThrower>(new Point(8, 31));
-            BuyBuilding<CdThrower>(new Point(9, 31));
-            BuyBuilding<CdThrower>(new Point(10, 31));
-            BuyBuilding<CdThrower>(new Point(11, 31));
-            BuyBuilding<CdThrower>(new Point(12, 31));
-            BuyBuilding<CdThrower>(new Point(13, 31));
-            BuyBuilding<CdThrower>(new Point(14, 31));
-            BuyBuilding<CdThrower>(new Point(15, 31));
-            BuyBuilding<CdThrower>(new Point(16, 31));
-            */
-            // anti aircraft defence
-            /*
-            BuyBuilding<CdThrower>(new Point(7, 37));
-            BuyBuilding<CdThrower>(new Point(8, 37));
-            BuyBuilding<CdThrower>(new Point(9, 37));
-            BuyBuilding<CdThrower>(new Point(10, 37));
-            BuyBuilding<CdThrower>(new Point(11, 37));
-            BuyBuilding<CdThrower>(new Point(12, 37));
-            BuyBuilding<CdThrower>(new Point(13, 37));
-            */
-            // mFirstTime = false;
         }
 
         private void UpdateBuildPosition()
@@ -143,7 +112,7 @@ namespace KernelPanic.ArtificialIntelligence
             else if (mBuildX > 8 && !mBuildForward) mBuildX -= 1;
             else
             {
-                mBuildForward = mBuildForward ? false : true;
+                mBuildForward = !mBuildForward;
                 mBuildY += 2;
             }
         }
