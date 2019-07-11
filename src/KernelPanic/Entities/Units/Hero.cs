@@ -336,6 +336,10 @@ namespace KernelPanic.Entities.Units
         {
             DrawAStarPath(spriteBatch, gameTime);
             base.Draw(spriteBatch, gameTime);
+            if (!Selected)
+            {
+                return;
+            }
             DrawAbility(spriteBatch, gameTime);
         }
 

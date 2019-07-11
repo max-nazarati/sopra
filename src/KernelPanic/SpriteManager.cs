@@ -524,6 +524,15 @@ namespace KernelPanic
             return sprite;
         }
         
+        public ImageSprite CreateTroupeMarker(int gridRadius = Grid.KachelSize / 2)
+        {
+            if (Math.Abs(gridRadius) < 0.00001)
+                return null;
+            var sprite = new ImageSprite(CreateCircleTexture(gridRadius, Color.LightGreen));
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
+        }
+        
         internal ImageSprite CreateHealIndicator(float radius)
         {
             if (Math.Abs(radius) < 0.00001)
@@ -580,5 +589,6 @@ namespace KernelPanic
             text.SizeChanged += s => s.Origin = new Vector2(s.Width / 2, s.Height / 2);
             return text;
         }
+        
     }
 }
