@@ -31,6 +31,7 @@ namespace KernelPanic.Entities
             Sprite.SetOrigin(RelativePosition.Center);
             mInfoText = spriteManager.CreateText($"Preis: {price}");
             mInfoText.SetOrigin(RelativePosition.CenterRight);
+            mInfoText.TextColor = Color.White;
             SpriteManager = spriteManager;
         }
 
