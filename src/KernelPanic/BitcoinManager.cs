@@ -3,6 +3,7 @@
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using KernelPanic.Events;
 
 namespace KernelPanic
 {
@@ -22,8 +23,8 @@ namespace KernelPanic
         {
             var oneSecond = new TimeSpan(0, 0, 1);
             return new PlayerIndexed<CooldownComponent>(
-                new CooldownComponent(oneSecond), 
-                new CooldownComponent(oneSecond)
+                new CooldownComponent(oneSecond, false),
+                new CooldownComponent(oneSecond, false)
             );
         }
 
@@ -35,6 +36,12 @@ namespace KernelPanic
 
             Subscribe(players.A);
             Subscribe(players.B);
+
+            EventCenter.Default.Subscribe(Event.Id.SetupEnded, @event =>
+            {
+                mCooldown.A.Reset();
+                mCooldown.B.Reset();
+            });
         }
 
         private void Subscribe(Player player)

@@ -116,7 +116,10 @@ namespace KernelPanic.Waves
                 // Decrease the time till the first wave.
                 mTimeTillFirstWave -= gameTime.ElapsedGameTime;
                 if (mTimeTillFirstWave <= TimeSpan.Zero)
+                {
                     Activate();
+                    EventCenter.Default.Send(Event.SetupEnded());
+                }
             }
         }
     }

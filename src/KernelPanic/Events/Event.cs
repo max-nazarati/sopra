@@ -31,7 +31,9 @@ namespace KernelPanic.Events
             GameWon,
             GameLost,
 
-            BitcoinChanged
+            BitcoinChanged,
+
+            SetupEnded
 
             // FirefoxJump            // TODO: Not sent yet.
         }
@@ -298,6 +300,9 @@ namespace KernelPanic.Events
                     [Key.Achievement] = achievement
                 }
             };
+
+        internal static Event SetupEnded() =>
+            new Event(Id.SetupEnded);
 
         #endregion
 
