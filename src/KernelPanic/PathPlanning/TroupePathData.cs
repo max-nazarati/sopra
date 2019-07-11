@@ -56,13 +56,12 @@ namespace KernelPanic.PathPlanning
             mGrid = grid;
 
             BuildingMatrix = new ObstacleMatrix(grid);
-            var smallUnitMatrix = BuildingMatrix.AddScaledChildMatrix(2);
 
             if (initialBuildings != null)
                 BuildingMatrix.Raster(initialBuildings);
 
             mHeatMap = new HeatMap(BuildingMatrix);
-            var smallHeatMap = new HeatMap(smallUnitMatrix);
+            var smallHeatMap = new HeatMap(BuildingMatrix);
 
             mVectorField = new VectorField(mHeatMap);
             mSmallVectorField = new VectorField(smallHeatMap);
@@ -71,7 +70,7 @@ namespace KernelPanic.PathPlanning
 
         internal Vector2 RelativeMovement(Troupe troupe)
         {
-            var maybeTile = mGrid.TileFromWorldPoint(troupe.Sprite.Position, troupe.IsSmall ? 2 : 1);
+            var maybeTile = mGrid.TileFromWorldPoint(troupe.Sprite.Position);
             if (!(maybeTile is TileIndex tile))
                 return Vector2.Zero;
 
@@ -109,9 +108,8 @@ namespace KernelPanic.PathPlanning
             var hadLargeUnits = mLargeUnits.Count > 0;
             var largeUnits = entityGraph.Entities<Troupe>()
                 .Where(troupe => !troupe.IsSmall)
-                .SelectMany(troupe => new []{troupe.Sprite.Position, troupe.MoveTarget})
-                .SelectMaybe(position => position is Vector2 pos ? mGrid.TileFromWorldPoint(pos) : null)
-                .SelectMany(tile => tile.Rescaled(2), (_, tile) => tile.ToPoint());
+                .SelectMany(troupe => new[] {troupe.Sprite.Position, troupe.MoveTarget})
+                .SelectMaybe(position => position is Vector2 pos ? mGrid.TileFromWorldPoint(pos)?.ToPoint() : null);
             mLargeUnits.Clear();
             mLargeUnits.AddRange(largeUnits);
             mLargeUnits.Sort(new PointComparer());
@@ -121,14 +119,9 @@ namespace KernelPanic.PathPlanning
             if (!buildingsChanged && !hadLargeUnits && mLargeUnits.Count == 0)
                 return;
 
-            BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, ScaledTarget, mLargeUnits);
+            BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, mTarget, mLargeUnits);
             mSmallVectorField.Update();
         }
-
-        private IEnumerable<Point> ScaledTarget =>
-            mTarget.SelectMany(
-                target => new TileIndex(target, 1).Rescaled(2),
-                (_, tile) => tile.ToPoint());
 
         internal void Visualize(SpriteManager spriteManager, SpriteBatch spriteBatch, GameTime gameTime)
         {
