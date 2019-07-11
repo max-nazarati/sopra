@@ -14,10 +14,11 @@ namespace KernelPanic.Entities.Units
     internal sealed class Settings : Hero
     {
         private readonly ImageSprite mIndicator;
-        private const int AbilityRange = Grid.KachelSize;
+        private const int AbilityRange = Grid.KachelSize * 5;
         private float mAbilityRangeAmplifier = 1;
         private readonly List<Troupe> mTroupesInRange;
         private const int HealValue = -2;
+        private readonly ImageSprite mTroupeMarker;
 
         // Heilt alle zwei Sekunden, Truppen im Radius von 1 Kachel um 2 LP
         internal Settings(SpriteManager spriteManager)
@@ -25,6 +26,7 @@ namespace KernelPanic.Entities.Units
         {
             mIndicator = spriteManager.CreateHealIndicator(AbilityRange * mAbilityRangeAmplifier);
             mTroupesInRange = new List<Troupe>();
+            mTroupeMarker = spriteManager.CreateTroupeMarker();
         }
         
         protected override void CompleteClone()
@@ -133,7 +135,8 @@ namespace KernelPanic.Entities.Units
             {
                 foreach (var troupe in mTroupesInRange)
                 {
-                    // Console.WriteLine(troupe);
+                    mTroupeMarker.Position = troupe.Sprite.Position;
+                    mTroupeMarker.Draw(spriteBatch, gameTime);
                 }
             }
         }
