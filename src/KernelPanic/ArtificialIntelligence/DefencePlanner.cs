@@ -39,7 +39,7 @@ namespace KernelPanic.ArtificialIntelligence
             base.Update();
             var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => x));
             var choice = mDefenseDecisionMaker.Revert(choiceEncoded);
-            //BuySingleTower(choice);
+            BuySingleTower(choice);
         }
 
         private void BuySingleTower(string choice)
