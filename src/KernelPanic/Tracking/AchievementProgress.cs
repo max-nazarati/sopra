@@ -151,18 +151,12 @@ namespace KernelPanic.Tracking
 
         private static bool IsActiveBuyer(Event @event)
         {
-            return IsActivePlayer(@event, Event.Key.Buyer);
-        }
-
-        private static bool IsActivePlayer(Event @event, Event.Key key)
-        {
-            return @event.Get<Player>(key).Select(true, false);
+            return @event.IsActivePlayer(Event.Key.Buyer);
         }
 
         private static bool IsEnemyBug(Event @event)
         {
-            var unit = @event.Get<Unit>(Event.Key.Unit);
-            return IsActivePlayer(@event, Event.Key.Defender) && unit is Bug;
+            return @event.IsActivePlayer(Event.Key.Defender) && @event.Get<Unit>(Event.Key.Unit) is Bug;
         }
 
         #endregion

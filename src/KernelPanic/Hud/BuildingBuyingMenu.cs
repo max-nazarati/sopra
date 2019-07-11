@@ -28,10 +28,15 @@ namespace KernelPanic.Hud
             internal Element(Building building, SpriteManager spriteManager)
             {
                 Building = building;
+                const int buttonSize = 70;
+                const int iconSize = 64;
+                const int border = (buttonSize - iconSize) / 2;
                 var sprite = building.Sprite.Clone();
                 sprite.SetOrigin(RelativePosition.TopLeft);
-                sprite.ScaleToWidth(64); // for some reason cable has a size of 100x100
-                Button = new ImageButton(spriteManager, (ImageSprite)sprite, 70, 70);
+                sprite.X -= border;
+                sprite.Y -= border;
+                sprite.ScaleToWidth(iconSize); // for some reason cable has a size of 100x100
+                Button = new ImageButton(spriteManager, (ImageSprite)sprite, buttonSize, buttonSize);
             }
 
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
