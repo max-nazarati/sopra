@@ -21,11 +21,6 @@ namespace KernelPanic.PathPlanning
         /// <see cref="mVectorField"/>.
         /// </summary>
         private readonly HeatMap mHeatMap;
-        
-        /// <summary>
-        /// The <see cref="HeatMap"/> used for calculating <see cref="mSmallVectorField"/>.
-        /// </summary>
-        private readonly HeatMap mSmallHeatMap;
 
         /// <summary>
         /// The <see cref="VectorField"/> for non-small troupes. <see cref="Thunderbird"/> uses
@@ -67,10 +62,10 @@ namespace KernelPanic.PathPlanning
                 BuildingMatrix.Raster(initialBuildings);
 
             mHeatMap = new HeatMap(BuildingMatrix);
-            mSmallHeatMap = new HeatMap(smallUnitMatrix);
+            var smallHeatMap = new HeatMap(smallUnitMatrix);
 
             mVectorField = new VectorField(mHeatMap);
-            mSmallVectorField = new VectorField(mSmallHeatMap);
+            mSmallVectorField = new VectorField(smallHeatMap);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(grid.LaneRectangle.Size, grid.LaneSide);
         }
 
@@ -126,7 +121,7 @@ namespace KernelPanic.PathPlanning
             if (!buildingsChanged && !hadLargeUnits && mLargeUnits.Count == 0)
                 return;
 
-            BreadthFirstSearch.UpdateHeatMap(mSmallHeatMap, ScaledTarget, mLargeUnits);
+            BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, ScaledTarget, mLargeUnits);
             mSmallVectorField.Update();
         }
 
