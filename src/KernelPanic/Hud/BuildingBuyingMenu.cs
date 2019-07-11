@@ -30,11 +30,8 @@ namespace KernelPanic.Hud
                 Building = building;
                 const int buttonSize = 70;
                 const int iconSize = 64;
-                const int border = (buttonSize - iconSize) / 2;
                 var sprite = building.Sprite.Clone();
                 sprite.SetOrigin(RelativePosition.TopLeft);
-                sprite.X -= border;
-                sprite.Y -= border;
                 sprite.ScaleToWidth(iconSize); // for some reason cable has a size of 100x100
                 Button = new ImageButton(spriteManager, (ImageSprite)sprite, buttonSize, buttonSize);
             }

@@ -180,7 +180,8 @@ namespace KernelPanic
         {
             var background = new ImageSprite(Lookup(Image.ButtonBackground))
             {
-                DestinationRectangle = new Rectangle(-width + (int)image.Width, -height + (int)image.Height, width, height)
+                DestinationRectangle = new Rectangle(-width + (int)image.Width + (int)(width - image.Width) / 2,
+                    -height + (int)image.Height + (int)(height - image.Height) / 2, width, height)
             };
             return (
                 new CompositeSprite {Children = {background, image}},
