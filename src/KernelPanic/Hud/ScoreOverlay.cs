@@ -23,8 +23,9 @@ namespace KernelPanic.Hud
 
         internal bool Pause { get; set; }
 
-        private static Point PowerIndicatorSize => new Point(100, 30);
-        private static Point ClockSize => new Point(100, 20);
+        private const float scale = 1.5f;
+        private static Point PowerIndicatorSize => new Point((int)(60*scale), (int)(28 *scale));
+        private static Point ClockSize => new Point((int)(80 *scale), (int)(18 *scale));
 
         public ScoreOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager, TimeSpan time)
         {
@@ -41,8 +42,8 @@ namespace KernelPanic.Hud
 
             var sprite = spriteManager.CreatePause();
             mPauseButton = new ImageButton(spriteManager, sprite, 40, 40);
-            mPauseButton.Sprite.X = spriteManager.ScreenSize.X/2-20;
-            mPauseButton.Sprite.Y = 20;
+            mPauseButton.Sprite.X = spriteManager.ScreenSize.X-50-mPauseButton.Bounds.Width;
+            mPauseButton.Sprite.Y = 50;
             Pause = false;
             mPauseButton.Clicked += (button, input) => Pause = true;
         }
@@ -51,8 +52,8 @@ namespace KernelPanic.Hud
 
         public void Update(InputManager inputManager, GameTime gameTime)
         {
-            mPowerTexts.A.Text = "A: " + mPlayers.A.Base.Power + "%";
-            mPowerTexts.B.Text = "B: " + mPlayers.B.Base.Power + "%";
+            mPowerTexts.A.Text = mPlayers.A.Base.Power + "%";
+            mPowerTexts.B.Text = mPlayers.B.Base.Power + "%";
             mMoneyTexts.A.Text = mPlayers.A.Bitcoins + "$";
             mMoneyTexts.B.Text = mPlayers.B.Bitcoins + "$";
             mExperienceTexts.A.Text = mPlayers.A.ExperiencePoints + " EP";

@@ -333,6 +333,18 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/Saeule.png;Saeule.png
 
+#begin ../../KernelPanic/Content/score_background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/score_background.png;score_background.png
+
 #begin ../../KernelPanic/Content/shoot.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
