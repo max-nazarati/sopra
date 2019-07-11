@@ -33,16 +33,30 @@ namespace KernelPanic.Table
         /// <summary>
         /// Calculates the position where to spawn units.
         /// </summary>
-        private Vector2 BasePosition
+        private Vector2 BasePosition(Unit unit)
         {
-            get
+            int headstart = 0;
+            if (unit.GetType() == typeof(Bug))
             {
-                var tile =
-                    mGrid.LaneSide == Lane.Side.Left
-                        ? new TileIndex(Grid.LaneWidthInTiles / 2, mGrid.LaneRectangle.Width - 1, 1)
-                        : new TileIndex(mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
-                return mGrid.GetTile(tile).Position;
+                headstart = -4;
             }
+            else if (unit.GetType() == typeof(Virus))
+            {
+                headstart = -2;
+            }
+            else if (unit.GetType() == typeof(Trojan))
+            {
+                headstart = 2;
+            }
+            else if (unit.GetType() == typeof(Nokia))
+            {
+                headstart = 4;
+            }
+            var tile =
+                mGrid.LaneSide == Lane.Side.Left
+                    ? new TileIndex(headstart + Grid.LaneWidthInTiles / 2, mGrid.LaneRectangle.Width - 1, 1)
+                    : new TileIndex(-headstart + mGrid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
+            return mGrid.GetTile(tile).Position;
         }
 
         /// <summary>
@@ -54,7 +68,7 @@ namespace KernelPanic.Table
         {
             if (atBase)
             {
-                unit.Sprite.Position = BasePosition;
+                unit.Sprite.Position = BasePosition(unit);
             }
 
             if (!(unit is Troupe troupe))
