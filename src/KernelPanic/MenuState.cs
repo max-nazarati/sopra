@@ -82,7 +82,7 @@ namespace KernelPanic
             
             var components = new List<InterfaceComponent>
             {
-                CreateBackground(stateManager.Sprite), newGameButton, loadGameButton, backButton
+                CreateBackgroundWithoutText(stateManager.Sprite), newGameButton, loadGameButton, backButton
             };
 
             if (hasError)
@@ -197,7 +197,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     musicButton,
                     musicOnOffButton,
                     effectsButton,
@@ -221,7 +221,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     backButton
                 }
             };
@@ -242,7 +242,7 @@ namespace KernelPanic
 
             var components = new List<InterfaceComponent>
             {
-                CreateBackground(stateManager.Sprite),
+                CreateBackgroundWithoutText(stateManager.Sprite),
                 backButton,
                 resetButton
             };
@@ -279,7 +279,7 @@ namespace KernelPanic
             
             var components = new List<InterfaceComponent>
             {
-                CreateBackground(stateManager.Sprite),
+                CreateBackgroundWithoutText(stateManager.Sprite),
                 backButton,
             };
 
@@ -343,7 +343,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     new StaticComponent(titleSprite),
                     new StaticComponent(descriptionSprite),
                     backButton
@@ -385,7 +385,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     janekButton,
                     johannesButton,
                     maxButton,
@@ -445,7 +445,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     optionsButton,
                     saveButton,
                     mainMenuButton,
