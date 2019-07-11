@@ -71,30 +71,6 @@ namespace KernelPanic.Table
             mSpawnCooldown.Enabled = true;
         }
 
-        // maybe this will get somehow transformed into a parent class Spawner
-        /*
-        internal void Register(Entity clone, int? x=null, int? y=null)
-        {
-            if (clone is Unit unit)
-            {
-                Register(unit);
-            }
-            */
-            /*
-            if (clone is Building building)
-            {
-                if (x is int xInt && y is int yInt)
-                {
-                    RegisterBuilding(building, xInt, yInt);
-                }
-                else
-                {
-                    // throw new NotSupportedException("Cant build a tower without position");
-                }
-            }
-            */
-        // }
-
         internal void Update(GameTime gameTime)
         {
             mSpawnCooldown.Update(gameTime);
