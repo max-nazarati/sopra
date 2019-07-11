@@ -32,7 +32,7 @@ namespace KernelPanic.Entities.Units
         protected override void CompleteClone()
         {
             base.CompleteClone(); 
-            Cooldown = new CooldownComponent(TimeSpan.FromSeconds(1), false);
+            Cooldown = new CooldownComponent(Cooldown.Cooldown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
@@ -78,6 +78,14 @@ namespace KernelPanic.Entities.Units
                     throw new ArgumentOutOfRangeException();
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        protected override void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
+        {
+            if (/*TODO ask if we are back in base */ true) // ask for base tile hit
+            {
+                base.UpdateCooldown(gameTime, positionProvider);
             }
         }
 

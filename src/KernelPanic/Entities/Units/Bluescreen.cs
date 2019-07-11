@@ -20,31 +20,25 @@ namespace KernelPanic.Entities.Units
         private readonly ImageSprite mEmpSpriteTwo;
         private Tower mAbilityTargetOne;
         private Tower mAbilityTargetTwo;
-        
-        // prob should delete those two...
-        private readonly TimeSpan mAbilityDurationTotal;
-        private TimeSpan mAbilityDurationLeft;
-        
+
         private Emp[] mEmps;
 
         #region Upgrades
 
         internal bool TargetsTwoTower { private get; set; }
-        private const double EmpDuration = 2;
+        private const double EmpDuration = 5;
         internal float mEmpDurationAmplifier = 1;
         
         #endregion
         
         internal Bluescreen(SpriteManager spriteManager)
-            : base(50, 9, 15, 0, TimeSpan.FromSeconds(5), spriteManager.CreateBluescreen(), spriteManager)
+            : base(50, 9, 15, 0, TimeSpan.FromSeconds(1), spriteManager.CreateBluescreen(), spriteManager)
         {
             mAbilityRange = 1000;
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
             mIndicatorTarget = spriteManager.CreateEmpIndicatorTarget();
             mEmpSpriteOne = spriteManager.CreateEmp();
             mEmpSpriteTwo = spriteManager.CreateEmp();
-            mAbilityDurationTotal = TimeSpan.FromSeconds(5);
-            mAbilityDurationLeft = TimeSpan.Zero;
             mEmps = new Emp[2];
         }
         
@@ -52,7 +46,7 @@ namespace KernelPanic.Entities.Units
         {
             base.CompleteClone();
             mEmps = new Emp[2];
-            Cooldown = new CooldownComponent(TimeSpan.FromSeconds(5), false);
+            Cooldown = new CooldownComponent(Cooldown.Cooldown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
@@ -101,7 +95,6 @@ namespace KernelPanic.Entities.Units
             // debug
             base.StartAbility(positionProvider, inputManager);
             
-            mAbilityDurationLeft = mAbilityDurationTotal;
             if (mAbilityTargetOne is Tower first)
             {
                 var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSpriteOne);
@@ -117,14 +110,7 @@ namespace KernelPanic.Entities.Units
 
         protected override void ContinueAbility(GameTime gameTime)
         {
-            mAbilityDurationLeft -= gameTime.ElapsedGameTime;
-            if (mAbilityDurationLeft > TimeSpan.Zero)
-            {
-            }
-            else
-            {
-                AbilityStatus = AbilityState.Finished;
-            }
+            AbilityStatus = AbilityState.Finished;
         }
         
         protected override void FinishAbility()
