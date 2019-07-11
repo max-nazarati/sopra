@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -9,9 +10,6 @@ namespace KernelPanic.Data
         internal HeatMap HeatMap { get; }
 
         private readonly RelativePosition[,] mRelativeField;
-        
-        internal Point Size =>
-            new Point(mRelativeField.GetLength(1), mRelativeField.GetLength(0));
 
         /// <summary>
         /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
@@ -64,67 +62,39 @@ namespace KernelPanic.Data
             const RelativePosition right = RelativePosition.CenterRight;
             const RelativePosition up = RelativePosition.CenterTop;
             const RelativePosition down = RelativePosition.CenterBottom;
-            const int laneWidth = Grid.LaneWidthInTiles;
             var thunderBirdField = new RelativePosition[size.Y, size.X];
 
             for (var row = 0; row < size.Y; ++row)
             {
                 for (var col = 0; col < size.X; ++col)
                 {
-                    if (laneSide == Lane.Side.Right)
+                    switch (laneSide)
                     {
-                        /* should not be needed anymore now that target is a whole column
-                        if (row < laneWidth && col <= 1)
-                        {
-                            // go upwards to hit the base tile
-                            thunderBirdField[row, col] = up;
-                        }
-                        */
-                        /* else */ if (row + col < 18)
-                        {
+                        case Lane.Side.Right when row + col < 18:
                             // distance to left, top
                             thunderBirdField[row, col] = left;
-                        }
-
-                        else if (size.Y - row + col < 18)
-                        {
+                            break;
+                        case Lane.Side.Right when size.Y - row + col < 18:
                             // distance to left, bottom
                             thunderBirdField[row, col] = right;
-                        }
-                        else
-                        {
+                            break;
+                        case Lane.Side.Right:
                             thunderBirdField[row, col] = up;
-                        }
-                    }
-
-                    if (laneSide == Lane.Side.Left)
-                    {
-                        /* should not be needed anymore now that target is a whole column
-                        if (row > size.Y - laneWidth && col >= size.X - 1)
-                        {
-                            // go downwards to hit the base tile
-                            thunderBirdField[row, col] = down;
-                        }
-                        */
-                        /*else*/ if (row + (size.X - 1) - col < 18)
-                        {
+                            break;
+                        case Lane.Side.Left when row + (size.X - 1) - col < 18:
                             // distance to right, top
                             thunderBirdField[row, col] = left;
-                        }
-
-                        else if (size.Y - row + (size.X - 1) - col < 18)
-                        {
+                            break;
+                        case Lane.Side.Left when size.Y - row + (size.X - 1) - col < 18:
                             // distance to right, bottom
                             thunderBirdField[row, col] = right;
-                        }
-
-                        else
-                        {
+                            break;
+                        case Lane.Side.Left:
                             thunderBirdField[row, col] = down;
-                        }
-                        
+                            break;
+                        default:
+                            throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(Lane.Side));
                     }
-
                 }
             }
             var res = new VectorField(thunderBirdField);
