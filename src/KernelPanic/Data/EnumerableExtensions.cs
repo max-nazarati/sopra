@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,5 +27,21 @@ namespace KernelPanic.Data
         internal static IEnumerable<(TFirst, TSecond)> Zip<TFirst, TSecond>(
             this IEnumerable<TFirst> first, IEnumerable<TSecond> second
         ) => first.Zip(second, (a, b) => (a, b));
+
+        /// <summary>
+        /// Enumerates trough all elements throwing all out where <paramref name="func"/> returned <c>null</c>.
+        /// </summary>
+        /// <param name="enumerable">The source enumerable.</param>
+        /// <param name="func">Applied to each element.</param>
+        /// <typeparam name="TSource">Type of source elements.</typeparam>
+        /// <typeparam name="TResult">Type of resulting elements.</typeparam>
+        /// <returns>An enumerable over the values from <paramref name="enumerable"/> with <paramref name="func"/> applied.</returns>
+        internal static IEnumerable<TResult> SelectMaybe<TSource, TResult>(
+            this IEnumerable<TSource> enumerable,
+            Func<TSource, TResult?> func) where TResult : struct
+        {
+            return enumerable.SelectMany(value =>
+                func(value) is TResult result ? new[] {result} : Enumerable.Empty<TResult>());
+        }
     }
 }
