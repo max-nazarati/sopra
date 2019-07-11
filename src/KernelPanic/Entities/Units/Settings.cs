@@ -14,10 +14,10 @@ namespace KernelPanic.Entities.Units
     internal sealed class Settings : Hero
     {
         private readonly ImageSprite mIndicator;
-        private const int AbilityRange = Grid.KachelSize * 5;
+        private const int AbilityRange = Grid.KachelSize * 3;
         private float mAbilityRangeAmplifier = 1;
         private readonly List<Troupe> mTroupesInRange;
-        private const int HealValue = -2;
+        private const int HealValue = -5;
         private readonly ImageSprite mTroupeMarker;
 
         // Heilt alle zwei Sekunden, Truppen im Radius von 1 Kachel um 2 LP
@@ -92,18 +92,16 @@ namespace KernelPanic.Entities.Units
         {
             if (mTroupesInRange.Count == 0)
             {
-                // if the CoolDown should only be used when there is a troupe in Range, remove the line below
-                AbilityStatus = AbilityState.CoolingDown;
-
-                return;
+                // if the CoolDown should only be used when there is a troupe in Range, remove this if
             }
-            foreach (var troupe in mTroupesInRange)
+            else foreach (var troupe in mTroupesInRange)
             {
                 troupe.DealDamage(HealValue);
             }
 
             // Ability was successfully cast;
             AbilityStatus = AbilityState.CoolingDown;
+            Cooldown.Reset();
         }
         
         protected override void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
