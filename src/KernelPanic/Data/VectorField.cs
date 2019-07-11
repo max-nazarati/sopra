@@ -79,12 +79,14 @@ namespace KernelPanic.Data
                 {
                     if (laneSide == Lane.Side.Right)
                     {
+                        /* should not be needed anymore now that target is a whole column
                         if (row < laneWidth && col <= 1)
                         {
                             // go upwards to hit the base tile
                             thunderBirdField[row, col] = up;
                         }
-                        else if (row + col < 18)
+                        */
+                        /* else */ if (row + col < 18)
                         {
                             // distance to left, top
                             thunderBirdField[row, col] = left;
@@ -103,12 +105,14 @@ namespace KernelPanic.Data
 
                     if (laneSide == Lane.Side.Left)
                     {
+                        /* should not be needed anymore now that target is a whole column
                         if (row > vectorField.Height - laneWidth && col >= vectorField.Width - 1)
                         {
                             // go downwards to hit the base tile
                             thunderBirdField[row, col] = down;
                         }
-                        else if (row + (vectorField.Width - 1) - col < 18)
+                        */
+                        /*else*/ if (row + (vectorField.Width - 1) - col < 18)
                         {
                             // distance to right, top
                             thunderBirdField[row, col] = left;
