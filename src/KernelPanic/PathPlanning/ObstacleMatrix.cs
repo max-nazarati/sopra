@@ -17,6 +17,7 @@ namespace KernelPanic.PathPlanning
     {
         #region Properties
 
+        private ObstacleMatrix mChild;
         private readonly Grid mGrid;
         private readonly bool[,] mObstacles;
         private readonly bool mHasBorder;
@@ -96,6 +97,54 @@ namespace KernelPanic.PathPlanning
 
         #endregion
 
+        #region Child Handling
+
+        /// <summary>
+        /// Creates a copy of this <see cref="ObstacleMatrix"/> which has
+        /// </summary>
+        /// <param name="subTileCount"></param>
+        /// <param name="includeBorder"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">
+        /// <list type="bullet">
+        /// <item><description>if there is already a child matrix</description></item>
+        /// <item><description>if <paramref name="subTileCount"/> is not a multiple of the sub-tile count.</description></item>
+        /// <item><description>if <paramref name="subTileCount"/> is smaller than the sub-tile count.</description></item>
+        /// </list>
+        /// </exception>
+        internal ObstacleMatrix AddScaledChildMatrix(int subTileCount, bool? includeBorder = null)
+        {
+            if (mChild != null)
+                throw new InvalidOperationException("Already a child present.");
+
+            if (subTileCount % SubTileCount != 0)
+                throw new InvalidOperationException(
+                    $"Sub-tile count of {subTileCount} is not a multiple of {SubTileCount}");
+
+            if (subTileCount / SubTileCount == 0)
+                throw new InvalidOperationException(
+                    $"Sub-tile count of {subTileCount} is not more fine grained than {SubTileCount}");
+            
+            mChild = new ObstacleMatrix(mGrid, subTileCount, includeBorder ?? mHasBorder);
+            foreach (var obstacle in Obstacles)
+            {
+                MarkChild(obstacle.Row, obstacle.Column, true);
+            }
+
+            return mChild;
+        }
+
+        private void MarkChild(int row, int column, bool value)
+        {
+            var tile = new TileIndex(row, column, SubTileCount);
+            foreach (var scaledTile in tile.Rescaled(mChild.SubTileCount))
+            {
+                mChild[scaledTile.Row, scaledTile.Column] = value;
+            }
+        }
+
+        #endregion
+
         #region Accessing
 
         internal int Rows => mObstacles.GetLength(0) - (mHasBorder ? 2 : 0);
@@ -122,6 +171,10 @@ namespace KernelPanic.PathPlanning
             }
             set
             {
+                // Call into the child before row and column are modified by VerifyRange.
+                if (mChild != null)
+                    MarkChild(row, column, value);
+
                 VerifyRange(nameof(row), ref row, 0);
                 VerifyRange(nameof(column), ref column, 1);
                 mObstacles[row, column] = value;
