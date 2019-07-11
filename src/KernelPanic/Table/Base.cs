@@ -19,7 +19,14 @@ namespace KernelPanic.Table
             var offset = side == Lane.Side.Left ? laneSize.Y - Grid.LaneWidthInTiles : 0;
             for (var i = 0; i < Grid.LaneWidthInTiles; ++i)
             {
-                HitBox[i] = new Point(laneSize.X - 1, offset + i);
+                if (side == Lane.Side.Left)
+                {
+                    HitBox[i] = new Point(laneSize.X - 1, offset + i);
+                }
+                else
+                {
+                    HitBox[i] = new Point(0, offset + i);
+                }
             }
         }
     }
