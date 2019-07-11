@@ -108,6 +108,9 @@
     <Compile Include="..\KernelPanic\Data\IBounded.cs">
       <Link>Data\IBounded.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Data\PointComparer.cs">
+      <Link>Data\PointComparer.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Data\PriorityQueue.cs">
       <Link>Data\PriorityQueue.cs</Link>
     </Compile>

@@ -9,9 +9,13 @@ namespace KernelPanic
         private static bool sVisualizeHeatMap;
         private static bool sVisualizeVectors;
 
+        private static bool sGamePaused;
+
         internal static bool VisualizeAStar => sVisualizeAStar;
         internal static bool VisualizeHeatMap => sVisualizeHeatMap;
         internal static bool VisualizeVectors => sVisualizeVectors;
+
+        internal static bool GamePaused => sGamePaused;
 
         internal static void Update(InputManager inputManager)
         {
@@ -24,6 +28,8 @@ namespace KernelPanic
             Toggles(Keys.H, ref sVisualizeHeatMap);
             Toggles(Keys.G, ref sVisualizeAStar);
             Toggles(Keys.V, ref sVisualizeVectors);
+
+            Toggles(Keys.P, ref sGamePaused);
         }
     }
 }
