@@ -5,6 +5,7 @@ using KernelPanic.Players;
 using KernelPanic.Selection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace KernelPanic.Hud
 {
@@ -24,14 +25,14 @@ namespace KernelPanic.Hud
             UnitBuyingMenu unitMenu,
             BuildingBuyingMenu buildingMenu,
             SelectionManager selectionManager,
-            GameStateManager gameStateManager)
+            GameStateManager gameStateManager, TimeSpan time)
             : base(new StaticCamera(), gameStateManager)
         {
             // TODO: Add Button parameters
             mSelection = selectionManager.Selection;
             selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
 
-            ScoreOverlay = new ScoreOverlay(players, gameStateManager.Sprite);
+            ScoreOverlay = new ScoreOverlay(players, gameStateManager.Sprite, time);
             mUnitBuyingMenu = unitMenu;
             mBuildingBuyingMenu = buildingMenu;
             mMinimapOverlay = new MinimapOverlay(players, gameStateManager.Sprite);

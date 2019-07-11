@@ -5,6 +5,7 @@ using KernelPanic.Input;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Hud
 {
@@ -25,10 +26,10 @@ namespace KernelPanic.Hud
         private static Point PowerIndicatorSize => new Point(100, 30);
         private static Point ClockSize => new Point(100, 20);
 
-        public ScoreOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager)
+        public ScoreOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager, TimeSpan time)
         {
             mPlayers = players;
-            mPlayTime = new PlayTime();
+            mPlayTime = new PlayTime(time);
 
             var sprites = spriteManager.CreateScoreDisplay(PowerIndicatorSize, ClockSize);
             mSprite = sprites.Main;
