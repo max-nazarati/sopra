@@ -309,6 +309,8 @@ namespace KernelPanic.Events
 
         internal T Get<T>(Key key) => (T) mPayload[key];
 
+        internal bool IsActivePlayer(Key key) => Get<Player>(key).Select(true, false);
+
         #endregion
     }
 }
