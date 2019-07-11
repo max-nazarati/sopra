@@ -19,11 +19,26 @@ namespace KernelPanic.Entities.Units
         private readonly ImageSprite mIndicator;
         private const int JumpDuration = 10;
         private const int JumpSegmentLength = 30;
+        private Rectangle mHitBox;
+
+        public override Rectangle Bounds
+        {
+            get
+            {
+                mHitBox.X = Sprite.Bounds.X + 4;
+                mHitBox.Y = Sprite.Bounds.Y + 19;
+                return mHitBox;
+            }
+        }
 
         internal Firefox(SpriteManager spriteManager)
             : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), spriteManager.CreateFirefox(), spriteManager)
         {
             mIndicator = spriteManager.CreateJumpIndicator();
+            mHitBox = Sprite.Bounds;
+            mHitBox.Width = 56;
+            mHitBox.Height = 29;
+            Console.Write(Sprite.Bounds);
         }
 
         protected override void CompleteClone()

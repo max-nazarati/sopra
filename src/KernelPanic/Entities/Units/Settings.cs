@@ -20,6 +20,18 @@ namespace KernelPanic.Entities.Units
         private const int HealValue = -5;
         private readonly ImageSprite mTroupeMarker;
 
+        private Rectangle mHitBox;
+
+        public override Rectangle Bounds
+        {
+            get
+            {
+                mHitBox.X = Sprite.Bounds.X + 4;
+                mHitBox.Y = Sprite.Bounds.Y + 3;
+                return mHitBox;
+            }
+        }
+
         // Heilt alle zwei Sekunden, Truppen im Radius von 1 Kachel um 2 LP
         internal Settings(SpriteManager spriteManager)
             : base(50, 4, 25, 0, TimeSpan.FromSeconds(1), spriteManager.CreateSettings(), spriteManager)
@@ -27,6 +39,9 @@ namespace KernelPanic.Entities.Units
             mIndicator = spriteManager.CreateHealIndicator(AbilityRange * mAbilityRangeAmplifier);
             mTroupesInRange = new List<Troupe>();
             mTroupeMarker = spriteManager.CreateTroupeMarker();
+            mHitBox = Sprite.Bounds;
+            mHitBox.Width = 56;
+            mHitBox.Height = 58;
         }
         
         protected override void CompleteClone()

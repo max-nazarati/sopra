@@ -73,7 +73,7 @@ namespace KernelPanic.Entities
 
         public bool Selected { get; set; }
 
-        public Rectangle Bounds => Sprite.Bounds;
+        public virtual Rectangle Bounds => Sprite.Bounds;
 
         internal virtual void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
         {

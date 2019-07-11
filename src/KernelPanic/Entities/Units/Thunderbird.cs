@@ -8,9 +8,24 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Thunderbird : Troupe
     {
+        private Rectangle mHitBox;
+
+        public override Rectangle Bounds
+        {
+            get
+            {
+                mHitBox.X = Sprite.Bounds.X + 5;
+                mHitBox.Y = Sprite.Bounds.Y + 2;
+                return mHitBox;
+            }
+        }
+
         internal Thunderbird(SpriteManager spriteManager)
             : base(15, 3, 15, 3, spriteManager.CreateThunderbird(), spriteManager)
         {
+            mHitBox = Sprite.Bounds;
+            mHitBox.Width = 53;
+            mHitBox.Height = 55;
         }
         
         protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
