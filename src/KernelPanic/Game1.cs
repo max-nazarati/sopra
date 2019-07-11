@@ -97,10 +97,14 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
-            mGameStateManager.Update(mInputState, gameTime, mSoundManager);
-            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
-            EventCenter.Default.Run();
 
+            if (!DebugSettings.GamePaused)
+            {
+                mGameStateManager.Update(mInputState, gameTime, mSoundManager);
+                EventCenter.Default.Run();
+            }
+
+            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
             base.Update(gameTime);
         }
 
