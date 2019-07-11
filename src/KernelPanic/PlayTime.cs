@@ -5,7 +5,7 @@ namespace KernelPanic
 {
     internal sealed class PlayTime
     {
-        public TimeSpan Overall { get; private set; } = TimeSpan.Zero;
+        public TimeSpan Overall { get; private set; }
         public string Time { get; private set; } = "";
 
         public PlayTime(TimeSpan time = default(TimeSpan))

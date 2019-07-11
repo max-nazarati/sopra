@@ -21,7 +21,7 @@ namespace KernelPanic.Hud
             {
                 element.Position = startPosition;
                 // calculate spacing between buttons
-                // add bigger space after first five units to seperate heroes from troupes
+                // add bigger space after first five units to separate heroes from troupes
                 startPosition.Y += (i == 5 && element is UnitBuyingMenu.Element) ? element.Size.Y + 20 : element.Size.Y;
                 i++;
             }

@@ -36,19 +36,19 @@ namespace KernelPanic.Table
         private Vector2 BasePosition(Unit unit)
         {
             int headstart = 0;
-            if (unit.GetType() == typeof(Bug))
+            if (unit is Bug)
             {
                 headstart = -4;
             }
-            else if (unit.GetType() == typeof(Virus))
+            else if (unit is Virus)
             {
                 headstart = -2;
             }
-            else if (unit.GetType() == typeof(Trojan))
+            else if (unit is Trojan)
             {
                 headstart = 2;
             }
-            else if (unit.GetType() == typeof(Nokia))
+            else if (unit is Nokia)
             {
                 headstart = 4;
             }

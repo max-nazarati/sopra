@@ -41,7 +41,7 @@ namespace KernelPanic.Entities.Units
         #endregion
 
         [DataMember]
-        protected CooldownComponent Cooldown { get; set; }
+        protected internal CooldownComponent Cooldown { get; set; }
         internal AStar mAStar; // save the AStar for path-drawing
         private Point? mTarget; // the target we wish to move to
         private Visualizer mPathVisualizer;
@@ -225,12 +225,17 @@ namespace KernelPanic.Entities.Units
                     break;
 
                 case AbilityState.CoolingDown:
-                    Cooldown.Update(gameTime);
+                    UpdateCooldown(gameTime, positionProvider);
                     break;
                 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        protected virtual void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
+        {
+            Cooldown.Update(gameTime);
         }
 
         protected virtual void TryActivateAbility(InputManager inputManager, bool button = false)

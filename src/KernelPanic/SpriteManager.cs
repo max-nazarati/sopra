@@ -49,7 +49,8 @@ namespace KernelPanic
             Virus,
             StandingFox,
             VectorArrow,
-            Pause
+            Pause,
+            ScoreBackground
         }
 
         private enum Font
@@ -103,6 +104,7 @@ namespace KernelPanic
                 Texture(Image.StandingFox, "heroes/firefox_standing"),
                 Texture(Image.VectorArrow, "vector_arrow"),
                 Texture(Image.Pause, "pause"),
+                Texture(Image.ScoreBackground, "score_background"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -178,7 +180,8 @@ namespace KernelPanic
         {
             var background = new ImageSprite(Lookup(Image.ButtonBackground))
             {
-                DestinationRectangle = new Rectangle(-width + (int)image.Width +2, -height + (int)image.Height, width, height)
+                DestinationRectangle = new Rectangle(-width + (int)image.Width + (int)(width - image.Width) / 2,
+                    -height + (int)image.Height + (int)(height - image.Height) / 2, width, height)
             };
             return (
                 new CompositeSprite {Children = {background, image}},
@@ -246,81 +249,57 @@ namespace KernelPanic
 
         internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
         {
-            var texture = Lookup(Image.ButtonBackground);
+            const float scale = 1.8f;
+            const float hudWidth = scale * 318;
+            const float moneyWidth = scale * 60;
+            const float hudHeight = scale * 44;
+            const float padding = scale * 5;
+            const float topPadding = scale * 8;
             var font = Lookup(Font.Hud);
-            var secondLine = new Point(0, powerIndicatorSize.Y);
-            var thirdLine = new Point(0, 2*powerIndicatorSize.Y);
+            var leftBoarder = (int)((float)ScreenSize.X / 2 - (hudWidth / 2));
 
-            var leftBackground = new ImageSprite(texture)
+            var leftMoneyText = new TextSprite(font, "00000 $")
             {
-                DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
-                TintColor = Color.LightBlue
+                Position = new Vector2(padding, topPadding)
             };
-            var leftMoneyBackground = new ImageSprite(texture)
+            var leftEpText = new TextSprite(font, "000 EP")
             {
-                DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
+                Position = new Vector2(moneyWidth + padding, topPadding)
             };
-            var leftEpBackground = new ImageSprite(texture)
+            var leftText = new TextSprite(font, "000%")
             {
-                DestinationRectangle = new Rectangle(thirdLine, powerIndicatorSize)
+                Position = new Vector2(2 * moneyWidth + padding, topPadding),
+                TintColor = Color.DarkBlue
             };
-            var rightBackground = new ImageSprite(texture)
+            var rightMoneyText = new TextSprite(font, "00000$")
             {
-                DestinationRectangle = new Rectangle(Point.Zero, powerIndicatorSize),
-                TintColor = Color.LightSalmon
+                Position = new Vector2(hudWidth - padding, topPadding)
             };
-            var rightMoneyBackground = new ImageSprite(texture)
+            rightMoneyText.SetOrigin(RelativePosition.TopRight);
+            var rightEpText = new TextSprite(font, "000 EP")
             {
-                DestinationRectangle = new Rectangle(secondLine, powerIndicatorSize)
+                Position = new Vector2(hudWidth - moneyWidth - padding, topPadding),
+                
             };
-            var rightEpBackground = new ImageSprite(texture)
+            rightEpText.SetOrigin(RelativePosition.TopRight);
+            var rightText = new TextSprite(font, "000%")
             {
-                DestinationRectangle = new Rectangle(thirdLine, powerIndicatorSize)
+                Position = new Vector2(hudWidth - 2 * moneyWidth - padding, topPadding),
+                TintColor = Color.DarkRed
             };
-            var clockBackground = new ImageSprite(texture)
+            rightText.SetOrigin(RelativePosition.TopRight);
+            var clockText = new TextSprite(font, "00:00:00")
             {
-                DestinationRectangle = new Rectangle(Point.Zero, clockSize)
+                Position = new Vector2(hudWidth / 2, (hudHeight/2) + topPadding)
             };
+            clockText.SetOrigin(RelativePosition.CenterTop);
 
-            var leftText = AutoCenteredTextSprite(font, leftBackground);
-            var leftMoneyText = AutoCenteredTextSprite(font, leftMoneyBackground);
-            var leftEpText = AutoCenteredTextSprite(font, leftEpBackground);
-            leftMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
-            leftEpText.Y = (float)(2.5 * powerIndicatorSize.Y);
-            var rightText = AutoCenteredTextSprite(font, rightBackground);
-            var rightMoneyText = AutoCenteredTextSprite(font, rightMoneyBackground);
-            var rightEpText = AutoCenteredTextSprite(font, rightEpBackground);
-            rightMoneyText.Y = (float)(1.5 * powerIndicatorSize.Y);
-            rightEpText.Y = (float)(2.5 * powerIndicatorSize.Y);
-            var clockText = AutoCenteredTextSprite(font, clockBackground);
-
-            var left = new CompositeSprite
-            {
-                X = (ScreenSize.X - clockSize.X) / 2f,
-                Y = 0,
-                Children = { leftBackground, leftText, leftMoneyBackground, leftMoneyText, leftEpBackground, leftEpText }
-            };
-            left.SetOrigin(RelativePosition.TopRight);
-
-            var right = new CompositeSprite
-            {
-                X = (ScreenSize.X + clockSize.X) / 2f,
-                Y = 0,
-                Children = { rightBackground, rightText, rightMoneyBackground, rightMoneyText, rightEpBackground, rightEpText }
-            };
-            right.SetOrigin(RelativePosition.TopLeft);
-
-            var middle = new CompositeSprite
-            {
-                X = ScreenSize.X / 2f,
-                Y = 0,
-                Children = { clockBackground, clockText }
-            };
-            middle.SetOrigin(RelativePosition.CenterTop);
-
+            var hudSprite = new ImageSprite(Lookup(Image.ScoreBackground));
+            hudSprite.ScaleToWidth(hudWidth);
             var sprite = new CompositeSprite
             {
-                Children = { left, right, middle }
+                Children = { hudSprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText },
+                Position = new Vector2(leftBoarder, 0)
             };
             return (sprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText);
         }

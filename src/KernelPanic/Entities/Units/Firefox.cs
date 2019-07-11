@@ -30,7 +30,7 @@ namespace KernelPanic.Entities.Units
         {
             base.CompleteClone();
             mAbility = new Stack<Vector2>(mAbility);
-            Cooldown = new CooldownComponent(TimeSpan.FromSeconds(5), false);
+            Cooldown = new CooldownComponent(Cooldown.Cooldown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
@@ -115,6 +115,13 @@ namespace KernelPanic.Entities.Units
                 // just jump the next steps
                 if (mAStar.Path is List<Point> path && path.Count >= 2)
                 {
+                    /* 
+                    foreach (var pathPoint in path)
+                    {
+                        var point = positionProvider.Grid.GetTile(new TileIndex(pathPoint, 1)).Position;
+                        point -= Sprite.Position;
+                    }
+                    */
                     mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[2], 1)).Position;
                     TryActivateAbility(inputManager, true);
                     StartAbility(positionProvider, inputManager);
