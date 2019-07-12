@@ -100,6 +100,7 @@ namespace KernelPanic.Tracking
         [JsonProperty] private int Target { get; set; }
         [JsonProperty] private Event.Key ExtractKey { get; set; }
 
+        [JsonConstructor]
         internal ComparisonProgressComponent(AchievementProgress progress, int target, Event.Id eventId, Event.Key extractKey)
             : base(progress, eventId)
         {
