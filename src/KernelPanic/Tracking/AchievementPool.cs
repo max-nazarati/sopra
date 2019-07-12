@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac.Util;
 using KernelPanic.Events;
 using KernelPanic.Serialization;
@@ -12,12 +13,26 @@ namespace KernelPanic.Tracking
         internal struct Data
         {
             [JsonProperty] internal DateTime?[] UnlockTime { get; set; }
+            [JsonProperty] internal List<AchievementProgress> Progress { get; set; }
 
-            [JsonProperty] internal Dictionary<Achievement, AchievementProgress> Progress { get; set; }
+            internal bool RemoveProgress(Achievement achievement)
+            {
+                var index = Progress.BinarySearch(
+                    AchievementProgress.Untracked(achievement),
+                    new AchievementProgress.Comparer());
+
+                if (index < 0)
+                    return false;
+
+                Progress.RemoveAt(index);
+                return true;
+            }
         }
 
         private readonly AchievementPool mParent;
         internal Data TheData { get; }
+
+        private DateTime?[] UnlockTimeArray => TheData.UnlockTime ?? mParent.TheData.UnlockTime;
 
         internal AchievementPool(AchievementPool parent, Data? loadedData)
         {
@@ -31,15 +46,15 @@ namespace KernelPanic.Tracking
                 @event =>
                 {
                     var achievement = @event.Get<Achievement>(Event.Key.Achievement);
-                    (TheData.UnlockTime ?? mParent.TheData.UnlockTime)[(int) achievement] = DateTime.Now;
-                    TheData.Progress.Remove(achievement);
+                    if (TheData.RemoveProgress(achievement))
+                        UnlockTimeArray[(int) achievement] = DateTime.Now;
                 });
 
             EventCenter.Default.Subscribe(Event.Id.AchievementImpossible,
                 @event =>
                 {
                     var achievement = @event.Get<Achievement>(Event.Key.Achievement);
-                    TheData.Progress.Remove(achievement);
+                    TheData.RemoveProgress(achievement);
                 });
         }
 
@@ -53,22 +68,19 @@ namespace KernelPanic.Tracking
             return new Data
             {
                 UnlockTime = mParent == null ? new DateTime?[Achievements.Count] : null,
-                Progress = TrackingDictionary(mParent == null ? Achievements.GloballyTracked : Achievements.PerGame)
+                Progress = InitialProgress(mParent == null ? Achievements.GloballyTracked : Achievements.PerGame)
             };
         }
 
-        private Dictionary<Achievement, AchievementProgress> TrackingDictionary(IReadOnlyCollection<Achievement> achievements)
+        private List<AchievementProgress> InitialProgress(IReadOnlyCollection<Achievement> achievements)
         {
-            var dict = new Dictionary<Achievement, AchievementProgress>(achievements.Count);
-            foreach (var achievement in achievements)
-            {
-                if (mParent?.TheData.UnlockTime[(int) achievement].HasValue ?? false)
-                    continue;
+            var progress = new List<AchievementProgress>(achievements.Count);
+            progress.AddRange(achievements
+                .Where(achievement => !UnlockTimeArray[(int)achievement].HasValue)
+                .Select(AchievementProgress.Track));
 
-                dict[achievement] = AchievementProgress.Track(achievement);
-            }
-
-            return dict;
+            progress.Sort(new AchievementProgress.Comparer());
+            return progress;
         }
 
         protected override void Dispose(bool disposing)
@@ -78,7 +90,7 @@ namespace KernelPanic.Tracking
             if (!disposing)
                 return;
 
-            foreach (var progress in TheData.Progress.Values)
+            foreach (var progress in TheData.Progress)
             {
                 progress.Dispose();
             }

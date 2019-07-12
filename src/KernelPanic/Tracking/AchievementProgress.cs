@@ -21,6 +21,8 @@ namespace KernelPanic.Tracking
         [JsonProperty]
         internal ProgressComponent[] mComponents;
 
+        #region Creation
+
         [JsonConstructor]
         private AchievementProgress(Achievement achievement)
         {
@@ -44,6 +46,15 @@ namespace KernelPanic.Tracking
             progress.mComponents = helper.ResultingComponents;
             return progress;
         }
+
+        internal static AchievementProgress Untracked(Achievement achievement)
+        {
+            return new AchievementProgress(achievement);
+        }
+
+        #endregion
+
+        #region Component Management
 
         private struct ComponentHelper
         {
@@ -148,6 +159,24 @@ namespace KernelPanic.Tracking
             }
         }
 
+        /// <summary>
+        /// Disconnects the components from the event center.
+        /// </summary>
+        private void DisposeComponents()
+        {
+            if (mComponents == null)
+                return;
+
+            foreach (var component in mComponents)
+            {
+                component.Dispose();
+            }
+
+            mComponents = null;
+        }
+
+        #endregion
+
         #region Conditions
 
         private static bool Is100Percent(Event @event)
@@ -189,28 +218,22 @@ namespace KernelPanic.Tracking
                 : Event.AchievementImpossible(Achievement));
         }
 
-        /// <summary>
-        /// Disconnects the components from the event center.
-        /// </summary>
-        private void DisposeComponents()
-        {
-            if (mComponents == null)
-                return;
-
-            foreach (var component in mComponents)
-            {
-                component.Dispose();
-            }
-
-            mComponents = null;
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
                 DisposeComponents();
 
             base.Dispose(disposing);
+        }
+
+        internal struct Comparer : IComparer<AchievementProgress>
+        {
+            public int Compare(AchievementProgress x, AchievementProgress y)
+            {
+                if (x?.Achievement is Achievement a && y?.Achievement is Achievement b)
+                    return a.CompareTo(b);
+                return (x == null).CompareTo(y == null);
+            }
         }
     }
 }
