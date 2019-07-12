@@ -68,17 +68,6 @@ namespace KernelPanic.Table
             return bounds;
         }
 
-        private static Point BasePosition(Side laneSide)
-        {
-            if (laneSide == Side.Right)
-                return new Point(1);
-
-            var position = LaneBoundsInTiles(laneSide).Size;
-            position.X -= 2;
-            position.Y -= 2;
-            return position;
-        }
-
         internal static Rectangle LeftBounds => LaneBoundsInPixel(Side.Left);
         internal static Rectangle RightBounds => LaneBoundsInPixel(Side.Right);
 

@@ -43,7 +43,7 @@ namespace KernelPanic.Entities.Units
         [DataMember]
         protected internal CooldownComponent Cooldown { get; set; }
         internal AStar mAStar; // save the AStar for path-drawing
-        private Point? mTarget; // the target we wish to move to
+        private Point? mTarget; // the target we wish to move to (world position)
         private Visualizer mPathVisualizer;
         internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
@@ -56,9 +56,6 @@ namespace KernelPanic.Entities.Units
         protected Hero(int price, int speed, int life, int attackStrength, TimeSpan coolDown, Sprite sprite, SpriteManager spriteManager)
             : base(price, speed, life, attackStrength, sprite, spriteManager)
         {
-            // TODO set mTarget to the position itself so heroes spawn non moving
-            // Kind of done... Hero starts moving when the first target command is set... :)
-            // mTarget = Sprite.Position;
             ShouldMove = false;
             Cooldown = new CooldownComponent(coolDown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
@@ -81,7 +78,7 @@ namespace KernelPanic.Entities.Units
             var start = Sprite.Position;
             var startPoint = positionProvider.RequireTile(start).ToPoint();
             
-            // set the target Position for the AStar (latest updated target should be saved in mTarget
+            // set the target Position for the AStar (latest updated target should be saved in mTarget)
             var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
@@ -306,11 +303,13 @@ namespace KernelPanic.Entities.Units
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
         {
             var startPoint = positionProvider.RequireTile(this).ToPoint();
-            mTarget = positionProvider.RequireTile(basePosition.ToVector2()).ToPoint();
+            // TODO: is there a function for the calculation below?
+            //       something like Grid.WorldPositionFromTile(basePosition);
+            mTarget = new Point(basePosition.X * Grid.KachelSize, basePosition.Y * Grid.KachelSize);
             mAStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
             ShouldMove = true;
         }
-
+        
         #endregion
         
         #region Update
