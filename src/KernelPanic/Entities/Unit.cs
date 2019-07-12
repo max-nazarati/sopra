@@ -140,7 +140,7 @@ namespace KernelPanic.Entities
             var length = 80;
             var height = 5;
             mHealthBar.DestinationRectangle = new Rectangle((int)(Sprite.Position.X - length/2.0), (int)(Sprite.Y - Sprite.Height/1.5),
-                (int)(length - length * (1 - RemainingLife*1.0f/MaximumLife)), height);
+                (int)(length * (RemainingLife*1.0f/MaximumLife)), height);
             base.Update(positionProvider, inputManager, gameTime);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
