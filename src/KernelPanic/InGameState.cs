@@ -99,7 +99,7 @@ namespace KernelPanic
         {
             Board = mBoard,
             GameTime = mHud.ScoreOverlay.Time,
-            AchievementData = mAchievementPool.TheData
+            AchievementData = mAchievementPool.AchievementData
         };
 
         #endregion

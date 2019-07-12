@@ -32,18 +32,18 @@ namespace KernelPanic.Tracking
 
         private readonly AchievementPool mParent;
 
-        internal Data TheData { get; }
+        internal Data AchievementData { get; }
 
         private CompositeDisposable mDisposable;
 
-        private DateTime?[] UnlockTimeArray => TheData.UnlockTime ?? mParent.TheData.UnlockTime;
+        private DateTime?[] UnlockTimeArray => AchievementData.UnlockTime ?? mParent.AchievementData.UnlockTime;
 
         internal AchievementPool(AchievementPool parent, Data? loadedData)
         {
             mParent = parent;
-            TheData = loadedData ?? InitialData();
+            AchievementData = loadedData ?? InitialData();
 
-            if (TheData.Progress.Count == 0)
+            if (AchievementData.Progress.Count == 0)
                 return;
             
             mDisposable = new CompositeDisposable();
@@ -51,7 +51,7 @@ namespace KernelPanic.Tracking
                 @event =>
                 {
                     var achievement = @event.Get<Achievement>(Event.Key.Achievement);
-                    if (TheData.RemoveProgress(achievement))
+                    if (AchievementData.RemoveProgress(achievement))
                         UnlockTimeArray[(int) achievement] = DateTime.Now;
                 });
 
@@ -59,7 +59,7 @@ namespace KernelPanic.Tracking
                 @event =>
                 {
                     var achievement = @event.Get<Achievement>(Event.Key.Achievement);
-                    TheData.RemoveProgress(achievement);
+                    AchievementData.RemoveProgress(achievement);
                 });
         }
 
@@ -93,13 +93,13 @@ namespace KernelPanic.Tracking
             base.Dispose(disposing);
 
             mDisposable.Dispose();
-            foreach (var progress in TheData.Progress)
+            foreach (var progress in AchievementData.Progress)
             {
                 progress.Dispose();
             }
 
             if (mParent == null)
-                StorageManager.SaveAchievements(TheData);
+                StorageManager.SaveAchievements(AchievementData);
         }
 
         internal IEnumerable<(string Title, string Description, string Time)> UserRepresentation
@@ -107,7 +107,7 @@ namespace KernelPanic.Tracking
             get
             {
                 Achievement a = 0;
-                foreach (var time in TheData.UnlockTime)
+                foreach (var time in AchievementData.UnlockTime)
                 {
                     var unlock = time is DateTime unlockTime ? unlockTime.ToString("dd.MM.yyyy, hh:mm") : "-";
                     yield return (a.Title(), a.Description(), unlock);
