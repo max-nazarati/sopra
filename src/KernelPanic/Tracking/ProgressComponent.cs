@@ -7,15 +7,13 @@ namespace KernelPanic.Tracking
 {
     internal abstract class ProgressComponent : Disposable
     {
-        [JsonProperty] protected AchievementProgress Progress { get; }
-
+        [JsonIgnore] protected AchievementProgress Progress { get; private set; }
         [JsonProperty] internal Event.Id EventId { get; set; }
 
         private IDisposable mDisposable;
 
-        protected ProgressComponent(AchievementProgress progress, Event.Id eventId)
+        protected ProgressComponent(Event.Id eventId)
         {
-            Progress = progress;
             EventId = eventId;
         }
 
@@ -36,13 +34,15 @@ namespace KernelPanic.Tracking
         /// The <see cref="EventCenter"/> subscription can be disposed of with a call to <see cref="Dispose"/>.
         /// </para>
         /// </summary>
+        /// <param name="progress">The progress where this is a component.</param>
         /// <param name="condition">If not <c>null</c> this function must return <c>true</c> for events to be passed to <see cref="Handle"/>.</param>
         /// <exception cref="InvalidOperationException">If this <see cref="ProgressComponent"/> is already connected.</exception>
-        internal void Connect(Func<Event, bool> condition = null)
+        internal void Connect(AchievementProgress progress, Func<Event, bool> condition = null)
         {
             if (mDisposable != null || IsDisposed)
                 throw new InvalidOperationException("Component is/was already connected.");
 
+            Progress = progress;
             mDisposable = EventCenter.Default.Subscribe(EventId, Handle, condition);
         }
 
@@ -74,7 +74,7 @@ namespace KernelPanic.Tracking
         [JsonProperty] internal Achievements.Status ResultingStatus { get; set; } = Achievements.Status.Unlocked;
 
         [JsonConstructor]
-        internal CounterProgressComponent(AchievementProgress progress, Event.Id eventId, int target = 1) : base(progress, eventId)
+        internal CounterProgressComponent(Event.Id eventId, int target = 1) : base(eventId)
         {
             Target = target;
         }
@@ -101,8 +101,8 @@ namespace KernelPanic.Tracking
         [JsonProperty] private Event.Key ExtractKey { get; set; }
 
         [JsonConstructor]
-        internal ComparisonProgressComponent(AchievementProgress progress, int target, Event.Id eventId, Event.Key extractKey)
-            : base(progress, eventId)
+        internal ComparisonProgressComponent(Event.Id eventId, Event.Key extractKey, int target)
+            : base(eventId)
         {
             Target = target;
             EventId = eventId;

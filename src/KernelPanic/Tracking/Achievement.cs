@@ -1,5 +1,10 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Units;
+using KernelPanic.Events;
+using KernelPanic.Players;
 
 namespace KernelPanic.Tracking
 {
@@ -26,6 +31,8 @@ namespace KernelPanic.Tracking
 
     internal static class Achievements
     {
+        #region Display Information
+
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
         internal static string Title(this Achievement achievement)
         {
@@ -72,12 +79,94 @@ namespace KernelPanic.Tracking
             return achievement.ToString();
         }
 
+        #endregion
+
+        #region Connecting
+
         internal enum Status
         {
             Locked,
             Unlocked,
             Failed
         }
+
+        internal static void ConnectComponents(this Achievement achievement, ProgressConnector progressConnector)
+        {
+            switch (achievement)
+            {
+                case Achievement.Win1:
+                    progressConnector.ConnectCounter(Event.Id.GameWon);
+                    break;
+                case Achievement.Win10:
+                    progressConnector.ConnectCounter(Event.Id.GameWon, target: 10);
+                    break;
+                case Achievement.Win100:
+                    progressConnector.ConnectCounter(Event.Id.GameWon, target: 100);
+                    break;
+
+                case Achievement.Lose1:
+                    progressConnector.ConnectCounter(Event.Id.GameLost);
+                    break;
+                case Achievement.Lose10:
+                    progressConnector.ConnectCounter(Event.Id.GameLost, target: 10);
+                    break;
+                case Achievement.Lose100:
+                    progressConnector.ConnectCounter(Event.Id.GameLost, target: 100);
+                    break;
+
+                case Achievement.AptGetUpgrade:
+                    progressConnector.ConnectCounter(Event.Id.UpgradeBought, Event.Key.Price, 10, @event => @event.IsActivePlayer(Event.Key.Buyer));
+                    break;
+
+                case Achievement.BitcoinAddict:
+                    progressConnector.ConnectComparison(Event.Id.BitcoinChanged, Event.Key.Price, 1100, @event => @event.IsActivePlayer(Event.Key.Buyer));
+                    break;
+
+                case Achievement.IronFortress:
+                    progressConnector.ConnectCounter(Event.Id.GameWon, condition: Is100Percent);
+                    break;
+
+                case Achievement.HighInference:
+                    progressConnector.ConnectCounter(Event.Id.GameWon);
+                    progressConnector.ConnectCounter(Event.Id.BuildingPlaced,
+                        condition: PlacedNonWifi,
+                        resultingStatus: Status.Failed);
+                    break;
+
+                case Achievement.BugsFixed:
+                    progressConnector.ConnectCounter(Event.Id.KilledUnit, target: 3, condition: IsEnemyBug);
+                    break;
+
+                case Achievement.EmptySlot:
+                    progressConnector.ConnectCounter(Event.Id.LoadEmptySlot);
+                    break;
+
+                case Achievement.NumberOfAchievements:
+                    goto default;
+                default:
+                    throw new InvalidEnumArgumentException(nameof(achievement), (int) achievement, typeof(Achievement));
+            }
+        }
+
+        private static bool Is100Percent(Event @event)
+        {
+            return @event.Get<Player>(Event.Key.Winner).Base.Power == 100;
+        }
+
+        private static bool PlacedNonWifi(Event @event)
+        {
+            var building = @event.Get<Building>(Event.Key.Building);
+            return @event.IsActivePlayer(Event.Key.Buyer) && !(building is WifiRouter);
+        }
+
+        private static bool IsEnemyBug(Event @event)
+        {
+            return @event.IsActivePlayer(Event.Key.Defender) && @event.Get<Unit>(Event.Key.Unit) is Bug;
+        }
+
+        #endregion
+
+        #region Achievement Sets
 
         internal const int Count = (int) Achievement.NumberOfAchievements;
 
@@ -101,5 +190,7 @@ namespace KernelPanic.Tracking
                 Achievement.BugsFixed,
                 Achievement.HighInference
             };
+
+        #endregion
     }
 }

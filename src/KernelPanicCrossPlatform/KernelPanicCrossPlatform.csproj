@@ -399,6 +399,9 @@
     <Compile Include="..\KernelPanic\Tracking\ProgressComponent.cs">
       <Link>Tracking\ProgressComponent.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Tracking\ProgressConnector.cs">
+      <Link>Tracking\ProgressConnector.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Tracking\Statistics.cs">
       <Link>Tracking\Statistics.cs</Link>
     </Compile>

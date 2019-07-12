@@ -1,14 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
 using Autofac.Util;
-using KernelPanic.Entities;
-using KernelPanic.Entities.Buildings;
-using KernelPanic.Entities.Units;
 using KernelPanic.Events;
-using KernelPanic.Players;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Tracking
@@ -18,8 +12,19 @@ namespace KernelPanic.Tracking
         [JsonProperty] internal Achievement Achievement { get; }
         [JsonProperty] internal Achievements.Status Status { get; private set; }
 
+        internal ProgressComponent[] Components
+        {
+            get => mComponents;
+            set
+            {
+                if (mComponents != null)
+                    throw new InvalidOperationException("mComponents is already set.");
+                mComponents = value;
+            }
+        }
+
         [JsonProperty]
-        internal ProgressComponent[] mComponents;
+        private ProgressComponent[] mComponents;
 
         #region Creation
 
@@ -32,19 +37,20 @@ namespace KernelPanic.Tracking
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            using (var iterator = mComponents.AsEnumerable().GetEnumerator())
-            {
-                AddComponents(new ComponentHelper(iterator));
-            }
+            Connect();
         }
 
         internal static AchievementProgress Track(Achievement achievement)
         {
             var progress = new AchievementProgress(achievement);
-            var helper = new ComponentHelper(null);
-            progress.AddComponents(helper);
-            progress.mComponents = helper.ResultingComponents;
+            progress.Connect();
             return progress;
+        }
+
+        private void Connect()
+        {
+            using (var componentHelper = new ProgressConnector(this))
+                Achievement.ConnectComponents(componentHelper);
         }
 
         internal static AchievementProgress Untracked(Achievement achievement)
@@ -53,111 +59,6 @@ namespace KernelPanic.Tracking
         }
 
         #endregion
-
-        #region Component Management
-
-        private struct ComponentHelper
-        {
-            private readonly IEnumerator<ProgressComponent> mComponentIterator;
-            private readonly List<ProgressComponent> mNewComponents;
-
-            internal ProgressComponent[] ResultingComponents => mNewComponents.ToArray();
-
-            internal ComponentHelper(IEnumerator<ProgressComponent> componentIterator)
-            {
-                mComponentIterator = componentIterator;
-                mNewComponents = mComponentIterator == null ? new List<ProgressComponent>(4) : null;
-            }
-
-            internal ProgressComponent Add(ProgressComponent component)
-            {
-                if (mNewComponents != null)
-                {
-                    mNewComponents.Add(component);
-                    return component;
-                }
-
-                mComponentIterator.MoveNext();
-                
-                // NOTE: If you get an exception here, you might have to delete your achievements save file.
-                if (!(mComponentIterator.Current is ProgressComponent restored))
-                    throw new InvalidOperationException("Adding more components than were restored.");
-                if (!component.IsSimilar(restored))
-                    throw new InvalidOperationException("Components mismatch.");
-
-                return restored;
-            }
-        }
-
-        private void AddComponents(ComponentHelper componentHelper)
-        {
-            switch (Achievement)
-            {
-                case Achievement.Win1:
-                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameWon)).Connect();
-                    break;
-                case Achievement.Win10:
-                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameWon, 10)).Connect();
-                    break;
-                case Achievement.Win100:
-                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameWon, 100)).Connect();
-                    break;
-
-                case Achievement.Lose1:
-                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameLost)).Connect();
-                    break;
-                case Achievement.Lose10:
-                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameLost, 10)).Connect();
-                    break;
-                case Achievement.Lose100:
-                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameLost, 100)).Connect();
-                    break;
-
-                case Achievement.AptGetUpgrade:
-                    componentHelper
-                        .Add(new CounterProgressComponent(this, Event.Id.UpgradeBought, 10) {ExtractKey = Event.Key.Price})
-                        .Connect(IsActiveBuyer);
-                    break;
-
-                case Achievement.BitcoinAddict:
-                    componentHelper
-                        .Add(new ComparisonProgressComponent(this, 1100, Event.Id.BitcoinChanged, Event.Key.Price))
-                        .Connect(IsActiveBuyer);
-                    break;
-
-                case Achievement.IronFortress:
-                    componentHelper
-                        .Add(new CounterProgressComponent(this, Event.Id.GameWon))
-                        .Connect(Is100Percent);
-                    break;
-
-                case Achievement.HighInference:
-                    componentHelper
-                        .Add(new CounterProgressComponent(this, Event.Id.GameWon))
-                        .Connect();
-                    componentHelper
-                        .Add(new CounterProgressComponent(this, Event.Id.BuildingPlaced) {ResultingStatus = Achievements.Status.Failed})
-                        .Connect(PlacedNonWifi);
-                    break;
-
-                case Achievement.BugsFixed:
-                    componentHelper
-                        .Add(new CounterProgressComponent(this, Event.Id.KilledUnit, 3))
-                        .Connect(IsEnemyBug);
-                    break;
-
-                case Achievement.EmptySlot:
-                    componentHelper
-                        .Add(new CounterProgressComponent(this, Event.Id.LoadEmptySlot))
-                        .Connect();
-                    break;
-
-                case Achievement.NumberOfAchievements:
-                    goto default;
-                default:
-                    throw new InvalidEnumArgumentException(nameof(Achievement), (int) Achievement, typeof(Achievement));
-            }
-        }
 
         /// <summary>
         /// Disconnects the components from the event center.
@@ -174,33 +75,6 @@ namespace KernelPanic.Tracking
 
             mComponents = null;
         }
-
-        #endregion
-
-        #region Conditions
-
-        private static bool Is100Percent(Event @event)
-        {
-            return @event.Get<Player>(Event.Key.Winner).Base.Power == 100;
-        }
-
-        private static bool PlacedNonWifi(Event @event)
-        {
-            var building = @event.Get<Building>(Event.Key.Building);
-            return IsActiveBuyer(@event) && !(building is WifiRouter);
-        }
-
-        private static bool IsActiveBuyer(Event @event)
-        {
-            return @event.IsActivePlayer(Event.Key.Buyer);
-        }
-
-        private static bool IsEnemyBug(Event @event)
-        {
-            return @event.IsActivePlayer(Event.Key.Defender) && @event.Get<Unit>(Event.Key.Unit) is Bug;
-        }
-
-        #endregion
 
         internal void SetStatus(Achievements.Status status)
         {
