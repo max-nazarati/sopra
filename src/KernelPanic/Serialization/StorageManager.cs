@@ -58,19 +58,8 @@ namespace KernelPanic.Serialization
                 return (Storage.Info) CreateSerializer(gameStateManager).Deserialize(file, typeof(Storage.Info));
         }
 
-        internal static Statistics.Data? LoadStatistics()
-        {
-            try
-            {
-                using (var file = File.OpenText(StatisticsPath))
-                    return (Statistics.Data) CreateSerializer().Deserialize(file, typeof(Statistics.Data));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to load statistics: " + e.Message);
-                return null;
-            }
-        }
+        internal static Statistics.Data? LoadStatistics() =>
+            Load<Statistics.Data>(StatisticsPath, out var data) ? (Statistics.Data?) data : null;
 
         internal static void SaveStatistics(Statistics.Data data)
         {
@@ -80,19 +69,8 @@ namespace KernelPanic.Serialization
                 CreateSerializer().Serialize(file, data);
         }
         
-        internal static AchievementPool.Data? LoadAchievements()
-        {
-            try
-            {
-                using (var file = File.OpenText(AchievementsPath))
-                    return (AchievementPool.Data) CreateSerializer().Deserialize(file, typeof(AchievementPool.Data));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to load achievements: " + e.Message);
-                return null;
-            }
-        }
+        internal static AchievementPool.Data? LoadAchievements() =>
+            Load<AchievementPool.Data>(AchievementsPath, out var data) ? (AchievementPool.Data?) data : null;
 
         internal static void SaveAchievements(AchievementPool.Data data)
         {
@@ -100,6 +78,45 @@ namespace KernelPanic.Serialization
 
             using (var file = File.CreateText(AchievementsPath))
                 CreateSerializer().Serialize(file, data);
+        }
+
+        /// <summary>
+        /// Loads a value of type <typeparamref name="T"/> from the file at <paramref name="path"/> catching all exceptions.
+        /// The result is deserialized with using a serializer created from <see cref="CreateSerializer()"/>.
+        /// </summary>
+        /// <param name="path">The path to the file.</param>
+        /// <param name="result">Contains on completion the deserialized object or if an exception occured the default value for type <typeparamref name="T"/>.</param>
+        /// <typeparam name="T">The type of object to load.</typeparam>
+        /// <returns><c>true</c> if loading was successful, otherwise <c>false</c>.</returns>
+        private static bool Load<T>(string path, out T result)
+        {
+            try
+            {
+                using (var file = File.OpenText(path))
+                    result = (T) CreateSerializer().Deserialize(file, typeof(T));
+                return true;
+            }
+            catch (FileNotFoundException)
+            {
+#if DEBUG
+                Console.WriteLine($"Not loading {typeof(T)}: ›{path}‹ doesn't exist.");
+#else
+                Console.WriteLine($"Not loading {typeof(T)}: File doesn't exist.");
+#endif
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Console.WriteLine($"** Unable to load {typeof(T)} at ›{path}‹ **");
+                Console.WriteLine(e);
+                Console.WriteLine();
+#else
+                Console.WriteLine($"Unable to load {typeof(T)}: {e.Message}");
+#endif
+            }
+
+            result = default(T);
+            return false;
         }
 
         #endregion
