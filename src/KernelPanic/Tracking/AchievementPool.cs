@@ -22,32 +22,7 @@ namespace KernelPanic.Tracking
         internal AchievementPool(AchievementPool parent, Data? loadedData)
         {
             mParent = parent;
-
-            if (loadedData is Data data)
-            {
-                TheData = data;
-            }
-            else if (parent == null)
-            {
-                TheData = new Data
-                {
-                    UnlockTime = new DateTime?[(int) Achievement.NumberOfAchievements],
-
-                    // TODO: Complete this list.
-                    Progress = TrackingDictionary(Achievement.Lose1,
-                        Achievement.Lose10,
-                        Achievement.Win1,
-                        Achievement.Win10,
-                        Achievement.BitcoinAddict)
-                };
-            }
-            else
-            {
-                TheData = new Data
-                {
-                    Progress = TrackingDictionary(Achievement.HighInference, Achievement.BugsFixed)
-                };
-            }
+            TheData = loadedData ?? InitialData();
 
             if (TheData.Progress.Count == 0)
                 return;
@@ -73,9 +48,18 @@ namespace KernelPanic.Tracking
             return new AchievementPool(null, StorageManager.LoadAchievements());
         }
 
-        private Dictionary<Achievement, AchievementProgress> TrackingDictionary(params Achievement[] achievements)
+        private Data InitialData()
         {
-            var dict = new Dictionary<Achievement, AchievementProgress>(achievements.Length);
+            return new Data
+            {
+                UnlockTime = mParent == null ? new DateTime?[Achievements.Count] : null,
+                Progress = TrackingDictionary(mParent == null ? Achievements.GloballyTracked : Achievements.PerGame)
+            };
+        }
+
+        private Dictionary<Achievement, AchievementProgress> TrackingDictionary(IReadOnlyCollection<Achievement> achievements)
+        {
+            var dict = new Dictionary<Achievement, AchievementProgress>(achievements.Count);
             foreach (var achievement in achievements)
             {
                 if (mParent?.TheData.UnlockTime[(int) achievement].HasValue ?? false)

@@ -78,5 +78,28 @@ namespace KernelPanic.Tracking
             Unlocked,
             Failed
         }
+
+        internal const int Count = (int) Achievement.NumberOfAchievements;
+
+        internal static Achievement[] GloballyTracked =>
+            new[]
+            {
+                // TODO: Complete this list.
+                Achievement.BitcoinAddict,
+                Achievement.Lose1,
+                Achievement.Lose10,
+                Achievement.Lose100,
+                Achievement.Win1,
+                Achievement.Win10,
+                Achievement.Win100
+            };
+
+        internal static Achievement[] PerGame =>
+            new[]
+            {
+                // TODO: Complete this list.
+                Achievement.BugsFixed,
+                Achievement.HighInference
+            };
     }
 }
