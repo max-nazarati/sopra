@@ -16,7 +16,8 @@ namespace KernelPanic.Entities
     internal abstract class Unit : Entity
     {
 
-        protected ImageSprite mHealthBar;
+        private ImageSprite mHealthBar;
+        private ImageSprite mDamageBar;
 
         [DataMember]
         protected Vector2? MoveTarget { get; set; }
@@ -61,6 +62,8 @@ namespace KernelPanic.Entities
             ShouldMove = true;
             mHealthBar = spriteManager.CreateColoredRectangle(1, 1, new[] { new Color(0.0f, 1.0f, 0.0f, 1.0f) });
             mHealthBar.SetOrigin(RelativePosition.TopLeft);
+            mDamageBar = spriteManager.CreateColoredRectangle(1, 1, new[] { new Color(1.0f, 0.0f, 0.0f, 1.0f) });
+            mDamageBar.SetOrigin(RelativePosition.TopRight);
         }
 
         /// <summary>
@@ -137,10 +140,14 @@ namespace KernelPanic.Entities
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            var length = 80;
-            var height = 5;
+            var length = 50;
+            var height = 3;
             mHealthBar.DestinationRectangle = new Rectangle((int)(Sprite.Position.X - length/2.0), (int)(Sprite.Y - Sprite.Height/1.5),
                 (int)(length * (RemainingLife*1.0f/MaximumLife)), height);
+
+            mDamageBar.DestinationRectangle = new Rectangle((int)(Sprite.Position.X + length / 2.0), (int)(Sprite.Y - Sprite.Height / 1.5),
+               length, height);
+
             base.Update(positionProvider, inputManager, gameTime);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
@@ -199,6 +206,7 @@ namespace KernelPanic.Entities
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
+            mDamageBar.Draw(spriteBatch, gameTime);
             mHealthBar.Draw(spriteBatch, gameTime);
         }
 
@@ -206,6 +214,7 @@ namespace KernelPanic.Entities
         {
             base.CompleteClone();
             mHealthBar = (ImageSprite)mHealthBar.Clone();
+            mDamageBar = (ImageSprite)mDamageBar.Clone();
         }
     }
 }
