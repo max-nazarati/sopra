@@ -52,9 +52,7 @@ namespace KernelPanic
             if (disposing)
             {
                 Statistics.Dispose();
-                
-                // TODO: Enable when we can load them.
-                // AchievementPool.Dispose();
+                AchievementPool.Dispose();
             }
 
             base.Dispose(disposing);
