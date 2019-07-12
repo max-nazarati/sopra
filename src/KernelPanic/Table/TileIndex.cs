@@ -27,13 +27,27 @@ namespace KernelPanic.Table
 
         /// <summary>
         /// Turns a <see cref="TileIndex"/> into a set of indices which cover the same area. This function only works
-        /// correctly, if <paramref name="subTileCount"/> is a multiple <see cref="SubTileCount"/> and
-        /// <paramref name="subTileCount"/> is greater than or equal to <see cref="SubTileCount"/>;
+        /// correctly, if <paramref name="subTileCount"/> is a multiple <see cref="SubTileCount"/>.
         /// </summary>
         /// <param name="subTileCount">The wanted <see cref="SubTileCount"/>.</param>
         /// <returns>A set of indices covering the same area.</returns>
         internal IEnumerable<TileIndex> Rescaled(int subTileCount)
         {
+            if (subTileCount == SubTileCount)
+            {
+                yield return this;
+                yield break;
+            }
+
+            if (subTileCount < SubTileCount)
+            {
+                yield return new TileIndex(
+                    (int) ((float) Row / SubTileCount * subTileCount),
+                    (int) ((float) Column / SubTileCount * subTileCount),
+                    subTileCount);
+                yield break;
+            }
+
             var mul = subTileCount / SubTileCount;
             for (int row = Row * mul, i = 0; i < subTileCount; i++, row++)
             {
