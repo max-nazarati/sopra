@@ -83,5 +83,12 @@ namespace KernelPanic.Tracking
             // TODO: Return correct descriptions.
             return achievement.ToString();
         }
+
+        internal enum Status
+        {
+            Locked,
+            Unlocked,
+            Failed
+        }
     }
 }

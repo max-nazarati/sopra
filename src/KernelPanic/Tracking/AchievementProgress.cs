@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using Autofac.Util;
 using KernelPanic.Entities;
@@ -14,11 +17,12 @@ namespace KernelPanic.Tracking
     internal sealed class AchievementProgress : Disposable
     {
         [JsonProperty] internal Achievement Achievement { get; }
-        [JsonProperty] internal AchievementStatus Status { get; private set; }
+        [JsonProperty] internal Achievements.Status Status { get; private set; }
 
         [JsonProperty]
-        internal AchievementProgressComponent[] mComponents;
+        internal ProgressComponent[] mComponents;
 
+        [JsonConstructor]
         private AchievementProgress(Achievement achievement)
         {
             Achievement = achievement;
@@ -27,113 +31,122 @@ namespace KernelPanic.Tracking
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            // TODO: Re-track the events.
+            using (var iterator = mComponents.AsEnumerable().GetEnumerator())
+            {
+                AddComponents(new ComponentHelper(iterator));
+            }
         }
 
         internal static AchievementProgress Track(Achievement achievement)
         {
             var progress = new AchievementProgress(achievement);
+            var helper = new ComponentHelper(null);
+            progress.AddComponents(helper);
+            progress.mComponents = helper.ResultingComponents;
+            return progress;
+        }
 
-            switch (achievement)
+        private struct ComponentHelper
+        {
+            private readonly IEnumerator<ProgressComponent> mComponentIterator;
+            private readonly List<ProgressComponent> mNewComponents;
+
+            internal ProgressComponent[] ResultingComponents => mNewComponents.ToArray();
+
+            internal ComponentHelper(IEnumerator<ProgressComponent> componentIterator)
+            {
+                mComponentIterator = componentIterator;
+                mNewComponents = mComponentIterator == null ? new List<ProgressComponent>(4) : null;
+            }
+
+            internal ProgressComponent Add(ProgressComponent component)
+            {
+                if (mNewComponents != null)
+                {
+                    mNewComponents.Add(component);
+                    return component;
+                }
+
+                mComponentIterator.MoveNext();
+                
+                // NOTE: If you get an exception here, you might have to delete your achievements save file.
+                if (!(mComponentIterator.Current is ProgressComponent restored))
+                    throw new InvalidOperationException("Adding more components than were restored.");
+                if (!component.IsSimilar(restored))
+                    throw new InvalidOperationException("Components mismatch.");
+
+                return restored;
+            }
+        }
+
+        private void AddComponents(ComponentHelper componentHelper)
+        {
+            switch (Achievement)
             {
                 case Achievement.Win1:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.GameWon) 
-                    };
+                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameWon)).Connect();
                     break;
-
                 case Achievement.Win10:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.GameWon, count: 10) 
-                    };
+                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameWon, 10)).Connect();
                     break;
-
                 case Achievement.Win100:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.GameWon, count: 100) 
-                    };
+                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameWon, 100)).Connect();
                     break;
 
                 case Achievement.Lose1:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.GameLost) 
-                    };
+                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameLost)).Connect();
                     break;
-
                 case Achievement.Lose10:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.GameLost, count: 10) 
-                    };
+                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameLost, 10)).Connect();
                     break;
-
                 case Achievement.Lose100:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.GameLost, count: 100) 
-                    };
+                    componentHelper.Add(new CounterProgressComponent(this, Event.Id.GameLost, 100)).Connect();
                     break;
 
                 case Achievement.AptGetUpgrade:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.UpgradeBought, count: 10)
-                        {
-                            ExtractKey = Event.Key.Price
-                        }
-                    };
+                    componentHelper
+                        .Add(new CounterProgressComponent(this, Event.Id.UpgradeBought, 10) {ExtractKey = Event.Key.Price})
+                        .Connect(IsActiveBuyer);
                     break;
 
                 case Achievement.BitcoinAddict:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new ValueComparison(progress, 1100, Event.Id.BitcoinChanged, Event.Key.Price, IsActiveBuyer)
-                    };
+                    componentHelper
+                        .Add(new ComparisonProgressComponent(this, 1100, Event.Id.BitcoinChanged, Event.Key.Price))
+                        .Connect(IsActiveBuyer);
                     break;
 
                 case Achievement.IronFortress:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.GameWon, Is100Percent) 
-                    };
+                    componentHelper
+                        .Add(new CounterProgressComponent(this, Event.Id.GameWon))
+                        .Connect(Is100Percent);
                     break;
 
                 case Achievement.HighInference:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.GameWon),
-                        new EventCounter(progress, Event.Id.BuildingPlaced, PlacedNonWifi)
-                        {
-                            ResultingStatus = AchievementStatus.Failed
-                        }
-                    };
+                    componentHelper
+                        .Add(new CounterProgressComponent(this, Event.Id.GameWon))
+                        .Connect();
+                    componentHelper
+                        .Add(new CounterProgressComponent(this, Event.Id.BuildingPlaced) {ResultingStatus = Achievements.Status.Failed})
+                        .Connect(PlacedNonWifi);
                     break;
 
                 case Achievement.BugsFixed:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.KilledUnit, IsEnemyBug, 3)
-                    };
+                    componentHelper
+                        .Add(new CounterProgressComponent(this, Event.Id.KilledUnit, 3))
+                        .Connect(IsEnemyBug);
                     break;
 
                 case Achievement.EmptySlot:
-                    progress.mComponents = new AchievementProgressComponent[]
-                    {
-                        new EventCounter(progress, Event.Id.LoadEmptySlot)
-                    };
+                    componentHelper
+                        .Add(new CounterProgressComponent(this, Event.Id.LoadEmptySlot))
+                        .Connect();
                     break;
 
                 case Achievement.NumberOfAchievements:
                     goto default;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(achievement), achievement, null);
+                    throw new InvalidEnumArgumentException(nameof(Achievement), (int) Achievement, typeof(Achievement));
             }
-
-            return progress;
         }
 
         #region Conditions
@@ -161,18 +174,18 @@ namespace KernelPanic.Tracking
 
         #endregion
 
-        internal void SetStatus(AchievementStatus status)
+        internal void SetStatus(Achievements.Status status)
         {
             if (Status == status)
                 return;
-                
-            if (Status != AchievementStatus.Locked)
+
+            if (Status != Achievements.Status.Locked)
                 throw new InvalidOperationException($"Can't go from {Status} to {status}");
-            
+
             Status = status;
             DisposeComponents();
 
-            EventCenter.Default.Send(status == AchievementStatus.Unlocked
+            EventCenter.Default.Send(status == Achievements.Status.Unlocked
                 ? Event.AchievementUnlocked(Achievement)
                 : Event.AchievementImpossible(Achievement));
         }
@@ -189,7 +202,7 @@ namespace KernelPanic.Tracking
 
             mComponents = null;
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -197,85 +210,5 @@ namespace KernelPanic.Tracking
 
             base.Dispose(disposing);
         }
-    }
-
-    internal abstract class AchievementProgressComponent : Disposable
-    {
-        [JsonProperty] protected AchievementProgress Progress { get; }
-
-        [JsonProperty] internal Event.Id EventId { get; set; }
-
-        private IDisposable mDisposable;
-
-        protected AchievementProgressComponent(AchievementProgress progress, Event.Id eventId, Func<Event, bool> condition)
-        {
-            Progress = progress;
-            EventId = eventId;
-            mDisposable = EventCenter.Default.Subscribe(eventId, Handle, condition);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            mDisposable?.Dispose();
-            mDisposable = null;
-
-            base.Dispose(disposing);
-        }
-
-        protected abstract void Handle(Event @event);
-    }
-
-    internal sealed class EventCounter : AchievementProgressComponent
-    {
-        [JsonProperty]
-        private int mTarget;
-
-        [JsonProperty]
-        private int mCurrent;
-
-        [JsonProperty] internal Event.Key? ExtractKey { get; set; }
-
-        [JsonProperty] internal AchievementStatus ResultingStatus { get; set; } = AchievementStatus.Unlocked;
-
-        internal EventCounter(AchievementProgress progress, Event.Id eventId, Func<Event, bool> condition = null, int count = 1)
-            : base(progress, eventId, condition)
-        {
-            mTarget = count;
-        }
-
-        protected override void Handle(Event @event)
-        {
-            mCurrent += ExtractKey is Event.Key key ? @event.Get<int>(key) : 1;
-            if (mCurrent >= mTarget)
-                Progress.SetStatus(ResultingStatus);
-        }
-    }
-
-    internal sealed class ValueComparison : AchievementProgressComponent
-    {
-        [JsonProperty]
-        private int mTarget;
-
-        [JsonProperty]
-        private Event.Key mExtractKey;
-
-        internal ValueComparison(AchievementProgress progress, int target, Event.Id eventId, Event.Key extractKey, Func<Event, bool> condition = null)
-            : base(progress, eventId, condition)
-        {
-            mTarget = target;
-            EventId = eventId;
-            mExtractKey = extractKey;
-        }
-
-        protected override void Handle(Event @event)
-        {
-            if (@event.Get<int>(mExtractKey) >= mTarget)
-                Progress.SetStatus(AchievementStatus.Unlocked);
-        }
-    }
-
-    internal enum AchievementStatus
-    {
-        Locked, Unlocked, Failed
     }
 }

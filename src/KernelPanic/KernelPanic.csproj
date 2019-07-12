@@ -163,6 +163,7 @@
     <Compile Include="Tracking\Achievement.cs" />
     <Compile Include="Tracking\AchievementPool.cs" />
     <Compile Include="Tracking\AchievementProgress.cs" />
+    <Compile Include="Tracking\ProgressComponent.cs" />
     <Compile Include="Tracking\Statistics.cs" />
     <Compile Include="Upgrades\Upgrade.cs" />
     <Compile Include="Upgrades\UpgradePool.cs" />
