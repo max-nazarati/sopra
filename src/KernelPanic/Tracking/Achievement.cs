@@ -1,17 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
-using Accord.Statistics.Kernels;
-using Autofac.Util;
-using KernelPanic.Entities;
-using KernelPanic.Entities.Buildings;
-using KernelPanic.Entities.Units;
-using KernelPanic.Events;
-using KernelPanic.Players;
-using KernelPanic.Serialization;
-using Newtonsoft.Json;
 
 namespace KernelPanic.Tracking
 {
