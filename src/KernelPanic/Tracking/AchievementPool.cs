@@ -38,6 +38,13 @@ namespace KernelPanic.Tracking
 
         private DateTime?[] UnlockTimeArray => AchievementData.UnlockTime ?? mParent.AchievementData.UnlockTime;
 
+        #region Creation
+
+        internal static AchievementPool LoadGlobal()
+        {
+            return new AchievementPool(null, StorageManager.LoadAchievements());
+        }
+
         internal AchievementPool(AchievementPool parent, Data? loadedData)
         {
             mParent = parent;
@@ -63,11 +70,6 @@ namespace KernelPanic.Tracking
                 });
         }
 
-        internal static AchievementPool LoadGlobal()
-        {
-            return new AchievementPool(null, StorageManager.LoadAchievements());
-        }
-
         private Data InitialData()
         {
             return new Data
@@ -87,6 +89,8 @@ namespace KernelPanic.Tracking
             progress.Sort(new AchievementProgress.Comparer());
             return progress;
         }
+        
+        #endregion
 
         protected override void Dispose(bool disposing)
         {
