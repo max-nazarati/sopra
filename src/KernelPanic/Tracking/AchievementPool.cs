@@ -98,14 +98,17 @@ namespace KernelPanic.Tracking
         {
             base.Dispose(disposing);
 
+            // Disconnect ourselves from the event center.
             mDisposable.Dispose();
+
+            // Save the achievement progress before we dispose of the progress.
+            if (mParent == null)
+                StorageManager.SaveAchievements(AchievementData);
+
             foreach (var progress in AchievementData.Progress)
             {
                 progress.Dispose();
             }
-
-            if (mParent == null)
-                StorageManager.SaveAchievements(AchievementData);
         }
 
         internal IEnumerable<(string Title, string Description, string Time)> UserRepresentation
