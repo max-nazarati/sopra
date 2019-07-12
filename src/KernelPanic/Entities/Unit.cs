@@ -7,6 +7,7 @@ using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using KernelPanic.Data;
 
 
 namespace KernelPanic.Entities
@@ -14,6 +15,9 @@ namespace KernelPanic.Entities
     [DataContract]
     internal abstract class Unit : Entity
     {
+
+        protected ImageSprite mHealthBar;
+
         [DataMember]
         protected Vector2? MoveTarget { get; set; }
 
@@ -55,6 +59,8 @@ namespace KernelPanic.Entities
             RemainingLife = life;
             AttackStrength = attackStrength;
             ShouldMove = true;
+            mHealthBar = spriteManager.CreateColoredRectangle(1, 1, new[] { new Color(0.0f, 1.0f, 0.0f, 1.0f) });
+            mHealthBar.SetOrigin(RelativePosition.TopLeft);
         }
 
         /// <summary>
@@ -73,10 +79,10 @@ namespace KernelPanic.Entities
             const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.CreateInstance |
                                               BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
-            return (TUnit) Activator.CreateInstance(typeof(TUnit),
+            return (TUnit)Activator.CreateInstance(typeof(TUnit),
                 bindingFlags,
                 null,
-                new object[] {spriteManager},
+                new object[] { spriteManager },
                 null);
         }
 
@@ -131,6 +137,10 @@ namespace KernelPanic.Entities
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
+            var length = 80;
+            var height = 5;
+            mHealthBar.DestinationRectangle = new Rectangle((int)(Sprite.Position.X - length/2.0), (int)(Sprite.Y - Sprite.Height/1.5),
+                (int)(length - length * (1 - RemainingLife*1.0f/MaximumLife)), height);
             base.Update(positionProvider, inputManager, gameTime);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
@@ -138,7 +148,7 @@ namespace KernelPanic.Entities
             var actualSpeed = mSlowedDown ? Speed / 2 : Speed;
             mSlowedDown = false;
 
-            var move = (Vector2?) null;
+            var move = (Vector2?)null;
             if (ShouldMove && MoveTarget is Vector2 target)
             {
                 var remainingDistance = Vector2.Distance(Sprite.Position, target);
@@ -184,6 +194,18 @@ namespace KernelPanic.Entities
             EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
             positionProvider.DamageBase(AttackStrength);
             WantsRemoval = true;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            base.Draw(spriteBatch, gameTime);
+            mHealthBar.Draw(spriteBatch, gameTime);
+        }
+
+        protected override void CompleteClone()
+        {
+            base.CompleteClone();
+            mHealthBar = (ImageSprite)mHealthBar.Clone();
         }
     }
 }
