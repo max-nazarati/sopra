@@ -16,8 +16,7 @@ namespace KernelPanic.Entities.Units
         private readonly int mAbilityRange;
         private readonly ImageSprite mIndicatorRange;
         private readonly ImageSprite mIndicatorTarget;
-        private readonly ImageSprite mEmpSpriteOne;
-        private readonly ImageSprite mEmpSpriteTwo;
+        private readonly ImageSprite mEmpSprite;
         private Tower mAbilityTargetOne;
         private Tower mAbilityTargetTwo;
 
@@ -37,8 +36,8 @@ namespace KernelPanic.Entities.Units
             mAbilityRange = 1000;
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
             mIndicatorTarget = spriteManager.CreateEmpIndicatorTarget();
-            mEmpSpriteOne = spriteManager.CreateEmp();
-            mEmpSpriteTwo = spriteManager.CreateEmp();
+            mEmpSprite = spriteManager.CreateEmp();
+
             mEmps = new Emp[2];
         }
         
@@ -97,13 +96,13 @@ namespace KernelPanic.Entities.Units
             
             if (mAbilityTargetOne is Tower first)
             {
-                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSpriteOne);
+                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite);
                 positionProvider.AddProjectile(empOne);
             }
 
             if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
             {
-                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSpriteTwo);
+                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite);
                 positionProvider.AddProjectile(empTwo);
             }
         }

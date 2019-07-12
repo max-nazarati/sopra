@@ -129,6 +129,11 @@ namespace KernelPanic.Entities
         }
 
         #endregion
+
+        public void HitByEmp()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal enum BuildingState

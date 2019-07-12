@@ -252,6 +252,13 @@ namespace KernelPanic.ArtificialIntelligence
 
         public void Update(GameTime gameTime)
         {
+            if (mAttackPlanner == null || mDefencePlanner == null || mUpgradePlanner == null || EventCenter.Default == null)
+            {
+                // I caught an error when starting a new game, I hope this fixes it
+                return;
+                // does not fix it
+            }
+            
             SetData();
             
             mAttackPlanner.Update(mAttackData, gameTime);
