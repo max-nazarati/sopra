@@ -13,7 +13,6 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.Tracking
 {
-
     internal sealed class AchievementProgress : Disposable
     {
         [JsonProperty] internal Achievement Achievement { get; }
@@ -190,6 +189,9 @@ namespace KernelPanic.Tracking
                 : Event.AchievementImpossible(Achievement));
         }
 
+        /// <summary>
+        /// Disconnects the components from the event center.
+        /// </summary>
         private void DisposeComponents()
         {
             if (mComponents == null)
