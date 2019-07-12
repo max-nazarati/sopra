@@ -1,24 +1,37 @@
-﻿using System.Collections.Generic;
-using KernelPanic.Entities;
+﻿using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Projectiles;
 
 namespace KernelPanic
 {
-    internal sealed class CollisionManager
+    internal static class CollisionManager
     {
-        private readonly List<Entity> mObjectList;
-
-        public CollisionManager()
+        internal static void Handle(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
         {
-            mObjectList = new List<Entity>();
+            if (!TryHandle(object1, object2, positionProvider))
+                TryHandle(object2, object1, positionProvider);
         }
 
-        public void CreatedObject(Entity Object)
+        private static bool TryHandle(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
         {
-            mObjectList.Add(Object);
-        }
+            switch (object1)
+            {
+                case Projectile projectile when object2 is Unit unit:
+                    projectile.Hit(unit, positionProvider);
+                    return true;
 
-        public void Update()
-        {
+                case Projectile projectile when object2 is LaneBorder:
+                    projectile.RadiusReached();
+                    return true;
+                
+                case Emp emp when object2 is Tower tower:
+                    emp.Hit(tower);
+                    return true;
+                
+                default:
+                    return false;
+            }
+
         }
     }
 }

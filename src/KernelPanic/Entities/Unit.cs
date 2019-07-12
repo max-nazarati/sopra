@@ -2,10 +2,9 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
-using KernelPanic.Table;
-using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,8 +12,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic.Entities
 {
     [DataContract]
-    [KnownType(typeof(Troupe))]
-    [KnownType(typeof(Hero))]
     internal abstract class Unit : Entity
     {
         [DataMember]
@@ -24,16 +21,13 @@ namespace KernelPanic.Entities
         /// The speed (GS) of this unit.
         /// </summary>
         [DataMember]
-        protected int Speed { get; set; }
-        private int OriginalSpeed { get; set; }
-
-        public bool mIsSlower;
+        internal float Speed { get; set; }
 
         /// <summary>
         /// The AS of this Unit. This is the damage dealt to the enemy's base if reached.
         /// </summary>
         [DataMember]
-        private int AttackStrength { get; set; }
+        internal int AttackStrength { get; set; }
 
         /// <summary>
         /// Stores the initial/maximum LP. Kept to ensure,
@@ -46,7 +40,7 @@ namespace KernelPanic.Entities
         /// Stores the current/remaining LP. If this goes to zero or below, this unit is considered to be dead.
         /// </summary>
         [DataMember]
-        private int RemainingLife { get; set; }
+        internal int RemainingLife { get; set; }
 
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
@@ -57,8 +51,6 @@ namespace KernelPanic.Entities
             : base(price, sprite, spriteManager)
         {
             Speed = speed;
-            OriginalSpeed = speed;
-            mIsSlower = false;
             MaximumLife = life;
             RemainingLife = life;
             AttackStrength = attackStrength;
@@ -90,6 +82,8 @@ namespace KernelPanic.Entities
 
         internal Unit Clone() => Clone<Unit>();
 
+        public override int? DrawLevel => 1;    // Units are between buildings and projectiles.
+
         #region Taking damage
 
         /// <summary>
@@ -102,11 +96,15 @@ namespace KernelPanic.Entities
         /// </para>
         /// </summary>
         /// <param name="damage">The number of life-points to subtract.</param>
-        public void DealDamage(int damage)
+        /// <returns><c>true</c> if this <see cref="Unit"/> died, <c>false</c> otherwise.</returns>
+        public bool DealDamage(int damage)
         {
             RemainingLife = Math.Min(MaximumLife, RemainingLife - damage);
-            if (RemainingLife <= 0)
-                DidDie();
+            if (RemainingLife > 0)
+                return false;
+
+            DidDie();
+            return true;
         }
 
         /// <summary>
@@ -114,18 +112,31 @@ namespace KernelPanic.Entities
         /// </summary>
         protected virtual void DidDie()
         {
-            SetWantsRemoval();
+            WantsRemoval = true;
         }
 
         #endregion
 
+        private bool mSlowedDown;
+
+        /// <summary>
+        /// Slows this unit for the next frame.
+        /// </summary>
+        internal void SlowDownForFrame()
+        {
+            mSlowedDown = true;
+        }
+
         protected abstract void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager);
 
-        internal override void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            base.Update(positionProvider, gameTime, inputManager);
+            base.Update(positionProvider, inputManager, gameTime);
 
             CalculateMovement(positionProvider, gameTime, inputManager);
+
+            var actualSpeed = mSlowedDown ? Speed / 2 : Speed;
+            mSlowedDown = false;
 
             var move = (Vector2?) null;
             if (ShouldMove && MoveTarget is Vector2 target)
@@ -138,28 +149,19 @@ namespace KernelPanic.Entities
                 }
                 else
                 {
-                    var theMove = Vector2.Normalize(target - Sprite.Position) * Math.Min(Speed, remainingDistance);
+                    var theMove = Vector2.Normalize(target - Sprite.Position) * Math.Min(actualSpeed, remainingDistance);
                     Sprite.Position += theMove;
                     CheckBaseReached(positionProvider);
                     move = theMove;
                 }
             }
 
-            if (mIsSlower)
-            {
-                Speed = OriginalSpeed / 2;
-            }
-            else
-            {
-                Speed = OriginalSpeed;
-            }
-            
             if (!(Sprite is AnimatedSprite animated))
                 return;
 
             if (move?.X is float x)
             {
-                // choose correct movement direction baseed on x value or direction of idle animation
+                // choose correct movement direction based on x value or direction of idle animation
                 animated.MovementDirection = (animated.Effect == SpriteEffects.None && (int)x == 0) || x < 0
                     ? AnimatedSprite.Direction.Left
                     : AnimatedSprite.Direction.Right;
@@ -168,13 +170,20 @@ namespace KernelPanic.Entities
                 animated.MovementDirection = AnimatedSprite.Direction.Standing;
         }
 
+        internal override void UpdateInformation()
+        {
+            base.UpdateInformation();
+            mInfoText.Text += $"\nLeben: {RemainingLife}";
+        }
+
         private void CheckBaseReached(PositionProvider positionProvider)
         {
             if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
                 return;
 
+            EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
             positionProvider.DamageBase(AttackStrength);
-            SetWantsRemoval();
+            WantsRemoval = true;
         }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 
@@ -8,7 +6,7 @@ namespace KernelPanic.PathPlanning
 {
     internal sealed class BreadthFirstSearch : PathPlanner
     {
-        public HeatMap HeatMap { get; }
+        private HeatMap HeatMap { get; }
 
         private BreadthFirstSearch(HeatMap map)
         {

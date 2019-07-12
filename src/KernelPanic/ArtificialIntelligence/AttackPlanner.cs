@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Units;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using Microsoft.Xna.Framework;
@@ -11,14 +12,15 @@ namespace KernelPanic.ArtificialIntelligence
     {
         private readonly Dictionary<Type, PurchasableAction<Unit>> mActions;
 
-        private int mTimer = 0; // this can prob be deleted in the future (usage: TroupeParade)
-
         #region Konstruktor
         
         public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions) : base(player)
         {
             mActions = actions;
-            FastWave();
+            BuyEntity<Thunderbird>();
+            // FastWave();
+            // FastAndFurious();
+            BuyEntity<Firefox>();
         }
         
         #endregion
@@ -33,45 +35,9 @@ namespace KernelPanic.ArtificialIntelligence
         
         #region Spawn Functions
         
-        private void TroupeParade(int interval = 200)
-        {
-            if (mTimer == interval)
-            {
-                BuyEntity<Thunderbird>();
-                mTimer++;
-                return;
-            }
-            if (mTimer == 2 * interval)
-            {
-                BuyEntity<Bug>();
-                mTimer++;
-                return;
-            }
-            if (mTimer == 3 * interval)
-            {
-                BuyEntity<Virus>();
-                mTimer++;
-                return;
-            }
-            if (mTimer == 4 * interval)
-            {
-                BuyEntity<Nokia>();
-                mTimer++;
-                return;
-            }
-            if (mTimer >= 5 * interval)
-            {
-                BuyEntity<Trojan>();
-                mTimer = 0;
-                return;
-            }
-
-            mTimer++;
-        }
-
         private void FastWave()
         {
-            BuyEntity<Bug>(1);
+            BuyEntity<Bug>();
         }
         
         private void FastAndFurious()

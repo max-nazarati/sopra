@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Media;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
@@ -9,9 +8,6 @@ namespace KernelPanic
 {
     internal sealed class SoundManager
     {
-        private SoundEffect mShoot, mPlacement;
-        private Song mBackgroundSong1;
-
         public enum Sound
         {
             TowerPlacement,
@@ -76,8 +72,8 @@ namespace KernelPanic
 
         /// <summary>
         /// plays the sound according to the given string
+        /// <param name="sound"><see cref="Sound"/> to play.</param>
         /// </summary>
-        /// <param name="actionName">Sound to play. walk, shoot, buildTower</param>
         public void PlaySound(Sound sound)
         {
             Lookup(sound).Play(0.4f, 1f, 1f);

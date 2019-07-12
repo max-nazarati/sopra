@@ -16,14 +16,12 @@ namespace KernelPanic.Table
         internal Rectangle LaneRectangle { get; }
 
         private Rectangle TileCutout => new Rectangle(
-            
             LaneSide == Lane.Side.Left ? LaneWidthInTiles : 0,
             LaneWidthInTiles,
             LaneRectangle.Width - LaneWidthInTiles,
             LaneRectangle.Height - 2 * LaneWidthInTiles);
-            
 
-            private Rectangle PixelCutout
+        internal Rectangle PixelCutout
         {
             get
             {
@@ -41,25 +39,12 @@ namespace KernelPanic.Table
         /// The size of a single tile in pixels.
         /// </summary>
         internal const int KachelSize = 100; // TODO
-        
-        private const int TilesPerSprite = 1; // per Dimension
-        private const int SingleTileSizePixel = KachelSize / TilesPerSprite;
 
         private static int TileCountPixelSize(int tiles) => tiles * KachelSize;
 
         private readonly Sprite mSprite;
 
         public Rectangle Bounds => mSprite.Bounds;
-
-        internal int TileCount
-        {
-            get
-            {
-                var rectangle = LaneRectangle;
-                var cutout = TileCutout;
-                return rectangle.Width * rectangle.Height - cutout.Width * cutout.Height;
-            }
-        }
 
         internal Grid(Rectangle laneBounds, SpriteManager sprites, Lane.Side laneSide)
         {

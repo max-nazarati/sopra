@@ -6,6 +6,7 @@ using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Players;
+using KernelPanic.Purchasing;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,9 +16,11 @@ namespace KernelPanic.Entities
     [DataContract]
     [KnownType(typeof(Unit))]
     [KnownType(typeof(Building))]
-    internal abstract class Entity : IPriced, IBounded
+    internal abstract class Entity : IPriced, IGameObject
     {
         internal Sprite Sprite { get; private set; }
+
+        internal readonly TextSprite mInfoText;
 
         protected SpriteManager SpriteManager { get; }
 
@@ -26,6 +29,9 @@ namespace KernelPanic.Entities
             Price = price;
             Sprite = sprite;
             Sprite.SetOrigin(RelativePosition.Center);
+            mInfoText = spriteManager.CreateText($"Preis: {price}");
+            mInfoText.SetOrigin(RelativePosition.CenterRight);
+            mInfoText.TextColor = Color.White;
             SpriteManager = spriteManager;
         }
 
@@ -50,7 +56,7 @@ namespace KernelPanic.Entities
         /// </example>
         /// <typeparam name="T">Should be the type of <c>this</c>.</typeparam>
         /// <returns>A copy of the object.</returns>
-        protected internal T Clone<T>() where T: Entity
+        protected T Clone<T>() where T: Entity
         {
             var copy = (T) MemberwiseClone();
             copy.CompleteClone();
@@ -59,46 +65,40 @@ namespace KernelPanic.Entities
 
         #endregion
 
-        #region Removal
-
-        internal delegate void RemovalDelegate(Entity entity);
-
-        internal event RemovalDelegate Removed;
+        public abstract int? DrawLevel { get; }
 
         /// <summary>
         /// If this flag is <c>true</c> this entity should be removed from the <see cref="EntityGraph"/>.
         /// </summary>
-        internal bool WantsRemoval { get; private set; }
-
-        /// <summary>
-        /// Flags this entity for removal.
-        /// </summary>
-        protected void SetWantsRemoval()
-        {
-            WantsRemoval = true;
-            Removed?.Invoke(this);
-        }
-
-        #endregion
+        public bool WantsRemoval { get; protected set; }
 
         public bool Selected { get; set; }
 
-        public Rectangle Bounds => Sprite.Bounds;
+        public virtual Rectangle Bounds => Sprite.Bounds;
 
         internal virtual void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
         {
             // do nothing (Troupes walk to the base anyways
         }
-            
-        internal virtual void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+
+        public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             if (!Selected)
                 return;
 
+            var owner = positionProvider.Owner[this];
             if (mStoredActions == null)
-                mStoredActions = Actions(positionProvider.Owner[this]).ToArray();
+            {
+                mStoredActions = Actions(owner).ToArray();
+                mDrawActions = owner.Select(true, false);
+            }
 
-            PositionActions(action => action.Update(inputManager, gameTime));
+            if (mDrawActions)
+            {
+                PositionActions(action => action.Update(inputManager, gameTime));
+                UpdateInformation();
+            }
+
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -106,12 +106,23 @@ namespace KernelPanic.Entities
             Sprite.Draw(spriteBatch, gameTime);
         }
 
-        internal void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
+        internal virtual void UpdateInformation()
         {
+            mInfoText.Text = $"Preis: {Price}";
+        }
+
+        internal virtual void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (!mDrawActions)
+                return;
+
             foreach (var action in mStoredActions)
             {
                 action.Draw(spriteBatch, gameTime);
             }
+
+            
+            mInfoText.Draw(spriteBatch, gameTime);
         }
 
         #region IPriced
@@ -124,6 +135,7 @@ namespace KernelPanic.Entities
         #region Actions
 
         private IAction[] mStoredActions;
+        private bool mDrawActions;
 
         /// <summary>
         /// Enumerates through all actions supported by this entity. Defaults to no actions.
@@ -158,6 +170,7 @@ namespace KernelPanic.Entities
                 body(action);
                 position.Y += action.Button.Sprite.Height;
             }
+            mInfoText.Position = new Vector2(Sprite.Position.X - Sprite.Width, Sprite.Position.Y);
         }
 
         #endregion

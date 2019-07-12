@@ -1,30 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using Autofac.Util;
 using KernelPanic.Data;
 using KernelPanic.Input;
+using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    [DataContract]
-    internal sealed class GameStateManager
+    internal sealed class GameStateManager : Disposable
     {
-        /*
-        public AGameState ActiveState { get; }
-        public InputManager Input { get; }
-        //public Settings Settings { get; }
-        public SoundManager Sounds { get; }
-        public void Switch(AGameState newGameState)
-        {
-            mGameStates.Pop();
-            mGameStates.Push(newGameState);
-        }
-        */
-
         /// <summary>
         /// Stores a <see cref="AGameState"/> together with the current quad-tree of click targets.
         /// </summary>
@@ -41,26 +28,54 @@ namespace KernelPanic
         }
 
         public SpriteManager Sprite { get; }
-        
+        internal GraphicsDeviceManager GraphicsDeviceManager { get; }
+
         public SoundManager Sound { get; }
         private readonly Stack<GameStateInfo> mGameStates = new Stack<GameStateInfo>();
 
         internal Action ExitAction { get; }
 
-        public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds
-            , GraphicsDeviceManager mGraphics)
+        internal Statistics Statistics { get; } = new Statistics();
+
+        internal AchievementPool AchievementPool { get; } = AchievementPool.LoadGlobal();
+
+        public GameStateManager(Action exitAction, SpriteManager sprites, SoundManager sounds, GraphicsDeviceManager graphics)
         {
             Sprite = sprites;
             Sound = sounds;
+            GraphicsDeviceManager = graphics;
             ExitAction = exitAction;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Statistics.Dispose();
+                
+                // TODO: Enable when we can load them.
+                // AchievementPool.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        private void Clear()
+        {
+            foreach (var info in mGameStates)
+            {
+                info.State.Dispose();
+            }
+            
+            mGameStates.Clear();
         }
 
         public void Pop()
         {
-            if (mGameStates.Count > 0)
-            {
-                mGameStates.Pop();
-            }
+            if (mGameStates.Count <= 0)
+                return;
+
+            mGameStates.Pop().State.Dispose();
         }
 
         public void Push(AGameState newGameState)
@@ -80,12 +95,11 @@ namespace KernelPanic
         /// <param name="newGameState">The new state.</param>
         internal void Restart(AGameState newGameState)
         {
-            mGameStates.Clear();
+            Clear();
             Push(newGameState);
         }
 
-        public void Update(RawInputState rawInput, GameTime gameTime, SoundManager soundManager
-            , GraphicsDeviceManager mGraphics)
+        public void Update(RawInputState rawInput, GameTime gameTime, SoundManager soundManager)
         {
             foreach (var info in ActiveStates())
             {
@@ -97,7 +111,7 @@ namespace KernelPanic
                     rawInput.Claim(requiredClaim);
 
                 // Do the actual update.
-                state.Update(input, gameTime, soundManager, mGraphics);
+                state.Update(input, gameTime, soundManager);
 
                 // The call to Update filled newClickTargets via the reference in the InputManager.
                 info.ClickTargets = QuadTree<ClickTarget>.Create(newClickTargets);

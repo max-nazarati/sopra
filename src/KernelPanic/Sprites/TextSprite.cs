@@ -22,13 +22,13 @@ namespace KernelPanic.Sprites
         private SpriteFont Font
         {
             get => mFont;
-            set
+            /*set
             {
                 if (mFont == value)
                     return;
                 mFont = value ?? throw new ArgumentNullException();
                 ResetLazySize();
-            }
+            } */
         }
 
         public string Text
@@ -43,7 +43,13 @@ namespace KernelPanic.Sprites
             }
         }
 
-        public Color TextColor { /*internal*/ private get; set; } = Color.Black;
+        internal Color TextColor { /*internal*/ private get; set; } = Color.Black;
+
+        internal override Color TintColor
+        {
+            get => TextColor;
+            set => TextColor = value;
+        }
 
         public TextSprite(SpriteFont font, string text = "")
         {

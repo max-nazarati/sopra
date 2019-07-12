@@ -2,23 +2,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Units;
+using KernelPanic.Events;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Waves
 {
     internal sealed class WaveManager
     {
+        [JsonProperty]
         private PlayerIndexed<List<Troupe>> mTroupes;
+
+        [JsonProperty]
         internal PlayerIndexed<Player> Players { get; }
 
+        [JsonProperty]
         private TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(10);
 
+        [JsonProperty]
         private int mLastIndex;
 
         /// <summary>
         /// All the waves where at least one player still has units.
         /// </summary>
+        [JsonProperty]
         private readonly List<Wave> mAliveWaves = new List<Wave>();
 
         /// <summary>
@@ -26,6 +35,7 @@ namespace KernelPanic.Waves
         /// </summary>
         private Wave CurrentWave => mAliveWaves.Count == 0 ? null : mAliveWaves[mAliveWaves.Count - 1];
 
+        [JsonConstructor]
         public WaveManager(PlayerIndexed<Player> players)
         {
             mTroupes = new PlayerIndexed<List<Troupe>>(new List<Troupe>(), new List<Troupe>());
@@ -69,17 +79,18 @@ namespace KernelPanic.Waves
 
         internal void Add(IPlayerDistinction player, Unit unit)
         {
-            var clone = unit.Clone();
+            var buyer = Players.Select(player);
+            EventCenter.Default.Send(Event.BoughtUnit(buyer, unit));
 
+            var clone = unit.Clone();
             if (clone is Troupe troupe)
             {
                 mTroupes.Select(player).Add(troupe);
                 return;
             }
 
-            var player1 = Players.Select(player);
-            player1.ApplyUpgrades(clone);
-            player1.AttackingLane.UnitSpawner.Register(clone);
+            buyer.ApplyUpgrades(clone);
+            buyer.AttackingLane.UnitSpawner.Register(clone);
         }
 
         internal void Update(GameTime gameTime)
@@ -105,7 +116,10 @@ namespace KernelPanic.Waves
                 // Decrease the time till the first wave.
                 mTimeTillFirstWave -= gameTime.ElapsedGameTime;
                 if (mTimeTillFirstWave <= TimeSpan.Zero)
+                {
                     Activate();
+                    EventCenter.Default.Send(Event.SetupEnded());
+                }
             }
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using KernelPanic.Camera;
+using KernelPanic.Events;
 using KernelPanic.Input;
+using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -33,6 +35,17 @@ namespace KernelPanic
             mInputState = new RawInputState();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                mGameStateManager?.Dispose();
+                mGameStateManager = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -41,9 +54,15 @@ namespace KernelPanic
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             IsMouseVisible = true;
             mSoundManager = new SoundManager(Content);
+            EventCenter.Default.Subscribe(Event.Id.AchievementUnlocked, @event =>
+            {
+                var achievement = @event.Get<Achievement>(Event.Key.Achievement);
+                var screen = MenuState.CreateAchievementDisplay(achievement, mGameStateManager);
+                mGameStateManager.Push(screen);
+            });
+
             base.Initialize();
         }
 
@@ -55,7 +74,8 @@ namespace KernelPanic
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
-            mGameStateManager = new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mSoundManager, mGraphics);
+            mGameStateManager =
+                new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mSoundManager, mGraphics);
             InGameState.PushGameStack(0, mGameStateManager);
             // SoundManager.Instance.PlayBackgroundMusic();
         }
@@ -77,7 +97,13 @@ namespace KernelPanic
         protected override void Update(GameTime gameTime)
         {
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
-            mGameStateManager.Update(mInputState, gameTime, mSoundManager, mGraphics);
+
+            if (!DebugSettings.GamePaused)
+            {
+                mGameStateManager.Update(mInputState, gameTime, mSoundManager);
+                EventCenter.Default.Run();
+            }
+
             DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
             base.Update(gameTime);
         }

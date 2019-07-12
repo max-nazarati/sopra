@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
@@ -119,16 +118,17 @@ namespace KernelPanic.PathPlanning
         {
         }
 
-        internal void Append(Vector2[,] vectors)
+        internal void Append(RelativePosition[,] vectors)
         {
+            var rect = new Rectangle(-1, -1, 2, 2);
             for (var row = 0; row < vectors.GetLength(0); ++row)
             {
                 for (var col = 0; col < vectors.GetLength(1); ++col)
                 {
-                    var vec = vectors[row, col];
-                    if (vec.X is float.NaN || vec.Y is float.NaN || vec.LengthSquared() < 0.01)
+                    var rel = vectors[row, col];
+                    if (rel == RelativePosition.Center)
                         continue;
-
+                    var vec = rect.At(rel);
                     var position = Grid.GetTile(new TileIndex(row, col, 1)).Position;
                     Nodes.Add(Node.New(position, vec));
                 }

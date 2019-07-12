@@ -5,8 +5,8 @@ namespace KernelPanic.Table
 {
     internal sealed class Owner
     {
-        private Player mAttacker;
-        private Player mDefender;
+        private readonly Player mAttacker;
+        private readonly Player mDefender;
 
         public Owner(Player attacker, Player defender)
         {
@@ -29,5 +29,7 @@ namespace KernelPanic.Table
                 }
             }
         }
+
+        internal Owner Swapped => new Owner(mDefender, mAttacker);
     }
 }

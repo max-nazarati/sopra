@@ -45,9 +45,9 @@ namespace KernelPanic.Input
         internal bool IsActive => mInputState.IsActive;
 
         #region Claiming
-
-        internal bool IsClaimed(Keys key) => mInputState.IsClaimed(key);
-
+        
+        /* internal bool IsClaimed(Keys key) => mInputState.IsClaimed(key); */
+        
         internal bool IsClaimed(MouseButton mouseButton) => mInputState.IsClaimed(mouseButton);
 
         #endregion
@@ -99,7 +99,7 @@ namespace KernelPanic.Input
         /// </summary>
         /// <param name="keys">Keys that should be checked</param>
         /// <returns>True if any of the keys was down</returns>
-        internal bool KeyDown(params Keys[] keys)
+        private bool KeyDown(params Keys[] keys)
         {
             foreach (var key in keys)
             {
@@ -142,13 +142,14 @@ namespace KernelPanic.Input
         internal Vector2 TranslatedMousePosition =>
             Vector2.Transform(MousePosition.ToVector2(), mCamera.InverseTransformation);
 
+        /*
         /// <summary>
         /// calculates the X and Y difference since the last update
         /// </summary>
         /// <returns>Tuple with X and Y distance</returns>
         internal Point MouseMovement =>
             new Point(mInputState.CurrentMouse.X - mInputState.PreviousMouse.X, mInputState.CurrentMouse.Y - mInputState.PreviousMouse.Y);
-
+        */
         internal void RegisterClickTarget(Rectangle position, Action<InputManager> action) =>
             mClickTargets.Add(new ClickTarget(position, action));
 

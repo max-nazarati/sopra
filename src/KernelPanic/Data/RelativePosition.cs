@@ -5,40 +5,20 @@ namespace KernelPanic.Data
 {
     internal enum RelativePosition
     {
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight,
-        CenterLeft,
+        // Important: This ordering shouldn't be changed because HeatMap.RoundToOctant relies on it!
         CenterRight,
-        CenterTop,
+        BottomRight,
         CenterBottom,
+        BottomLeft,
+        CenterLeft,
+        TopLeft,
+        CenterTop,
+        TopRight,
         Center
     }
     
     internal static class RelativePositionImpl
     {
-        internal static RelativePosition MirrorVertical(this RelativePosition position)
-        {
-            switch (position)
-            {
-                case RelativePosition.TopLeft:
-                    return RelativePosition.BottomLeft;
-                case RelativePosition.TopRight:
-                    return RelativePosition.BottomRight;
-                case RelativePosition.BottomLeft:
-                    return RelativePosition.TopLeft;
-                case RelativePosition.BottomRight:
-                    return RelativePosition.TopRight;
-                case RelativePosition.CenterTop:
-                    return RelativePosition.CenterBottom;
-                case RelativePosition.CenterBottom:
-                    return RelativePosition.CenterTop;
-                default:
-                    return position;
-            }
-        }
-        
         /// <summary>
         /// Calculates the origin of the rectangle at (0,0) with size <paramref name="rectangleSize"/> such that the
         /// origin is at the position indicated by <paramref name="position"/>.

@@ -30,7 +30,7 @@ namespace KernelPanic.Data
         [DataMember(Name = "Children")]
         private QuadTree<T>[] mChildren;
 
-        internal int Count { get; private set; }
+        /*internal*/ private int Count { get; /*private*/ set; }
 
         #endregion
 
@@ -46,11 +46,11 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="elements">The elements for the <see cref="QuadTree{T}"/></param>
         /// <returns>A new <see cref="QuadTree{T}"/></returns>
-        internal static QuadTree<T> Create(List<T> elements)
+        internal static QuadTree<T> Create<TInitial>(ICollection<TInitial> elements) where TInitial : T
         {
-            return elements.Count == 0 ? Empty : new QuadTree<T>(elements.Union()) {elements};
+            return elements.Count == 0 ? Empty : new QuadTree<T>(elements.Union()) {elements.Cast<T>()};
         }
-        
+
         /// <summary>
         /// Returns a new <see cref="QuadTree{T}"/> without any elements inside. The way this
         /// <see cref="QuadTree{T}"/> is constructed it is not possible to add any values to it.
@@ -94,18 +94,25 @@ namespace KernelPanic.Data
         private SquareIndex? CalculatePosition(Rectangle bounds)
         {
             if (mChildren == null)
-                throw new InvalidOperationException("Can't use CalculateBounds before Split.");
+                throw new InvalidOperationException("Can't use CalculatePosition before Split.");
 
-            SquareIndex index = 0;
-            foreach (var child in mChildren)
-            {
-                if (child.mBounds.Contains(bounds))
-                    return index;
-                ++index;
-            }
-
-            return null;
+            return Squares
+                .Where(square => square.Tree.mBounds.Contains(bounds))
+                .Select(square => (SquareIndex?) square.Index)
+                .FirstOrDefault();
         }
+
+        private IEnumerable<(SquareIndex Index, Rectangle Rectangle)> OverlappingSquareIndices(Rectangle bounds)
+        {
+            return Squares
+                .Select(square => (square.Index, Rectangle: Rectangle.Intersect(square.Tree.mBounds, bounds)))
+                .Where(square => square.Rectangle.Size != Point.Zero);
+        }
+
+        private IEnumerable<(SquareIndex Index, QuadTree<T> Tree)> Squares =>
+            mChildren == null
+                ? Enumerable.Empty<(SquareIndex, QuadTree<T>)>()
+                : Enumerable.Range(0, mChildren.Length).Select(index => ((SquareIndex) index, mChildren[index]));
 
         #endregion
 
@@ -176,7 +183,7 @@ namespace KernelPanic.Data
             }
         }
 
-        internal void Add(IEnumerable<T> elements)
+        /*internal*/ private void Add(IEnumerable<T> elements)
         {
             foreach (var element in elements)
             {
@@ -239,6 +246,23 @@ namespace KernelPanic.Data
         }
 
         /// <summary>
+        /// Returns every value in the <see cref="QuadTree{T}"/> that has <see cref="IBounded.Bounds"/>
+        /// intersecting with the given rectangle.
+        /// </summary>
+        /// <param name="rectangle">The rectangle to look at.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> with all matching values.</returns>
+        internal IEnumerable<T> EntitiesAt(Rectangle rectangle)
+        {
+            IEnumerable<T> Locals(QuadTree<T> quadTree) =>
+                quadTree.mObjects.Where(value => rectangle.Intersects(value.Bounds));
+
+            IEnumerable<T> Children((SquareIndex Index, Rectangle Rectangle) square) =>
+                mChildren[(int) square.Index].EntitiesAt(square.Rectangle);
+
+            return Locals(this).Concat(OverlappingSquareIndices(rectangle).SelectMany(Children));
+        }
+
+        /// <summary>
         /// Checks whether an entity exists in the <see cref="QuadTree{T}"/> that has <see cref="IBounded.Bounds"/>
         /// containing the given point.
         /// </summary>
@@ -289,32 +313,39 @@ namespace KernelPanic.Data
         /// <returns>All pairs of overlapping elements.</returns>
         internal IEnumerable<(T, T)> Overlaps()
         {
-            return LocalOverlaps(null, 0).Concat(ChildOverlaps(null, 0));
+            return LocalOverlaps(Array.Empty<T>()).Concat(ChildOverlaps(mObjects));
         }
 
-        private IEnumerable<(T, T)> ChildOverlaps(T[] parentElements, int parentCount)
+        private IEnumerable<(T, T)> ChildOverlaps(IReadOnlyCollection<T> parentElements)
         {
             if (mChildren == null)
                 return Enumerable.Empty<(T, T)>();
 
-            // TODO: We can elide these copies in some cases (e.g. parentElements empty or null, or all the children's mObjects empty).
-            var additionalCount = mChildren.Max(t => t.mObjects.Count);
-            var parentElementsCopy = new T[parentCount + additionalCount];
-            if (parentElements != null)
-            {
-                Array.Copy(parentElements, parentElementsCopy, parentCount);
-            }
+            var parentElementsCount = parentElements.Count;
+            var parentElementsCopy = parentElementsCount == 0 ? null : new List<T>(parentElements);
 
             return mChildren.SelectMany(tree =>
             {
-                tree.mObjects.CopyTo(parentElementsCopy, parentCount);
-                return tree
-                    .LocalOverlaps(parentElements, parentCount)
-                    .Concat(tree.ChildOverlaps(parentElementsCopy, parentCount + additionalCount));
+                if (parentElementsCopy != null)
+                {
+                    var removeCount = parentElementsCopy.Count - parentElementsCount;
+                    parentElementsCopy.RemoveRange(parentElementsCount, removeCount);
+                    parentElementsCopy.AddRange(tree.mObjects);
+                }
+
+                var locals = tree.LocalOverlaps(parentElements);
+                var children = tree.ChildOverlaps(parentElementsCopy ?? tree.mObjects);
+                return locals.Concat(children);
             });
         }
 
-        private IEnumerable<(T, T)> LocalOverlaps(T[] parentElements, int count)
+        /// <summary>
+        /// Enumerates through all overlaps between elements in <see cref="mObjects"/> and through overlaps between
+        /// elements in <see cref="mObjects"/> and <paramref name="parentElements"/>.
+        /// </summary>
+        /// <param name="parentElements">Elements from upper levels which might overlap with elements from this level.</param>
+        /// <returns>All overlaps.</returns>
+        private IEnumerable<(T, T)> LocalOverlaps(IReadOnlyCollection<T> parentElements)
         {
             for (var i = 0; i < mObjects.Count; ++i)
             {
@@ -326,10 +357,7 @@ namespace KernelPanic.Data
                         yield return (x, y);
                 }
 
-                if (parentElements == null)
-                    continue;
-
-                foreach (var z in parentElements.Take(count))
+                foreach (var z in parentElements)
                 {
                     if (x.Bounds.Intersects(z.Bounds))
                         yield return (x, z);
@@ -343,8 +371,9 @@ namespace KernelPanic.Data
 
         public IEnumerator<T> GetEnumerator()
         {
-            // If mChildren is null enumerate only through mObjects, otherwise go through mObjects and then continue with the children.
-            return (mChildren == null ? mObjects : mObjects.Concat(mChildren.SelectMany(c => c))).GetEnumerator();
+            // If mChildren is null we will enumerate only through mObjects, otherwise we will go through mObjects and
+            // then continue with the children.
+            return (mChildren == null ? mObjects : mObjects.Concat(mChildren.Flatten())).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

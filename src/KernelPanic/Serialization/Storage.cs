@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using KernelPanic.Table;
+using KernelPanic.Tracking;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Serialization
@@ -12,7 +13,10 @@ namespace KernelPanic.Serialization
 
         [JsonProperty]
         internal TimeSpan GameTime { get; set; }
-        
+
+        [JsonProperty]
+        internal AchievementPool.Data AchievementData { get; set; }
+
         internal struct Info
         {
             /// <summary>

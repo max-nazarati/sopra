@@ -1,10 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
-using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -12,38 +12,78 @@ using Newtonsoft.Json;
 namespace KernelPanic
 {
     [JsonArray]
-    internal sealed class EntityGraph : IEnumerable<Entity>
+    internal sealed class EntityGraph
     {
         #region Properties
 
-        [DataMember] internal QuadTree<Entity> QuadTree { get; }
+        [DataMember] internal QuadTree<IGameObject> QuadTree { get; }
 
-        private readonly ImageSprite mSelectionBorder;
+        private readonly SortedDictionary<int, List<IGameObject>> mDrawObjects =
+            new SortedDictionary<int, List<IGameObject>>();
+
+        private bool mMidUpdate;
+        private readonly List<IGameObject> mMidUpdateBuffer = new List<IGameObject>();
 
         #endregion
 
         #region Constructor
 
-        public EntityGraph(Rectangle bounds, SpriteManager spriteManager)
+        public EntityGraph(ICollection<LaneBorder> borders)
         {
-            // Adjust for bounds which might (due to float/int conversions) be slightly bigger than the containing lane.
-            bounds.Inflate(10, 10);
-            QuadTree = new QuadTree<Entity>(bounds);
-            mSelectionBorder = spriteManager.CreateSelectionBorder();
+            QuadTree = QuadTree<IGameObject>.Create(borders);
         }
 
         #endregion
 
         #region Modifying
 
-        internal void Add(Entity entity)
+        internal void Add(IGameObject gameObject)
         {
-            QuadTree.Add(entity);
+            if (mMidUpdate)
+            {
+                mMidUpdateBuffer.Add(gameObject);
+            }
+            else
+            {
+                RealAdd(gameObject);
+            }
         }
 
-        internal void Add(IEnumerable<Entity> entities)
+        internal void Add(IEnumerable<IGameObject> gameObjects)
         {
-            QuadTree.Add(entities);
+            if (mMidUpdate)
+            {
+                mMidUpdateBuffer.AddRange(gameObjects);
+                return;
+            }
+
+            foreach (var entity in gameObjects)
+            {
+                RealAdd(entity);
+            }
+        }
+
+        private void RealAdd(IGameObject gameObject)
+        {
+            if (gameObject is Tower tower)
+                tower.FireAction = Add;
+
+            QuadTree.Add(gameObject);
+            AddDrawObject(gameObject);
+        }
+
+        private void AddDrawObject(IGameObject gameObject)
+        {
+            if (!(gameObject.DrawLevel is int level))
+                return;
+
+            if (mDrawObjects.TryGetValue(level, out var objects))
+            {
+                objects.Add(gameObject);
+                return;
+            }
+
+            mDrawObjects[level] = new List<IGameObject> {gameObject};
         }
         
         #endregion
@@ -57,7 +97,7 @@ namespace KernelPanic
 
         internal IEnumerable<Entity> EntitiesAt(Vector2 point)
         {
-            return QuadTree.EntitiesAt(point);
+            return QuadTree.EntitiesAt(point).OfType<Entity>();
         }
         
         #endregion
@@ -66,19 +106,42 @@ namespace KernelPanic
 
         public void Update(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
         {
-            foreach (var entity in QuadTree)
+            // ABOUT UPDATING, DRAWING & REMOVAL OF GAME OBJECTS
+            //
+            // It seems we have to rebuild the quad-tree twice:
+            //     1. After the movements are complete to determine the overlaps correctly.
+            //     2. After handling the overlaps, because some units might have died.
+            //
+            // For now we can save us the second rebuilding step but in loops in the Update & Draw functions we have
+            // to skip those game objects which have the WantsRemoval flag set. During the next quad-tree-rebuilding in
+            // Update they get removed completely.
+
+            mMidUpdate = true;
+
+            foreach (var entity in QuadTree.Where(entity => !entity.WantsRemoval))
             {
-                entity.Update(positionProvider, gameTime, inputManager);
+                entity.Update(positionProvider, inputManager, gameTime);
             }
 
-            /*
+            // Rebuild the quad-tree after movements are done so that the overlaps can be determined correctly.
+            QuadTree.Rebuild(entity => !entity.WantsRemoval);
+
+            mMidUpdate = false;
+            Add(mMidUpdateBuffer);
+            mMidUpdateBuffer.Clear();
+            mMidUpdate = true;
+
             foreach (var (a, b) in QuadTree.Overlaps())
             {
-                Console.WriteLine(
-                    $"[COLLISION:]  UNIT {a} AND UNIT {b} ARE COLLIDING! [TIME:] {gameTime.TotalGameTime} [BOUNDS:] {a.Bounds} {b.Bounds}");
+                CollisionManager.Handle(a, b, positionProvider);
             }
-            */
-            QuadTree.Rebuild(entity => !entity.WantsRemoval);
+
+            foreach (var objects in mDrawObjects.Values)
+            {
+                objects.RemoveAll(@object => @object.WantsRemoval);
+            }
+
+            mMidUpdate = false;
         }
 
         #endregion
@@ -87,14 +150,9 @@ namespace KernelPanic
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var entity in QuadTree)
+            foreach (var gameObject in mDrawObjects.SelectMany(kv => kv.Value))
             {
-                if (entity.Selected)
-                {
-                    mSelectionBorder.Position = entity.Sprite.Position;
-                    mSelectionBorder.Draw(spriteBatch, gameTime);
-                }
-                entity.Draw(spriteBatch, gameTime);
+                gameObject.Draw(spriteBatch, gameTime);
             }
         }
 
@@ -102,15 +160,9 @@ namespace KernelPanic
 
         #region Enumerable
 
-        public IEnumerator<Entity> GetEnumerator()
-        {
-            return QuadTree.GetEnumerator();
-        }
+        internal IEnumerable<Entity> AllEntities => QuadTree.OfType<Entity>();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable) QuadTree).GetEnumerator();
-        }
+        internal IEnumerable<T> Entities<T>() where T : Entity => QuadTree.OfType<T>();
 
         #endregion
     }

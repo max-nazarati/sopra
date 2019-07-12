@@ -18,6 +18,7 @@ namespace KernelPanic.Players
             mIsActive = isActive;
         }
 
+        /*
         /// <summary>
         /// Creates a <see cref="StaticDistinction"/> from an other <see cref="IPlayerDistinction"/>.
         /// </summary>
@@ -25,7 +26,7 @@ namespace KernelPanic.Players
         internal StaticDistinction(IPlayerDistinction distinction)
             : this(distinction.Select(true, false))
         {
-        }
+        } */
 
         /// <inheritdoc />
         public T Select<T>(T ifActive, T ifPassive)

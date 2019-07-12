@@ -4,7 +4,7 @@ using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Newtonsoft.Json.Serialization;
 
-namespace KernelPanic
+namespace KernelPanic.Serialization
 {
     // Taken from https://www.newtonsoft.com/json/help/html/DeserializeWithDependencyInjection.htm.
     internal sealed class AutofacContractResolver : DefaultContractResolver

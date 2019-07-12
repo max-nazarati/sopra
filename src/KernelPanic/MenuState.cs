@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Camera;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Serialization;
+using KernelPanic.Sprites;
+using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,10 +15,10 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic
 {
-    [DataContract]
+    [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "The Strings are in German")]
     internal sealed class MenuState : AGameState
     {
-        private InterfaceComponent[] mComponents;
+        private ICollection<InterfaceComponent> mComponents;
         private readonly Action mEscapeAction;
 
         private MenuState(GameStateManager gameStateManager, Action escapeAction = null)
@@ -25,15 +27,14 @@ namespace KernelPanic
             mEscapeAction = escapeAction;
         }
 
-        internal static MenuState CreateMainMenu(GameStateManager stateManager, SoundManager soundManager
-            , GraphicsDeviceManager graphics)
+        internal static MenuState CreateMainMenu(GameStateManager stateManager, SoundManager soundManager)
         {
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
             playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
             
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 200);
-            optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager
-                , soundManager, graphics));
+            optionsButton.Clicked += (button, input) =>
+                stateManager.Push(CreateOptionsMenu(stateManager, soundManager));
             
             var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 300);
             instructionsButton.Clicked += (button, input) => stateManager
@@ -81,7 +82,7 @@ namespace KernelPanic
             
             var components = new List<InterfaceComponent>
             {
-                CreateBackground(stateManager.Sprite), newGameButton, loadGameButton, backButton
+                CreateBackgroundWithoutText(stateManager.Sprite), newGameButton, loadGameButton, backButton
             };
 
             if (hasError)
@@ -147,9 +148,9 @@ namespace KernelPanic
             };
         }
 
-        private static Button TurnSoundsOnOff(TextButton soundOnOffButton, SoundManager soundManager)
+        private static void TurnSoundsOnOff(TextButton soundOnOffButton, SoundManager soundManager)
         {
-            switch (soundOnOffButton.Title) // TODO: when SoundManager is updated: Interaction with SoundManager
+            switch (soundOnOffButton.Title)
             {
                 case "an":
                     soundOnOffButton.Title = "aus"; 
@@ -158,38 +159,20 @@ namespace KernelPanic
                 case "aus":
                     soundOnOffButton.Title = "an";
                     soundManager.PlaySong(SoundManager.Music.BackgroundMusic1);
-                    // TODO implement updated SoundManager
                     break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
                     break;
             }
-
-            return soundOnOffButton;
         }
         
-        private static Button ChangeScreenSize(TextButton fullScreenButton, GraphicsDeviceManager graphics)
+        private static void ChangeScreenSize(TextButton button, GraphicsDeviceManager graphics)
         {
-            switch (fullScreenButton.Title)
-            {
-                case "an":
-                    fullScreenButton.Title = "aus";
-                    graphics.ToggleFullScreen();
-                    break;
-                case "aus":
-                    fullScreenButton.Title = "an";
-                    graphics.ToggleFullScreen();
-                    break;
-                default:
-                    Console.WriteLine("Some Error");
-                    break;
-            }
-
-            return fullScreenButton;
+            graphics.ToggleFullScreen();
+            button.Title = graphics.IsFullScreen ? "an" : "aus";
         }
 
-        private static MenuState CreateOptionsMenu(GameStateManager stateManager, SoundManager soundManager
-            , GraphicsDeviceManager graphics)
+        private static MenuState CreateOptionsMenu(GameStateManager stateManager, SoundManager soundManager)
         {
             var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
             var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
@@ -204,7 +187,7 @@ namespace KernelPanic
             
             var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 575, 150);
             var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus",575, -150);
-            fullScreenWindowButton.Clicked += (button, input) => ChangeScreenSize(fullScreenWindowButton, graphics);
+            fullScreenWindowButton.Clicked += (button, input) => ChangeScreenSize(fullScreenWindowButton, stateManager.GraphicsDeviceManager);
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
 
@@ -214,7 +197,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     musicButton,
                     musicOnOffButton,
                     effectsButton,
@@ -238,7 +221,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     backButton
                 }
             };
@@ -246,36 +229,128 @@ namespace KernelPanic
 
         private static MenuState CreateStatisticsMenu(GameStateManager stateManager)
         {
-            // TODO: Collecting and processing game statistics. 
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
             backButton.Clicked += (button, input) => stateManager.Pop();
-            
-            return new MenuState(stateManager)
+
+            var resetButton = CreateButton(stateManager.Sprite, "Zurücksetzen", 800);
+            resetButton.Clicked += (button, input) =>
             {
-                mComponents = new InterfaceComponent[]
-                {
-                    CreateBackground(stateManager.Sprite),
-                    backButton
-                }
-            };   
+                // Reset the statistics and recreate the statistics menu.
+                stateManager.Statistics.Reset();
+                stateManager.Switch(CreateStatisticsMenu(stateManager));
+            };
+
+            var components = new List<InterfaceComponent>
+            {
+                CreateBackgroundWithoutText(stateManager.Sprite),
+                backButton,
+                resetButton
+            };
+
+            var y = 50f;
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            foreach (var (title, value) in stateManager.Statistics.UserRepresentation)
+            {
+                var titleText = stateManager.Sprite.CreateText(title);
+                var valueText = stateManager.Sprite.CreateText(value);
+                
+                titleText.SetOrigin(RelativePosition.TopRight);
+                valueText.SetOrigin(RelativePosition.TopLeft);
+
+                // TODO: Better layout.
+                titleText.X = screenMid - 10;
+                valueText.X = screenMid + 10;
+                titleText.Y = valueText.Y = y;
+                y += titleText.Height + 20;
+
+                components.Add(new StaticComponent(titleText));
+                components.Add(new StaticComponent(valueText));
+            }
+
+            return new MenuState(stateManager) {mComponents = components};
         }
 
         private static MenuState CreateAchievementsMenu(GameStateManager stateManager)
         {
-            // TODO: Create List with all Achievements with true/false flag.
-            var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
+            var backButton = CreateButton(stateManager.Sprite, "Zurück", 0);
+            backButton.Sprite.SetOrigin(RelativePosition.BottomLeft);
+            backButton.Sprite.Y = stateManager.Sprite.ScreenSize.Y - backButton.Sprite.Height - 20;
             backButton.Clicked += (button, input) => stateManager.Pop();
             
+            var components = new List<InterfaceComponent>
+            {
+                CreateBackgroundWithoutText(stateManager.Sprite),
+                backButton,
+            };
+
+            // TODO: Better layout.
+            var y = 20f;
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            foreach (var (title, description, value) in stateManager.AchievementPool.UserRepresentation)
+            {
+                var titleText = stateManager.Sprite.CreateText(title);
+                var descText = stateManager.Sprite.CreateText(description);
+                
+                titleText.SetOrigin(RelativePosition.TopRight);
+                descText.SetOrigin(RelativePosition.TopRight);
+                descText.Y = titleText.Height;
+
+                var leftSide = new CompositeSprite
+                {
+                    X = screenMid - 10,
+                    Y = y,
+                    Children = {titleText, descText}
+                };
+
+                var valueText = stateManager.Sprite.CreateText(value);
+                valueText.SetOrigin(RelativePosition.CenterLeft);
+                valueText.X = screenMid + 10;
+                valueText.Y = leftSide.Y + 0.5f * leftSide.Height;
+
+                y += leftSide.Height + 10;
+
+                components.Add(new StaticComponent(leftSide));
+                components.Add(new StaticComponent(valueText));
+            }
+
+            return new MenuState(stateManager) {mComponents = components};
+        }
+
+        /// <summary>
+        /// Creates a <see cref="MenuState"/> for an “Achievement unlocked” screen.
+        /// </summary>
+        /// <param name="achievement">The unlocked <see cref="Achievement"/>.</param>
+        /// <param name="stateManager"></param>
+        /// <returns>A new <see cref="MenuState"/>.</returns>
+        internal static MenuState CreateAchievementDisplay(Achievement achievement, GameStateManager stateManager)
+        {
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            var titleSprite = stateManager.Sprite.CreateText(achievement.Title());
+            titleSprite.ScaleToHeight(100);
+            titleSprite.SetOrigin(RelativePosition.CenterTop);
+            titleSprite.X = screenMid;
+            titleSprite.Y = 200;
+            
+            var descriptionSprite = stateManager.Sprite.CreateText(achievement.Description());
+            descriptionSprite.SetOrigin(RelativePosition.CenterTop);
+            descriptionSprite.X = screenMid;
+            descriptionSprite.Y = 400;
+
+            var backButton = CreateButton(stateManager.Sprite, "Ok", 800);
+            backButton.Clicked += (button, input) => stateManager.Pop();
+
             return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
+                    new StaticComponent(titleSprite),
+                    new StaticComponent(descriptionSprite),
                     backButton
                 }
             };
-        } 
-        
+        }
+
         /*
          * Connect current results of not yet integrated tasks for presentation
          * at sprint meeting with your Button.
@@ -310,7 +385,7 @@ namespace KernelPanic
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     janekButton,
                     johannesButton,
                     maxButton,
@@ -323,76 +398,74 @@ namespace KernelPanic
             };
         }
 
-        public static MenuState CreateGameOverScreen(GameStateManager stateManager, Table.Board.GameState result
-           , SoundManager soundManager, GraphicsDeviceManager graphics)
+        public static MenuState CreateGameOverScreen(GameStateManager stateManager,
+            Table.Board.GameState result,
+            SoundManager soundManager)
         {
             var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
-            mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager
-                , soundManager, graphics));
+            mainMenuButton.Clicked += (button, input) =>
+                stateManager.Restart(CreateMainMenu(stateManager, soundManager));
 
-            Sprites.TextSprite text;
-            if (result == Table.Board.GameState.AWon)
-            {
-                text = stateManager.Sprite.CreateText("Du hast gewonnen!");
-            }
-            else
-            {
-                text = stateManager.Sprite.CreateText("Game over!");
-            }
+            var text = stateManager.Sprite.CreateText(result == Table.Board.GameState.AWon
+                ? "Du hast gewonnen!"
+                : "Game over!");
             text.ScaleToWidth(400);
             text.Position = new Vector2(10, 10);
-
 
             return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
                 {
-                    CreateBackground(stateManager.Sprite),
+                    CreateBackgroundWithoutText(stateManager.Sprite),
                     mainMenuButton,
                     new StaticComponent(text)
                 }
             };
         }
 
+        public static MenuState CreatePauseMenu(GameStateManager stateManager,
+            InGameState inGameState,
+            SoundManager soundManager)
+        {
+            var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
+            backButton.Clicked += (button, input) => stateManager.Pop();
 
-        public static MenuState CreatePauseMenu(GameStateManager stateManager, InGameState inGameState
-           , SoundManager soundManager, GraphicsDeviceManager graphics) 
-       {
-           var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
-           backButton.Clicked += (button, input) => stateManager.Pop();
+            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
+            optionsButton.Clicked += (button, input) =>
+                stateManager.Push(CreateOptionsMenu(stateManager, soundManager));
 
-           var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
-           optionsButton.Clicked += (button, input) => stateManager.Push(CreateOptionsMenu(stateManager
-               , soundManager, graphics));
+            var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
+            saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);
 
-           var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
-           saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);
+            var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
+            mainMenuButton.Clicked += (button, input) =>
+                stateManager.Restart(CreateMainMenu(stateManager, soundManager));
 
-           var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
-           mainMenuButton.Clicked += (button, input) => stateManager.Restart(CreateMainMenu(stateManager
-               , soundManager, graphics));
-           
-           return new MenuState(stateManager)
-           {
-               mComponents = new InterfaceComponent[]
-               {
-                   CreateBackground(stateManager.Sprite),
-                   optionsButton,
-                   saveButton,
-                   mainMenuButton,
-                   backButton
-               }
-           }; 
-       }
+            return new MenuState(stateManager)
+            {
+                mComponents = new InterfaceComponent[]
+                {
+                    CreateBackgroundWithoutText(stateManager.Sprite),
+                    optionsButton,
+                    saveButton,
+                    mainMenuButton,
+                    backButton
+                }
+            };
+        }
 
-       private static StaticComponent CreateBackground(SpriteManager sprites)
+        private static StaticComponent CreateBackground(SpriteManager sprites)
         {
             return new StaticComponent(sprites.CreateMenuBackground());
         }
-        
+
+        private static StaticComponent CreateBackgroundWithoutText(SpriteManager sprites)
+        {
+            return new StaticComponent(sprites.CreateMenuBackgroundWithoutText());
+        }
+
         private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
         {
-            // TODO: Change Text Color on Buttons
             var button = new TextButton(sprites) {Title = title};
             button.Sprite.X = sprites.ScreenSize.X / 2.0f - button.Sprite.Width / 2.0f - shiftPositionX;
             button.Sprite.Y = positionY;
@@ -400,8 +473,7 @@ namespace KernelPanic
             return button;
         }
 
-        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
-            , GraphicsDeviceManager graphics)
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
         {
             foreach(var component in mComponents)
             {

@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Table;
-using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Entities;
+using KernelPanic.Events;
 using KernelPanic.Upgrades;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Players
@@ -18,8 +16,24 @@ namespace KernelPanic.Players
         [DataMember]
         internal Lane DefendingLane { get; }
 
+        [DataMember(Name = "bitcoins")]
+        private int mBitcoin;
+
+        internal int Bitcoins
+        {
+            get => mBitcoin;
+            set
+            {
+                if (mBitcoin == value)
+                    return;
+
+                mBitcoin = value;
+                EventCenter.Default.Send(Event.BitcoinChanged(this));
+            }
+        }
+
         [DataMember]
-        public int Bitcoins { get; set; }
+        internal bool IncreasedBitcoins { get; private set; }
 
         [DataMember]
         private readonly List<Upgrade> mUpgrades = new List<Upgrade>();
@@ -29,13 +43,11 @@ namespace KernelPanic.Players
 
         internal Base Base => DefendingLane.Target;
 
-        internal Player(Lane defendingLane, Lane attackingLane) : this(defendingLane, attackingLane, 9999)
-        {
-
-        }
+        [DataMember]
+        internal int FirefoxMaximum { get; private set; } = 1;
 
         [JsonConstructor]
-        protected Player(Lane defendingLane, Lane attackingLane, int bitcoins)
+        internal Player(Lane defendingLane, Lane attackingLane, int bitcoins)
         {
             Bitcoins = bitcoins;
             AttackingLane = attackingLane;
@@ -46,12 +58,26 @@ namespace KernelPanic.Players
 
         internal void AddUpgrade(Upgrade upgrade)
         {
+            EventCenter.Default.Send(Event.UpgradeBought(this, upgrade));
+
+            switch (upgrade.Kind)
+            {
+                case Upgrade.Id.IncreaseBitcoins:
+                    IncreasedBitcoins = true;
+                    return;
+
+                case Upgrade.Id.AdditionalFirefox1:
+                case Upgrade.Id.AdditionalFirefox2:
+                    FirefoxMaximum++;
+                    return;
+            }
+
             mUpgrades.Add(upgrade);
 
             // Apply the new upgrade to all existing entities.
-            foreach (var unit in AttackingLane.EntityGraph.OfType<Unit>())
+            foreach (var unit in AttackingLane.EntityGraph.Entities<Unit>())
                 upgrade.Apply(unit);
-            foreach (var building in DefendingLane.EntityGraph.OfType<Building>())
+            foreach (var building in DefendingLane.EntityGraph.Entities<Building>())
                 upgrade.Apply(building);
         }
 
@@ -66,9 +92,11 @@ namespace KernelPanic.Players
         #endregion
 
         /// <inheritdoc />
-        public T Select<T>(T ifActive, T ifPassive)
+        public virtual T Select<T>(T ifActive, T ifPassive)
         {
-            return this is ArtificialPlayer ? ifPassive : ifActive;
+            // A player is active. If it is passive it is of type ArtificialPlayer
+            // where this function is overriden accordingly.
+            return ifActive;
         }
     }
 }

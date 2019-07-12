@@ -6,9 +6,11 @@ namespace KernelPanic.Data
 {
     internal sealed class VectorField
     {
-        private readonly Vector2[,] mVectorField;
-        private int Height => mVectorField.GetLength(0);
-        private int Width => mVectorField.GetLength(1);
+        internal HeatMap HeatMap { get; }
+
+        private readonly RelativePosition[,] mRelativeField;
+        private int Height => mRelativeField.GetLength(0);
+        private int Width => mRelativeField.GetLength(1);
 
         /// <summary>
         /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
@@ -33,30 +35,114 @@ namespace KernelPanic.Data
         /// <param name="heatMap">The heat map.</param>
         internal VectorField(HeatMap heatMap)
         {
-            mVectorField = new Vector2[heatMap.Height, heatMap.Width];
+            HeatMap = heatMap;
+            mRelativeField = new RelativePosition[heatMap.Height, heatMap.Width];
             for (var row = 0; row < heatMap.Height; ++row)
             {
                 for (var col = 0; col < heatMap.Width; ++col)
                 {
-                    mVectorField[row, col] = heatMap.Gradient(new Point(col, row));
+                    mRelativeField[row, col] = heatMap.Gradient(new Point(col, row));
                 }
             }
         }
 
-        public Vector2 this[Point point]
+        private VectorField(RelativePosition[,] vectorField)
         {
-            get
+            mRelativeField = vectorField;
+        }
+
+        internal void Update(HeatMap heatMap)
+        {
+            for (var row = 0; row < heatMap.Height; ++row)
             {
-                if (point.X >= Width || point.Y >= Height) return new Vector2(float.NaN);
-                if (point.X < 0 || point.Y < 0) return new Vector2(float.NaN);
-                return mVectorField[point.Y, point.X];
+                for (var col = 0; col < heatMap.Width; ++col)
+                {
+                    var relative = heatMap.Gradient(new Point(col, row));
+                    if (relative != RelativePosition.Center)
+                        mRelativeField[row, col] = relative;
+                }
             }
         }
+        
+        internal static VectorField GetVectorFieldThunderbird(VectorField vectorField, Lane.Side laneSide)
+        {
+            const RelativePosition left = RelativePosition.CenterLeft;
+            const RelativePosition right = RelativePosition.CenterRight;
+            const RelativePosition up = RelativePosition.CenterTop;
+            const RelativePosition down = RelativePosition.CenterBottom;
+            const int laneWidth = Grid.LaneWidthInTiles;
+            var thunderBirdField = new RelativePosition[vectorField.Height, vectorField.Width];
+
+            for (var row = 0; row < vectorField.Height; ++row)
+            {
+                for (var col = 0; col < vectorField.Width; ++col)
+                {
+                    if (laneSide == Lane.Side.Right)
+                    {
+                        /* should not be needed anymore now that target is a whole column
+                        if (row < laneWidth && col <= 1)
+                        {
+                            // go upwards to hit the base tile
+                            thunderBirdField[row, col] = up;
+                        }
+                        */
+                        /* else */ if (row + col < 18)
+                        {
+                            // distance to left, top
+                            thunderBirdField[row, col] = left;
+                        }
+
+                        else if (vectorField.Height - row + col < 18)
+                        {
+                            // distance to left, bottom
+                            thunderBirdField[row, col] = right;
+                        }
+                        else
+                        {
+                            thunderBirdField[row, col] = up;
+                        }
+                    }
+
+                    if (laneSide == Lane.Side.Left)
+                    {
+                        /* should not be needed anymore now that target is a whole column
+                        if (row > vectorField.Height - laneWidth && col >= vectorField.Width - 1)
+                        {
+                            // go downwards to hit the base tile
+                            thunderBirdField[row, col] = down;
+                        }
+                        */
+                        /*else*/ if (row + (vectorField.Width - 1) - col < 18)
+                        {
+                            // distance to right, top
+                            thunderBirdField[row, col] = left;
+                        }
+
+                        else if (vectorField.Height - row + (vectorField.Width - 1) - col < 18)
+                        {
+                            // distance to right, bottom
+                            thunderBirdField[row, col] = right;
+                        }
+
+                        else
+                        {
+                            thunderBirdField[row, col] = down;
+                        }
+                        
+                    }
+
+                }
+            }
+            var res = new VectorField(thunderBirdField);
+            return res;
+        }
+
+        public RelativePosition this[Point point] => mRelativeField[point.Y, point.X];
 
         internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
         {
             var visualizer = new ArrowVisualizer(grid, spriteManager);
-            visualizer.Append(mVectorField);
+            visualizer.Append(mRelativeField);
             return visualizer;
         }
     }

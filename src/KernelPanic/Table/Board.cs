@@ -21,15 +21,18 @@ namespace KernelPanic.Table
         internal Player PlayerA { get; /* required for deserialization */ private set; }
         [JsonProperty]
         internal ArtificialPlayer PlayerB { get; /* required for deserialization */ private set; }
+        private PlayerIndexed<Player> Players => new PlayerIndexed<Player>(PlayerA, PlayerB);
 
         [JsonProperty]
         internal UpgradePool mUpgradePool;
         
+        [JsonProperty]
         internal WaveManager WaveManager { get; /* required for deserialization */ private set; }
 
-        private readonly Sprite mBase;
-
+        [JsonProperty]
         private readonly BitcoinManager mBitcoinManager;
+
+        private readonly Sprite mBase;
 
         internal enum GameState
         {
@@ -50,7 +53,7 @@ namespace KernelPanic.Table
 
         #region Constructing a Board
 
-        internal Board(SpriteManager spriteManager, SoundManager soundManager, bool deserializing = false)
+        internal Board(SpriteManager spriteManager, bool deserializing = false)
         {
             mBase = CreateBase(spriteManager);
             if (deserializing)
@@ -59,18 +62,17 @@ namespace KernelPanic.Table
                 return;
             }
 
-            var leftLane = new Lane(Lane.Side.Left, spriteManager, soundManager);
-            var rightLane = new Lane(Lane.Side.Right, spriteManager, soundManager);
+            var leftLane = new Lane(Lane.Side.Left, spriteManager);
+            var rightLane = new Lane(Lane.Side.Right, spriteManager);
             
-            PlayerA = new Player(leftLane, rightLane);
-            PlayerB = new ArtificialPlayer(rightLane, leftLane, 9999, spriteManager, soundManager);
+            PlayerA = new Player(leftLane, rightLane, 999);
+            PlayerB = new ArtificialPlayer(rightLane, leftLane, 999);
 
             mUpgradePool = new UpgradePool(PlayerA, spriteManager);
             LayOutUpgradePool();
-            
-            WaveManager = new WaveManager(new PlayerIndexed<Player>(PlayerA, PlayerB));
 
-            mBitcoinManager = new BitcoinManager(PlayerA, PlayerB);
+            WaveManager = new WaveManager(Players);
+            mBitcoinManager = new BitcoinManager(Players);
         }
 
         [OnDeserialized]

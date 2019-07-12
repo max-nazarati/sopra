@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Autofac;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Units;
 using KernelPanic.Table;
+using KernelPanic.Tracking;
 using KernelPanic.Upgrades;
 using Newtonsoft.Json;
 
@@ -56,6 +58,50 @@ namespace KernelPanic.Serialization
                 return (Storage.Info) CreateSerializer(gameStateManager).Deserialize(file, typeof(Storage.Info));
         }
 
+        internal static Statistics.Data? LoadStatistics()
+        {
+            try
+            {
+                using (var file = File.OpenText(StatisticsPath))
+                    return (Statistics.Data) CreateSerializer().Deserialize(file, typeof(Statistics.Data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to load statistics: " + e.Message);
+                return null;
+            }
+        }
+
+        internal static void SaveStatistics(Statistics.Data data)
+        {
+            Directory.CreateDirectory(sFolder);
+
+            using (var file = File.CreateText(StatisticsPath))
+                CreateSerializer().Serialize(file, data);
+        }
+        
+        internal static AchievementPool.Data? LoadAchievements()
+        {
+            try
+            {
+                using (var file = File.OpenText(AchievementsPath))
+                    return (AchievementPool.Data) CreateSerializer().Deserialize(file, typeof(AchievementPool.Data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to load achievements: " + e.Message);
+                return null;
+            }
+        }
+
+        internal static void SaveAchievements(AchievementPool.Data data)
+        {
+            Directory.CreateDirectory(sFolder);
+
+            using (var file = File.CreateText(AchievementsPath))
+                CreateSerializer().Serialize(file, data);
+        }
+
         #endregion
 
         #region Private Helpers
@@ -65,9 +111,6 @@ namespace KernelPanic.Serialization
         [SuppressMessage("ReSharper", "ImplicitlyCapturedClosure")]
         private static AutofacContractResolver CreateContractResolver(GameStateManager manager)
         {
-            const BindingFlags bindingFlags =
-                BindingFlags.Instance | BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
-
             var builder = new ContainerBuilder();
 
             // A unit is assumed to be constructable with a SpriteManager as the only argument.
@@ -88,16 +131,16 @@ namespace KernelPanic.Serialization
             RegisterUnit<Settings>();
             
             RegisterBuilding<Cable>();
+            RegisterBuilding<Antivirus>();
             RegisterBuilding<CdThrower>();
             RegisterBuilding<ShockField>();
             RegisterBuilding<Ventilator>();
             RegisterBuilding<WifiRouter>();
             RegisterBuilding<CursorShooter>();
-            RegisterBuilding<StrategicTower>();     // TODO: Remove this when there are no more direct instances.
 
             // Register further classes.
-            builder.Register(c => new Board(manager.Sprite, manager.Sound, true));
-            builder.Register(c => new Lane(manager.Sprite, manager.Sound));
+            builder.Register(c => new Board(manager.Sprite, true));
+            builder.Register(c => new Lane(manager.Sprite));
             builder.Register(c => new UpgradePool(null, manager.Sprite));
 
             return new AutofacContractResolver(builder.Build());
@@ -114,11 +157,24 @@ namespace KernelPanic.Serialization
             };
         }
 
+        private static JsonSerializer CreateSerializer()
+        {
+            return new JsonSerializer
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                Formatting = Formatting.Indented,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            };
+        }
+
         private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
         private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
         private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
 
-        #endregion
+        private static string StatisticsPath => Path.Combine(sFolder, "statistics.json");
 
+        private static string AchievementsPath => Path.Combine(sFolder, "achievements.json");
+
+        #endregion
     }
 }

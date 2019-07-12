@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 
 namespace KernelPanic.ArtificialIntelligence
 {
@@ -23,6 +22,7 @@ namespace KernelPanic.ArtificialIntelligence
         /// </summary>
         public void TrainModel()
         {
+        Console.WriteLine("starting to train model");
         // split dataset into features (xTrain) and labels (yTrain)  
         double[][] xTrain = mDataSet.ToJagged<double>("Bitcoins",
             "Bug", "Virus", "Trojaner", "Nokia", "Thunderbird", "Settings",
@@ -39,6 +39,7 @@ namespace KernelPanic.ArtificialIntelligence
         // training statistics
         int[] predicted = mModel.Decide(xTrain);
         double error = new ZeroOneLoss(yTrain).Loss(predicted);
+        Console.Write("finished training - ");
         Console.WriteLine("training error: " + error);
         }
 
@@ -125,7 +126,7 @@ namespace KernelPanic.ArtificialIntelligence
             int prediction = predictions[0];
             return prediction;
         }
-
+        /*
         public double Score(double[][] xTest, string[] yTest)
         {
             int[] decodedYTest = mCodebook.Transform("Aktion", yTest);
@@ -133,16 +134,16 @@ namespace KernelPanic.ArtificialIntelligence
             double error = new ZeroOneLoss(decodedYTest).Loss(predictions);
 
             return error;
-        }
+        } */
 
+        /*
         public int[] PredictMulti(double[][] input)
         {
             int[] predictions = mModel.Decide(input);
             return predictions;
-        }
+        } */
 
         public string Revert(int prediction) => mCodebook.Revert("Aktion", prediction);
-
         public Codification Codebook { get => mCodebook; set => mCodebook = value; }
         public DecisionTree Model { get => mModel; set => mModel = value; }
         public DecisionSet Rules { get => mModel.ToRules();}

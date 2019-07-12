@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -14,10 +16,13 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic.Entities
 {
     [DataContract]
-    [KnownType(typeof(Tower))]
     internal abstract class Building : Entity
     {
-        protected Building(int price, Sprite sprite, SpriteManager spriteManager) : base(price, sprite, spriteManager)
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification =
+            "Ensures that all buildings take a SoundManager in their constructor, which is required for Building.Create to work."
+        )]
+        protected Building(int price, Sprite sprite, SpriteManager spriteManager, SoundManager soundManager)
+            : base(price, sprite, spriteManager)
         {
             BitcoinWorth = price;
             sprite.ScaleToWidth(Table.Grid.KachelSize);
@@ -47,33 +52,41 @@ namespace KernelPanic.Entities
                 null);
         }
 
-        private int BitcoinWorth { get; set; }
-
-        internal State StateProperty { get; set; }
-
         internal Building Clone() => Clone<Building>();
 
-        internal enum State
+        public override int? DrawLevel => 0;    // Buildings have the lowest level.
+
+        private int BitcoinWorth { get; } //set; }
+
+        private BuildingState mBuildingState;
+
+        internal BuildingState State
         {
-            /// <summary>
-            /// The building is able to act, that means it is able to attack enemies.
-            /// </summary>
-            Active,
-            
-            /// <summary>
-            /// The building has been bought and is waiting to become active, that is when no enemies are at its position.
-            /// </summary>
-            Inactive,
-            
-            /// <summary>
-            /// Used during selection of a new place for a building when the current position is not allowed.
-            /// </summary>
-            Invalid,
-            
-            /// <summary>
-            /// Used during selection of a new place for a building when the current position is allowed.
-            /// </summary>
-            Valid
+            get => mBuildingState;
+            set
+            {
+                mBuildingState = value;
+                switch (value)
+                {
+                    case BuildingState.Active:
+                        Sprite.TintColor = Color.White;
+                        break;
+                    case BuildingState.Inactive:
+                        Sprite.TintColor = Color.Gray;
+                        break;
+                    case BuildingState.Invalid:
+                        Sprite.TintColor = Color.Red;
+                        break;
+                    case BuildingState.Valid:
+                        Sprite.TintColor = Color.Green;
+                        break;
+                    case BuildingState.Disabled:
+                        Sprite.TintColor = Color.Black;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+            }
         }
 
         #region Actions
@@ -95,7 +108,11 @@ namespace KernelPanic.Entities
                 var action = new PurchasableAction<SellAction>(this);
                 var button = new TextButton(spriteManager) {Title = "Verkaufen"};
                 mButton = new PurchaseButton<TextButton, SellAction>(owner, action, button);
-                action.Purchased += (player, theAction) => building.SetWantsRemoval();
+                action.Purchased += (player, theAction) =>
+                {
+                    building.WantsRemoval = true;
+                    EventCenter.Default.Send(Event.BuildingSold(player, building));
+                };
                 mBuilding = building;
             }
 
@@ -112,5 +129,33 @@ namespace KernelPanic.Entities
         }
 
         #endregion
+    }
+
+    internal enum BuildingState
+    {
+        /// <summary>
+        /// The building is able to act, that means it is able to attack enemies.
+        /// </summary>
+        Active,
+
+        /// <summary>
+        /// The building has been bought and is waiting to become active, that is when no enemies are at its position.
+        /// </summary>
+        Inactive,
+
+        /// <summary>
+        /// Used during selection of a new place for a building when the current position is not allowed.
+        /// </summary>
+        Invalid,
+
+        /// <summary>
+        /// Used during selection of a new place for a building when the current position is allowed.
+        /// </summary>
+        Valid,
+        
+        /// <summary>
+        /// Used when hit by the Bluescreen Ability, the building is currently not able to attack
+        /// </summary>
+        Disabled
     }
 }

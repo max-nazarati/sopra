@@ -1,16 +1,15 @@
 ﻿using KernelPanic.Camera;
-using KernelPanic.Data;
-using KernelPanic.Entities;
+using KernelPanic.Events;
+using KernelPanic.Hud;
 using KernelPanic.Input;
-using KernelPanic.Interface;
-using KernelPanic.Players;
-using KernelPanic.Purchasing;
 using KernelPanic.Selection;
 using KernelPanic.Serialization;
 using KernelPanic.Table;
+using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace KernelPanic
 {
@@ -20,45 +19,28 @@ namespace KernelPanic
         private readonly SelectionManager mSelectionManager;
         private readonly BuildingBuyer mBuildingBuyer;
         private readonly InGameOverlay mHud;
+        private readonly AchievementPool mAchievementPool;
 
         internal int SaveSlot { get; }
-
-        // public SaveGame CurrentSaveGame { get; private set; } no such class yet
-        // private HashSet<Wave> mActiveWaves;
-        // private SelectionManager mSelectionManager;
 
         private InGameState(Storage? storage, int saveSlot, GameStateManager gameStateManager)
             : base(new Camera2D(Board.Bounds, gameStateManager.Sprite.ScreenSize), gameStateManager)
         {
-            mBoard = storage?.Board ?? new Board(gameStateManager.Sprite, gameStateManager.Sound);
+            mBoard = storage?.Board ?? new Board(gameStateManager.Sprite);
             mBuildingBuyer = new BuildingBuyer(mBoard.PlayerA, gameStateManager.Sound);
-            mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane);
+            mSelectionManager = new SelectionManager(mBoard.LeftLane, mBoard.RightLane, gameStateManager.Sprite);
+            mAchievementPool = new AchievementPool(gameStateManager.AchievementPool, storage?.AchievementData);
             SaveSlot = saveSlot;
 
             var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
-            var buildingMenu = BuildingBuyingMenu.Create(mBoard.PlayerA, mBuildingBuyer, gameStateManager.Sprite, gameStateManager.Sound);
-            mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager);
+            var buildingMenu = BuildingBuyingMenu.Create(mBuildingBuyer, gameStateManager.Sprite, gameStateManager.Sound);
+            mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager, storage?.GameTime ?? TimeSpan.Zero);
 
-            /*
-             after pulling turrets dont shoot anymore,
-             im kinda certain i merged correctly...
-             feel free to delete this commented code when its fixed
             mBoard.PlayerB.InitializePlanners(
-<<<<<<< HEAD
-                unitMenu.BuyingActions,
-=======
-                mHud.UnitBuyingMenu.BuyingActions,
-                mBuildingBuyer, // TODO implement this, just added it like this so i can build :) 
->>>>>>> [BuildingPlanner] First half of Changing the structure
-                upgradeId => mBoard.mUpgradePool[upgradeId]
-            );
-            */
-            
-            mBoard.PlayerB.InitializePlanners(
-                unitMenu.BuyingActions,
-                mBuildingBuyer, // TODO implement this, just added it like this so i can build :)
-                upgradeId => mBoard.mUpgradePool[upgradeId]
-                );
+                unitMenu.BuyingActions, // TODO implement this, just added it like this so i can build :)
+                upgradeId => mBoard.mUpgradePool[upgradeId],
+                gameStateManager.Sprite,
+                gameStateManager.Sound);
         }
 
         internal static void PushGameStack(int saveSlot, GameStateManager gameStateManager, Storage? storage = null)
@@ -68,33 +50,47 @@ namespace KernelPanic
             gameStateManager.Push(game.mHud);
         }
 
-        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager
-            , GraphicsDeviceManager graphics)
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+                mAchievementPool.Dispose();
+        }
+
+        public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)
         {
             if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.ScoreOverlay.Pause)
             {
-                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager, graphics));
+                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, soundManager));
                 mHud.ScoreOverlay.Pause = false;
                 return;
             }
 
-            mSelectionManager.Update(inputManager);
+            // Update the overall play time.
+            GameStateManager.Statistics.Update(gameTime);
+
             mBuildingBuyer.Update(inputManager);
+            mSelectionManager.Update(inputManager);
 
             mBoard.Update(gameTime, inputManager);
             var gameState = mBoard.CheckGameState();
             if (gameState == Board.GameState.Playing)
                 return;
 
-            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager, graphics));
-            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager, graphics));
+            EventCenter.Default.Send(gameState == Board.GameState.AWon
+                ? Event.GameWon(mBoard.PlayerA, mBoard.PlayerB)
+                : Event.GameLost(mBoard.PlayerB, mBoard.PlayerA));
+
+            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, soundManager));
+            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, soundManager));
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mBoard.Draw(spriteBatch, gameTime);
             mBuildingBuyer.Draw(spriteBatch, gameTime);
-            mSelectionManager.Selection?.DrawActions(spriteBatch, gameTime);
+            mSelectionManager.Draw(spriteBatch, gameTime);
         }
 
         #region Serialization
@@ -102,7 +98,8 @@ namespace KernelPanic
         internal Storage Data => new Storage
         {
             Board = mBoard,
-            GameTime = mHud.ScoreOverlay.Time
+            GameTime = mHud.ScoreOverlay.Time,
+            AchievementData = mAchievementPool.TheData
         };
 
         #endregion

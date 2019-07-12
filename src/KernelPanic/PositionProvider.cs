@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Projectiles;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
-    internal class PositionProvider
+    internal sealed class PositionProvider
     {
         private readonly SpriteManager mSpriteManager;
         private readonly EntityGraph mEntities;
         private readonly VectorField mVectorField;
+        private readonly VectorField mVectorFieldThunderbird;
 
         internal Grid Grid { get; }
         internal Owner Owner { get; }
@@ -25,6 +27,7 @@ namespace KernelPanic
             mEntities = entities;
             mSpriteManager = spriteManager;
             mVectorField = vectorField;
+            mVectorFieldThunderbird = VectorField.GetVectorFieldThunderbird(vectorField, grid.LaneSide);
             Target = target;
             Owner = owner;
         }
@@ -69,6 +72,17 @@ namespace KernelPanic
                 .OfType<T>();
         }
 
+        /// <summary>
+        /// Enumerates through the entities overlapping with <paramref name="entity"/>.
+        /// </summary>
+        /// <param name="entity">The entity with which the overlaps are required.</param>
+        /// <typeparam name="T">The entities are filtered by this type.</typeparam>
+        /// <returns>An enumerable through entities of type <typeparamref name="T"/> overlapping with <paramref name="entity"/>.</returns>
+        internal IEnumerable<T> EntitiesAt<T>(Entity entity) where T : Entity
+        {
+            return mEntities.QuadTree.EntitiesAt(entity.Bounds).OfType<T>();
+        }
+
         internal bool HasEntityAt(Vector2 point)
         {
             return mEntities.HasEntityAt(point);
@@ -78,35 +92,30 @@ namespace KernelPanic
 
         #region Path Finding
 
-        public Vector2 MovementVector(Point point)
+        public Vector2 RelativeMovement(Point point)
         {
-            return mVectorField[point];
+            var rectangle = new Rectangle(new Point(-Grid.KachelSize), new Point(Grid.KachelSize * 2));
+            return rectangle.At(mVectorField[point]);
+        }
+
+        public Vector2 RelativeMovementThunderbird(Point point)
+        {
+            var rectangle = new Rectangle(new Point(-Grid.KachelSize), new Point(Grid.KachelSize * 2));
+            return rectangle.At(mVectorFieldThunderbird[point]);
+        }
+
+        internal int? TileHeat(Point point)
+        {
+            return (int?) mVectorField.HeatMap[point];
         }
 
         internal AStar MakePathFinding(Entity entity, Point start, Point target)
         {
             var matrixObstacles = new ObstacleMatrix(Grid);
-            matrixObstacles.Raster(mEntities, e => e != entity);
+            matrixObstacles.Raster(mEntities.AllEntities, e => e != entity);
             var aStar = new AStar(start, target, matrixObstacles);
             aStar.CalculatePath();
             return aStar;
-        }
-
-        internal bool CheckPathExistance(Point? start, Point? target, Building building)
-        {
-            if (start == null || target == null)
-                return false;
-
-            var matrixObstacles = new ObstacleMatrix(Grid);
-            var tmpEntities = mEntities.ToList();
-            tmpEntities.Add(building);
-            matrixObstacles.Raster(tmpEntities, e => !(e is Unit));
-            var aStar = new AStar((Point)start, (Point)target, matrixObstacles);
-            aStar.CalculatePath();
-
-            if (aStar.Path != null && aStar.Path[aStar.Path.Count - 1] == target)
-                return true;
-            return false;
         }
 
         #endregion
@@ -121,5 +130,10 @@ namespace KernelPanic
         #endregion
 
         public void DamageBase(int damage) => Target.Power = Math.Max(0, Target.Power - damage);
+
+        internal void AddProjectile(Projectile projectile)
+        {
+            mEntities.Add(projectile);
+        }
     }
 }

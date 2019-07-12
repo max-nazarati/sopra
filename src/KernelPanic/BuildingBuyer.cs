@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using KernelPanic.Input;
 using KernelPanic.Entities;
+using KernelPanic.Events;
+using KernelPanic.PathPlanning;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
-using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,123 +14,120 @@ namespace KernelPanic
     internal sealed class BuildingBuyer
     {
         private readonly Player mPlayer;
-        private readonly PurchasableAction<Building> mBuyAction;
         private readonly SoundManager mSoundManager;
-        private bool mBlocked = false;
-
         private Building mBuilding;
+        private TileIndex? mPosition;
 
-        internal Building Building
-        {
-            set
-            {
-                mBuilding = value;
-                mBuyAction.ResetResource(value);
-
-                if (mBuilding != null)
-                {
-                    TintEntity(mBuilding, Color.Gray);
-                }
-            }
-        }
-
-        private Point? mPosition;
+        private Lane Lane => mPlayer.DefendingLane;
 
         internal BuildingBuyer(Player player, SoundManager soundManager)
         {
             mPlayer = player;
-            mBuyAction = new PurchasableAction<Building>();
-            mBuyAction.Purchased += PurchasedBuilding;
             mSoundManager = soundManager;
+        }
+
+        internal void SetBuilding(Building building)
+        {
+            mBuilding = building;
         }
 
         internal void Update(InputManager input)
         {
-            if (!mBuyAction.HasResource)
+            if (mBuilding == null)
                 return;
 
             UpdatePosition(input);
-            checkPath(mPlayer.DefendingLane, mBuilding);
+            CheckPath();
 
             if (!input.MousePressed(InputManager.MouseButton.Left))
                 return;
 
-            if (mPosition == null || mBlocked || !mBuyAction.TryPurchase(mPlayer))
+            if (TryPurchase())
             {
-                // TODO: Play failure sound.
+                mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
             }
+
+            // TODO: Play failure sound if the purchase couldn't be completed.
         }
 
         private void UpdatePosition(InputManager inputManager)
         {
-            var lane = mPlayer.DefendingLane;
             var mouse = inputManager.TranslatedMousePosition;
-            if (!(lane.Grid.TileFromWorldPoint(mouse) is TileIndex tile))
+            if (!(Lane.Grid.TileFromWorldPoint(mouse) is TileIndex tile))
             {
                 mPosition = null;
                 return;
             }
 
-            var tilePoint = lane.Grid.GetTile(tile).Position;
-            if (lane.EntityGraph.EntitiesAt(tilePoint).Any(entity => entity is Building))
+            SetPosition(tile);
+        }
+
+        private void SetPosition(TileIndex tile)
+        {
+            var tilePoint = Lane.Grid.GetTile(tile).Position;
+            if (Lane.EntityGraph.EntitiesAt(tilePoint).Any(entity => entity is Building))
             {
                 mPosition = null;
                 return;
             }
 
-            mPosition = tile.ToPoint();
+            mPosition = tile;
             mBuilding.Sprite.Position = tilePoint;
         }
 
-        private bool checkPath(Lane lane, Building building)
+        private void CheckPath()
         {
-            if (mBuilding == null)
+            if (mBuilding == null || mPosition == null)
             {
-                mBlocked = false;
-                return true;
+                return;
             }
+
             var startTile =
-                lane.Grid.LaneSide == Lane.Side.Left
-                        ? new TileIndex(Grid.LaneWidthInTiles / 2, lane.Grid.LaneRectangle.Width - 1, 1)
-                        : new TileIndex(lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2, 0, 1);
+                Lane.Grid.LaneSide == Lane.Side.Left
+                        ? new Point(Lane.Grid.LaneRectangle.Width - 1, Grid.LaneWidthInTiles / 2)
+                        : new Point(0, Lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2);
 
-            var endPosition = lane.Target.Position;
+            var buildingMatrix = new ObstacleMatrix(Lane.Grid);
+            buildingMatrix.Raster(Lane.EntityGraph.Entities<Building>());
+            buildingMatrix.Raster(new[] {mBuilding});
 
-            if (lane.PositionProvider.CheckPathExistance(startTile.ToPoint(), endPosition, building.Clone()))
-            {
-                mBlocked = false;
-                return true;
-            }
-            else
-            {
-                mBlocked = true;
-                return false;
-            }
+            var pathFinder = new AStar(startTile, Lane.Target.HitBox, buildingMatrix);
+            mBuilding.State = pathFinder.CalculatePath() ? BuildingState.Valid : BuildingState.Invalid;
         }
 
-        private void PurchasedBuilding(Player buyer, Building building)
+        private bool TryPurchase()
         {
-            if (!(mPosition is Point point))
-                throw new InvalidOperationException("Can't purchase the building if the position is null.");
-  
-            if (!mBlocked)
+            if (mBuilding == null
+                || mBuilding.State != BuildingState.Valid
+                || !(mPosition is TileIndex tile)
+                || !PurchasableAction<Building>.TryPurchase(mPlayer, mBuilding))
             {
-                var clone = building.Clone();
-                TintEntity(clone, Color.White);
-                buyer.DefendingLane.BuildingSpawner.Register(clone, point);
-                mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
+                return false;
             }
+
+            var clone = mBuilding.Clone();
+            mPlayer.DefendingLane.BuildingSpawner.Register(clone, tile);
+            mPlayer.ApplyUpgrades(clone);
+
+            // TODO: Play a different sound when the AI places a tower.
+            mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
+            EventCenter.Default.Send(Event.BuildingPlaced(mPlayer, clone));
+
+            return true;
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (mPosition.HasValue && !mBlocked)
+            if (mPosition.HasValue)
                 mBuilding?.Draw(spriteBatch, gameTime);
         }
 
-        private static void TintEntity(Entity building, Color color)
+        internal static bool Buy(Player player, Building building, Point tile, SoundManager soundManager)
         {
-            ((ImageSprite) building.Sprite).TintColor = color;
+            var buyer = new BuildingBuyer(player, soundManager) {mBuilding = building};
+            buyer.SetPosition(new TileIndex(tile, 1));
+            buyer.CheckPath();
+            return buyer.TryPurchase();
         }
     }
 }

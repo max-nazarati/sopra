@@ -2,7 +2,11 @@ using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Entities;
 using KernelPanic.Input;
+using KernelPanic.Players;
+using KernelPanic.Sprites;
 using KernelPanic.Table;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Selection
 {
@@ -23,13 +27,16 @@ namespace KernelPanic.Selection
         /// </summary>
         private readonly Lane mEnemyLane;
 
+        private readonly Sprite mSelectionBorder;
+
         [DataMember]
         private Entity mSelection;
 
-        internal SelectionManager(Lane ownedLane, Lane enemyLane)
+        internal SelectionManager(Lane ownedLane, Lane enemyLane, SpriteManager spriteManager)
         {
             mOwnedLane = ownedLane;
             mEnemyLane = enemyLane;
+            mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
         internal Entity Selection
@@ -40,13 +47,11 @@ namespace KernelPanic.Selection
                 if (mSelection != null)
                 {
                     mSelection.Selected = false;
-                    mSelection.Removed -= SelectedEntityRemoved;
                 }
 
                 if (value != null)
                 {
                     value.Selected = true;
-                    value.Removed += SelectedEntityRemoved;
                 }
 
                 SelectionChanged?.Invoke(mSelection, value);
@@ -56,6 +61,11 @@ namespace KernelPanic.Selection
 
         internal void Update(InputManager inputManager)
         {
+            if (Selection?.WantsRemoval == true)
+            {
+                Selection = null;
+            }
+            
             if (inputManager.IsClaimed(InputManager.MouseButton.Left))
             {
                 // No click for us to handle.
@@ -89,9 +99,14 @@ namespace KernelPanic.Selection
             }
         }
 
-        private void SelectedEntityRemoved(Entity entity)
+        internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            Selection = null;
+            if (Selection == null)
+                return;
+
+            mSelectionBorder.Position = Selection.Sprite.Position;
+            mSelectionBorder.Draw(spriteBatch, gameTime);
+            Selection.DrawActions(spriteBatch, gameTime);
         }
     }
 }
