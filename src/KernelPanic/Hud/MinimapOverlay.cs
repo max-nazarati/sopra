@@ -194,37 +194,42 @@ namespace KernelPanic.Hud
         
         private void SetEntityColor(Lane lane)
         {
+            // at first we only save the position of the selected entity, so we can draw it on top.
+            // TODO needs to be adapted if we can select multiple entities at a given point
             var drawSelected = false;
             var selectedIndex = 0;
-            
+
             foreach (var entity in lane.EntityGraph.AllEntities)
             {
                 var index = CalculateMapIndexPosition(entity.Sprite.Position);
                 var color = mColorBackground;
-                
+
                 if (entity.Selected)
                 {
-                    // dont draw it yet
-                    // TODO needs to be adapted if we can select multiple entities at a given point
+                    // dont draw it yet, but save the position and remember to draw it
                     drawSelected = true;
                     selectedIndex = index;
-                    continue;
                 }
-                else if (entity is Unit)
+                else
                 {
-                    color = mColorPlayerA;
-                }
-                else if (entity is Building)
-                {
-                    color = mColorPlayerB;
-                }
-                SetPixelSquare(index, color);
+                    switch (entity)
+                    {
+                        case Unit _:
+                            color = mColorPlayerA;
+                            break;
+                        case Building _:
+                            color = mColorPlayerB;
+                            break;
+                    }
 
-                // draw the selected one on top
-                if (drawSelected)
-                {
-                    SetPixelSquare(selectedIndex, mColorSelected);
+                    SetPixelSquare(index, color);
                 }
+            }
+
+            // draw the selected one on top
+            if (drawSelected)
+            {
+                SetPixelSquare(selectedIndex, mColorSelected);
             }
         }
 
