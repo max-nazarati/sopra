@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Util;
+using KernelPanic.Data;
 using KernelPanic.Events;
 using KernelPanic.Serialization;
 using Newtonsoft.Json;
@@ -30,7 +31,10 @@ namespace KernelPanic.Tracking
         }
 
         private readonly AchievementPool mParent;
+
         internal Data TheData { get; }
+
+        private CompositeDisposable mDisposable;
 
         private DateTime?[] UnlockTimeArray => TheData.UnlockTime ?? mParent.TheData.UnlockTime;
 
@@ -41,8 +45,9 @@ namespace KernelPanic.Tracking
 
             if (TheData.Progress.Count == 0)
                 return;
-
-            EventCenter.Default.Subscribe(Event.Id.AchievementUnlocked,
+            
+            mDisposable = new CompositeDisposable();
+            mDisposable += EventCenter.Default.Subscribe(Event.Id.AchievementUnlocked,
                 @event =>
                 {
                     var achievement = @event.Get<Achievement>(Event.Key.Achievement);
@@ -50,7 +55,7 @@ namespace KernelPanic.Tracking
                         UnlockTimeArray[(int) achievement] = DateTime.Now;
                 });
 
-            EventCenter.Default.Subscribe(Event.Id.AchievementImpossible,
+            mDisposable += EventCenter.Default.Subscribe(Event.Id.AchievementImpossible,
                 @event =>
                 {
                     var achievement = @event.Get<Achievement>(Event.Key.Achievement);
@@ -87,9 +92,7 @@ namespace KernelPanic.Tracking
         {
             base.Dispose(disposing);
 
-            if (!disposing)
-                return;
-
+            mDisposable.Dispose();
             foreach (var progress in TheData.Progress)
             {
                 progress.Dispose();
