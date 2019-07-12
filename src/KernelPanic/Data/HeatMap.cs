@@ -39,6 +39,17 @@ namespace KernelPanic.Data
             mMap = new float[obstacleMatrix.Rows, obstacleMatrix.Columns];
         }
 
+        internal void SetZero()
+        {
+            for (var i = 0; i < mMap.GetLength(0); ++i)
+            {
+                for (var j = 0; j < mMap.GetLength(1); ++j)
+                {
+                    mMap[i, j] = default(float);
+                }
+            }
+        }
+
         /// <summary>
         /// Checks if this grid point is not blocked and therefore walkable.
         /// Blocked grid points have a value of less than one.

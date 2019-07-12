@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using KernelPanic.Data;
 using Microsoft.Xna.Framework;
 
@@ -20,11 +21,10 @@ namespace KernelPanic.PathPlanning
         /// <returns>An enumeration of all walkable neighbour nodes.</returns>
         private IEnumerable<Node> EnumerateNeighbours(Node node)
         {
-            var cost = node.Cost + CostIncrease(node.Position);
-
             Node CreateNode(int xOffset, int yOffset)
             {
                 var point = node.Position + new Point(xOffset, yOffset);
+                var cost = node.Cost + CostIncrease(point);
                 return IsWalkable(point) ? new Node(point, node, cost, EstimateCost(point)) : null;
             }
 
@@ -40,7 +40,11 @@ namespace KernelPanic.PathPlanning
                 return false;
 
             foreach (var neighbour in EnumerateNeighbours(node))
-                mQueue.Insert(neighbour);
+            {
+                if (!mExplored.Contains(neighbour.Position))
+                    mQueue.Insert(neighbour);
+            }
+
             return true;
         }
 

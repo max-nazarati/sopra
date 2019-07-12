@@ -70,13 +70,19 @@ namespace KernelPanic.PathPlanning
 
         internal Vector2 RelativeMovement(Troupe troupe)
         {
-            var maybeTile = mGrid.TileFromWorldPoint(troupe.Sprite.Position);
+            var maybeTile = mGrid.TileFromWorldPoint(troupe.Sprite.Position, troupe.IsSmall ? 2 : 1);
             if (!(maybeTile is TileIndex tile))
                 return Vector2.Zero;
 
             var size = mGrid.GetTile(tile).Size;
+            var vector = RelativeMovement(tile.Rescaled(1).First(), SelectVectorField(troupe));
+            return vector * size;
+        }
+
+        private static Vector2 RelativeMovement(TileIndex tile, VectorField vectorField)
+        {
             var rectangle = new Rectangle(new Point(-1), new Point(2));
-            return rectangle.At(SelectVectorField(troupe)[tile.ToPoint()]) * size;
+            return rectangle.At(vectorField[tile.ToPoint()]);
         }
 
         private VectorField SelectVectorField(Unit unit)
@@ -106,13 +112,7 @@ namespace KernelPanic.PathPlanning
             }
             
             var hadLargeUnits = mLargeUnits.Count > 0;
-            var largeUnits = entityGraph.Entities<Troupe>()
-                .Where(troupe => !troupe.IsSmall)
-                .SelectMany(troupe => new[] {troupe.Sprite.Position, troupe.MoveTarget})
-                .SelectMaybe(position => position is Vector2 pos ? mGrid.TileFromWorldPoint(pos)?.ToPoint() : null);
-            mLargeUnits.Clear();
-            mLargeUnits.AddRange(largeUnits);
-            mLargeUnits.Sort(new PointComparer());
+            UpdateLargeUnits(entityGraph);
 
             // If there was no change in the buildings and the number of large units is and was zero, we can skip this
             // update.
@@ -121,6 +121,35 @@ namespace KernelPanic.PathPlanning
 
             BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, mTarget, mLargeUnits);
             mSmallVectorField.Update();
+        }
+
+        private void UpdateLargeUnits(EntityGraph entityGraph)
+        {
+            var largeUnits = entityGraph.Entities<Troupe>()
+                .SelectMany(
+                    troupe => troupe.IsSmall || troupe is Thunderbird
+                                ? Enumerable.Empty<TileIndex>()
+                                : ProjectMovement(troupe, 2),
+                    (troupe, index) => index.ToPoint());
+            mLargeUnits.Clear();
+            mLargeUnits.AddRange(largeUnits);
+            mLargeUnits.Sort(new PointComparer());
+        }
+
+        private IEnumerable<TileIndex> ProjectMovement(Entity troupe, int depth)
+        {
+            if (!(mGrid.TileFromWorldPoint(troupe.Sprite.Position) is TileIndex tile))
+                yield break;
+
+            yield return tile;
+
+            while (depth-- > 0)
+            {
+                var movement = RelativeMovement(tile, mVectorField);
+                tile.Row += (int) movement.Y;
+                tile.Column += (int) movement.X;
+                yield return tile;
+            }
         }
 
         internal void Visualize(SpriteManager spriteManager, SpriteBatch spriteBatch, GameTime gameTime)

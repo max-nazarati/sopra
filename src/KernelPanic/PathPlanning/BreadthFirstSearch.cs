@@ -17,14 +17,16 @@ namespace KernelPanic.PathPlanning
 
         internal static void UpdateHeatMap(HeatMap map, IEnumerable<Point> goalPoints, List<Point> unwantedPoints = null)
         {
-            foreach (var node in new BreadthFirstSearch(map.ObstacleMatrix, unwantedPoints).Run(goalPoints))
+            map.SetZero();
+            var breadthFirstSearch = new BreadthFirstSearch(map.ObstacleMatrix, unwantedPoints);
+            foreach (var node in breadthFirstSearch.Run(goalPoints))
             {
                 map.SetCost(node.Position, (float) node.Cost);
             }
         }
 
-        private const int UnwantedCost = 30;
-        private const int UnwantedEstimation = 30;
+        private const int UnwantedCost = 3;
+        private const int UnwantedEstimation = 10;
 
         protected override bool IsWalkable(Point point) => !mObstacleMatrix[point];
         protected override double EstimateCost(Point point) =>
