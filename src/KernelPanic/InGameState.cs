@@ -55,7 +55,9 @@ namespace KernelPanic
             base.Dispose(disposing);
 
             if (disposing)
-                mAchievementPool.Dispose();
+            {
+                EventCenter.Default.Send(Event.CloseAchievementPool(mAchievementPool));
+            }
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime, SoundManager soundManager)

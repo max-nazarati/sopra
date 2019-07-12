@@ -45,6 +45,12 @@ namespace KernelPanic.Tracking
             return new AchievementPool(null, StorageManager.LoadAchievements());
         }
 
+        static AchievementPool()
+        {
+            EventCenter.Default.Subscribe(Event.Id.CloseAchievementPool,
+                @event => @event.Get<AchievementPool>(Event.Key.AchievementPool).Dispose());
+        }
+
         internal AchievementPool(AchievementPool parent, Data? loadedData)
         {
             mParent = parent;

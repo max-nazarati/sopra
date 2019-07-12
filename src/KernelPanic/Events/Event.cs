@@ -14,6 +14,7 @@ namespace KernelPanic.Events
         {
             AchievementUnlocked,
             AchievementImpossible,
+            CloseAchievementPool,
 
             LoadEmptySlot,         // TODO: Not sent yet.
 
@@ -163,7 +164,15 @@ namespace KernelPanic.Events
             /// <item><description><see cref="Id.AchievementImpossible"/></description></item>
             /// </list>
             /// </summary>
-            Achievement
+            Achievement,
+
+            /// <summary>
+            /// Of type <see cref="AchievementPool"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.CloseAchievementPool"/></description></item>
+            /// </list>
+            /// </summary>
+            AchievementPool
         }
 
         #region Creating events
@@ -298,6 +307,15 @@ namespace KernelPanic.Events
                 mPayload =
                 {
                     [Key.Achievement] = achievement
+                }
+            };
+
+        internal static Event CloseAchievementPool(AchievementPool achievementPool) =>
+            new Event(Id.CloseAchievementPool)
+            {
+                mPayload =
+                {
+                    [Key.AchievementPool] = achievementPool
                 }
             };
 
