@@ -81,10 +81,12 @@ namespace KernelPanic.Tracking
 
         private List<AchievementProgress> InitialProgress(IReadOnlyCollection<Achievement> achievements)
         {
+            // UnlockTimeArray is still null here when mParent is null because this function is called from InitialData.
+            bool StillLocked(Achievement achievement) =>
+                mParent == null || !UnlockTimeArray[(int) achievement].HasValue;
+
             var progress = new List<AchievementProgress>(achievements.Count);
-            progress.AddRange(achievements
-                .Where(achievement => !UnlockTimeArray[(int)achievement].HasValue)
-                .Select(AchievementProgress.Track));
+            progress.AddRange(achievements.Where(StillLocked).Select(AchievementProgress.Track));
 
             progress.Sort(new AchievementProgress.Comparer());
             return progress;
