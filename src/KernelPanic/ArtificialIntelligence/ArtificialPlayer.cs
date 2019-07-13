@@ -39,7 +39,7 @@ namespace KernelPanic.ArtificialIntelligence
         private AttackPlanner mAttackPlanner;
         private DefencePlanner mDefencePlanner;
         private UpgradePlanner mUpgradePlanner;
-        private int[] mDefenceData = new int[16];
+        private int[] mDefenceData;
         private int[] mAttackData;
         private int mAttackMoney;
         private int mDefenceMoney;
@@ -50,6 +50,8 @@ namespace KernelPanic.ArtificialIntelligence
         [JsonConstructor]
         internal ArtificialPlayer(Lane defendingLane, Lane attackingLane, int bitcoins) : base(defendingLane, attackingLane, bitcoins)
         {
+            mDefenceData = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            mAttackData = new [] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             mDefenceData[(int)Feature.Bitcoins] = bitcoins;
             var eventCenter = EventCenter.Default;
 
@@ -105,7 +107,7 @@ namespace KernelPanic.ArtificialIntelligence
             // Data Format is:
             // Bitcoin (own), Bug (own), Trojaner, Nokia, Thunderbird, Settings, Firefox, Bluescreen, Cable(enemy), Mauszeigersch., CD-Werfer, Antivirus, Lüftung, WiFi, Shockfield
 
-            var data = new[] {mAttackMoney, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            var data = new[] {mAttackMoney, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             mAttackData = data;
         }
 
@@ -113,7 +115,7 @@ namespace KernelPanic.ArtificialIntelligence
         {
             // Data Format is:
             // Bitcoin (own), Bug (enemy), Trojaner, Nokia, Thunderbird, Settings, Firefox, Bluescreen, Cable(own), Mauszeigersch., CD-Werfer, Antivirus, Lüftung, WiFi, Shockfield
-            var data = new[] {mDefenceMoney, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            var data = new[] {mDefenceMoney, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             mDefenceData = data;
 
         }
