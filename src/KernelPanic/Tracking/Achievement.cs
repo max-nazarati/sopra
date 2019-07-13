@@ -73,10 +73,40 @@ namespace KernelPanic.Tracking
             }
         }
 
+        [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "Strings are in German")]
         internal static string Description(this Achievement achievement)
         {
-            // TODO: Return correct descriptions.
-            return achievement.ToString();
+            switch (achievement)
+            {
+                case Achievement.Win1:
+                    return "Du hast das Spiel das erste Mal gewonnen.";
+                case Achievement.Win10:
+                    return "Du hast das Spiel das zehnte Mal gewonnen.";
+                case Achievement.Win100:
+                    return "Du hast das Spiel das hunderste Mal gewonnen.";
+                case Achievement.Lose1:
+                    return "Du hast das Spiel das erste Mal verloren.";
+                case Achievement.Lose10:
+                    return "Du hast das Spiel das zehnte Mal verloren.";
+                case Achievement.Lose100:
+                    return "Du hast das Spiel das hunderste Mal verloren.";
+                case Achievement.AptGetUpgrade:
+                    return "Investiere in einem Spiel zwanzig EP in Upgrades.";
+                case Achievement.BitcoinAddict:
+                    return "Erreiche in einem Spiel 300 BTC.";
+                case Achievement.IronFortress:
+                    return "Gewinne ein Spiel mit 100% verbleibender Ladung.";
+                case Achievement.HighInference:
+                    return "Gewinne ein Spiel nur mit Wifi-Routern als Verteidigung.";
+                case Achievement.BugsFixed:
+                    return "Besiege in einem Spiel 50 Bugs.";
+                case Achievement.EmptySlot:
+                    return "Versuche einen leeren Speicherstand zu laden.";
+                case Achievement.NumberOfAchievements:
+                    goto default;
+                default:
+                    throw new InvalidEnumArgumentException(nameof(achievement), (int) achievement, typeof(Achievement));
+            }
         }
 
         #endregion
