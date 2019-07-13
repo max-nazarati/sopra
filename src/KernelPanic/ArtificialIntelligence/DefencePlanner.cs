@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Players;
@@ -18,12 +20,15 @@ namespace KernelPanic.ArtificialIntelligence
 
         public DefencePlanner(Player player, SpriteManager spriteManager, SoundManager soundManager) : base(player)
         {
-            mBuildX = 9;
+            mBuildX = 8;
             mBuildY = 9;
             mBuildForward = true;
             mDefenseDecisionMaker = new DecisionTreeClassifier();
             mDefenseDecisionMaker.ReaderCsv("sopra_defense_train.csv");
             mDefenseDecisionMaker.TrainModel();
+            /*Console.WriteLine(mDefenseDecisionMaker.Rules.ToString(mDefenseDecisionMaker.Codebook,
+                "Aktion",
+                System.Globalization.CultureInfo.InvariantCulture));*/
             mSpriteManager = spriteManager;
             mSoundManager = soundManager;
         }
@@ -37,9 +42,14 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData, GameTime gameTime)
         {
             base.Update();
-            var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => x));
-            var choice = mDefenseDecisionMaker.Revert(choiceEncoded);
-            BuySingleTower(choice);
+            int numberOfChoices = 3;
+            for (int i = 0; i < numberOfChoices; i++)
+            {
+                var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => (double)x));
+                var choice = mDefenseDecisionMaker.Revert(choiceEncoded);
+                // Console.WriteLine(String.Join(",", defenceData.Select(p => p.ToString()).ToArray()));
+                BuySingleTower(choice);
+            }
         }
 
         private void BuySingleTower(string choice)

@@ -43,7 +43,7 @@ namespace KernelPanic.ArtificialIntelligence
         private int[] mAttackData;
         private int mAttackMoney;
         private int mDefenceMoney;
-        // private bool mNeedOffensiveUnits;
+        private bool mNeedDefensiveUnits;
 
         // private int[] mOwnTroupeAmount;
 
@@ -52,6 +52,7 @@ namespace KernelPanic.ArtificialIntelligence
         {
             mDefenceData = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             mAttackData = new [] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            mNeedDefensiveUnits = false;
             mDefenceData[(int)Feature.Bitcoins] = bitcoins;
             var eventCenter = EventCenter.Default;
 
@@ -60,13 +61,16 @@ namespace KernelPanic.ArtificialIntelligence
                 e => e.IsActivePlayer(Event.Key.Buyer));
             eventCenter.Subscribe(Event.Id.BuildingPlaced,
                 e => UpdateDefenceData(Event.Id.BuildingPlaced, e),
-                e => e.IsActivePlayer(Event.Key.Buyer));
+                e => !e.IsActivePlayer(Event.Key.Buyer));
             eventCenter.Subscribe(Event.Id.BoughtUnit,
                 e => UpdateAttackData(Event.Id.BoughtUnit, e),
                 e => !e.IsActivePlayer(Event.Key.Buyer));
             eventCenter.Subscribe(Event.Id.BuildingPlaced,
                 e => UpdateAttackData(Event.Id.BuildingPlaced, e),
-                e => !e.IsActivePlayer(Event.Key.Buyer));
+                e => e.IsActivePlayer(Event.Key.Buyer));
+            eventCenter.Subscribe(Event.Id.DamagedBase,
+                e => mNeedDefensiveUnits = true,
+                e => !e.IsActivePlayer(Event.Key.Defender));
             // mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
         }
 
@@ -92,7 +96,7 @@ namespace KernelPanic.ArtificialIntelligence
         {
             SetMoney();
             SetAttackData();
-            SetDefenceData();
+            // SetDefenceData();
         }
 
         private void SetMoney()
@@ -264,8 +268,9 @@ namespace KernelPanic.ArtificialIntelligence
             SetData();
             
             mAttackPlanner.Update(mAttackData, gameTime);
-            mDefencePlanner.Update(mDefenceData, gameTime);
+            if (mNeedDefensiveUnits) mDefencePlanner.Update(mDefenceData, gameTime);
             mUpgradePlanner.Update();
+            mNeedDefensiveUnits = false;
         }
     }
 }
