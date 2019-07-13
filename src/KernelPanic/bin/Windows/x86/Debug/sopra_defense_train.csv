@@ -10,8 +10,8 @@ Bitcoins,Bug,Virus,Trojaner,Nokia,Thunderbird,Settings,Firefox,Bluescreen,Kabel,
 500,0,0,0,0,0,0,1,0,0,2,0,0,0,0,0,Mauszeigerschütze
 800,0,0,0,0,0,0,1,0,0,3,0,0,0,0,0,Mauszeigerschütze
 10,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,Warten
-100,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,Warten
-200,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,Warten
+100,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,Mauszeigerschütze
+200,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,Mauszeigerschütze
 500,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,Antivirusprogramm
 800,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,Antivirusprogramm
 10,0,4,5,2,2,1,1,1,1,1,1,1,5,0,5,Warten
@@ -21,7 +21,7 @@ Bitcoins,Bug,Virus,Trojaner,Nokia,Thunderbird,Settings,Firefox,Bluescreen,Kabel,
 500,0,0,5,0,0,0,0,0,0,3,0,0,0,0,0,Antivirusprogramm
 800,0,0,5,0,0,0,0,0,0,3,0,0,0,0,0,Antivirusprogramm
 10,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,Warten
-100,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,Warten
+100,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,Antivirusprogramm
 200,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,CD-Werfer
 500,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,Antivirusprogramm
 800,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,Antivirusprogramm
@@ -56,7 +56,7 @@ Bitcoins,Bug,Virus,Trojaner,Nokia,Thunderbird,Settings,Firefox,Bluescreen,Kabel,
 500,12,5,9,5,5,1,0,1,0,10,9,10,6,7,7,Antivirusprogramm
 800,15,12,14,7,5,0,1,1,0,6,5,9,7,5,5,Antivirusprogramm
 10,9,5,9,12,8,1,0,0,0,9,6,5,6,5,7,Warten
-100,9,8,6,7,8,0,1,1,0,10,5,10,7,8,9,Warten
+100,9,8,6,7,8,0,1,1,0,10,5,10,7,8,9,Mauszeigerschütze
 200,10,14,9,14,6,1,1,0,0,7,9,6,7,9,5,CD-Werfer
 500,10,12,15,15,8,1,0,0,0,10,10,8,6,10,9,Antivirusprogramm
 800,9,5,11,6,6,1,1,1,0,6,9,6,10,8,10,Antivirusprogramm

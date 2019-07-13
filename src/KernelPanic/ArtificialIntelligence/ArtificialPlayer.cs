@@ -115,7 +115,7 @@ namespace KernelPanic.ArtificialIntelligence
             var data = new[] {mAttackMoney, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             mAttackData = data;
         }
-
+        /*
         private void SetDefenceData()
         {
             // Data Format is:
@@ -123,7 +123,7 @@ namespace KernelPanic.ArtificialIntelligence
             var data = new[] {mDefenceMoney, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             mDefenceData = data;
 
-        }
+        } */
 
         private void UpdateDefenceData(Event.Id id, Event handler)
         {

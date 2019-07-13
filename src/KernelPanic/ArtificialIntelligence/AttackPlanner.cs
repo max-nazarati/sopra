@@ -11,15 +11,19 @@ namespace KernelPanic.ArtificialIntelligence
     internal sealed class AttackPlanner : Planner
     {
         private readonly Dictionary<Type, PurchasableAction<Unit>> mActions;
+        private DecisionTreeClassifier mOffenseDecisionMaker;
 
         #region Konstruktor
-        
+
         public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions) : base(player)
         {
             mActions = actions;
             BuyEntity<Thunderbird>();
             // FastWave();
             // FastAndFurious();
+            mOffenseDecisionMaker = new DecisionTreeClassifier();
+            mOffenseDecisionMaker.ReaderCsv("sopra_offense_train.csv");
+            mOffenseDecisionMaker.TrainModel();
             BuyEntity<Firefox>();
         }
         
