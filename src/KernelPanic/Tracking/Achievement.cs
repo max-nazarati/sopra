@@ -5,9 +5,12 @@ using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
 using KernelPanic.Events;
 using KernelPanic.Players;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace KernelPanic.Tracking
 {
+    [JsonConverter(typeof(StringEnumConverter))]
     internal enum Achievement
     {
         Win1,
@@ -24,7 +27,7 @@ namespace KernelPanic.Tracking
         HighInference,
         BugsFixed,
 
-        EmptySlot,
+        Fool,
         
         NumberOfAchievements
     }
@@ -63,7 +66,7 @@ namespace KernelPanic.Tracking
                 case Achievement.BugsFixed:
                     return "Fix your Code!";
 
-                case Achievement.EmptySlot:
+                case Achievement.Fool:
                     return "Fool!";
 
                 case Achievement.NumberOfAchievements:
@@ -73,16 +76,47 @@ namespace KernelPanic.Tracking
             }
         }
 
+        [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "Strings are in German")]
         internal static string Description(this Achievement achievement)
         {
-            // TODO: Return correct descriptions.
-            return achievement.ToString();
+            switch (achievement)
+            {
+                case Achievement.Win1:
+                    return "Du hast das Spiel das erste Mal gewonnen.";
+                case Achievement.Win10:
+                    return "Du hast das Spiel das zehnte Mal gewonnen.";
+                case Achievement.Win100:
+                    return "Du hast das Spiel das hunderste Mal gewonnen.";
+                case Achievement.Lose1:
+                    return "Du hast das Spiel das erste Mal verloren.";
+                case Achievement.Lose10:
+                    return "Du hast das Spiel das zehnte Mal verloren.";
+                case Achievement.Lose100:
+                    return "Du hast das Spiel das hunderste Mal verloren.";
+                case Achievement.AptGetUpgrade:
+                    return "Investiere in einem Spiel zwanzig EP in Upgrades.";
+                case Achievement.BitcoinAddict:
+                    return "Erreiche in einem Spiel 300 BTC.";
+                case Achievement.IronFortress:
+                    return "Gewinne ein Spiel mit 100% verbleibender Ladung.";
+                case Achievement.HighInference:
+                    return "Gewinne ein Spiel nur mit Wifi-Routern als Verteidigung.";
+                case Achievement.BugsFixed:
+                    return "Besiege in einem Spiel 50 Bugs.";
+                case Achievement.Fool:
+                    return "Versuche einen leeren Speicherstand zu laden.";
+                case Achievement.NumberOfAchievements:
+                    goto default;
+                default:
+                    throw new InvalidEnumArgumentException(nameof(achievement), (int) achievement, typeof(Achievement));
+            }
         }
 
         #endregion
 
         #region Connecting
 
+        [JsonConverter(typeof(StringEnumConverter))]
         internal enum Status
         {
             Locked,
@@ -137,7 +171,7 @@ namespace KernelPanic.Tracking
                     progressConnector.ConnectCounter(Event.Id.KilledUnit, target: 3, condition: IsEnemyBug);
                     break;
 
-                case Achievement.EmptySlot:
+                case Achievement.Fool:
                     progressConnector.ConnectCounter(Event.Id.LoadEmptySlot);
                     break;
 
@@ -175,6 +209,7 @@ namespace KernelPanic.Tracking
             {
                 // TODO: Complete this list.
                 Achievement.BitcoinAddict,
+                Achievement.Fool,
                 Achievement.Lose1,
                 Achievement.Lose10,
                 Achievement.Lose100,

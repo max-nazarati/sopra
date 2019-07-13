@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using KernelPanic.Camera;
 using KernelPanic.Data;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Serialization;
@@ -18,7 +20,7 @@ namespace KernelPanic
     [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "The Strings are in German")]
     internal sealed class MenuState : AGameState
     {
-        private ICollection<InterfaceComponent> mComponents;
+        private IReadOnlyCollection<InterfaceComponent> mComponents;
         private readonly Action mEscapeAction;
 
         private MenuState(GameStateManager gameStateManager, Action escapeAction = null)
@@ -114,7 +116,12 @@ namespace KernelPanic
 
                     btn.Enabled = false;
                     newGameButton.Enabled = true;
-                    loadGameButton.Enabled = exists;
+
+                    // We abuse that the pressed state looks like the disabled state for still receiving click events
+                    // but giving the player a visual indication.
+                    loadGameButton.Enabled = true;
+                    loadGameButton.ViewPressed = !exists;
+
                     selectedButton = btn;
                     selectedSlot = slot;
                 };
@@ -124,7 +131,7 @@ namespace KernelPanic
 
             newGameButton.Clicked += (button, input) => InGameState.PushGameStack(selectedSlot, stateManager);
             loadGameButton.Clicked += LoadGameCallback(() => selectedSlot, stateManager);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             return new MenuState(stateManager) { mComponents = components.ToArray() };
         }
@@ -133,6 +140,12 @@ namespace KernelPanic
         {
             return (button, inputManager) =>
             {
+                if (button.ViewPressed)
+                {
+                    EventCenter.Default.Send(Event.LoadEmptySlot());
+                    return;
+                }
+
                 try
                 {
                     InGameState.PushGameStack(slotAccessor(),
@@ -190,8 +203,7 @@ namespace KernelPanic
             fullScreenWindowButton.Clicked += (button, input) => ChangeScreenSize(fullScreenWindowButton, stateManager.GraphicsDeviceManager);
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
-
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             return new MenuState(stateManager)
             {
@@ -215,7 +227,7 @@ namespace KernelPanic
         {
             // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
             
             return new MenuState(stateManager)
             {
@@ -230,7 +242,7 @@ namespace KernelPanic
         private static MenuState CreateStatisticsMenu(GameStateManager stateManager)
         {
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             var resetButton = CreateButton(stateManager.Sprite, "Zurücksetzen", 800);
             resetButton.Clicked += (button, input) =>
@@ -272,48 +284,33 @@ namespace KernelPanic
 
         private static MenuState CreateAchievementsMenu(GameStateManager stateManager)
         {
-            var backButton = CreateButton(stateManager.Sprite, "Zurück", 0);
-            backButton.Sprite.SetOrigin(RelativePosition.BottomLeft);
-            backButton.Sprite.Y = stateManager.Sprite.ScreenSize.Y - backButton.Sprite.Height - 20;
-            backButton.Clicked += (button, input) => stateManager.Pop();
-            
-            var components = new List<InterfaceComponent>
-            {
-                CreateBackgroundWithoutText(stateManager.Sprite),
-                backButton,
-            };
+            const int hPadding = 10;
+            const int vPadding = 8;
 
-            // TODO: Better layout.
-            var y = 20f;
             var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
-            foreach (var (title, description, value) in stateManager.AchievementPool.UserRepresentation)
-            {
-                var titleText = stateManager.Sprite.CreateText(title);
-                var descText = stateManager.Sprite.CreateText(description);
-                
-                titleText.SetOrigin(RelativePosition.TopRight);
-                descText.SetOrigin(RelativePosition.TopRight);
-                descText.Y = titleText.Height;
-
-                var leftSide = new CompositeSprite
+            return CreatePaged(6, stateManager.AchievementPool.UserRepresentation, stateManager,
+                element =>
                 {
-                    X = screenMid - 10,
-                    Y = y,
-                    Children = {titleText, descText}
-                };
+                    var titleText = stateManager.Sprite.CreateText(element.Title);
+                    titleText.SetOrigin(RelativePosition.TopRight);
+                    titleText.X = -hPadding;
 
-                var valueText = stateManager.Sprite.CreateText(value);
-                valueText.SetOrigin(RelativePosition.CenterLeft);
-                valueText.X = screenMid + 10;
-                valueText.Y = leftSide.Y + 0.5f * leftSide.Height;
+                    var descText = stateManager.Sprite.CreateText(element.Description);
+                    descText.SetOrigin(RelativePosition.TopRight);
+                    descText.X = -hPadding;
+                    descText.Y = titleText.Height + vPadding;
 
-                y += leftSide.Height + 10;
+                    var valueText = stateManager.Sprite.CreateText(element.Value);
+                    valueText.SetOrigin(RelativePosition.CenterLeft);
+                    valueText.X = hPadding;
+                    valueText.Y = (descText.Bounds.Bottom - titleText.Bounds.Top) / 2f;
 
-                components.Add(new StaticComponent(leftSide));
-                components.Add(new StaticComponent(valueText));
-            }
-
-            return new MenuState(stateManager) {mComponents = components};
+                    return new StaticComponent(new CompositeSprite
+                    {
+                        Origin = new Vector2(-screenMid, 0),
+                        Children = {titleText, descText, valueText}
+                    });
+                });
         }
 
         /// <summary>
@@ -337,7 +334,7 @@ namespace KernelPanic
             descriptionSprite.Y = 400;
 
             var backButton = CreateButton(stateManager.Sprite, "Ok", 800);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             return new MenuState(stateManager)
             {
@@ -379,7 +376,7 @@ namespace KernelPanic
             // zoeButton.Clicked
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 750);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
             
             return new MenuState(stateManager)
             {
@@ -428,7 +425,7 @@ namespace KernelPanic
             SoundManager soundManager)
         {
             var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
             optionsButton.Clicked += (button, input) =>
@@ -462,6 +459,83 @@ namespace KernelPanic
         private static StaticComponent CreateBackgroundWithoutText(SpriteManager sprites)
         {
             return new StaticComponent(sprites.CreateMenuBackgroundWithoutText());
+        }
+
+        private static MenuState CreatePaged<T>(int elementsPerPage,
+            IReadOnlyList<T> elements,
+            GameStateManager stateManager,
+            Func<T, InterfaceComponent> viewFunc,
+            int currentPage = 0)
+        {
+            const float padding = 50;        // Padding between elements.
+            const float screenBorder = 50;   // Distance from the screen border.
+
+            var spriteManager = stateManager.Sprite;
+            var screenSize = spriteManager.ScreenSize;
+            var screenMid = screenSize.X / 2.0f;
+            var bottomRowY = screenSize.Y - screenBorder;
+
+            var backButton = new TextButton(spriteManager)
+            {
+                Title = "Zurück",
+                Sprite = {X = screenMid, Y = bottomRowY}
+            };
+            backButton.Sprite.SetOrigin(RelativePosition.CenterBottom);
+            backButton.Clicked += stateManager.PopOnClick;
+            var backButtonHalfWidth = backButton.Bounds.Width / 2.0f;
+
+            var prevButton = new TextButton(spriteManager)
+            {
+                Title = "<",
+                Enabled = currentPage > 0,
+                Sprite = {X = screenMid - backButtonHalfWidth - padding, Y = bottomRowY}
+            };
+            prevButton.Sprite.SetOrigin(RelativePosition.BottomRight);
+            prevButton.Clicked += delegate
+            {
+                stateManager.Switch(CreatePaged(elementsPerPage,
+                    elements,
+                    stateManager,
+                    viewFunc,
+                    currentPage - 1));
+            };
+
+            var nextButton = new TextButton(spriteManager)
+            {
+                Title = ">",
+                Enabled = currentPage * elementsPerPage + elementsPerPage < elements.Count,
+                Sprite = {X = screenMid + backButtonHalfWidth + padding, Y = bottomRowY}
+            };
+            nextButton.Sprite.SetOrigin(RelativePosition.BottomLeft);
+            nextButton.Clicked += delegate
+            {
+                stateManager.Switch(CreatePaged(elementsPerPage,
+                    elements,
+                    stateManager,
+                    viewFunc,
+                    currentPage + 1));
+            };
+
+            var components = new List<InterfaceComponent>(elementsPerPage + 4)
+            {
+                CreateBackgroundWithoutText(spriteManager),
+                backButton,
+                prevButton,
+                nextButton
+            };
+
+            var y = screenBorder;
+            var indexRange = Enumerable.Range(currentPage * elementsPerPage,
+                    Math.Min(elementsPerPage, elements.Count - currentPage * elementsPerPage));
+            components.AddRange(indexRange.Select(index =>
+            {
+                var component = viewFunc(elements[index]);
+                component.Position = new Vector2(component.Position.X, y);
+                y += component.Bounds.Height + padding;
+                return component;
+            }));
+
+            return new MenuState(stateManager) {mComponents = components};
         }
 
         private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)

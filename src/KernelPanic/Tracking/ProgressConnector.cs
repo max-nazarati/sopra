@@ -34,10 +34,8 @@ namespace KernelPanic.Tracking
                 return component;
             }
 
-            mComponentIterator.MoveNext();
-
             // NOTE: If you get an exception here, you might have to delete your achievements save file.
-            if (!(mComponentIterator.Current is ProgressComponent restored))
+            if (!mComponentIterator.MoveNext() || !(mComponentIterator.Current is ProgressComponent restored))
                 throw new InvalidOperationException("Adding more components than were restored.");
             if (!component.IsSimilar(restored))
                 throw new InvalidOperationException("Components mismatch.");

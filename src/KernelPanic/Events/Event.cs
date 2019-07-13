@@ -5,18 +5,21 @@ using KernelPanic.Players;
 using KernelPanic.Table;
 using KernelPanic.Tracking;
 using KernelPanic.Upgrades;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace KernelPanic.Events
 {
     internal sealed class Event
     {
+        [JsonConverter(typeof(StringEnumConverter))]
         internal enum Id
         {
             AchievementUnlocked,
             AchievementImpossible,
             CloseAchievementPool,
 
-            LoadEmptySlot,         // TODO: Not sent yet.
+            LoadEmptySlot,
 
             BuildingPlaced,
             BuildingImproved,      // TODO: Not sent yet.
@@ -39,6 +42,7 @@ namespace KernelPanic.Events
             // FirefoxJump            // TODO: Not sent yet.
         }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         internal enum Key
         {
             /// <summary>
@@ -181,6 +185,8 @@ namespace KernelPanic.Events
         {
             Kind = id;
         }
+
+        internal static Event LoadEmptySlot() => new Event(Id.LoadEmptySlot);
 
         internal static Event GameWon(Player winner, Player loser) =>
             new Event(Id.GameWon)

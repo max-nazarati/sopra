@@ -98,6 +98,7 @@ namespace KernelPanic.Tracking
     internal sealed class ComparisonProgressComponent : ProgressComponent
     {
         [JsonProperty] private int Target { get; set; }
+        [JsonProperty] private int Best { get; set; }
         [JsonProperty] private Event.Key ExtractKey { get; set; }
 
         [JsonConstructor]
@@ -111,7 +112,8 @@ namespace KernelPanic.Tracking
 
         protected override void Handle(Event @event)
         {
-            if (@event.Get<int>(ExtractKey) >= Target)
+            Best = Math.Max(Best, @event.Get<int>(ExtractKey));
+            if (Best >= Target)
                 Progress.SetStatus(Achievements.Status.Unlocked);
         }
 

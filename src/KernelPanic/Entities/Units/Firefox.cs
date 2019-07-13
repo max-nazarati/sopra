@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KernelPanic.Entities.Units
 {
+    
     [DataContract]
     internal sealed class Firefox : Hero
     {
@@ -124,25 +125,45 @@ namespace KernelPanic.Entities.Units
         {
             // moving
             base.AttackBase(inputManager, positionProvider, basePosition);
-            // jump if possible
-            if (MoveTarget != null && Cooldown.Ready)
+              SmartJump(inputManager, positionProvider);
+        }
+
+        private void SmartJump(InputManager inputManager, PositionProvider positionProvider)
+        {
+            // check invariants for jumping
+            if (MoveTarget == null || !Cooldown.Ready) return;
+            if (!(mAStar.Path is List<Point> path) || path.Count < 2) return;
+
+            // iterate over the path and note the distances
+            double[] distance = new double[path.Count];
+            for (int i = 0; i < path.Count; i++)
             {
-                // just jump the next steps
-                if (mAStar.Path is List<Point> path && path.Count >= 2)
+                var posX = Grid.KachelSize * path[i].X;
+                var posY = Grid.KachelSize * path[i].Y;
+                var diff = Sprite.Position - new Vector2(posX, posY);
+                var dist = Math.Sqrt(Math.Pow(diff.X, 2) + Math.Pow(diff.Y, 2));
+                distance[i] = dist;
+            }
+
+            // look for a good jump (aka a small distance but high number in the path)
+            // -> lets just jump to the furthest target with small enough distance for a jump
+            for (int i = distance.Length - 1; i >= 0; i--)
+            {
+                // TODO find a good check if we should wait before jumping
+                //      so we dont waste it.
+                
+                if (distance[i] < 300) // TODO this distance is hardcoded and therefore bad
                 {
-                    /* 
-                    foreach (var pathPoint in path)
-                    {
-                        var point = positionProvider.Grid.GetTile(new TileIndex(pathPoint, 1)).Position;
-                        point -= Sprite.Position;
-                    }
-                    */
-                    mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[2], 1)).Position;
-                    TryActivateAbility(inputManager, true);
-                    StartAbility(positionProvider, inputManager);
+                    mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[i], 1)).Position;
+                    break;
                 }
             }
+            TryActivateAbility(inputManager, true);
+            StartAbility(positionProvider, inputManager);
         }
+
+
+
 
         #endregion
         

@@ -136,7 +136,7 @@ namespace KernelPanic.Table
         }
 
         /// <summary>
-        /// Calculates the origin the tile identified by <paramref name="index"/>.
+        /// Calculates the origin of the tile identified by <paramref name="index"/>.
         /// </summary>
         /// <param name="index">The index of the tile.</param>
         /// <param name="origin">Where to put the origin in the rectangle, <see cref="RelativePosition.Center"/> by default.</param>
