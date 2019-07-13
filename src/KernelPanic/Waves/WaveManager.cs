@@ -44,6 +44,9 @@ namespace KernelPanic.Waves
 
         private void Activate()
         {
+            if (mTroupes.A.Count == 0 && mTroupes.B.Count == 0)
+                return;
+
             var wave = new Wave(++mLastIndex, mTroupes);
             mAliveWaves.Add(wave);
 
@@ -107,19 +110,36 @@ namespace KernelPanic.Waves
             mAliveWaves.RemoveAll(wave => wave.FullyDefeated);
 
             // 4. Activate the next wave. Doing this after 3. might save us some allocations.
-            if (current?.AtLeastPartiallyDefeated ?? false)
+            // 4a) If there is no current wave, start the next one directly if the time till first wave has passed.
+            if (current == null)
             {
-                Activate();
-            }
-            else if (current == null)
-            {
-                // Decrease the time till the first wave.
-                mTimeTillFirstWave -= gameTime.ElapsedGameTime;
                 if (mTimeTillFirstWave <= TimeSpan.Zero)
                 {
                     Activate();
                     EventCenter.Default.Send(Event.SetupEnded());
                 }
+                else
+                {
+                    mTimeTillFirstWave -= gameTime.ElapsedGameTime;
+                }
+                return;
+            }
+
+            // 4b) If the wave is not at least partially defeated don't start the next wave.
+            if (!current.AtLeastPartiallyDefeated)
+                return;
+            
+            // 4c) If it wasn't unbalanced, we start the next wave.
+            if (!current.Unbalanced)
+            {
+                Activate();
+                return;
+            }
+            
+            // 4d) It was unbalanced—if all units from the wave are spawned we'll start the next one.
+            if (Players.A.AttackingLane.UnitSpawner.Ready && Players.B.AttackingLane.UnitSpawner.Ready)
+            {
+                Activate();
             }
         }
     }

@@ -15,6 +15,11 @@ namespace KernelPanic.Table
         // TODO: We probably want to have more logic instead, maybe something like “is the tile free”.
         private readonly CooldownComponent mSpawnCooldown = new CooldownComponent(TimeSpan.FromSeconds(0.5));
 
+        /// <summary>
+        /// Returns <c>true</c> if there are no more troupes to spawn.
+        /// </summary>
+        internal bool Ready => mUnits.Count == 0;
+
         public UnitSpawner(Grid grid, Action<Unit> spawnAction)
         {
             mGrid = grid;

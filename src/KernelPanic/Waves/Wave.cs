@@ -13,6 +13,12 @@ namespace KernelPanic.Waves
 
         [JsonProperty]
         private readonly PlayerIndexed<List<Troupe>> mUnits;
+        
+        /// <summary>
+        /// A <see cref="Wave"/> is unbalanced, if one player doesn't have any troupes.
+        /// </summary>
+        [JsonProperty]
+        internal bool Unbalanced { get; }
 
         /// <summary>
         /// Creates a new <see cref="Wave"/> with the given index and units.
@@ -24,6 +30,7 @@ namespace KernelPanic.Waves
         {
             Index = index;
             mUnits = units;
+            Unbalanced = units.A.Count == 0 || units.B.Count == 0;
         }
 
         /// <summary>
