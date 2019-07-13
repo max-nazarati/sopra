@@ -135,9 +135,6 @@ namespace KernelPanic.Entities.Units
             if (!(mAStar.Path is List<Point> path) || path.Count < 2) return;
 
             // iterate over the path and note the distances
-            // var point = positionProvider.Grid.GetTile(new TileIndex(pathPoint, 1)).Position;
-
-            // double[] distance = {-1d * path.Count};
             double[] distance = new double[path.Count];
             for (int i = 0; i < path.Count; i++)
             {
@@ -150,18 +147,17 @@ namespace KernelPanic.Entities.Units
 
             // look for a good jump (aka a small distance but high number in the path)
             // -> lets just jump to the furthest target with small enough distance for a jump
-
             for (int i = distance.Length - 1; i >= 0; i--)
             {
-                if (distance[i] < 300)
+                // TODO find a good check if we should wait before jumping
+                //      so we dont waste it.
+                
+                if (distance[i] < 300) // TODO this distance is hardcoded and therefore bad
                 {
                     mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[i], 1)).Position;
-                    // mJumpTarget = path[i];
                     break;
                 }
             }
-
-            // mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[2], 1)).Position;
             TryActivateAbility(inputManager, true);
             StartAbility(positionProvider, inputManager);
         }
