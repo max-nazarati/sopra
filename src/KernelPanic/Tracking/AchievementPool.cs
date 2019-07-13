@@ -165,8 +165,9 @@ namespace KernelPanic.Tracking
                 {
                     var achievement = (Achievement) index;
                     var unlockDate = mAchievementPool.AchievementData.UnlockTime[index];
+                    var description = unlockDate.HasValue ? achievement.Description() : "???";
                     var value = unlockDate?.ToString("dd.MM.yyyy, HH:mm") ?? "-";
-                    return new UserRepresentationValue(achievement.Title(), achievement.Description(), value);
+                    return new UserRepresentationValue(achievement.Title(), description, value);
                 }
             }
         }
