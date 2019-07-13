@@ -12,6 +12,8 @@ using KernelPanic.Interface;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace KernelPanic.Entities
 {
@@ -136,6 +138,7 @@ namespace KernelPanic.Entities
         }
     }
 
+    [JsonConverter(typeof(StringEnumConverter))]
     internal enum BuildingState
     {
         /// <summary>

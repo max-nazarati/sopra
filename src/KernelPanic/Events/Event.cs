@@ -5,11 +5,14 @@ using KernelPanic.Players;
 using KernelPanic.Table;
 using KernelPanic.Tracking;
 using KernelPanic.Upgrades;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace KernelPanic.Events
 {
     internal sealed class Event
     {
+        [JsonConverter(typeof(StringEnumConverter))]
         internal enum Id
         {
             AchievementUnlocked,
@@ -39,6 +42,7 @@ namespace KernelPanic.Events
             // FirefoxJump            // TODO: Not sent yet.
         }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         internal enum Key
         {
             /// <summary>

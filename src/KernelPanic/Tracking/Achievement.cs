@@ -5,9 +5,12 @@ using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
 using KernelPanic.Events;
 using KernelPanic.Players;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace KernelPanic.Tracking
 {
+    [JsonConverter(typeof(StringEnumConverter))]
     internal enum Achievement
     {
         Win1,
@@ -113,6 +116,7 @@ namespace KernelPanic.Tracking
 
         #region Connecting
 
+        [JsonConverter(typeof(StringEnumConverter))]
         internal enum Status
         {
             Locked,
