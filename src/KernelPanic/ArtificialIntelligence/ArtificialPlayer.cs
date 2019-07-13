@@ -65,7 +65,8 @@ namespace KernelPanic.ArtificialIntelligence
             eventCenter.Subscribe(Event.Id.BuildingPlaced,
                 e => UpdateAttackData(Event.Id.BuildingPlaced, e),
                 e => !e.IsActivePlayer(Event.Key.Buyer));
-            // mOwnTroupeAmount = new int[5]; // amount of different troupes in the game            
+            // mOwnTroupeAmount = new int[5]; // amount of different troupes in the game       
+            SetData();
         }
 
         public override T Select<T>(T ifActive, T ifPassive)
