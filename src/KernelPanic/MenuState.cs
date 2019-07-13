@@ -125,7 +125,7 @@ namespace KernelPanic
 
             newGameButton.Clicked += (button, input) => InGameState.PushGameStack(selectedSlot, stateManager);
             loadGameButton.Clicked += LoadGameCallback(() => selectedSlot, stateManager);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             return new MenuState(stateManager) { mComponents = components.ToArray() };
         }
@@ -191,8 +191,7 @@ namespace KernelPanic
             fullScreenWindowButton.Clicked += (button, input) => ChangeScreenSize(fullScreenWindowButton, stateManager.GraphicsDeviceManager);
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
-
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             return new MenuState(stateManager)
             {
@@ -216,7 +215,7 @@ namespace KernelPanic
         {
             // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
             
             return new MenuState(stateManager)
             {
@@ -231,7 +230,7 @@ namespace KernelPanic
         private static MenuState CreateStatisticsMenu(GameStateManager stateManager)
         {
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 600);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             var resetButton = CreateButton(stateManager.Sprite, "Zurücksetzen", 800);
             resetButton.Clicked += (button, input) =>
@@ -323,7 +322,7 @@ namespace KernelPanic
             descriptionSprite.Y = 400;
 
             var backButton = CreateButton(stateManager.Sprite, "Ok", 800);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             return new MenuState(stateManager)
             {
@@ -365,7 +364,7 @@ namespace KernelPanic
             // zoeButton.Clicked
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 750);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
             
             return new MenuState(stateManager)
             {
@@ -414,7 +413,7 @@ namespace KernelPanic
             SoundManager soundManager)
         {
             var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
-            backButton.Clicked += (button, input) => stateManager.Pop();
+            backButton.Clicked += stateManager.PopOnClick;
 
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
             optionsButton.Clicked += (button, input) =>
