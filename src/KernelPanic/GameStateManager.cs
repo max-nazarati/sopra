@@ -4,6 +4,8 @@ using System.Linq;
 using Autofac.Util;
 using KernelPanic.Data;
 using KernelPanic.Input;
+using KernelPanic.Interface;
+using KernelPanic.Purchasing;
 using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -75,6 +77,8 @@ namespace KernelPanic
 
             mGameStates.Pop().State.Dispose();
         }
+
+        public Button.Delegate PopOnClick => delegate { Pop(); };
 
         public void Push(AGameState newGameState)
         {

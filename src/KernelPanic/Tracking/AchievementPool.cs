@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Util;
@@ -117,18 +118,59 @@ namespace KernelPanic.Tracking
             }
         }
 
-        internal IEnumerable<(string Title, string Description, string Time)> UserRepresentation
+        #region User Representation
+
+        internal UserRepresentationCollection UserRepresentation =>
+            new UserRepresentationCollection(this);
+        
+        internal struct UserRepresentationValue
         {
-            get
+            public UserRepresentationValue(string title, string description, string value)
             {
-                Achievement a = 0;
-                foreach (var time in AchievementData.UnlockTime)
+                Title = title;
+                Description = description;
+                Value = value;
+            }
+
+            internal string Title { get; }
+            internal string Description { get; }
+            internal string Value { get; }
+        }
+
+        internal struct UserRepresentationCollection : IReadOnlyList<UserRepresentationValue>
+        {
+            private readonly AchievementPool mAchievementPool;
+
+            internal UserRepresentationCollection(AchievementPool achievementPool)
+            {
+                mAchievementPool = achievementPool;
+            }
+
+            public IEnumerator<UserRepresentationValue> GetEnumerator()
+            {
+                var self = this;
+                return Enumerable.Range(0, Count).Select(index => self[index]).GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+            public int Count => mAchievementPool.AchievementData.UnlockTime.Length;
+
+            public UserRepresentationValue this[int index]
+            {
+                get
                 {
-                    var unlock = time is DateTime unlockTime ? unlockTime.ToString("dd.MM.yyyy, hh:mm") : "-";
-                    yield return (a.Title(), a.Description(), unlock);
-                    ++a;
+                    var achievement = (Achievement) index;
+                    var unlockDate = mAchievementPool.AchievementData.UnlockTime[index];
+                    var value = unlockDate?.ToString("dd.MM.yyyy, HH:mm") ?? "-";
+                    return new UserRepresentationValue(achievement.Title(), achievement.Description(), value);
                 }
             }
         }
+
+        #endregion
     }
 }
