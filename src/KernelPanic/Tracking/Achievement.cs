@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
@@ -21,14 +23,23 @@ namespace KernelPanic.Tracking
         Lose10,
         Lose100,
 
-        AptGetUpgrade,
-        BitcoinAddict,
         IronFortress,
+        TowersWin,
         HighInference,
-        BugsFixed,
-
+        Nutcracker,
+        ManyWires,
         Fool,
-        
+
+        MinionSlayer,
+        BitcoinAddict,
+        AptGetUpgrade,
+        DirtyCoder,
+        BugsFixed,
+        Shockfield,
+        Hacker,
+        AntiVirus,
+        JumpNRun,
+
         NumberOfAchievements
     }
 
@@ -55,19 +66,37 @@ namespace KernelPanic.Tracking
                 case Achievement.Lose100:
                     return "Complete Humiliation";
 
-                case Achievement.AptGetUpgrade:
-                    return "while true; DO sudo apt-get upgrade; DONE";
-                case Achievement.BitcoinAddict:
-                    return "Bitcoin Addiction";
                 case Achievement.IronFortress:
                     return "Iron Fortress";
+                case Achievement.TowersWin:
+                    return "Tower's win the game";
                 case Achievement.HighInference:
                     return "High Inference";
-                case Achievement.BugsFixed:
-                    return "Fix your Code!";
-
+                case Achievement.Nutcracker:
+                    return "Nutcracker";
+                case Achievement.ManyWires:
+                    return "Lange Leitung";
                 case Achievement.Fool:
                     return "Fool!";
+
+                case Achievement.MinionSlayer:
+                    return "Minion Slayer";
+                case Achievement.BitcoinAddict:
+                    return "Bitcoin Addiction";
+                case Achievement.AptGetUpgrade:
+                    return "while true DO sudo apt-get upgrade DONE";
+                case Achievement.DirtyCoder:
+                    return "Dirty Coder!";
+                case Achievement.BugsFixed:
+                    return "Fix your Code!";
+                case Achievement.Hacker:
+                    return "Hacker";
+                case Achievement.AntiVirus:
+                    return "High Security Anti-Virus";
+                case Achievement.Shockfield:
+                    return "Bzzzzz";
+                case Achievement.JumpNRun:
+                    return "~Tower Defense~ Jump 'n' Run";    // TODO: Can we do strikethrough?
 
                 case Achievement.NumberOfAchievements:
                     goto default;
@@ -87,24 +116,46 @@ namespace KernelPanic.Tracking
                     return "Du hast das Spiel das zehnte Mal gewonnen.";
                 case Achievement.Win100:
                     return "Du hast das Spiel das hunderste Mal gewonnen.";
+
                 case Achievement.Lose1:
                     return "Du hast das Spiel das erste Mal verloren.";
                 case Achievement.Lose10:
                     return "Du hast das Spiel das zehnte Mal verloren.";
                 case Achievement.Lose100:
                     return "Du hast das Spiel das hunderste Mal verloren.";
-                case Achievement.AptGetUpgrade:
-                    return "Investiere in einem Spiel zwanzig EP in Upgrades.";
-                case Achievement.BitcoinAddict:
-                    return "Erreiche in einem Spiel 300 BTC.";
+
                 case Achievement.IronFortress:
                     return "Gewinne ein Spiel mit 100% verbleibender Ladung.";
+                case Achievement.TowersWin:
+                    return "Gewinne ein Spiel, bei dem du 500 BTC in Verteidigung investiert hast.";
                 case Achievement.HighInference:
                     return "Gewinne ein Spiel nur mit Wifi-Routern als Verteidigung.";
-                case Achievement.BugsFixed:
-                    return "Besiege in einem Spiel 50 Bugs.";
+                case Achievement.Nutcracker:
+                    return "Besiege eine Nokia-Einheit.";
+                case Achievement.ManyWires:
+                    return "Baue 500 mal Kabel.";
                 case Achievement.Fool:
                     return "Versuche einen leeren Speicherstand zu laden.";
+
+                case Achievement.MinionSlayer:
+                    return "Besiege in einem Spiel 200 Einheiten.";
+                case Achievement.BitcoinAddict:
+                    return "Erreiche in einem Spiel 300 BTC.";
+                case Achievement.AptGetUpgrade:
+                    return "Investiere in einem Spiel zwanzig EP in Upgrades.";
+                case Achievement.DirtyCoder:
+                    return "Spawne in einem Spiel 100 Bugs.";
+                case Achievement.BugsFixed:
+                    return "Besiege in einem Spiel 100 Bugs.";
+                case Achievement.Hacker:
+                    return "Spawne in einem Spiel 100 Virus- oder Trojaner-Einheiten.";
+                case Achievement.AntiVirus:
+                    return "Besiege in einem Spiel 100 Virus- oder Trojaner-Einheiten.";
+                case Achievement.Shockfield:
+                    return "Besiege in einem Spiel 50 Einheiten mit Schockfeldern.";
+                case Achievement.JumpNRun:
+                    return "Springe in einem Spiel mit der Firefox-Einheit über 50 Gebäude.";
+
                 case Achievement.NumberOfAchievements:
                     goto default;
                 default:
@@ -148,31 +199,61 @@ namespace KernelPanic.Tracking
                     progressConnector.ConnectCounter(Event.Id.GameLost, target: 100);
                     break;
 
-                case Achievement.AptGetUpgrade:
-                    progressConnector.ConnectCounter(Event.Id.UpgradeBought, Event.Key.Price, 10, @event => @event.IsActivePlayer(Event.Key.Buyer));
-                    break;
-
-                case Achievement.BitcoinAddict:
-                    progressConnector.ConnectComparison(Event.Id.BitcoinChanged, Event.Key.Price, 1100, @event => @event.IsActivePlayer(Event.Key.Buyer));
-                    break;
-
                 case Achievement.IronFortress:
                     progressConnector.ConnectCounter(Event.Id.GameWon, condition: Is100Percent);
                     break;
-
+                case Achievement.TowersWin:
+                    progressConnector.ConnectCounter(Event.Id.GameWon);
+                    progressConnector.ConnectCounter(Event.Id.BuildingPlaced, Event.Key.Price, 500, e => e.IsActivePlayer(Event.Key.Buyer));
+                    break;
                 case Achievement.HighInference:
                     progressConnector.ConnectCounter(Event.Id.GameWon);
+                    progressConnector.ConnectCounter(Event.Id.BuildingPlaced, condition: PlacedNonWifi, success: false);
+                    break;
+                case Achievement.Nutcracker:
+                    progressConnector.ConnectCounter(Event.Id.KilledUnit,
+                        condition: PlayerAndUnitMatches(Event.Key.Defender, typeof(Nokia)));
+                    break;
+                case Achievement.ManyWires:
                     progressConnector.ConnectCounter(Event.Id.BuildingPlaced,
-                        condition: PlacedNonWifi,
-                        resultingStatus: Status.Failed);
+                        condition: PlayerAndBuildingMatches(Event.Key.Buyer, typeof(Cable)));
                     break;
-
-                case Achievement.BugsFixed:
-                    progressConnector.ConnectCounter(Event.Id.KilledUnit, target: 3, condition: IsEnemyBug);
-                    break;
-
                 case Achievement.Fool:
                     progressConnector.ConnectCounter(Event.Id.LoadEmptySlot);
+                    break;
+
+                case Achievement.MinionSlayer:
+                    progressConnector.ConnectCounter(Event.Id.KilledUnit, target: 200, condition: e => e.IsActivePlayer(Event.Key.Defender));
+                    break;
+                case Achievement.BitcoinAddict:
+                    progressConnector.ConnectComparison(Event.Id.BitcoinChanged, Event.Key.Price, 300, @event => @event.IsActivePlayer(Event.Key.Buyer));
+                    break;
+                case Achievement.AptGetUpgrade:
+                    progressConnector.ConnectCounter(Event.Id.UpgradeBought, Event.Key.Price, 20, @event => @event.IsActivePlayer(Event.Key.Buyer));
+                    break;
+                case Achievement.DirtyCoder:
+                    progressConnector.ConnectCounter(Event.Id.SpawnedUnit, target: 100,
+                        condition: PlayerAndUnitMatches(Event.Key.Attacker, typeof(Bug)));
+                    break;
+                case Achievement.BugsFixed:
+                    progressConnector.ConnectCounter(Event.Id.KilledUnit, target: 100,
+                        condition: PlayerAndUnitMatches(Event.Key.Defender, typeof(Bug)));
+                    break;
+                case Achievement.Hacker:
+                    progressConnector.ConnectCounter(Event.Id.SpawnedUnit, target: 100,
+                        condition: PlayerAndUnitMatches(Event.Key.Attacker, typeof(Virus), typeof(Trojan)));
+                    break;
+                case Achievement.AntiVirus:
+                    progressConnector.ConnectCounter(Event.Id.KilledUnit, target: 100,
+                        condition: PlayerAndUnitMatches(Event.Key.Defender, typeof(Virus), typeof(Trojan)));
+                    break;
+                case Achievement.Shockfield:
+                    progressConnector.ConnectCounter(Event.Id.KilledUnit, target: 50,
+                        condition: PlayerAndBuildingMatches(Event.Key.Defender, typeof(ShockField)));
+                    break;
+                case Achievement.JumpNRun:
+                    progressConnector.ConnectCounter(Event.Id.FirefoxJump, Event.Key.CrossedBuildingsCount, 50,
+                        e => e.IsActivePlayer(Event.Key.Attacker));
                     break;
 
                 case Achievement.NumberOfAchievements:
@@ -193,10 +274,11 @@ namespace KernelPanic.Tracking
             return @event.IsActivePlayer(Event.Key.Buyer) && !(building is WifiRouter);
         }
 
-        private static bool IsEnemyBug(Event @event)
-        {
-            return @event.IsActivePlayer(Event.Key.Defender) && @event.Get<Unit>(Event.Key.Unit) is Bug;
-        }
+        private static Func<Event, bool> PlayerAndBuildingMatches(Event.Key playerKey, params Type[] types) =>
+            e => e.IsActivePlayer(playerKey) && types.Contains(e.Get<Building>(Event.Key.Building).GetType());
+
+        private static Func<Event, bool> PlayerAndUnitMatches(Event.Key playerKey, params Type[] types) =>
+            e => e.IsActivePlayer(playerKey) && types.Contains(e.Get<Unit>(Event.Key.Unit).GetType());
 
         #endregion
 
@@ -207,23 +289,34 @@ namespace KernelPanic.Tracking
         internal static Achievement[] GloballyTracked =>
             new[]
             {
-                // TODO: Complete this list.
-                Achievement.BitcoinAddict,
-                Achievement.Fool,
+                Achievement.Win1,
+                Achievement.Win10,
+                Achievement.Win100,
+
                 Achievement.Lose1,
                 Achievement.Lose10,
                 Achievement.Lose100,
-                Achievement.Win1,
-                Achievement.Win10,
-                Achievement.Win100
+
+                Achievement.IronFortress,
+                Achievement.TowersWin,
+                Achievement.HighInference,
+                Achievement.Nutcracker,
+                Achievement.ManyWires,
+                Achievement.Fool,
             };
 
         internal static Achievement[] PerGame =>
             new[]
             {
-                // TODO: Complete this list.
+                Achievement.MinionSlayer,
+                Achievement.BitcoinAddict,
+                Achievement.AptGetUpgrade,
+                Achievement.DirtyCoder,
                 Achievement.BugsFixed,
-                Achievement.HighInference
+                Achievement.Shockfield,
+                Achievement.Hacker,
+                Achievement.AntiVirus,
+                Achievement.JumpNRun,
             };
 
         #endregion

@@ -28,6 +28,7 @@ namespace KernelPanic.Events
             UpgradeBought,
             
             BoughtUnit,
+            SpawnedUnit,
             DamagedUnit,
             KilledUnit,
 
@@ -37,9 +38,9 @@ namespace KernelPanic.Events
 
             BitcoinChanged,
 
-            SetupEnded
+            SetupEnded,
 
-            // FirefoxJump            // TODO: Not sent yet.
+            FirefoxJump            // TODO: Not sent yet.
         }
 
         [JsonConverter(typeof(StringEnumConverter))]
@@ -89,6 +90,7 @@ namespace KernelPanic.Events
             /// <summary>
             /// Of type <see cref="Player"/>, applies to
             /// <list type="bullet">
+            /// <item><description><see cref="Id.SpawnedUnit"/></description></item>
             /// <item><description><see cref="Id.DamagedUnit"/></description></item>
             /// <item><description><see cref="Id.KilledUnit"/></description></item>
             /// <item><description><see cref="Id.DamagedBase"/></description></item>
@@ -117,6 +119,7 @@ namespace KernelPanic.Events
             /// Of type <see cref="KernelPanic.Entities.Unit"/>, applies to
             /// <list type="bullet">
             /// <item><description><see cref="Id.BoughtUnit"/></description></item>
+            /// <item><description><see cref="Id.SpawnedUnit"/></description></item>
             /// <item><description><see cref="Id.DamagedUnit"/></description></item>
             /// <item><description><see cref="Id.KilledUnit"/></description></item>
             /// <item><description><see cref="Id.DamagedBase"/></description></item>
@@ -132,13 +135,13 @@ namespace KernelPanic.Events
             /// </summary>
             Upgrade,
 
-            // <summary>
-            // Of type <see cref="int"/>, applies to
-            // <list type="bullet">
-            // <item><description><see cref="Id.FirefoxJump"/></description></item>
-            // </list>
-            // </summary>
-            // CrossedBuildingsCount,
+            /// <summary>
+            /// Of type <see cref="int"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.FirefoxJump"/></description></item>
+            /// </list>
+            /// </summary>
+            CrossedBuildingsCount,
 
             /// <summary>
             /// Of type <see cref="int"/>, applies to
@@ -258,6 +261,16 @@ namespace KernelPanic.Events
                     [Key.Buyer] = buyer,
                     [Key.Unit] = unit,
                     [Key.Price] = unit.Price
+                }
+            };
+            
+        internal static Event SpawnedUnit(Player attacker, Unit unit) =>
+            new Event(Id.SpawnedUnit)
+            {
+                mPayload =
+                {
+                    [Key.Attacker] = attacker,
+                    [Key.Unit] = unit
                 }
             };
 

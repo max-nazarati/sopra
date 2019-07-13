@@ -35,9 +35,11 @@ namespace KernelPanic.Tracking
             }
 
             // NOTE: If you get an exception here, you might have to delete your achievements save file.
-            if (!mComponentIterator.MoveNext() || !(mComponentIterator.Current is ProgressComponent restored))
+            if (!mComponentIterator.MoveNext())
                 throw new InvalidOperationException("Adding more components than were restored.");
-            if (!component.IsSimilar(restored))
+
+            var restored = mComponentIterator.Current;
+            if (restored != null && !restored.IsSimilar(component))
                 throw new InvalidOperationException("Components mismatch.");
 
             return restored;
@@ -45,21 +47,16 @@ namespace KernelPanic.Tracking
 
         private void Connect(ProgressComponent component, Func<Event, bool> condition)
         {
-            Add(component).Connect(mProgress, condition);
+            Add(component)?.Connect(mProgress, condition);
         }
 
         internal void ConnectCounter(Event.Id eventId,
             Event.Key? extractKey = null,
             int target = 1,
             Func<Event, bool> condition = null,
-            Achievements.Status resultingStatus = Achievements.Status.Unlocked)
+            bool success = true)
         {
-            var component = new CounterProgressComponent(eventId, target)
-            {
-                ExtractKey = extractKey,
-                ResultingStatus = resultingStatus
-            };
-
+            var component = new CounterProgressComponent(eventId, extractKey, target, success);
             Connect(component, condition);
         }
 

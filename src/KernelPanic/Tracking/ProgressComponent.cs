@@ -5,16 +5,24 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.Tracking
 {
+    internal interface IProgress<in T>
+    {
+        void SetFailed();
+        void SetSuccess(T component);
+    }
+
     internal abstract class ProgressComponent : Disposable
     {
-        [JsonIgnore] protected AchievementProgress Progress { get; private set; }
-        [JsonProperty] internal Event.Id EventId { get; set; }
+        [JsonIgnore] private IProgress<ProgressComponent> Progress { get; set; }
+        [JsonProperty] internal Event.Id EventId { get; }
+        [JsonProperty] internal bool Positive { get; }
 
         private IDisposable mDisposable;
 
-        protected ProgressComponent(Event.Id eventId)
+        protected ProgressComponent(Event.Id eventId, bool positive)
         {
             EventId = eventId;
+            Positive = positive;
         }
 
         protected override void Dispose(bool disposing)
@@ -37,7 +45,7 @@ namespace KernelPanic.Tracking
         /// <param name="progress">The progress where this is a component.</param>
         /// <param name="condition">If not <c>null</c> this function must return <c>true</c> for events to be passed to <see cref="Handle"/>.</param>
         /// <exception cref="InvalidOperationException">If this <see cref="ProgressComponent"/> is already connected.</exception>
-        internal void Connect(AchievementProgress progress, Func<Event, bool> condition = null)
+        internal void Connect(IProgress<ProgressComponent> progress, Func<Event, bool> condition = null)
         {
             if (mDisposable != null || IsDisposed)
                 throw new InvalidOperationException("Component is/was already connected.");
@@ -48,42 +56,54 @@ namespace KernelPanic.Tracking
 
         protected abstract void Handle(Event @event);
 
+        protected void Completed()
+        {
+            Dispose();
+
+            if (Positive)
+            {
+                Progress.SetSuccess(this);
+            }
+            else
+            {
+                Progress.SetFailed();
+            }
+        }
+
         /// <summary>
         /// Compares the initial parameters of two <see cref="ProgressComponent"/>s.
         /// </summary>
         /// <param name="other">The component to compare <c>this</c> with.</param>
         /// <returns><c>true</c> if they are similar.</returns>
-        internal abstract bool IsSimilar(ProgressComponent other);
+        internal virtual bool IsSimilar(ProgressComponent other)
+        {
+            return EventId == other.EventId && Positive == other.Positive;
+        }
     }
 
     internal sealed class CounterProgressComponent : ProgressComponent
     {
-        [JsonProperty] private int Target { get; set; }
+        [JsonProperty] private int Target { get; }
         [JsonProperty] private int Current { get; set; }
         
         /// <summary>
         /// If not <c>null</c> <see cref="Current"/> will be increased by the <see cref="int"/> value extracted from
         /// the <see cref="Event"/>. If <see cref="ExtractKey"/> is <c>null</c> it will be increased by one.
         /// </summary>
-        [JsonProperty] internal Event.Key? ExtractKey { get; set; }
-        
-        /// <summary>
-        /// The status to which <see cref="ProgressComponent.Progress"/> is set when <see cref="Current"/> reaches
-        /// <see cref="Target"/>.
-        /// </summary>
-        [JsonProperty] internal Achievements.Status ResultingStatus { get; set; } = Achievements.Status.Unlocked;
+        [JsonProperty] private Event.Key? ExtractKey { get; }
 
         [JsonConstructor]
-        internal CounterProgressComponent(Event.Id eventId, int target = 1) : base(eventId)
+        internal CounterProgressComponent(Event.Id eventId, Event.Key? extractKey, int target, bool positive) : base(eventId, positive)
         {
             Target = target;
+            ExtractKey = extractKey;
         }
 
         protected override void Handle(Event @event)
         {
             Current += ExtractKey is Event.Key key ? @event.Get<int>(key) : 1;
             if (Current >= Target)
-                Progress.SetStatus(ResultingStatus);
+                Completed();
         }
 
         internal override bool IsSimilar(ProgressComponent other)
@@ -91,7 +111,7 @@ namespace KernelPanic.Tracking
             return other is CounterProgressComponent counter
                    && Target == counter.Target
                    && ExtractKey == counter.ExtractKey
-                   && ResultingStatus == counter.ResultingStatus;
+                   && base.IsSimilar(other);
         }
     }
 
@@ -103,10 +123,9 @@ namespace KernelPanic.Tracking
 
         [JsonConstructor]
         internal ComparisonProgressComponent(Event.Id eventId, Event.Key extractKey, int target)
-            : base(eventId)
+            : base(eventId, true)
         {
             Target = target;
-            EventId = eventId;
             ExtractKey = extractKey;
         }
 
@@ -114,14 +133,15 @@ namespace KernelPanic.Tracking
         {
             Best = Math.Max(Best, @event.Get<int>(ExtractKey));
             if (Best >= Target)
-                Progress.SetStatus(Achievements.Status.Unlocked);
+                Completed();
         }
 
         internal override bool IsSimilar(ProgressComponent other)
         {
             return other is ComparisonProgressComponent comparison
                    && Target == comparison.Target
-                   && ExtractKey == comparison.ExtractKey;
+                   && ExtractKey == comparison.ExtractKey
+                   && base.IsSimilar(other);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Autofac.Util;
 using KernelPanic.Events;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.Tracking
 {
-    internal sealed class AchievementProgress : Disposable
+    internal sealed class AchievementProgress : Disposable, IProgress<ProgressComponent>
     {
         [JsonProperty] internal Achievement Achievement { get; }
         [JsonProperty] internal Achievements.Status Status { get; private set; }
@@ -60,23 +61,25 @@ namespace KernelPanic.Tracking
 
         #endregion
 
-        /// <summary>
-        /// Disconnects the components from the event center.
-        /// </summary>
-        private void DisposeComponents()
+        #region Component Feedback
+
+        void IProgress<ProgressComponent>.SetFailed()
         {
-            if (mComponents == null)
-                return;
-
-            foreach (var component in mComponents)
-            {
-                component.Dispose();
-            }
-
-            mComponents = null;
+            SetStatus(Achievements.Status.Failed);
         }
 
-        internal void SetStatus(Achievements.Status status)
+        void IProgress<ProgressComponent>.SetSuccess(ProgressComponent component)
+        {
+            var index = Array.IndexOf(mComponents, component);
+            if (index < 0)
+                throw new InvalidOperationException("Given component is  not a part of this achievement");
+            mComponents[index] = null;
+            
+            if (mComponents.All(c => c == null || !c.Positive))
+                SetStatus(Achievements.Status.Unlocked);
+        }
+        
+        private void SetStatus(Achievements.Status status)
         {
             if (Status == status)
                 return;
@@ -90,6 +93,24 @@ namespace KernelPanic.Tracking
             EventCenter.Default.Send(status == Achievements.Status.Unlocked
                 ? Event.AchievementUnlocked(Achievement)
                 : Event.AchievementImpossible(Achievement));
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Disconnects the components from the event center.
+        /// </summary>
+        private void DisposeComponents()
+        {
+            if (mComponents == null)
+                return;
+
+            foreach (var component in mComponents)
+            {
+                component?.Dispose();
+            }
+
+            mComponents = null;
         }
 
         protected override void Dispose(bool disposing)
