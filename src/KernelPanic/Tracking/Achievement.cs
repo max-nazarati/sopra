@@ -27,7 +27,7 @@ namespace KernelPanic.Tracking
         HighInference,
         BugsFixed,
 
-        EmptySlot,
+        Fool,
         
         NumberOfAchievements
     }
@@ -66,7 +66,7 @@ namespace KernelPanic.Tracking
                 case Achievement.BugsFixed:
                     return "Fix your Code!";
 
-                case Achievement.EmptySlot:
+                case Achievement.Fool:
                     return "Fool!";
 
                 case Achievement.NumberOfAchievements:
@@ -103,7 +103,7 @@ namespace KernelPanic.Tracking
                     return "Gewinne ein Spiel nur mit Wifi-Routern als Verteidigung.";
                 case Achievement.BugsFixed:
                     return "Besiege in einem Spiel 50 Bugs.";
-                case Achievement.EmptySlot:
+                case Achievement.Fool:
                     return "Versuche einen leeren Speicherstand zu laden.";
                 case Achievement.NumberOfAchievements:
                     goto default;
@@ -171,7 +171,7 @@ namespace KernelPanic.Tracking
                     progressConnector.ConnectCounter(Event.Id.KilledUnit, target: 3, condition: IsEnemyBug);
                     break;
 
-                case Achievement.EmptySlot:
+                case Achievement.Fool:
                     progressConnector.ConnectCounter(Event.Id.LoadEmptySlot);
                     break;
 
@@ -209,6 +209,7 @@ namespace KernelPanic.Tracking
             {
                 // TODO: Complete this list.
                 Achievement.BitcoinAddict,
+                Achievement.Fool,
                 Achievement.Lose1,
                 Achievement.Lose10,
                 Achievement.Lose100,

@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using KernelPanic.Camera;
 using KernelPanic.Data;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Serialization;
@@ -115,7 +116,12 @@ namespace KernelPanic
 
                     btn.Enabled = false;
                     newGameButton.Enabled = true;
-                    loadGameButton.Enabled = exists;
+
+                    // We abuse that the pressed state looks like the disabled state for still receiving click events
+                    // but giving the player a visual indication.
+                    loadGameButton.Enabled = true;
+                    loadGameButton.ViewPressed = !exists;
+
                     selectedButton = btn;
                     selectedSlot = slot;
                 };
@@ -134,6 +140,12 @@ namespace KernelPanic
         {
             return (button, inputManager) =>
             {
+                if (button.ViewPressed)
+                {
+                    EventCenter.Default.Send(Event.LoadEmptySlot());
+                    return;
+                }
+
                 try
                 {
                     InGameState.PushGameStack(slotAccessor(),

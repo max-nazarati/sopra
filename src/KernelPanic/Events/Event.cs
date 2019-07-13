@@ -19,7 +19,7 @@ namespace KernelPanic.Events
             AchievementImpossible,
             CloseAchievementPool,
 
-            LoadEmptySlot,         // TODO: Not sent yet.
+            LoadEmptySlot,
 
             BuildingPlaced,
             BuildingImproved,      // TODO: Not sent yet.
@@ -185,6 +185,8 @@ namespace KernelPanic.Events
         {
             Kind = id;
         }
+
+        internal static Event LoadEmptySlot() => new Event(Id.LoadEmptySlot);
 
         internal static Event GameWon(Player winner, Player loser) =>
             new Event(Id.GameWon)
