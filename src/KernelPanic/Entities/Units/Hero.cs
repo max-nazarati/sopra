@@ -35,7 +35,8 @@ namespace KernelPanic.Entities.Units
         protected enum Strategy
         {
             Human = 0,
-            Attack
+            Attack,
+            Econ
         }
         
         #endregion
@@ -123,8 +124,13 @@ namespace KernelPanic.Entities.Units
         {
             if (StrategyStatus == Strategy.Attack)
             {
-                AttackBase(inputManager, positionProvider, positionProvider.Target.HitBox[0]);
+                AttackBase(inputManager, positionProvider);
                 return;
+            }
+
+            if (StrategyStatus == Strategy.Econ)
+            {
+                SlowPush(inputManager, positionProvider);
             }
             // only check for new target of selected and Right Mouse Button was pressed
             if (!Selected) return;
@@ -300,14 +306,23 @@ namespace KernelPanic.Entities.Units
 
         #region KI
 
-        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
+        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
         {
             var startPoint = positionProvider.RequireTile(this).ToPoint();
+            var basePosition = positionProvider.Target.HitBox[0];
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
             mTarget = new Point(basePosition.X * Grid.KachelSize, basePosition.Y * Grid.KachelSize);
             mAStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
             ShouldMove = true;
+        }
+
+        /// <summary>
+        /// try not to die while sieging.
+        /// sets mTarget and ShouldMove
+        /// </summary>
+        protected virtual void SlowPush(InputManager inputManager, PositionProvider positionProvider)
+        {
         }
         
         #endregion
