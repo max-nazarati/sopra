@@ -207,12 +207,12 @@ namespace KernelPanic.Hud
         {
             var topLeft = new Vector2(rect.X, rect.Y);
             var topRight = new Vector2(rect.X+rect.Width, rect.Y);
-            var BottomLeft = new Vector2(rect.X, rect.Y+rect.Height);
-            var BottomRight = new Vector2(rect.X+rect.Width, rect.Y+rect.Height);
+            var bottomLeft = new Vector2(rect.X, rect.Y+rect.Height);
+            var bottomRight = new Vector2(rect.X+rect.Width, rect.Y+rect.Height);
             DrawLine(topLeft, topRight);
-            DrawLine(topLeft, BottomLeft);
-            DrawLine(BottomLeft, BottomRight);
-            DrawLine(topRight, BottomRight);
+            DrawLine(topLeft, bottomLeft);
+            DrawLine(bottomLeft, bottomRight);
+            DrawLine(topRight, bottomRight);
         }
 
         private void DrawLine(Vector2 start, Vector2 end)

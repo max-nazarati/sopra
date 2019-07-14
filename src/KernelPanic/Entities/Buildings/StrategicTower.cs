@@ -104,8 +104,16 @@ namespace KernelPanic.Entities.Buildings
                 mButton = new PurchaseButton<TextButton, ImprovementAction>(owner, action, button);
                 action.Purchased += (player, theAction) =>
                 {
-                    tower.mLevel = Enum.GetValues(typeof(TowerLevel)).Cast<TowerLevel>()
-                        .SkipWhile(e => e != tower.mLevel).Skip(1).First();
+                    switch (tower.mLevel)
+                    {
+                        case TowerLevel.First:
+                            tower.mLevel = TowerLevel.Second;
+                            break;
+                        case TowerLevel.Second:
+                            tower.mLevel = TowerLevel.Third;
+                            break;
+                    }
+
                     tower.UpdateLevel(spriteManager);
                 };
                 mIsFinalLevel = () => tower.mLevel == TowerLevel.Third;
@@ -255,5 +263,5 @@ namespace KernelPanic.Entities.Buildings
     [JsonConverter(typeof(StringEnumConverter))]
     internal enum TowerStrategy { First, Strongest, Weakest };
 
-    internal enum TowerLevel {First,  /*Second,*/ Third}
+    internal enum TowerLevel {First,  Second, Third}
 }
