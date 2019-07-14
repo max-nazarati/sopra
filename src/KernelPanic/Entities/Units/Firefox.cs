@@ -121,10 +121,10 @@ namespace KernelPanic.Entities.Units
 
         #region KI
 
-        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider, Point basePosition)
+        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
         {
             // moving
-            base.AttackBase(inputManager, positionProvider, basePosition);
+            base.AttackBase(inputManager, positionProvider);
               SmartJump(inputManager, positionProvider);
         }
 

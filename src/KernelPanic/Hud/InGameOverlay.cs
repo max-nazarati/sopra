@@ -45,7 +45,7 @@ namespace KernelPanic.Hud
             ScoreOverlay.Update(inputManager, gameTime);
             mUnitBuyingMenu.Update(inputManager, gameTime);
             mBuildingBuyingMenu.Update(inputManager, gameTime);
-            mMinimapOverlay.Update(inputManager, gameTime);
+            mMinimapOverlay.Update();
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
