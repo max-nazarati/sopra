@@ -57,9 +57,48 @@ namespace KernelPanic.ArtificialIntelligence
 
         #region Update
 
+        public void BuySingleUnit(string choice)
+        {
+            switch (choice)
+            {
+                case "Bug":
+                    BuyEntity<Bug>();
+                    break;
+                case "Virus":
+                    BuyEntity<Virus>();
+                    break;
+                case "Trojaner":
+                    BuyEntity<Trojan>();
+                    break;
+                case "Nokia":
+                    BuyEntity<Nokia>();
+                    break;
+                case "Thunderbird":
+                    BuyEntity<Thunderbird>();
+                    break;
+                case "Settings":
+                    BuyEntity<Settings>();
+                    break;
+                case "Firefox":
+                    BuyEntity<Firefox>();
+                    break;
+                case "Bluescreen":
+                    BuyEntity<Bluescreen>();
+                    break;
+            }
+        }
+
         public void Update(int[] attackData, GameTime gameTime)
         {
             base.Update();
+            int numberOfChoices = 3;
+            for (int i = 0; i < numberOfChoices; i++)
+            {
+                var choiceEncoded = mOffenseDecisionMaker.Predict(Array.ConvertAll<int, double>(attackData, x => (double)x));
+                var choice = mOffenseDecisionMaker.Revert(choiceEncoded);
+                // Console.WriteLine(String.Join(",", defenceData.Select(p => p.ToString()).ToArray()));
+                BuySingleUnit(choice);
+            }
             // TroupeParade();
         }
         

@@ -24,7 +24,7 @@ namespace KernelPanic.ArtificialIntelligence
         Thunderbird = 5,
         Settings = 6,
         Firefox = 7,
-        //Bluescreen = 8,
+        Bluescreen = 8,
         Cable = 9,
         CursorShooter = 10,
         CdThrower = 11,
@@ -44,6 +44,7 @@ namespace KernelPanic.ArtificialIntelligence
         private int mAttackMoney;
         private int mDefenceMoney;
         private bool mNeedDefensiveUnits;
+        private bool mNeedOffensiveUnits;
 
         // private int[] mOwnTroupeAmount;
 
@@ -53,6 +54,7 @@ namespace KernelPanic.ArtificialIntelligence
             mDefenceData = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             mAttackData = new [] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             mNeedDefensiveUnits = false;
+            mNeedOffensiveUnits = false;
             mDefenceData[(int)Feature.Bitcoins] = bitcoins;
             var eventCenter = EventCenter.Default;
 
@@ -70,7 +72,11 @@ namespace KernelPanic.ArtificialIntelligence
                 e => UpdateAttackData(Event.Id.BoughtUnit, e),
                 e => !e.IsActivePlayer(Event.Key.Buyer));
             eventCenter.Subscribe(Event.Id.BuildingPlaced,
-                e => UpdateAttackData(Event.Id.BuildingPlaced, e),
+                e =>
+                {
+                    UpdateAttackData(Event.Id.BuildingPlaced, e);
+                    mNeedOffensiveUnits = true;
+                },
                 e => e.IsActivePlayer(Event.Key.Buyer));
             eventCenter.Subscribe(Event.Id.DamagedBase,
                 e => mNeedDefensiveUnits = true,
@@ -157,6 +163,9 @@ namespace KernelPanic.ArtificialIntelligence
                             break;
                         case Firefox _:
                             mDefenceData[(int)Feature.Firefox]++;
+                            break;
+                        case Bluescreen _:
+                            mDefenceData[(int) Feature.Bluescreen]++;
                             break;
                     }
 
@@ -272,10 +281,11 @@ namespace KernelPanic.ArtificialIntelligence
             
             SetData();
             
-            mAttackPlanner.Update(mAttackData, gameTime);
+            if (mNeedOffensiveUnits) mAttackPlanner.Update(mAttackData, gameTime);
             if (mNeedDefensiveUnits) mDefencePlanner.Update(mDefenceData, gameTime);
             mUpgradePlanner.Update();
             mNeedDefensiveUnits = false;
+            mNeedOffensiveUnits = false;
         }
     }
 }
