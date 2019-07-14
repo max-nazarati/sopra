@@ -25,7 +25,7 @@ namespace KernelPanic.Hud
             UnitBuyingMenu unitMenu,
             BuildingBuyingMenu buildingMenu,
             SelectionManager selectionManager,
-            GameStateManager gameStateManager, TimeSpan time)
+            GameStateManager gameStateManager, TimeSpan time, ICamera camera)
             : base(new StaticCamera(), gameStateManager)
         {
             // TODO: Add Button parameters
@@ -35,7 +35,7 @@ namespace KernelPanic.Hud
             ScoreOverlay = new ScoreOverlay(players, gameStateManager.Sprite, time);
             mUnitBuyingMenu = unitMenu;
             mBuildingBuyingMenu = buildingMenu;
-            mMinimapOverlay = new MinimapOverlay(players, gameStateManager.Sprite);
+            mMinimapOverlay = new MinimapOverlay(players, gameStateManager.Sprite, camera);
         }
 
         public override void Update(InputManager inputManager,

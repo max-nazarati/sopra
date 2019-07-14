@@ -22,6 +22,7 @@ namespace KernelPanic.Camera
         private const float MinZoom = 0.15f;
         private const float MaxZoom = 3.0f;
         private const float Movement = 10f;
+        private readonly Point mViewportSize;
 
         /// <summary>
         /// Creates a new camera at (0,0) which moves only inside <paramref name="boundingBox"/> with a viewport of size
@@ -32,6 +33,7 @@ namespace KernelPanic.Camera
         internal Camera2D(Rectangle boundingBox, Point viewportSize)
         {
             mBoundingBox = boundingBox;
+            mViewportSize = viewportSize;
             RecalculateTransformations(viewportSize);
         }
 
@@ -40,6 +42,8 @@ namespace KernelPanic.Camera
 
         /// <inheritdoc />
         public Matrix InverseTransformation => mInverseTransformation;
+        
+        public Point ViewportSize => mViewportSize;
 
         /// <inheritdoc />
         public void Update(Point viewportSize, Change x, Change y, Change scrollVertical)

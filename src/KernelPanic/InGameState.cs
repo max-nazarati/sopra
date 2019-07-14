@@ -34,7 +34,8 @@ namespace KernelPanic
 
             var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
             var buildingMenu = BuildingBuyingMenu.Create(mBuildingBuyer, gameStateManager.Sprite, gameStateManager.Sound);
-            mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager, gameStateManager, storage?.GameTime ?? TimeSpan.Zero);
+            mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager
+                , gameStateManager, storage?.GameTime ?? TimeSpan.Zero, Camera);
 
             mBoard.PlayerB.InitializePlanners(
                 unitMenu.BuyingActions, // TODO implement this, just added it like this so i can build :)

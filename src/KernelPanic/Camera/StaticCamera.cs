@@ -9,6 +9,7 @@ namespace KernelPanic.Camera
     {
         public Matrix Transformation => Matrix.Identity;
         public Matrix InverseTransformation => Matrix.Identity;
+        public Point ViewportSize => Point.Zero;
 
         public void Update(Point viewportSize, Change x, Change y, Change scrollVertical)
         {

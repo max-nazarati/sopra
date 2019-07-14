@@ -13,6 +13,8 @@ namespace KernelPanic.Camera
         /// The camera's current inverse transformation for turning window-coordinates into world-coordinates.
         /// </summary>
         Matrix InverseTransformation { get; }
+        
+        Point ViewportSize { get; }
 
         /// <summary>
         /// Updates the camera's <see cref="Transformation"/> and in turn <see cref="InverseTransformation"/>.

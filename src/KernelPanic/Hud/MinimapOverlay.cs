@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Remoting.Proxies;
 using System.Security.AccessControl;
+using KernelPanic.Camera;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
@@ -22,6 +23,7 @@ namespace KernelPanic.Hud
         private readonly SpriteManager mSpriteManager;
         private readonly float mRelativeSize; // how much of the screen should be the minimap [0, 1]
         private int mSize;
+        private ICamera mCamera;
         private readonly Vector2 mPosition;
         private bool mSizeShouldChange;
         private float mScale;
@@ -46,7 +48,8 @@ namespace KernelPanic.Hud
 
         #region Konstruktor
         
-        internal MinimapOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager, float relativeSize = 0.3f)
+        
+        internal MinimapOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager, ICamera camera, float relativeSize = 0.3f)
         {
             var screenSizeX = spriteManager.ScreenSize.X;
             var screenSizeY = spriteManager.ScreenSize.Y;
@@ -56,6 +59,7 @@ namespace KernelPanic.Hud
             mPosition = new Vector2(screenSizeX - mSize, screenSizeY - mSize);
             mPlayers = players;
             mSpriteManager = spriteManager;
+            mCamera = camera;
 
             // filling the minimap with background color
             mData = new Color[mSize * mSize];
@@ -176,8 +180,27 @@ namespace KernelPanic.Hud
 
         private void DrawCameraRectangle()
         {
-            var rect = new Rectangle(10, 10, 50, 50);
-            DrawRectangle(rect);
+            DrawRectangle(CameraRectangle());
+        }
+
+        /// <summary>
+        /// Calculates the Camera view Rectangle, translated in MiniMap coordinates.
+        /// </summary>
+        /// <returns></returns>
+        private Rectangle CameraRectangle()
+        {
+            Rectangle rect;
+            // Since 15px are represented by 1 MiniMap Pixel
+            rect.X = (int)-(mCamera.Transformation.M41 / (15 * mCamera.Transformation.M11));
+            rect.Y = (int)-(mCamera.Transformation.M42 / (15 * mCamera.Transformation.M11));
+
+            rect.Width = (int)((mCamera.ViewportSize.X / 15) / mCamera.Transformation.M11);
+            rect.Height = (int)((mCamera.ViewportSize.Y / 15) / mCamera.Transformation.M11);
+            if (rect.X < 0) rect.X = 0;
+            if (rect.Y < 0) rect.Y = 0;
+            if (rect.X + rect.Width > 315) rect.X = 314 - rect.Width;
+            if (rect.Y + rect.Height > 315) rect.Y = 315 - rect.Height;
+            return rect;
         }
 
         private void DrawRectangle(Rectangle rect)
@@ -186,7 +209,6 @@ namespace KernelPanic.Hud
             var topRight = new Vector2(rect.X+rect.Width, rect.Y);
             var BottomLeft = new Vector2(rect.X, rect.Y+rect.Height);
             var BottomRight = new Vector2(rect.X+rect.Width, rect.Y+rect.Height);
-            
             DrawLine(topLeft, topRight);
             DrawLine(topLeft, BottomLeft);
             DrawLine(BottomLeft, BottomRight);
