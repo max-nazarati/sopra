@@ -57,7 +57,11 @@ namespace KernelPanic.ArtificialIntelligence
             var eventCenter = EventCenter.Default;
 
             eventCenter.Subscribe(Event.Id.BoughtUnit,
-                e => UpdateDefenceData(Event.Id.BoughtUnit, e),
+                e =>
+                {
+                    UpdateDefenceData(Event.Id.BoughtUnit, e);
+                    mNeedDefensiveUnits = true;
+                },
                 e => e.IsActivePlayer(Event.Key.Buyer));
             eventCenter.Subscribe(Event.Id.BuildingPlaced,
                 e => UpdateDefenceData(Event.Id.BuildingPlaced, e),
