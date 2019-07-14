@@ -12,15 +12,15 @@ namespace KernelPanic.Camera
         [DataMember]
         private float mY;
         [DataMember]
-        private float mZoom = 1;
+        private float mZoom = 2;
         [DataMember]
         private readonly Rectangle mBoundingBox;
 
         private Matrix mTransformation;
         private Matrix mInverseTransformation;
 
-        private const float MinZoom = 0.2f;
-        private const float MaxZoom = 2.0f;
+        private const float MinZoom = 0.15f;
+        private const float MaxZoom = 3.0f;
         private const float Movement = 10f;
 
         /// <summary>
@@ -44,8 +44,8 @@ namespace KernelPanic.Camera
         /// <inheritdoc />
         public void Update(Point viewportSize, Change x, Change y, Change scrollVertical)
         {
-            var newZoom = MathHelper.Clamp((float) Math.Pow(1.5, scrollVertical.Direction) * mZoom, MinZoom, MaxZoom);
-            if (Math.Abs(newZoom - mZoom) > 0.1f)
+            var newZoom = MathHelper.Clamp((float) Math.Pow(1.1, scrollVertical.Direction) * mZoom, MinZoom, MaxZoom);
+            if (Math.Abs(newZoom - mZoom) > 0.05f)
             {
                 // When zooming we have to recalculate immediately, otherwise
                 // the calculations to stay in the bounding box aren't correct.

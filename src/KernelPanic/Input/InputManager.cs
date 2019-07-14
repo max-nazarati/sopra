@@ -280,6 +280,7 @@ namespace KernelPanic.Input
         /// <returns>negative value for zooming out</returns>
         private int ScrollWheelMovement()
         {
+            Console.WriteLine(mInputState.CurrentMouse.ScrollWheelValue - mInputState.PreviousMouse.ScrollWheelValue);
             return mInputState.CurrentMouse.ScrollWheelValue - mInputState.PreviousMouse.ScrollWheelValue;
         }
 
@@ -289,7 +290,7 @@ namespace KernelPanic.Input
         /// <returns></returns>
         private bool ScrolledDown()
         {
-            return ScrollWheelMovement() < -5;
+            return ScrollWheelMovement() < 0;
         }
 
         /// <summary>
@@ -298,7 +299,7 @@ namespace KernelPanic.Input
         /// <returns></returns>
         private bool ScrolledUp()
         {
-            return ScrollWheelMovement() > 5;
+            return ScrollWheelMovement() > 0;
         }
 
         #endregion
