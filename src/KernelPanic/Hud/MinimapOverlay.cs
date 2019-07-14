@@ -179,7 +179,6 @@ namespace KernelPanic.Hud
         private Rectangle CameraRectangle()
         {
             Rectangle rect;
-            // Since 15px are represented by 1 MiniMap Pixel
             rect.X = (int)-(mCamera.Transformation.M41 / (mScale * mCamera.Transformation.M11));
             rect.Y = (int)-(mCamera.Transformation.M42 / (mScale * mCamera.Transformation.M11));
 
@@ -187,8 +186,8 @@ namespace KernelPanic.Hud
             rect.Height = (int)((mCamera.ViewportSize.Y / mScale) / mCamera.Transformation.M11);
             if (rect.X < 0) rect.X = 0;
             if (rect.Y < 0) rect.Y = 0;
-            if (rect.X + rect.Width > 315) rect.X = 314 - rect.Width;
-            if (rect.Y + rect.Height > 315) rect.Y = 315 - rect.Height;
+            if (rect.X + rect.Width >= mSize) rect.X = mSize - rect.Width - 1;
+            if (rect.Y + rect.Height >= mSize) rect.Y = mSize - rect.Height - 1;
             return rect;
         }
 
