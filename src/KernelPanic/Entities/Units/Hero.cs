@@ -316,9 +316,12 @@ namespace KernelPanic.Entities.Units
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            if (inputManager.KeyPressed(Keys.Space))
+            if (Selected)
             {
-                StrategyStatus = StrategyStatus == Strategy.Attack ? Strategy.Human : Strategy.Attack;
+                if (inputManager.KeyPressed(Keys.Space))
+                {
+                    StrategyStatus = StrategyStatus == Strategy.Attack ? Strategy.Human : Strategy.Attack;
+                }    
             }
             // also updates the cooldown
             UpdateAbility(positionProvider, gameTime, inputManager);

@@ -25,6 +25,8 @@ namespace KernelPanic.ArtificialIntelligence
             mOffenseDecisionMaker.ReaderCsv("sopra_offense_train.csv");
             mOffenseDecisionMaker.TrainModel();
             BuyEntity<Firefox>();
+            BuyEntity<Settings>();
+            BuyEntity<Bluescreen>();
         }
         
         #endregion

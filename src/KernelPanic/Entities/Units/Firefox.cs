@@ -145,19 +145,23 @@ namespace KernelPanic.Entities.Units
                 distance[i] = dist;
             }
 
+            var cSharpHasNoElseAfterAForLoopLikeWtfIsThisAnApesLanguage = false;
             // look for a good jump (aka a small distance but high number in the path)
             // -> lets just jump to the furthest target with small enough distance for a jump
-            for (int i = distance.Length - 1; i >= 0; i--)
+            for (int i = distance.Length - 1; i >= 5; i--)
             {
                 // TODO find a good check if we should wait before jumping
                 //      so we dont waste it.
                 
-                if (distance[i] < 300) // TODO this distance is hardcoded and therefore bad
+                if (distance[i] < 250) // TODO this distance is hardcoded and therefore bad
                 {
                     mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[i], 1)).Position;
+                    cSharpHasNoElseAfterAForLoopLikeWtfIsThisAnApesLanguage = true;
                     break;
                 }
             }
+
+            if (!cSharpHasNoElseAfterAForLoopLikeWtfIsThisAnApesLanguage) return;
             TryActivateAbility(inputManager, true);
             StartAbility(positionProvider, inputManager);
         }
