@@ -19,9 +19,10 @@ namespace KernelPanic.Interface
 
         public override void Update(InputManager inputManager, GameTime gameTime)
         {
+            MouseOver = Sprite.Bounds.Contains(inputManager.TranslatedMousePosition);
             // Because InputManager.MouseDown is non-claiming we can use it without further precautions.
             mMouseDown = inputManager.MouseDown(InputManager.MouseButton.Left) &&
-                         Sprite.Bounds.Contains(inputManager.TranslatedMousePosition);
+                         MouseOver;
 
             inputManager.RegisterClickTarget(Sprite.Bounds, localInputManager =>
             {
@@ -37,6 +38,8 @@ namespace KernelPanic.Interface
         }
 
         Button IButtonLike.Button => this;
+
+        public bool MouseOver { get; private set; }
     }
 
     internal interface IButtonLike : IUpdatable, IDrawable
