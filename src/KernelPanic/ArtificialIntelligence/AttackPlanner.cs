@@ -18,9 +18,6 @@ namespace KernelPanic.ArtificialIntelligence
         public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions) : base(player)
         {
             mActions = actions;
-            BuyEntity<Thunderbird>();
-            // FastWave();
-            // FastAndFurious();
             mOffenseDecisionMaker = new DecisionTreeClassifier();
             mOffenseDecisionMaker.ReaderCsv("sopra_offense_train.csv");
             mOffenseDecisionMaker.TrainModel();
@@ -38,22 +35,6 @@ namespace KernelPanic.ArtificialIntelligence
                 mActions[typeof(T)].TryPurchase(mPlayer);
             }
         }
-        
-        #region Spawn Functions
-        
-        private void FastWave()
-        {
-            BuyEntity<Bug>();
-        }
-        
-        private void FastAndFurious()
-        {
-            BuyEntity<Bug>(15);
-            BuyEntity<Virus>(10);
-            BuyEntity<Thunderbird>(5);
-        }
-        
-        #endregion
 
         #region Update
 
