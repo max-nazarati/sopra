@@ -280,7 +280,6 @@ namespace KernelPanic.Input
         /// <returns>negative value for zooming out</returns>
         private int ScrollWheelMovement()
         {
-            Console.WriteLine(mInputState.CurrentMouse.ScrollWheelValue - mInputState.PreviousMouse.ScrollWheelValue);
             return mInputState.CurrentMouse.ScrollWheelValue - mInputState.PreviousMouse.ScrollWheelValue;
         }
 

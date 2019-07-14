@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
+using KernelPanic.Input;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities.Buildings
 {
@@ -7,10 +10,12 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class ShockField : Tower
     {
+        private List<Unit> mDamagedUnits;
         internal ShockField(SpriteManager spriteManager, SoundManager soundManager)
             : base(1, 1, 2, 0,TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager, soundManager)
         {
             // The fire timer is not used by the Shockfield.
+            mDamagedUnits = new List<Unit>();
             FireTimer.Enabled = false;
         }
 
@@ -18,6 +23,20 @@ namespace KernelPanic.Entities.Buildings
         {
             base.UpdateInformation();
             mInfoText.Text += $"\nStärke: {Damage}";
+        }
+
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        {
+            base.Update(positionProvider, inputManager, gameTime);
+
+            foreach(var unit in positionProvider.NearEntities<Unit>(this, Radius))
+            {
+                if (this.Bounds.Intersects(unit.Bounds) && !mDamagedUnits.Contains(unit))
+                {
+                    unit.DealDamage(Damage);
+                    mDamagedUnits.Add(unit);
+                }
+            }
         }
     }
 }
