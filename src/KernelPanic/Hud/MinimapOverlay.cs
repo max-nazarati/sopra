@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.Remoting.Proxies;
+using System.Security.AccessControl;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
@@ -60,7 +62,6 @@ namespace KernelPanic.Hud
             mInitializedData = new Color[mSize * mSize];
             SetBackground();
             UpdateTexture();
-            
             InitializeScale(); // mRadius is init here
             InitializeLaneData();
         }
@@ -144,6 +145,7 @@ namespace KernelPanic.Hud
             UpdateSize();
             UpdateData();
             UpdateTexture();
+            // UpdateCameraRectangle();
         }
 
         private void UpdateSize()
@@ -169,11 +171,41 @@ namespace KernelPanic.Hud
 
         private void SetScreenColor()
         {
-            mData[0] = mScreenBorder;
-            mData[1 * mSize] = mScreenBorder;
-            mData[2 * mSize] = mScreenBorder;
-            SetPixelSquare(3 * mSize + 10, Color.Cornsilk);
+            DrawCameraRectangle();
+        }
 
+        private void DrawCameraRectangle()
+        {
+            var rect = new Rectangle(10, 10, 50, 50);
+            DrawRectangle(rect);
+        }
+
+        private void DrawRectangle(Rectangle rect)
+        {
+            var topLeft = new Vector2(rect.X, rect.Y);
+            var topRight = new Vector2(rect.X+rect.Width, rect.Y);
+            var BottomLeft = new Vector2(rect.X, rect.Y+rect.Height);
+            var BottomRight = new Vector2(rect.X+rect.Width, rect.Y+rect.Height);
+            
+            DrawLine(topLeft, topRight);
+            DrawLine(topLeft, BottomLeft);
+            DrawLine(BottomLeft, BottomRight);
+            DrawLine(topRight, BottomRight);
+        }
+
+        private void DrawLine(Vector2 start, Vector2 end)
+        {
+            // for horizontal lines
+            for (var i = start.X; i <= end.X; i++)
+            {
+                mData[(int)(i + mSize * start.Y)] = mScreenBorder;
+            }
+            
+            // for vertical lines
+            for (var i = start.Y; i <= end.Y; i++)
+            {
+                mData[(int)(start.X + i * mSize)] = mScreenBorder;
+            }
         }
 
         private Color LaneColor(int i)
