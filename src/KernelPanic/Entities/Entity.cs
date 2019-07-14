@@ -116,7 +116,7 @@ namespace KernelPanic.Entities
 
         public bool Selected { get; set; }
 
-        public virtual Rectangle Bounds => Sprite.Bounds;
+        public abstract Rectangle Bounds { get; }
 
         internal virtual void AttackBase(InputManager inputManager, PositionProvider positionProvider)
         {

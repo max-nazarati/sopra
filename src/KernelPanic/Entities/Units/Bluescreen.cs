@@ -48,7 +48,8 @@ namespace KernelPanic.Entities.Units
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
-        
+        public override Rectangle Bounds => Sprite.Bounds;
+
         #region Ability 
 
         private static double Distance(Vector2 a, Vector2 b)
