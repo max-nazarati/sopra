@@ -1,11 +1,7 @@
 using System;
-using System.Runtime.Remoting.Proxies;
-using System.Security.AccessControl;
 using KernelPanic.Camera;
 using KernelPanic.Data;
 using KernelPanic.Entities;
-using KernelPanic.Entities.Buildings;
-using KernelPanic.Input;
 using KernelPanic.Players;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -23,7 +19,7 @@ namespace KernelPanic.Hud
         private readonly SpriteManager mSpriteManager;
         private readonly float mRelativeSize; // how much of the screen should be the minimap [0, 1]
         private int mSize;
-        private ICamera mCamera;
+        private readonly ICamera mCamera;
         private readonly Vector2 mPosition;
         private bool mSizeShouldChange;
         private float mScale;
@@ -113,14 +109,8 @@ namespace KernelPanic.Hud
         
         private void InitializeScale()
         {
-            // var laneLeft = mPlayers.A.DefendingLane.Grid;
             var laneRight = mPlayers.B.DefendingLane.Grid;
-            
-            var pointTopLeft = new TileIndex(0, 0, 1);
             var pointBottomRight = new TileIndex(laneRight.LaneRectangle.Size - new Point(1), 1);
-            
-
-            // var topLeft = laneLeft.GetTile(pointTopLeft, RelativePosition.TopLeft).Position;
             var bottomRight = laneRight.GetTile(pointBottomRight, RelativePosition.BottomRight).Position;
 
             mScale = Math.Max(bottomRight.X, bottomRight.Y) / mSize;
@@ -129,7 +119,7 @@ namespace KernelPanic.Hud
             // Console.WriteLine("There are a total of " + mSize * mSize + " Pixel.");
             
             mRadius = (int)(Grid.KachelSize / (mScale * 2)); // InitializeScale before mRadius
-            Console.WriteLine("Kachelsize is: " + Grid.KachelSize + " and mScale is: " + mScale);
+            Console.WriteLine("KachelSize is: " + Grid.KachelSize + " and mScale is: " + mScale);
         }
 
         private void InitializeLaneData()
@@ -144,12 +134,11 @@ namespace KernelPanic.Hud
 
         #region Update
 
-        public void Update(InputManager inputManager, GameTime gameTime)
+        public void Update()
         {
             UpdateSize();
             UpdateData();
             UpdateTexture();
-            // UpdateCameraRectangle();
         }
 
         private void UpdateSize()
@@ -191,11 +180,11 @@ namespace KernelPanic.Hud
         {
             Rectangle rect;
             // Since 15px are represented by 1 MiniMap Pixel
-            rect.X = (int)-(mCamera.Transformation.M41 / (15 * mCamera.Transformation.M11));
-            rect.Y = (int)-(mCamera.Transformation.M42 / (15 * mCamera.Transformation.M11));
+            rect.X = (int)-(mCamera.Transformation.M41 / (mScale * mCamera.Transformation.M11));
+            rect.Y = (int)-(mCamera.Transformation.M42 / (mScale * mCamera.Transformation.M11));
 
-            rect.Width = (int)((mCamera.ViewportSize.X / 15) / mCamera.Transformation.M11);
-            rect.Height = (int)((mCamera.ViewportSize.Y / 15) / mCamera.Transformation.M11);
+            rect.Width = (int)((mCamera.ViewportSize.X / mScale) / mCamera.Transformation.M11);
+            rect.Height = (int)((mCamera.ViewportSize.Y / mScale) / mCamera.Transformation.M11);
             if (rect.X < 0) rect.X = 0;
             if (rect.Y < 0) rect.Y = 0;
             if (rect.X + rect.Width > 315) rect.X = 314 - rect.Width;
@@ -232,7 +221,7 @@ namespace KernelPanic.Hud
 
         private Color LaneColor(int i)
         {
-            Point point = CalculateWorldPosition(i);
+            var point = CalculateWorldPosition(i);
             // Console.WriteLine(point);
             if (mPlayers.A.DefendingLane.Contains(new Vector2(point.X, point.Y)))
             {
