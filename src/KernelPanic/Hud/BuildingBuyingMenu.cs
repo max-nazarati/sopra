@@ -21,7 +21,12 @@ namespace KernelPanic.Hud
             Vector2 IPositioned.Position
             {
                 get => Button.Sprite.Position;
-                set => Button.Sprite.Position = value;
+                set
+                {
+                    Button.Sprite.Position = value;
+                    mInfoText.Position = value;
+                    mInfoText.X += 80;
+                }
             }
 
             Vector2 IPositioned.Size => Button.Size;
