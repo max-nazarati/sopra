@@ -17,11 +17,10 @@ namespace KernelPanic.Sprites
         internal event SizeChangedDelegate SizeChanged;
         
         private string mText;
-        private SpriteFont mFont;
 
         private SpriteFont Font
         {
-            get => mFont;
+            get;
             /*set
             {
                 if (mFont == value)
@@ -53,7 +52,7 @@ namespace KernelPanic.Sprites
 
         public TextSprite(SpriteFont font, string text = "")
         {
-            mFont = font ?? throw new ArgumentNullException(nameof(font));
+            Font = font ?? throw new ArgumentNullException(nameof(font));
             mText = text ?? throw new ArgumentNullException(nameof(text));
             ResetLazySize();
         }

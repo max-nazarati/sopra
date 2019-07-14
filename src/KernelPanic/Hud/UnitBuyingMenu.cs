@@ -23,6 +23,7 @@ namespace KernelPanic.Hud
             private readonly PurchaseButton<ImageButton, Unit> mButton;
             private readonly TextSprite mCounterSprite;
             private int mCounter;
+            private TextSprite mInfoText;
 
             Vector2 IPositioned.Position
             {
@@ -33,6 +34,9 @@ namespace KernelPanic.Hud
                     buttonSprite.Position = value;
                     mCounterSprite.X = value.X - buttonSprite.Width - 8 /* padding between text and button */;
                     mCounterSprite.Y = value.Y + buttonSprite.Height / 2;
+
+                    mInfoText.Position = value;
+                    mInfoText.X -= 80;
                 }
             }
 
@@ -49,6 +53,10 @@ namespace KernelPanic.Hud
                 mButton = button;
                 mButton.Action.Purchased += PurchasedUnit;
                 mButton.Button.Sprite.SetOrigin(RelativePosition.TopRight);
+
+                mInfoText = spriteManager.CreateText("Preis: 42");
+                mInfoText.SetOrigin(RelativePosition.TopRight);
+                mInfoText.X -= 175;
             }
 
             private void PurchasedUnit(IPlayerDistinction buyer, Unit resource)
@@ -64,6 +72,10 @@ namespace KernelPanic.Hud
             {
                 mButton.Draw(spriteBatch, gameTime);
                 mCounterSprite.Draw(spriteBatch, gameTime);
+                if (mButton.Button.MouseOver)
+                {
+                    mInfoText.Draw(spriteBatch, gameTime);
+                }
             }
 
             public void Update(InputManager inputManager, GameTime gameTime)

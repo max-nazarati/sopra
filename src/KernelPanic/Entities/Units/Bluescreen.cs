@@ -23,7 +23,6 @@ namespace KernelPanic.Entities.Units
         private Emp[] mEmps;
 
         #region Upgrades
-
         internal bool TargetsTwoTower { private get; set; }
         private const double EmpDuration = 5;
         internal float mEmpDurationAmplifier = 1;
