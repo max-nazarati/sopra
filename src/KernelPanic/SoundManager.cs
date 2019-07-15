@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Events;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -12,13 +13,15 @@ namespace KernelPanic
         public enum Sound
         {
             TowerPlacement,
-            Shoot1
+            Shoot1,
+            DiscShoot,
+            MoneyEarned
         }
 
         public enum Music
         {
-            BackgroundMusic1,
-            // MenuMusic1
+            Soundtrack1,
+            Soundtrack2
         }
         
         private readonly (Sound sound, SoundEffect soundEffect)[] mSounds;
@@ -32,19 +35,23 @@ namespace KernelPanic
             mSounds = new[]
             {
                 SoundEffect(Sound.Shoot1, "shoot"),
-                SoundEffect(Sound.TowerPlacement, "placement"),
+                SoundEffect(Sound.TowerPlacement, "TowerPlacement"),
+                SoundEffect(Sound.DiscShoot, "DiscShoot"),
+                SoundEffect(Sound.MoneyEarned, "MoneyEarned")
             };
             Array.Sort(mSounds);
 
             mSongs = new[]
             {
-                Song(Music.BackgroundMusic1, "testSoundtrack"),
-                // Song(Music.MenuMusic1, "placeholder")
+                Song(Music.Soundtrack1, "Soundtrack1"),
+                Song(Music.Soundtrack2, "Soundtrack2")
             };
             Array.Sort(mSongs);
             
             var eventCenter = EventCenter.Default;
             eventCenter.Subscribe(Event.Id.BuildingPlaced, PlaySound);
+            eventCenter.Subscribe(Event.Id.BuildingSold, PlaySound);
+            eventCenter.Subscribe(Event.Id.ProjectileShot, PlaySound);
         }
         
         private SoundEffect Lookup(Sound sound)
@@ -78,12 +85,26 @@ namespace KernelPanic
         /// plays the sound according to the given string
         /// <param name="sound"><see cref="Sound"/> to play.</param>
         /// </summary>
-        public void PlaySound(Event e)
+        private void PlaySound(Event e)
         {
+            Console.WriteLine(e.Kind);
             switch (e.Kind)
             {
                 case Event.Id.BuildingPlaced:
-                    Lookup(Sound.TowerPlacement).Play();
+                    Lookup(Sound.TowerPlacement).Play(0.3f,1,1);
+                    break;
+                case Event.Id.BuildingSold:
+                    Lookup(Sound.MoneyEarned).Play(0.5f,1,1);
+                    break;
+                case Event.Id.ProjectileShot:
+                    Console.WriteLine("Jetzt hier");
+                    switch (e.Get<Tower>(Event.Key.Tower))
+                    {
+                        case CdThrower _:
+                            Lookup(Sound.DiscShoot).Play(0.5f,1,1);
+                            break;
+                    }
+
                     break;
             }
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Players;
 using KernelPanic.Table;
@@ -31,6 +32,7 @@ namespace KernelPanic.Events
             SpawnedUnit,
             DamagedUnit,
             KilledUnit,
+            ProjectileShot,
 
             DamagedBase,
             GameWon,
@@ -54,6 +56,14 @@ namespace KernelPanic.Events
             /// </list>
             /// </summary>
             Winner,
+            
+            /// <summary>
+            /// Of type <see cref="KernelPanic.Entities.Buildings.Tower"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.ProjectileShot"/></description></item>
+            /// </list>
+            /// </summary>
+            Tower,
 
             /// <summary>
             /// Of type <see cref="Player"/>, applies to
@@ -179,7 +189,7 @@ namespace KernelPanic.Events
             /// <item><description><see cref="Id.CloseAchievementPool"/></description></item>
             /// </list>
             /// </summary>
-            AchievementPool
+            AchievementPool,
         }
 
         #region Creating events
@@ -198,6 +208,15 @@ namespace KernelPanic.Events
                 {
                     [Key.Winner] = winner,
                     [Key.Loser] = loser
+                }
+            };
+        
+        internal static Event ProjectileShot(Tower tower) =>
+            new Event(Id.ProjectileShot)
+            {
+                mPayload =
+                {
+                    [Key.Tower] = tower,
                 }
             };
 
