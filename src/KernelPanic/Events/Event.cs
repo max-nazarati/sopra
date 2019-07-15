@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Players;
 using KernelPanic.Table;
@@ -31,6 +32,10 @@ namespace KernelPanic.Events
             SpawnedUnit,
             DamagedUnit,
             KilledUnit,
+            ProjectileShot,
+            PlayMusic,
+            ButtonClicked,
+            
 
             DamagedBase,
             GameWon,
@@ -54,6 +59,14 @@ namespace KernelPanic.Events
             /// </list>
             /// </summary>
             Winner,
+            
+            /// <summary>
+            /// Of type <see cref="KernelPanic.Entities.Buildings.Tower"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.ProjectileShot"/></description></item>
+            /// </list>
+            /// </summary>
+            Tower,
 
             /// <summary>
             /// Of type <see cref="Player"/>, applies to
@@ -179,7 +192,7 @@ namespace KernelPanic.Events
             /// <item><description><see cref="Id.CloseAchievementPool"/></description></item>
             /// </list>
             /// </summary>
-            AchievementPool
+            AchievementPool,
         }
 
         #region Creating events
@@ -200,6 +213,23 @@ namespace KernelPanic.Events
                     [Key.Loser] = loser
                 }
             };
+        
+        internal static Event ProjectileShot(Tower tower) =>
+            new Event(Id.ProjectileShot)
+            {
+                mPayload =
+                {
+                    [Key.Tower] = tower,
+                }
+            };
+        
+        internal static Event PlayMusic() =>
+            new Event(Id.PlayMusic)
+            {
+                mPayload =
+                {
+                }
+            };
 
         internal static Event GameLost(Player winner, Player loser) =>
             new Event(Id.GameLost)
@@ -218,6 +248,14 @@ namespace KernelPanic.Events
                 {
                     [Key.Buyer] = player,
                     [Key.Price] = player.Bitcoins
+                }
+            };
+        
+        internal static Event ButtonClicked() =>
+            new Event(Id.GameWon)
+            {
+                mPayload =
+                {
                 }
             };
 

@@ -315,11 +315,11 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/pause.png;pause.png
 
-#begin ../../KernelPanic/Content/placement.mp3
+#begin ../../KernelPanic/Content/sounds/TowerPlacement.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/placement.mp3;placement.mp3
+/build:../../KernelPanic/Content/sounds/TowerPlacement.mp3;TowerPlacement.mp3
 
 #begin ../../KernelPanic/Content/Saeule.png
 /importer:TextureImporter
@@ -345,11 +345,41 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/score_background.png;score_background.png
 
-#begin ../../KernelPanic/Content/shoot.mp3
+#begin ../../KernelPanic/Content/sounds/MoneyEarned.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/shoot.mp3;shoot.mp3
+/build:../../KernelPanic/Content/sounds/MoneyEarned.mp3;MoneyEarned.mp3
+
+#begin ../../KernelPanic/Content/sounds/shoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/shoot.mp3;shoot.mp3
+
+#begin ../../KernelPanic/Content/sounds/DiscShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/DiscShoot.mp3;DiscShoot.mp3
+
+#begin ../../KernelPanic/Content/sounds/CursorShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/CursorShoot.mp3;CursorShoot.mp3
+
+#begin ../../KernelPanic/Content/sounds/ButtonClick.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/ButtonClick.mp3;ButtonClick.mp3
+
+#begin ../../KernelPanic/Content/sounds/ElectroShock.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/ElectroShock.mp3;ElectroShock.mp3
 
 #begin ../../KernelPanic/Content/skill_tile.png
 /importer:TextureImporter
@@ -370,11 +400,17 @@
 /processorParam:TextureFormat=Compressed
 /build:../../KernelPanic/Content/StartMenuTitle.spritefont;StartMenuTitle.spritefont
 
-#begin ../../KernelPanic/Content/testSoundtrack.mp3
+#begin ../../KernelPanic/Content/sounds/Soundtrack1.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/testSoundtrack.mp3;testSoundtrack.mp3
+/build:../../KernelPanic/Content/sounds/Soundtrack1.mp3;Soundtrack1.mp3
+
+#begin ../../KernelPanic/Content/sounds/Soundtrack2.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/Soundtrack2.mp3;Soundtrack2.mp3
 
 #begin ../../KernelPanic/Content/tower.png
 /importer:TextureImporter

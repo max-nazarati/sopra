@@ -11,14 +11,13 @@ namespace KernelPanic.ArtificialIntelligence
     internal sealed class DefencePlanner : Planner
     {
         private readonly SpriteManager mSpriteManager;
-        private readonly SoundManager mSoundManager;
         private readonly DecisionTreeClassifier mDefenseDecisionMaker;
         private int mBuildX;
         private int mBuildY;
         private readonly int mBoundX = 18;
         private bool mBuildForward;
 
-        public DefencePlanner(Player player, SpriteManager spriteManager, SoundManager soundManager) : base(player)
+        public DefencePlanner(Player player, SpriteManager spriteManager) : base(player)
         {
             mBuildX = 8;
             mBuildY = 9;
@@ -30,12 +29,11 @@ namespace KernelPanic.ArtificialIntelligence
                 "Aktion",
                 System.Globalization.CultureInfo.InvariantCulture));*/
             mSpriteManager = spriteManager;
-            mSoundManager = soundManager;
         }
 
         private void BuyBuilding<T>(Point tile) where T : Building
         {
-            if (!BuildingBuyer.Buy(mPlayer, Building.Create<T>(mSpriteManager, mSoundManager), tile, mSoundManager))
+            if (!BuildingBuyer.Buy(mPlayer, Building.Create<T>(mSpriteManager), tile))
                 Console.WriteLine("Wanted to build " + typeof(T) + " at " + tile + " which is not possible.");
         }
 

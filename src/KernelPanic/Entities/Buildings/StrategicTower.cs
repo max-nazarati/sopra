@@ -38,9 +38,8 @@ namespace KernelPanic.Entities.Buildings
             int speed,
             TimeSpan cooldown,
             Sprite sprite,
-            SpriteManager spriteManager,
-            SoundManager sounds)
-            : base(price, radius, damage, speed, cooldown, sprite, spriteManager, sounds)
+            SpriteManager spriteManager)
+            : base(price, radius, damage, speed, cooldown, sprite, spriteManager)
         {
             FireTimer.CooledDown += ShootNow;
         }

@@ -75,7 +75,7 @@ namespace KernelPanic
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
             mGameStateManager =
-                new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mSoundManager, mGraphics);
+                new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mGraphics);
             InGameState.PushGameStack(0, mGameStateManager);
             // SoundManager.Instance.PlayBackgroundMusic();
         }
@@ -100,7 +100,7 @@ namespace KernelPanic
 
             if (!DebugSettings.GamePaused)
             {
-                mGameStateManager.Update(mInputState, gameTime, mSoundManager);
+                mGameStateManager.Update(mInputState, gameTime);
                 EventCenter.Default.Run();
             }
 

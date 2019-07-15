@@ -29,8 +29,7 @@ namespace KernelPanic.Entities.Buildings
             int speed,
             TimeSpan cooldown,
             Sprite sprite,
-            SpriteManager spriteManager,
-            SoundManager sounds) : base(price, sprite, spriteManager, sounds)
+            SpriteManager spriteManager) : base(price, sprite, spriteManager)
         {
             FireTimer = new CooldownComponent(cooldown);
             Radius = radius * Grid.KachelSize;

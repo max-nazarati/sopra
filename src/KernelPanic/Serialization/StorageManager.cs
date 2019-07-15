@@ -136,7 +136,7 @@ namespace KernelPanic.Serialization
 
             // A building is assumed to be constructable with the SpriteManager and the SoundManager as the only arguments.
             void RegisterBuilding<TBuilding>() where TBuilding : Building =>
-                builder.Register(c => Building.Create<TBuilding>(manager.Sprite, manager.Sound)).As<TBuilding>();
+                builder.Register(c => Building.Create<TBuilding>(manager.Sprite)).As<TBuilding>();
 
             RegisterUnit<Bug>();
             RegisterUnit<Virus>();

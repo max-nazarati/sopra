@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Events;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
@@ -11,13 +13,18 @@ namespace KernelPanic
         public enum Sound
         {
             TowerPlacement,
-            Shoot1
+            Shoot1,
+            DiscShoot,
+            CursorShoot,
+            ElectroShock,
+            MoneyEarned,
+            ButtonClick
         }
 
         public enum Music
         {
-            BackgroundMusic1,
-            // MenuMusic1
+            Soundtrack1,
+            Soundtrack2
         }
         
         private readonly (Sound sound, SoundEffect soundEffect)[] mSounds;
@@ -31,16 +38,28 @@ namespace KernelPanic
             mSounds = new[]
             {
                 SoundEffect(Sound.Shoot1, "shoot"),
-                SoundEffect(Sound.TowerPlacement, "placement"),
+                SoundEffect(Sound.TowerPlacement, "TowerPlacement"),
+                SoundEffect(Sound.DiscShoot, "DiscShoot"),
+                SoundEffect(Sound.CursorShoot, "CursorShoot"),
+                SoundEffect(Sound.ElectroShock, "ElectroShock"),
+                SoundEffect(Sound.MoneyEarned, "MoneyEarned"),
+                SoundEffect(Sound.ButtonClick, "ButtonClick")
             };
             Array.Sort(mSounds);
 
             mSongs = new[]
             {
-                Song(Music.BackgroundMusic1, "testSoundtrack"),
-                // Song(Music.MenuMusic1, "placeholder")
+                Song(Music.Soundtrack1, "Soundtrack1"),
+                Song(Music.Soundtrack2, "Soundtrack2")
             };
             Array.Sort(mSongs);
+            
+            var eventCenter = EventCenter.Default;
+            eventCenter.Subscribe(Event.Id.BuildingPlaced, PlaySound);
+            eventCenter.Subscribe(Event.Id.BuildingSold, PlaySound);
+            eventCenter.Subscribe(Event.Id.ProjectileShot, PlaySound);
+            eventCenter.Subscribe(Event.Id.ButtonClicked, PlaySound);
+            eventCenter.Subscribe(Event.Id.PlayMusic, PlayMusic);
         }
         
         private SoundEffect Lookup(Sound sound)
@@ -60,9 +79,16 @@ namespace KernelPanic
         /// <summary>
         /// Plays background music when called
         /// </summary>
-        internal void PlaySong(Music music)
+        private void PlayMusic(Event e)
         {
-            MediaPlayer.Play(Lookup(music));
+            var values = Enum.GetValues(typeof(Music));
+            var random = new Random();
+            var randomBar = (Music)values.GetValue(random.Next(values.Length));
+            MediaPlayer.Play(Lookup(randomBar));
+            switch (e.Kind)
+            {
+                
+            }
         }
 
         internal void StopMusic()
@@ -74,9 +100,41 @@ namespace KernelPanic
         /// plays the sound according to the given string
         /// <param name="sound"><see cref="Sound"/> to play.</param>
         /// </summary>
-        public void PlaySound(Sound sound)
+        private void PlaySound(Event e)
         {
-            Lookup(sound).Play(0.4f, 1f, 1f);
+            Console.WriteLine(e.Kind);
+            switch (e.Kind)
+            {
+                case Event.Id.BuildingPlaced:
+                    Lookup(Sound.TowerPlacement).Play(0.3f,1,0);
+                    break;
+                case Event.Id.BuildingSold:
+                    Lookup(Sound.MoneyEarned).Play(0.5f,1,0);
+                    break;
+                case Event.Id.ProjectileShot:
+                    switch (e.Get<Tower>(Event.Key.Tower))
+                    {
+                        case CdThrower _:
+                            Lookup(Sound.DiscShoot).Play(0.3f,0,0);
+                            break;
+                        case ShockField _:
+                            Lookup(Sound.ElectroShock).Play(0.2f,0,0);
+                            break;
+                        case CursorShooter _:
+                            Lookup(Sound.CursorShoot).Play(0.03f,0.3f,0);
+                            break;
+                        case Antivirus _:
+                            Lookup(Sound.CursorShoot).Play(0.3f,0,0);
+                            break;
+                        case WifiRouter _:
+                            Lookup(Sound.CursorShoot).Play(0.3f,0,0);
+                            break;
+                    }
+                    break;
+                case Event.Id.ButtonClicked:
+                    Lookup(Sound.ButtonClick).Play(0.5f,1,0);
+                    break;
+            }
         }
     }
 }

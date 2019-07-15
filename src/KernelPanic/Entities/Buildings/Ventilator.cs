@@ -9,8 +9,8 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Ventilator : Tower
     {
-        internal Ventilator(SpriteManager spriteManager, SoundManager sounds)
-            : base(20, 2, 0, 0,TimeSpan.Zero, spriteManager.CreateVentilator(), spriteManager, sounds)
+        internal Ventilator(SpriteManager spriteManager)
+            : base(20, 2, 0, 0,TimeSpan.Zero, spriteManager.CreateVentilator(), spriteManager)
         {
             // The fire timer is not used by the Ventilator.
             FireTimer.Enabled = false;
