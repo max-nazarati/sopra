@@ -48,6 +48,15 @@ namespace KernelPanic.ArtificialIntelligence
             BuySingleTower(choice);
         }
 
+        public void BuyRandomTower(GameTime gameTime)
+        {
+            string[] choices = {"Kabel", "Mauszeigerschütze", "CD-Werfer", "Antivirusprogramm", "Lüftung", "Wifi-Router", "Schockfeld"};
+            Random numberGenerator = new Random();
+            int number = numberGenerator.Next(0, 6);
+            string choice = choices[number];
+            BuySingleTower(choice);
+        }
+
         private void BuySingleTower(string choice)
         {
             // if (!mFirstTime) return;
