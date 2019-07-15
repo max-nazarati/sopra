@@ -6,7 +6,7 @@ namespace KernelPanic.Table
     internal sealed class Base
     {
         [JsonProperty] public int Power { get; set; } = 100;
-        [JsonProperty] internal Point[] HitBox { get; }
+        [JsonProperty] internal Point[] HitBox { get; private set; }
 
         [JsonConstructor]
         private Base()
