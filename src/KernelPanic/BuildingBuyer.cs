@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using KernelPanic.Input;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Events;
 using KernelPanic.PathPlanning;
 using KernelPanic.Players;
@@ -88,9 +89,8 @@ namespace KernelPanic
                         : new Point(0, Lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2);
 
             var buildingMatrix = new ObstacleMatrix(Lane.Grid);
-            buildingMatrix.Raster(Lane.EntityGraph.Entities<Building>());
-            buildingMatrix.Raster(new[] {mBuilding});
-
+            buildingMatrix.Raster(Lane.EntityGraph.Entities<Building>(), b => b.GetType() != typeof(ShockField));
+            buildingMatrix.Raster(new[] {mBuilding}, b => b.GetType() != typeof(ShockField));
             var pathFinder = new AStar(startTile, Lane.Target.HitBox, buildingMatrix);
             mBuilding.State = pathFinder.CalculatePath() ? BuildingState.Valid : BuildingState.Invalid;
         }

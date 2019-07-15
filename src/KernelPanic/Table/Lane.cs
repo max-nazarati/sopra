@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
@@ -117,7 +118,7 @@ namespace KernelPanic.Table
             if (entities?.Count > 0)
             {
                 EntityGraph.Add(entities);
-                obstacleMatrix.Raster(entities, entity => entity is Building);
+                obstacleMatrix.Raster(entities, entity => entity is Building && entity.GetType() != typeof(ShockField));
             }
 
             foreach (var tileIndex in obstacleMatrix.Obstacles)

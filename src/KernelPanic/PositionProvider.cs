@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
@@ -112,7 +113,7 @@ namespace KernelPanic
         internal AStar MakePathFinding(Entity entity, Point start, Point target)
         {
             var matrixObstacles = new ObstacleMatrix(Grid);
-            matrixObstacles.Raster(mEntities.AllEntities, e => e != entity);
+            matrixObstacles.Raster(mEntities.AllEntities, e => e != entity && e.GetType() != typeof(ShockField));
             var aStar = new AStar(start, target, matrixObstacles);
             aStar.CalculatePath();
             return aStar;
