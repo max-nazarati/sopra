@@ -146,8 +146,7 @@ namespace KernelPanic.PathPlanning
             while (depth-- > 0)
             {
                 var movement = RelativeMovement(tile, mVectorField);
-                tile.Row += (int) movement.Y;
-                tile.Column += (int) movement.X;
+                tile = new TileIndex(tile.Row + (int) movement.Y, tile.Column + (int) movement.X, tile.SubTileCount);
                 yield return tile;
             }
         }
