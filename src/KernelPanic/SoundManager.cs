@@ -15,6 +15,8 @@ namespace KernelPanic
             TowerPlacement,
             Shoot1,
             DiscShoot,
+            CursorShoot,
+            ElectroShock,
             MoneyEarned
         }
 
@@ -37,6 +39,8 @@ namespace KernelPanic
                 SoundEffect(Sound.Shoot1, "shoot"),
                 SoundEffect(Sound.TowerPlacement, "TowerPlacement"),
                 SoundEffect(Sound.DiscShoot, "DiscShoot"),
+                SoundEffect(Sound.CursorShoot, "CursorShoot"),
+                SoundEffect(Sound.ElectroShock, "ElectroShock"),
                 SoundEffect(Sound.MoneyEarned, "MoneyEarned")
             };
             Array.Sort(mSounds);
@@ -52,6 +56,7 @@ namespace KernelPanic
             eventCenter.Subscribe(Event.Id.BuildingPlaced, PlaySound);
             eventCenter.Subscribe(Event.Id.BuildingSold, PlaySound);
             eventCenter.Subscribe(Event.Id.ProjectileShot, PlaySound);
+            eventCenter.Subscribe(Event.Id.PlayMusic, PlayMusic);
         }
         
         private SoundEffect Lookup(Sound sound)
@@ -71,9 +76,16 @@ namespace KernelPanic
         /// <summary>
         /// Plays background music when called
         /// </summary>
-        internal void PlaySong(Music music)
+        private void PlayMusic(Event e)
         {
-            MediaPlayer.Play(Lookup(music));
+            var values = Enum.GetValues(typeof(Music));
+            var random = new Random();
+            var randomBar = (Music)values.GetValue(random.Next(values.Length));
+            MediaPlayer.Play(Lookup(randomBar));
+            switch (e.Kind)
+            {
+                
+            }
         }
 
         internal void StopMusic()
@@ -91,17 +103,28 @@ namespace KernelPanic
             switch (e.Kind)
             {
                 case Event.Id.BuildingPlaced:
-                    Lookup(Sound.TowerPlacement).Play(0.3f,1,1);
+                    Lookup(Sound.TowerPlacement).Play(0.3f,1,0);
                     break;
                 case Event.Id.BuildingSold:
-                    Lookup(Sound.MoneyEarned).Play(0.5f,1,1);
+                    Lookup(Sound.MoneyEarned).Play(0.5f,1,0);
                     break;
                 case Event.Id.ProjectileShot:
-                    Console.WriteLine("Jetzt hier");
                     switch (e.Get<Tower>(Event.Key.Tower))
                     {
                         case CdThrower _:
-                            Lookup(Sound.DiscShoot).Play(0.5f,1,1);
+                            Lookup(Sound.DiscShoot).Play(0.5f,1,0);
+                            break;
+                        case ShockField _:
+                            Lookup(Sound.ElectroShock).Play(0.4f,0,0);
+                            break;
+                        case CursorShooter _:
+                            Lookup(Sound.CursorShoot).Play(0.4f,0,0);
+                            break;
+                        case Antivirus _:
+                            Lookup(Sound.CursorShoot).Play(0.4f,0,0);
+                            break;
+                        case WifiRouter _:
+                            Lookup(Sound.CursorShoot).Play(0.4f,0,0);
                             break;
                     }
 

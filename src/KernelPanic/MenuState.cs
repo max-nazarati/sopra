@@ -171,7 +171,7 @@ namespace KernelPanic
                     break;
                 case "aus":
                     soundOnOffButton.Title = "an";
-                    // soundManager.PlaySong(SoundManager.Music.BackgroundMusic1);
+                    EventCenter.Default.Send(Event.PlayMusic());
                     break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
@@ -189,11 +189,11 @@ namespace KernelPanic
         {
             var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
             var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
-            // musicOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(musicOnOffButton, soundManager);
+            musicOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(musicOnOffButton);
             
             var effectsButton = CreateButton(stateManager.Sprite, "Soundeffekte", 325, 150);
             var effectsOnOffButton = CreateButton(stateManager.Sprite, "aus", 325, -150);
-            // effectsOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(effectsOnOffButton);
+            effectsOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(effectsOnOffButton);
 
             var volumeButton = CreateButton(stateManager.Sprite, "Lautstärke", 450, 150);
             var volumeRegulatorButton = CreateButton(stateManager.Sprite, "Mittel",450, -150);

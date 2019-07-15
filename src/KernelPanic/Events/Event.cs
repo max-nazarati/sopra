@@ -33,6 +33,7 @@ namespace KernelPanic.Events
             DamagedUnit,
             KilledUnit,
             ProjectileShot,
+            PlayMusic,
 
             DamagedBase,
             GameWon,
@@ -217,6 +218,14 @@ namespace KernelPanic.Events
                 mPayload =
                 {
                     [Key.Tower] = tower,
+                }
+            };
+        
+        internal static Event PlayMusic() =>
+            new Event(Id.PlayMusic)
+            {
+                mPayload =
+                {
                 }
             };
 

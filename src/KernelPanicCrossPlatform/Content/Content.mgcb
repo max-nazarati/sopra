@@ -363,6 +363,18 @@
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/DiscShoot.mp3;DiscShoot.mp3
 
+#begin ../../KernelPanic/Content/sounds/CursorShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/CursorShoot.mp3;CursorShoot.mp3
+
+#begin ../../KernelPanic/Content/sounds/ElectroShock.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/ElectroShock.mp3;ElectroShock.mp3
+
 #begin ../../KernelPanic/Content/skill_tile.png
 /importer:TextureImporter
 /processor:TextureProcessor
