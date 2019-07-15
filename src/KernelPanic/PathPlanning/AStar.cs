@@ -9,17 +9,20 @@ namespace KernelPanic.PathPlanning
     internal sealed class AStar : PathPlanner
     {
         private readonly ObstacleMatrix mObstacles;
+        private readonly HashSet<Point> mBlocked;
         private readonly Point[] mTargets;
         private readonly Point mStart;
         internal List<Point> Path { get; private set; }
 
-        internal AStar(Point start, Point target, ObstacleMatrix obstacles) : this(start, new []{target}, obstacles)
+        internal AStar(Point start, Point target, ObstacleMatrix obstacles, HashSet<Point> blocked = null)
+            : this(start, new []{target}, obstacles, blocked)
         {
         }
 
-        internal AStar(Point start, Point[] targets, ObstacleMatrix obstacles)
+        internal AStar(Point start, Point[] targets, ObstacleMatrix obstacles, HashSet<Point> blocked = null)
         {
             mObstacles = obstacles;
+            mBlocked = blocked;
             mTargets = targets;
             mStart = start;
         }
@@ -70,7 +73,8 @@ namespace KernelPanic.PathPlanning
 
         #region Overrides
 
-        protected override bool IsWalkable(Point point) => !mObstacles[point];
+        protected override bool IsWalkable(Point point) =>
+            !mObstacles[point] && (mBlocked == null || !mBlocked.Contains(point));
         protected override double CostIncrease(Point point) => 0.5;
         protected override double EstimateCost(Point point)
         {
@@ -94,6 +98,7 @@ namespace KernelPanic.PathPlanning
         {
             var visualization = TileVisualizer.Border(mObstacles.SubTileCount, grid, spriteManager);
             visualization.Append(mObstacles);
+            visualization.Append(mBlocked, Color.Orange);
             visualization.Append(mExplored, Color.Yellow);
             visualization.Append(Path, Color.Green);
             visualization.Append(new[] {mStart}, Color.Turquoise);

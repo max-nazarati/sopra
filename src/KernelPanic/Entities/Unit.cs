@@ -166,6 +166,7 @@ namespace KernelPanic.Entities
             GameTime gameTime,
             InputManager inputManager)
         {
+            var initialTarget = target;
             var targetMove = target - Sprite.Position;
             var targetDistance = targetMove.Length();
 
@@ -190,9 +191,13 @@ namespace KernelPanic.Entities
 
                 theMove += targetMove;
 
+                MoveTarget = null;
                 CalculateMovement(target, positionProvider, gameTime, inputManager);
                 if (!(MoveTarget is Vector2 projectedTarget))
+                {
+                    MoveTarget = initialTarget;
                     return theMove;
+                }
 
                 targetMove = projectedTarget - target;
                 targetDistance = targetMove.Length();

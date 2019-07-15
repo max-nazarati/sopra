@@ -71,6 +71,9 @@ namespace KernelPanic.Entities.Units
             GameTime gameTime,
             InputManager inputManager)
         {
+            if (projectionStart != null)
+                return;
+
             UpdateTarget(positionProvider, gameTime, inputManager);
 
             if (!(mTarget?.ToVector2() is Vector2 targetVector))
@@ -78,21 +81,17 @@ namespace KernelPanic.Entities.Units
                 return;
             }
             
-            // set the start Position for the AStar (something like the current position should do great)
-            var start = Sprite.Position;
-            var startPoint = positionProvider.RequireTile(start).ToPoint();
-            
             // set the target Position for the AStar (latest updated target should be saved in mTarget)
             var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
-            mAStar = positionProvider.MakePathFinding(startPoint, target);
+            mAStar = positionProvider.MakePathFinding(this, target);
             mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
-                mAStar = positionProvider.MakePathFinding(startPoint, target);
+                mAStar = positionProvider.MakePathFinding(this, target);
                 mPathVisualizer = positionProvider.Visualize(mAStar);
                 path = mAStar.Path;
             }
@@ -311,12 +310,11 @@ namespace KernelPanic.Entities.Units
 
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
         {
-            var startPoint = positionProvider.RequireTile(this).ToPoint();
             var basePosition = positionProvider.Target.HitBox[0];
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
             mTarget = new Point(basePosition.X * Grid.KachelSize, basePosition.Y * Grid.KachelSize);
-            mAStar = positionProvider.MakePathFinding(startPoint, basePosition);
+            mAStar = positionProvider.MakePathFinding(this, basePosition);
             ShouldMove = true;
         }
 
@@ -370,7 +368,7 @@ namespace KernelPanic.Entities.Units
             #endregion
 
             #region set the optimum as walking target
-            mAStar = positionProvider.MakePathFinding(this, startPoint, bestPoint);
+            mAStar = positionProvider.MakePathFinding(this, bestPoint);
             mTarget = bestPoint * new Point(Grid.KachelSize);
             ShouldMove = true;
             #endregion

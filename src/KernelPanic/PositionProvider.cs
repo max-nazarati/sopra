@@ -105,6 +105,17 @@ namespace KernelPanic
             return aStar;
         }
 
+        internal AStar MakePathFinding(Hero hero, Point target)
+        {
+            var start = RequireTile(hero).ToPoint();
+            var otherHeroes = mEntities.AllEntities
+                .Where(entity => entity is Hero && entity != hero)
+                .Select(entity => RequireTile(entity).ToPoint());
+            var aStar = new AStar(start, target, TroupeData.BuildingMatrix, new HashSet<Point>(otherHeroes));
+            aStar.CalculatePath();
+            return aStar;
+        }
+
         #endregion
 
         #region Visualization
