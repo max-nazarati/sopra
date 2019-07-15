@@ -12,8 +12,8 @@ namespace KernelPanic.Entities.Buildings
     {
         protected override bool WantsRotation => true;
 
-        internal WifiRouter(SpriteManager spriteManager, SoundManager sounds)
-            : base(40, 3, 1,3, TimeSpan.FromSeconds(1), spriteManager.CreateWifiRouter(), spriteManager, sounds)
+        internal WifiRouter(SpriteManager spriteManager)
+            : base(40, 3, 1,3, TimeSpan.FromSeconds(1), spriteManager.CreateWifiRouter(), spriteManager)
         {
         }
 

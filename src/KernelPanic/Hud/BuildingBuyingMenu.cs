@@ -92,11 +92,10 @@ namespace KernelPanic.Hud
         }
 
         internal static BuildingBuyingMenu Create(BuildingBuyer buildingBuyer,
-            SpriteManager spriteManager,
-            SoundManager sounds)
+            SpriteManager spriteManager)
         {
             Element CreateElement<TBuilding>() where TBuilding : Building =>
-                new Element(Building.Create<TBuilding>(spriteManager, sounds), spriteManager);
+                new Element(Building.Create<TBuilding>(spriteManager), spriteManager);
 
             return new BuildingBuyingMenu(buildingBuyer, spriteManager,
                 CreateElement<CursorShooter>(),

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using KernelPanic.Events;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
@@ -41,6 +42,9 @@ namespace KernelPanic
                 // Song(Music.MenuMusic1, "placeholder")
             };
             Array.Sort(mSongs);
+            
+            var eventCenter = EventCenter.Default;
+            eventCenter.Subscribe(Event.Id.BuildingPlaced, PlaySound);
         }
         
         private SoundEffect Lookup(Sound sound)
@@ -74,9 +78,14 @@ namespace KernelPanic
         /// plays the sound according to the given string
         /// <param name="sound"><see cref="Sound"/> to play.</param>
         /// </summary>
-        public void PlaySound(Sound sound)
+        public void PlaySound(Event e)
         {
-            Lookup(sound).Play(0.4f, 1f, 1f);
+            switch (e.Kind)
+            {
+                case Event.Id.BuildingPlaced:
+                    Lookup(Sound.TowerPlacement).Play();
+                    break;
+            }
         }
     }
 }

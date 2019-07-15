@@ -23,7 +23,7 @@ namespace KernelPanic.Entities
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification =
             "Ensures that all buildings take a SoundManager in their constructor, which is required for Building.Create to work."
         )]
-        protected Building(int price, Sprite sprite, SpriteManager spriteManager, SoundManager soundManager)
+        protected Building(int price, Sprite sprite, SpriteManager spriteManager)
             : base(price, sprite, spriteManager)
         {
             BitcoinWorth = price;
@@ -42,7 +42,7 @@ namespace KernelPanic.Entities
         /// <param name="soundManager"></param>
         /// <typeparam name="TBuilding">The type of <see cref="Unit"/> to create.</typeparam>
         /// <returns>A new instance of <typeparamref name="TBuilding"/>.</returns>
-        internal static TBuilding Create<TBuilding>(SpriteManager spriteManager, SoundManager soundManager) where TBuilding : Building
+        internal static TBuilding Create<TBuilding>(SpriteManager spriteManager) where TBuilding : Building
         {
             const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.CreateInstance |
                                               BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
@@ -50,7 +50,7 @@ namespace KernelPanic.Entities
             return (TBuilding) Activator.CreateInstance(typeof(TBuilding),
                 bindingFlags,
                 null,
-                new object[] {spriteManager, soundManager},
+                new object[] {spriteManager},
                 null);
         }
 

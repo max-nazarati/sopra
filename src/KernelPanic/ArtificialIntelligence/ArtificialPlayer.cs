@@ -93,12 +93,11 @@ namespace KernelPanic.ArtificialIntelligence
         internal void InitializePlanners(
             Dictionary<Type, PurchasableAction<Unit>> unitBuyingActions,
             Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup,
-            SpriteManager spriteManager,
-            SoundManager soundManager)
+            SpriteManager spriteManager)
         {
             mAttackPlanner = new AttackPlanner(this, unitBuyingActions);
             mUpgradePlanner = new UpgradePlanner(this, upgradeLookup);
-            mDefencePlanner = new DefencePlanner(this, spriteManager, soundManager);
+            mDefencePlanner = new DefencePlanner(this, spriteManager);
         }
 
         #region Data

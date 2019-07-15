@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using KernelPanic.Input;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
@@ -15,16 +16,14 @@ namespace KernelPanic
     internal sealed class BuildingBuyer
     {
         private readonly Player mPlayer;
-        private readonly SoundManager mSoundManager;
         private Building mBuilding;
         private TileIndex? mPosition;
 
         private Lane Lane => mPlayer.DefendingLane;
 
-        internal BuildingBuyer(Player player, SoundManager soundManager)
+        internal BuildingBuyer(Player player)
         {
             mPlayer = player;
-            mSoundManager = soundManager;
         }
 
         internal void SetBuilding(Building building)
@@ -43,9 +42,9 @@ namespace KernelPanic
             if (!input.MousePressed(InputManager.MouseButton.Left))
                 return;
 
-            if (TryPurchase())
+            if (!TryPurchase())
             {
-                mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
+                Console.WriteLine("Gebäude kann nicht gekauft werden.");
             }
 
             // TODO: Play failure sound if the purchase couldn't be completed.
@@ -110,7 +109,6 @@ namespace KernelPanic
             mPlayer.ApplyUpgrades(clone);
 
             // TODO: Play a different sound when the AI places a tower.
-            mSoundManager.PlaySound(SoundManager.Sound.TowerPlacement);
             EventCenter.Default.Send(Event.BuildingPlaced(mPlayer, clone));
 
             return true;
@@ -122,9 +120,9 @@ namespace KernelPanic
                 mBuilding?.Draw(spriteBatch, gameTime);
         }
 
-        internal static bool Buy(Player player, Building building, Point tile, SoundManager soundManager)
+        internal static bool Buy(Player player, Building building, Point tile)
         {
-            var buyer = new BuildingBuyer(player, soundManager) {mBuilding = building};
+            var buyer = new BuildingBuyer(player) {mBuilding = building};
             buyer.SetPosition(new TileIndex(tile, 1));
             buyer.CheckPath();
             return buyer.TryPurchase();

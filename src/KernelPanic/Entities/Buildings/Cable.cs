@@ -6,8 +6,8 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Cable : Building
     {
-        internal Cable(SpriteManager spriteManager, SoundManager soundManager)
-            : base(10, spriteManager.CreateCable(), spriteManager, soundManager)
+        internal Cable(SpriteManager spriteManager)
+            : base(10, spriteManager.CreateCable(), spriteManager)
         {
         }
     }
