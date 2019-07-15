@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
+using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Units;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 
@@ -149,6 +152,7 @@ namespace KernelPanic.PathPlanning
         /// <typeparam name="T">The type of the elements, must implement <see cref="IBounded"/>.</typeparam>
         internal void Raster<T>(IEnumerable<T> elements, Func<T, bool> predicate = null) where T: IBounded
         {
+            predicate = (b) => b.GetType() != typeof(ShockField);
             foreach (var element in predicate == null ? elements : elements.Where(predicate))
             {
                 var center = element.Bounds.At(RelativePosition.Center);
