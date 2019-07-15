@@ -319,7 +319,7 @@
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/TowerPlacement.mp3;TowerPlacement.mp3
+/build:../../KernelPanic/Content/sounds/TowerPlacement.mp3;sounds/TowerPlacement.mp3
 
 #begin ../../KernelPanic/Content/Saeule.png
 /importer:TextureImporter
@@ -349,37 +349,37 @@
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/MoneyEarned.mp3;MoneyEarned.mp3
+/build:../../KernelPanic/Content/sounds/MoneyEarned.mp3;sounds/MoneyEarned.mp3
 
 #begin ../../KernelPanic/Content/sounds/shoot.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/shoot.mp3;shoot.mp3
+/build:../../KernelPanic/Content/sounds/shoot.mp3;sounds/shoot.mp3
 
 #begin ../../KernelPanic/Content/sounds/DiscShoot.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/DiscShoot.mp3;DiscShoot.mp3
+/build:../../KernelPanic/Content/sounds/DiscShoot.mp3;sounds/DiscShoot.mp3
 
 #begin ../../KernelPanic/Content/sounds/CursorShoot.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/CursorShoot.mp3;CursorShoot.mp3
+/build:../../KernelPanic/Content/sounds/CursorShoot.mp3;sounds/CursorShoot.mp3
 
 #begin ../../KernelPanic/Content/sounds/ButtonClick.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/ButtonClick.mp3;ButtonClick.mp3
+/build:../../KernelPanic/Content/sounds/ButtonClick.mp3;sounds/ButtonClick.mp3
 
 #begin ../../KernelPanic/Content/sounds/ElectroShock.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/ElectroShock.mp3;ElectroShock.mp3
+/build:../../KernelPanic/Content/sounds/ElectroShock.mp3;sounds/ElectroShock.mp3
 
 #begin ../../KernelPanic/Content/skill_tile.png
 /importer:TextureImporter
@@ -404,13 +404,13 @@
 /importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/Soundtrack1.mp3;Soundtrack1.mp3
+/build:../../KernelPanic/Content/sounds/Soundtrack1.mp3;sounds/Soundtrack1.mp3
 
 #begin ../../KernelPanic/Content/sounds/Soundtrack2.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/Soundtrack2.mp3;Soundtrack2.mp3
+/build:../../KernelPanic/Content/sounds/Soundtrack2.mp3;sounds/Soundtrack2.mp3
 
 #begin ../../KernelPanic/Content/tower.png
 /importer:TextureImporter
