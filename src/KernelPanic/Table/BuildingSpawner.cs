@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Data;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
 
 namespace KernelPanic.Table
@@ -28,7 +29,10 @@ namespace KernelPanic.Table
         {
             building.State = BuildingState.Inactive;
             building.Sprite.Position = mGrid.GetTile(tile).Position;
-            mHeatMap.Block(tile.ToPoint());
+            if (building.GetType() != typeof(ShockField))
+            {
+                mHeatMap.Block(tile.ToPoint());
+            }
             mInactive.Add(building);
             mSpawnAction(building);
         }
