@@ -315,12 +315,6 @@
 /processorParam:TextureFormat=Color
 /build:pause.png
 
-#begin placement.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:placement.mp3
-
 #begin Saeule.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -345,29 +339,29 @@
 /processorParam:TextureFormat=Color
 /build:score_background.png
 
-#begin sounds/shoot.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:sounds/shoot.mp3
+#begin skill_tile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:skill_tile.png
 
-#begin sounds/DiscShoot.mp3
+#begin sounds/ButtonClick.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/DiscShoot.mp3
+/build:sounds/ButtonClick.mp3
 
-#begin sounds/TowerPlacement.mp3
+#begin sounds/CreditsSoundtrack.mp3
 /importer:Mp3Importer
-/processor:SoundEffectProcessor
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:sounds/TowerPlacement.mp3
-
-#begin sounds/ElectroShock.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:sounds/ElectroShock.mp3
+/build:sounds/CreditsSoundtrack.mp3
 
 #begin sounds/CursorShoot.mp3
 /importer:Mp3Importer
@@ -375,17 +369,29 @@
 /processorParam:Quality=Best
 /build:sounds/CursorShoot.mp3
 
+#begin sounds/DiscShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/DiscShoot.mp3
+
+#begin sounds/ElectroShock.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/ElectroShock.mp3
+
 #begin sounds/MoneyEarned.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:sounds/MoneyEarned.mp3
 
-#begin sounds/ButtonClick.mp3
+#begin sounds/shoot.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/ButtonClick.mp3
+/build:sounds/shoot.mp3
 
 #begin sounds/Soundtrack1.mp3
 /importer:Mp3Importer
@@ -399,18 +405,11 @@
 /processorParam:Quality=Best
 /build:sounds/Soundtrack2.mp3
 
-
-#begin skill_tile.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:skill_tile.png
+#begin sounds/TowerPlacement.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/TowerPlacement.mp3
 
 #begin StartMenuTitle.spritefont
 /importer:FontDescriptionImporter

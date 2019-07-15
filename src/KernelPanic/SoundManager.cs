@@ -37,20 +37,20 @@ namespace KernelPanic
             
             mSounds = new[]
             {
-                SoundEffect(Sound.Shoot1, "shoot"),
-                SoundEffect(Sound.TowerPlacement, "TowerPlacement"),
-                SoundEffect(Sound.DiscShoot, "DiscShoot"),
-                SoundEffect(Sound.CursorShoot, "CursorShoot"),
-                SoundEffect(Sound.ElectroShock, "ElectroShock"),
-                SoundEffect(Sound.MoneyEarned, "MoneyEarned"),
-                SoundEffect(Sound.ButtonClick, "ButtonClick")
+                SoundEffect(Sound.Shoot1, "sounds/shoot"),
+                SoundEffect(Sound.TowerPlacement, "sounds/TowerPlacement"),
+                SoundEffect(Sound.DiscShoot, "sounds/DiscShoot"),
+                SoundEffect(Sound.CursorShoot, "sounds/CursorShoot"),
+                SoundEffect(Sound.ElectroShock, "sounds/ElectroShock"),
+                SoundEffect(Sound.MoneyEarned, "sounds/MoneyEarned"),
+                SoundEffect(Sound.ButtonClick, "sounds/ButtonClick")
             };
             Array.Sort(mSounds);
 
             mSongs = new[]
             {
-                Song(Music.Soundtrack1, "Soundtrack1"),
-                Song(Music.Soundtrack2, "Soundtrack2")
+                Song(Music.Soundtrack1, "sounds/Soundtrack1"),
+                Song(Music.Soundtrack2, "sounds/Soundtrack2")
             };
             Array.Sort(mSongs);
             
