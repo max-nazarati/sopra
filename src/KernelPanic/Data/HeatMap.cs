@@ -11,6 +11,7 @@ namespace KernelPanic.Data
     internal sealed class HeatMap
     {
         private readonly float[,] mMap;
+        internal ObstacleMatrix ObstacleMatrix { get; }
 
         public int Width => mMap.GetLength(1);
         public int Height => mMap.GetLength(0);
@@ -31,11 +32,11 @@ namespace KernelPanic.Data
         /// [ 4][ 3][ 2][ 1][ 0][ 0]
         /// [ 4][ 3][ 2][ 1][ 0][ 0]
         /// </summary>
-        /// <param name="width">number of columns</param>
-        /// <param name="height">number of rows</param>
-        public HeatMap(int width, int height)
+        /// <param name="obstacleMatrix"></param>
+        public HeatMap(ObstacleMatrix obstacleMatrix)
         {
-            mMap = new float[height, width];
+            ObstacleMatrix = obstacleMatrix;
+            mMap = new float[obstacleMatrix.Rows, obstacleMatrix.Columns];
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="point">the point (x, y)</param>
         /// <returns><c>false</c> if it is blocked, <c>true</c> otherwise.</returns>
-        public bool IsWalkable(Point point) => 0 <= this[point];
+        private bool IsWalkable(Point point) => !ObstacleMatrix[point];
 
         /// <summary>
         /// Calculates the gradient, given point (x, y) i,e.:
@@ -61,13 +62,14 @@ namespace KernelPanic.Data
         /// <returns></returns>
         internal RelativePosition Gradient(Point point)
         {
-            if (!(this[point] is float heatHere) || heatHere < 0)
+            if (!(this[point] is float heatHere) || heatHere <= 0)
                 return RelativePosition.Center;
 
             float LookupHeat(int xOffset, int yOffset)
             {
-                var maybeHeat = this[point + new Point(xOffset, yOffset)];
-                return maybeHeat is float heat2 && heat2 >= 0 ? heat2 : heatHere;
+                var offsetPoint = point + new Point(xOffset, yOffset);
+                var maybeHeat = this[offsetPoint];
+                return IsWalkable(offsetPoint) && maybeHeat is float heat ? heat : heatHere;
             }
 
             var heatUp = LookupHeat(0, -1);
@@ -157,15 +159,13 @@ namespace KernelPanic.Data
             while (angle > octant)
             {
                 angle -= octant;
-                index++;
+
+                if ((int)++index == 9)
+                    index = RelativePosition.CenterRight;
             }
 
             return index;
         }
-
-        internal void Block(Point point) => this[point] = -1;
-
-        internal void Unblock(Point point) => this[point] = 0;
 
         internal void SetCost(Point point, float cost) => this[point] = cost;
 
@@ -187,12 +187,20 @@ namespace KernelPanic.Data
         public override string ToString()
         {
             var builder = new StringBuilder();
-            foreach (var ((col, row), value) in AllPoints)
+            foreach (var (point, value) in AllPoints)
             {
+                var (col, row) = point;
                 if (col == 0 && row > 0)
                     builder.AppendLine();
                 if (col == 0)
                     builder.Append($"[{row:D2}]  ");
+
+                if (!IsWalkable(point))
+                {
+                    builder.Append(" XX ");
+                    continue;
+                }
+
                 if (value < 100 && value >= 0)
                     builder.Append(' ');
                 if (value < 10)
@@ -204,7 +212,7 @@ namespace KernelPanic.Data
 
         internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
         {
-            var visualization = TileVisualizer.FullTile(grid, spriteManager);
+            var visualization = TileVisualizer.FullTile(ObstacleMatrix.SubTileCount, grid, spriteManager);
             foreach (var (point, value) in AllPoints)
             {
                 Color color;
@@ -217,6 +225,7 @@ namespace KernelPanic.Data
                     
                 visualization.Append(new [] {point}, color);
             }
+            visualization.Append(ObstacleMatrix);
             return visualization;
         }
 

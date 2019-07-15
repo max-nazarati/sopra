@@ -9,8 +9,9 @@ namespace KernelPanic.Data
         internal HeatMap HeatMap { get; }
 
         private readonly RelativePosition[,] mRelativeField;
-        private int Height => mRelativeField.GetLength(0);
-        private int Width => mRelativeField.GetLength(1);
+        
+        internal Point Size =>
+            new Point(mRelativeField.GetLength(1), mRelativeField.GetLength(0));
 
         /// <summary>
         /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
@@ -37,13 +38,6 @@ namespace KernelPanic.Data
         {
             HeatMap = heatMap;
             mRelativeField = new RelativePosition[heatMap.Height, heatMap.Width];
-            for (var row = 0; row < heatMap.Height; ++row)
-            {
-                for (var col = 0; col < heatMap.Width; ++col)
-                {
-                    mRelativeField[row, col] = heatMap.Gradient(new Point(col, row));
-                }
-            }
         }
 
         private VectorField(RelativePosition[,] vectorField)
@@ -51,31 +45,31 @@ namespace KernelPanic.Data
             mRelativeField = vectorField;
         }
 
-        internal void Update(HeatMap heatMap)
+        internal void Update()
         {
-            for (var row = 0; row < heatMap.Height; ++row)
+            for (var row = 0; row < HeatMap.Height; ++row)
             {
-                for (var col = 0; col < heatMap.Width; ++col)
+                for (var col = 0; col < HeatMap.Width; ++col)
                 {
-                    var relative = heatMap.Gradient(new Point(col, row));
+                    var relative = HeatMap.Gradient(new Point(col, row));
                     if (relative != RelativePosition.Center)
                         mRelativeField[row, col] = relative;
                 }
             }
         }
         
-        internal static VectorField GetVectorFieldThunderbird(VectorField vectorField, Lane.Side laneSide)
+        internal static VectorField GetVectorFieldThunderbird(Point size, Lane.Side laneSide)
         {
             const RelativePosition left = RelativePosition.CenterLeft;
             const RelativePosition right = RelativePosition.CenterRight;
             const RelativePosition up = RelativePosition.CenterTop;
             const RelativePosition down = RelativePosition.CenterBottom;
             const int laneWidth = Grid.LaneWidthInTiles;
-            var thunderBirdField = new RelativePosition[vectorField.Height, vectorField.Width];
+            var thunderBirdField = new RelativePosition[size.Y, size.X];
 
-            for (var row = 0; row < vectorField.Height; ++row)
+            for (var row = 0; row < size.Y; ++row)
             {
-                for (var col = 0; col < vectorField.Width; ++col)
+                for (var col = 0; col < size.X; ++col)
                 {
                     if (laneSide == Lane.Side.Right)
                     {
@@ -92,7 +86,7 @@ namespace KernelPanic.Data
                             thunderBirdField[row, col] = left;
                         }
 
-                        else if (vectorField.Height - row + col < 18)
+                        else if (size.Y - row + col < 18)
                         {
                             // distance to left, bottom
                             thunderBirdField[row, col] = right;
@@ -106,19 +100,19 @@ namespace KernelPanic.Data
                     if (laneSide == Lane.Side.Left)
                     {
                         /* should not be needed anymore now that target is a whole column
-                        if (row > vectorField.Height - laneWidth && col >= vectorField.Width - 1)
+                        if (row > size.Y - laneWidth && col >= size.X - 1)
                         {
                             // go downwards to hit the base tile
                             thunderBirdField[row, col] = down;
                         }
                         */
-                        /*else*/ if (row + (vectorField.Width - 1) - col < 18)
+                        /*else*/ if (row + (size.X - 1) - col < 18)
                         {
                             // distance to right, top
                             thunderBirdField[row, col] = left;
                         }
 
-                        else if (vectorField.Height - row + (vectorField.Width - 1) - col < 18)
+                        else if (size.Y - row + (size.X - 1) - col < 18)
                         {
                             // distance to right, bottom
                             thunderBirdField[row, col] = right;
@@ -141,7 +135,7 @@ namespace KernelPanic.Data
 
         internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
         {
-            var visualizer = new ArrowVisualizer(grid, spriteManager);
+            var visualizer = new ArrowVisualizer(HeatMap?.ObstacleMatrix.SubTileCount ?? 1, grid, spriteManager);
             visualizer.Append(mRelativeField);
             return visualizer;
         }

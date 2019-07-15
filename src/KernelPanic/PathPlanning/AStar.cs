@@ -93,7 +93,7 @@ namespace KernelPanic.PathPlanning
 
         internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager)
         {
-            var visualization = TileVisualizer.Border(grid, spriteManager);
+            var visualization = TileVisualizer.Border(mObstacles.SubTileCount, grid, spriteManager);
             visualization.Append(mObstacles);
             visualization.Append(mExplored, Color.Yellow);
             visualization.Append(Path, Color.Green);

@@ -17,10 +17,11 @@ namespace KernelPanic.PathPlanning
     {
         #region Properties
 
+        private readonly Grid mGrid;
         private readonly bool[,] mObstacles;
         private readonly bool mHasBorder;
-        private readonly int mSubTileCount;
-        private readonly Grid mGrid;
+
+        internal int SubTileCount { get; }
 
         #endregion
 
@@ -41,7 +42,7 @@ namespace KernelPanic.PathPlanning
 
             mGrid = grid;
             mHasBorder = includeBorder;
-            mSubTileCount = subTileCount;
+            SubTileCount = subTileCount;
 
             // Elements initialized to false by default.
             var borderCount = includeBorder ? 2 : 0;
@@ -65,9 +66,9 @@ namespace KernelPanic.PathPlanning
                     throw new InvalidOperationException("Grid has an invalid side");
             }
             
-            for (var i = Grid.LaneWidthInTiles; i < grid.LaneRectangle.Height - Grid.LaneWidthInTiles; ++i)
+            for (var i = Grid.LaneWidthInTiles * subTileCount; i < (grid.LaneRectangle.Height - Grid.LaneWidthInTiles) * subTileCount; ++i)
             {
-                for (var j = cutoutXStart; j < cutoutXEnd; ++j)
+                for (var j = cutoutXStart * subTileCount; j < cutoutXEnd * subTileCount; ++j)
                 {
                     // Use our indexer because it automatically translates the coordinates in case there is a border.
                     this[i, j] = true;
@@ -97,8 +98,8 @@ namespace KernelPanic.PathPlanning
 
         #region Accessing
 
-        /*internal*/ private int Rows => mObstacles.GetLength(0) - (mHasBorder ? 2 : 0);
-        /*internal*/ private int Columns => mObstacles.GetLength(1) - (mHasBorder ? 2 : 0);
+        internal int Rows => mObstacles.GetLength(0) - (mHasBorder ? 2 : 0);
+        internal int Columns => mObstacles.GetLength(1) - (mHasBorder ? 2 : 0);
 
         /// <summary>
         /// Queries whether there is an obstacle at the given point.
@@ -108,7 +109,7 @@ namespace KernelPanic.PathPlanning
         internal bool this[Point point]
         {
             get => this[point.Y, point.X];
-            private set => this[point.Y, point.X] = value;
+            set => this[point.Y, point.X] = value;
         }
 
         private bool this[int row, int column]
@@ -155,7 +156,7 @@ namespace KernelPanic.PathPlanning
             foreach (var element in predicate == null ? elements : elements.Where(predicate))
             {
                 var center = element.Bounds.At(RelativePosition.Center);
-                if (mGrid.TileFromWorldPoint(center, mSubTileCount) is TileIndex tile)
+                if (mGrid.TileFromWorldPoint(center, SubTileCount) is TileIndex tile)
                 {
                     this[tile.ToPoint()] = true;
                 }
@@ -179,7 +180,7 @@ namespace KernelPanic.PathPlanning
                 for (var col = 0; col < Columns; ++col)
                 {
                     if (this[row, col] == obstacles)
-                        yield return new TileIndex(row, col, mSubTileCount);
+                        yield return new TileIndex(row, col, SubTileCount);
                 }
             }
         }

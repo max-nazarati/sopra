@@ -29,10 +29,8 @@ namespace KernelPanic.Table
         {
             building.State = BuildingState.Inactive;
             building.Sprite.Position = mGrid.GetTile(tile).Position;
-            if (building.GetType() != typeof(ShockField))
-            {
-                mHeatMap.Block(tile.ToPoint());
-            }
+            if (!(building is ShockField))
+                mHeatMap.ObstacleMatrix[tile.ToPoint()] = true;
             mInactive.Add(building);
             mSpawnAction(building);
         }

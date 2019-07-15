@@ -108,21 +108,19 @@ namespace KernelPanic.Table
         private void Initialize(IReadOnlyCollection<Entity> entities = null)
         {
             Grid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
-            mHeatMap = new HeatMap(Grid.LaneRectangle.Width, Grid.LaneRectangle.Height);
             EntityGraph = new EntityGraph(LaneBorders);
             UnitSpawner = new UnitSpawner(Grid, EntityGraph.Add);
+            
+            var obstacleMatrix = new ObstacleMatrix(Grid, 1, false);
+            mHeatMap = new HeatMap(obstacleMatrix);
             BuildingSpawner = new BuildingSpawner(Grid, mHeatMap, EntityGraph.Add, 
                 entities?.OfType<Building>().Where(building => building.State == BuildingState.Inactive));
 
-            var obstacleMatrix = new ObstacleMatrix(Grid, 1, false);
             if (entities?.Count > 0)
             {
                 EntityGraph.Add(entities);
                 obstacleMatrix.Raster(entities, entity => entity is Building && entity.GetType() != typeof(ShockField));
             }
-
-            foreach (var tileIndex in obstacleMatrix.Obstacles)
-                mHeatMap.Block(tileIndex.ToPoint());
 
             UpdateHeatMap();
         }
@@ -140,7 +138,7 @@ namespace KernelPanic.Table
             {
                 Vector2 position = building.Sprite.Position;
                 TileIndex tileIndex = Grid.TileFromWorldPoint(position).GetValueOrDefault();
-                mHeatMap.Unblock(tileIndex.ToPoint());
+                mHeatMap.ObstacleMatrix[tileIndex.ToPoint()] = false;
             }
             UpdateHeatMap();
 
@@ -172,7 +170,7 @@ namespace KernelPanic.Table
             if (mVectorField == null)
                 mVectorField = new VectorField(mHeatMap);
             else
-                mVectorField.Update(mHeatMap);
+                mVectorField.Update();
         }
 
         private void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
@@ -194,7 +192,7 @@ namespace KernelPanic.Table
             if (!DebugSettings.VisualizeHeatMap && !DebugSettings.VisualizeVectors)
                 return;
 
-            var tileVisualizer = TileVisualizer.Border(Grid, mSpriteManager);
+            var tileVisualizer = TileVisualizer.Border(1, Grid, mSpriteManager);
             tileVisualizer.Append(Target.HitBox, Color.Blue);
             tileVisualizer.Draw(spriteBatch, gameTime);
         }

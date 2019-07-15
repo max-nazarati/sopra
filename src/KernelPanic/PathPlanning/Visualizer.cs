@@ -13,16 +13,18 @@ namespace KernelPanic.PathPlanning
         private readonly ImageSprite mImage;
         protected Grid Grid { get; }
         protected List<ISpriteSettings> Nodes { get; } = new List<ISpriteSettings>();
+        protected int SubTileCount { get; }
 
         protected interface ISpriteSettings
         {
             void Apply(ImageSprite sprite);
         }
 
-        protected Visualizer(Grid grid, ImageSprite image)
+        protected Visualizer(int subTileCount, Grid grid, ImageSprite image)
         {
             Grid = grid;
             mImage = image;
+            SubTileCount = subTileCount;
         }
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -55,16 +57,16 @@ namespace KernelPanic.PathPlanning
             }
         }
 
-        private TileVisualizer(Grid grid, ImageSprite tile) : base(grid, tile)
+        private TileVisualizer(int subTileCount, Grid grid, ImageSprite tile) : base(subTileCount, grid, tile)
         {
             tile.SetOrigin(RelativePosition.Center);
         }
 
-        internal static TileVisualizer Border(Grid grid, SpriteManager spriteManager) =>
-            new TileVisualizer(grid, Grid.CreateTileBorder(spriteManager));
+        internal static TileVisualizer Border(int subTileCount, Grid grid, SpriteManager spriteManager) =>
+            new TileVisualizer(subTileCount, grid, Grid.CreateTileBorder(spriteManager));
 
-        internal static TileVisualizer FullTile(Grid grid, SpriteManager spriteManager) =>
-            new TileVisualizer(grid, Grid.CreateTile(spriteManager));
+        internal static TileVisualizer FullTile(int subTileCount, Grid grid, SpriteManager spriteManager) =>
+            new TileVisualizer(subTileCount, grid, Grid.CreateTile(spriteManager));
 
         internal void Append(ObstacleMatrix obstacleMatrix)
         {
@@ -74,7 +76,7 @@ namespace KernelPanic.PathPlanning
         internal void Append(IEnumerable<Point> points, Color color)
         {
             if (points != null)
-                Append(points.Select(point => new TileIndex(point, 1)), color);
+                Append(points.Select(point => new TileIndex(point, SubTileCount)), color);
         }
 
         private void Append(IEnumerable<TileIndex> points, Color color)
@@ -113,8 +115,8 @@ namespace KernelPanic.PathPlanning
             }
         }
 
-        internal ArrowVisualizer(Grid grid, SpriteManager spriteManager)
-            : base(grid, spriteManager.CreateVectorArrow())
+        internal ArrowVisualizer(int subTileCount, Grid grid, SpriteManager spriteManager)
+            : base(subTileCount, grid, spriteManager.CreateVectorArrow())
         {
         }
 
@@ -129,7 +131,7 @@ namespace KernelPanic.PathPlanning
                     if (rel == RelativePosition.Center)
                         continue;
                     var vec = rect.At(rel);
-                    var position = Grid.GetTile(new TileIndex(row, col, 1)).Position;
+                    var position = Grid.GetTile(new TileIndex(row, col, SubTileCount)).Position;
                     Nodes.Add(Node.New(position, vec));
                 }
             }

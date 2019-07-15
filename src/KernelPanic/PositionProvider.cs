@@ -28,7 +28,7 @@ namespace KernelPanic
             mEntities = entities;
             mSpriteManager = spriteManager;
             mVectorField = vectorField;
-            mVectorFieldThunderbird = VectorField.GetVectorFieldThunderbird(vectorField, grid.LaneSide);
+            mVectorFieldThunderbird = VectorField.GetVectorFieldThunderbird(vectorField.Size, grid.LaneSide);
             Target = target;
             Owner = owner;
         }

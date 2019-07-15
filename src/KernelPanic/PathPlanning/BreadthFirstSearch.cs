@@ -6,22 +6,22 @@ namespace KernelPanic.PathPlanning
 {
     internal sealed class BreadthFirstSearch : PathPlanner
     {
-        private HeatMap HeatMap { get; }
+        private readonly ObstacleMatrix mObstacleMatrix;
 
-        private BreadthFirstSearch(HeatMap map)
+        private BreadthFirstSearch(ObstacleMatrix obstacleMatrix)
         {
-            HeatMap = map;
+            mObstacleMatrix = obstacleMatrix;
         }
 
         internal static void UpdateHeatMap(HeatMap map, IEnumerable<Point> goalPoints)
         {
-            foreach (var node in new BreadthFirstSearch(map).Run(goalPoints))
+            foreach (var node in new BreadthFirstSearch(map.ObstacleMatrix).Run(goalPoints))
             {
                 map.SetCost(node.Position, (float) node.Cost);
             }
         }
 
-        protected override bool IsWalkable(Point point) => HeatMap.IsWalkable(point);
+        protected override bool IsWalkable(Point point) => !mObstacleMatrix[point];
         protected override double EstimateCost(Point point) => 0;
         protected override double CostIncrease => 1;
     }
