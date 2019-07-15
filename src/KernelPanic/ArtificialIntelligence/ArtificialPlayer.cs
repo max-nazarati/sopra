@@ -44,7 +44,7 @@ namespace KernelPanic.ArtificialIntelligence
         private int mAttackMoney;
         private int mDefenceMoney;
         private bool mEnemyBoughtUnit;
-        private bool mBaseTookDamageAI;
+        private bool mBaseTookDamageAi;
         private bool mNeedOffensiveUnits;
 
         // private int[] mOwnTroupeAmount;
@@ -55,7 +55,7 @@ namespace KernelPanic.ArtificialIntelligence
             mDefenceData = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             mAttackData = new [] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             mEnemyBoughtUnit = false;
-            mBaseTookDamageAI = false;
+            mBaseTookDamageAi = false;
             mNeedOffensiveUnits = false;
             mDefenceData[(int)Feature.Bitcoins] = bitcoins;
             var eventCenter = EventCenter.Default;
@@ -81,7 +81,7 @@ namespace KernelPanic.ArtificialIntelligence
                 },
                 e => e.IsActivePlayer(Event.Key.Buyer));
             eventCenter.Subscribe(Event.Id.DamagedBase,
-                e => mBaseTookDamageAI = true,
+                e => mBaseTookDamageAi = true,
                 e => !e.IsActivePlayer(Event.Key.Defender));
             // mOwnTroupeAmount = new int[5]; // amount of different troupes in the game       
             SetData();
@@ -292,14 +292,14 @@ namespace KernelPanic.ArtificialIntelligence
             
             if (mNeedOffensiveUnits) mAttackPlanner.Update(mAttackData, gameTime);
             if (mEnemyBoughtUnit) mDefencePlanner.Update(mDefenceData, gameTime);
-            if (mBaseTookDamageAI)
+            if (mBaseTookDamageAi)
             {
                 mDefencePlanner.Update(mDefenceData, gameTime);
                 mDefencePlanner.BuyRandomTower(gameTime);
             }
             mUpgradePlanner.Update();
             mEnemyBoughtUnit = false;
-            mBaseTookDamageAI = false;
+            mBaseTookDamageAi = false;
             mNeedOffensiveUnits = false;
 
             MakeRandomChoice(gameTime);
