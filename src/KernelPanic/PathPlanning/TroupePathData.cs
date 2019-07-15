@@ -68,9 +68,9 @@ namespace KernelPanic.PathPlanning
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(grid.LaneRectangle.Size, grid.LaneSide);
         }
 
-        internal Vector2 RelativeMovement(Troupe troupe)
+        internal Vector2 RelativeMovement(Troupe troupe, Vector2? position = null)
         {
-            var maybeTile = mGrid.TileFromWorldPoint(troupe.Sprite.Position, troupe.IsSmall ? 2 : 1);
+            var maybeTile = mGrid.TileFromWorldPoint(position ?? troupe.Sprite.Position, troupe.IsSmall ? 2 : 1);
             if (!(maybeTile is TileIndex tile))
                 return Vector2.Zero;
 

@@ -66,7 +66,10 @@ namespace KernelPanic.Entities.Units
 
         #region Movement
 
-        protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        protected override void CalculateMovement(Vector2? projectionStart,
+            PositionProvider positionProvider,
+            GameTime gameTime,
+            InputManager inputManager)
         {
             UpdateTarget(positionProvider, gameTime, inputManager);
 

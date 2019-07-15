@@ -22,10 +22,16 @@ namespace KernelPanic.Entities.Units
             mInfoText.Text += $"\nStärke: {AttackStrength}";
         }
 
-        protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        protected override void CalculateMovement(Vector2? projectionStart,
+            PositionProvider positionProvider,
+            GameTime gameTime,
+            InputManager inputManager)
         {
-            if (MoveTarget == null)
-                MoveTarget = Sprite.Position + positionProvider.TroupeData.RelativeMovement(this);
+            if (projectionStart == null && MoveTarget != null)
+                return;
+
+            var relativeMovement = positionProvider.TroupeData.RelativeMovement(this, projectionStart);
+            MoveTarget = (projectionStart ?? Sprite.Position) + relativeMovement;
         }
 
         internal new Troupe Clone() => Clone<Troupe>();

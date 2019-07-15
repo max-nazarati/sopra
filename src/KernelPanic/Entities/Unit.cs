@@ -89,6 +89,13 @@ namespace KernelPanic.Entities
 
         internal Unit Clone() => Clone<Unit>();
 
+        protected override void CompleteClone()
+        {
+            base.CompleteClone();
+            mHealthBar = (ImageSprite)mHealthBar.Clone();
+            mDamageBar = (ImageSprite)mDamageBar.Clone();
+        }
+
         public override int? DrawLevel => 1;    // Units are between buildings and projectiles.
 
         #region Taking damage
@@ -124,7 +131,10 @@ namespace KernelPanic.Entities
 
         #endregion
 
+        #region Movement
+
         private bool mSlowedDown;
+        private Vector2 mLastPosition;
 
         /// <summary>
         /// Slows this unit for the next frame.
@@ -134,42 +144,103 @@ namespace KernelPanic.Entities
             mSlowedDown = true;
         }
 
-        protected abstract void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager);
+        /// <summary>
+        /// Calculates the relative movement this unit should complete next. Overrides of this method can look at
+        /// <see cref="MoveTarget"/> which is set to <c>null</c> when the last requested movement is completed.
+        /// <para>
+        /// If the parameter <paramref name="projectionStart"/> is not <c>null</c> this calculation should be based on
+        /// its value.
+        /// </para>
+        /// </summary>
+        /// <param name="projectionStart">An alternative to the units current position.</param>
+        /// <param name="positionProvider">The current <see cref="PositionProvider"/>.</param>
+        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
+        /// <param name="inputManager">The <see cref="InputManager"/> associated with this update cycle.</param>
+        protected abstract void CalculateMovement(Vector2? projectionStart,
+            PositionProvider positionProvider,
+            GameTime gameTime,
+            InputManager inputManager);
 
-        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        private Vector2? PerformMove(Vector2 target,
+            PositionProvider positionProvider,
+            GameTime gameTime,
+            InputManager inputManager)
         {
-            var length = 50;
-            var height = 3;
-            mHealthBar.DestinationRectangle = new Rectangle((int)(Sprite.Position.X - length/2.0), (int)(Sprite.Y - Sprite.Height/1.5),
-                (int)(length * (RemainingLife*1.0f/MaximumLife)), height);
+            var targetMove = target - Sprite.Position;
+            var targetDistance = targetMove.Length();
 
-            mDamageBar.DestinationRectangle = new Rectangle((int)(Sprite.Position.X + length / 2.0), (int)(Sprite.Y - Sprite.Height / 1.5),
-               length, height);
-
-            base.Update(positionProvider, inputManager, gameTime);
-
-            CalculateMovement(positionProvider, gameTime, inputManager);
+            if (targetDistance < 0.01)
+            {
+                MoveTargetReached?.Invoke(target);
+                MoveTarget = null;
+                return null;
+            }
 
             var actualSpeed = mSlowedDown ? Speed / 2 : Speed;
             mSlowedDown = false;
 
-            var move = (Vector2?)null;
-            if (ShouldMove && MoveTarget is Vector2 target)
+            var theMove = Vector2.Zero;
+
+            while (true)
             {
-                var remainingDistance = Vector2.Distance(Sprite.Position, target);
-                if (remainingDistance < 0.1)
-                {
-                    MoveTargetReached?.Invoke(target);
-                    MoveTarget = null;
-                }
-                else
-                {
-                    var theMove = Vector2.Normalize(target - Sprite.Position) * Math.Min(actualSpeed, remainingDistance);
-                    Sprite.Position += theMove;
-                    CheckBaseReached(positionProvider);
-                    move = theMove;
-                }
+                var normalizedMove = targetMove / targetDistance;
+
+                if (targetDistance > actualSpeed)
+                    return theMove + normalizedMove * actualSpeed;
+
+                theMove += targetMove;
+
+                CalculateMovement(target, positionProvider, gameTime, inputManager);
+                if (!(MoveTarget is Vector2 projectedTarget))
+                    return theMove;
+
+                targetMove = projectedTarget - target;
+                targetDistance = targetMove.Length();
+                target = projectedTarget;
             }
+        }
+
+        private void CheckBaseReached(PositionProvider positionProvider)
+        {
+            if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
+                return;
+
+            EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
+            positionProvider.DamageBase(AttackStrength);
+            WantsRemoval = true;
+        }
+
+        internal void ResetMovement()
+        {
+            Sprite.Position = mLastPosition;
+        }
+
+        #endregion
+
+        internal override void UpdateInformation()
+        {
+            base.UpdateInformation();
+            mInfoText.Text += $"\nLeben: {RemainingLife}";
+        }
+
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        {
+            base.Update(positionProvider, inputManager, gameTime);
+
+
+            CalculateMovement(null, positionProvider, gameTime, inputManager);
+            mLastPosition = Sprite.Position;
+            var move = ShouldMove && MoveTarget is Vector2 target
+                ? PerformMove(target, positionProvider, gameTime, inputManager)
+                : null;
+
+            if (move is Vector2 theMove)
+            {
+                Sprite.Position += theMove;
+                CheckBaseReached(positionProvider);
+            }
+            
+            UpdateHealthBar();
 
             if (!(Sprite is AnimatedSprite animated))
                 return;
@@ -185,20 +256,19 @@ namespace KernelPanic.Entities
                 animated.MovementDirection = AnimatedSprite.Direction.Standing;
         }
 
-        internal override void UpdateInformation()
+        private void UpdateHealthBar()
         {
-            base.UpdateInformation();
-            mInfoText.Text += $"\nLeben: {RemainingLife}";
-        }
+            const int length = 50;
+            const int height = 3;
+            mHealthBar.DestinationRectangle = new Rectangle((int) (Sprite.Position.X - length / 2.0),
+                (int) (Sprite.Y - Sprite.Height / 1.5),
+                (int) (length * (RemainingLife * 1.0f / MaximumLife)),
+                height);
 
-        private void CheckBaseReached(PositionProvider positionProvider)
-        {
-            if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
-                return;
-
-            EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
-            positionProvider.DamageBase(AttackStrength);
-            WantsRemoval = true;
+            mDamageBar.DestinationRectangle = new Rectangle((int) (Sprite.Position.X + length / 2.0),
+                (int) (Sprite.Y - Sprite.Height / 1.5),
+                length,
+                height);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -206,13 +276,6 @@ namespace KernelPanic.Entities
             base.Draw(spriteBatch, gameTime);
             mDamageBar.Draw(spriteBatch, gameTime);
             mHealthBar.Draw(spriteBatch, gameTime);
-        }
-
-        protected override void CompleteClone()
-        {
-            base.CompleteClone();
-            mHealthBar = (ImageSprite)mHealthBar.Clone();
-            mDamageBar = (ImageSprite)mDamageBar.Clone();
         }
     }
 }
