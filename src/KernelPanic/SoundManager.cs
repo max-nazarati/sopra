@@ -17,7 +17,8 @@ namespace KernelPanic
             DiscShoot,
             CursorShoot,
             ElectroShock,
-            MoneyEarned
+            MoneyEarned,
+            ButtonClick
         }
 
         public enum Music
@@ -41,7 +42,8 @@ namespace KernelPanic
                 SoundEffect(Sound.DiscShoot, "DiscShoot"),
                 SoundEffect(Sound.CursorShoot, "CursorShoot"),
                 SoundEffect(Sound.ElectroShock, "ElectroShock"),
-                SoundEffect(Sound.MoneyEarned, "MoneyEarned")
+                SoundEffect(Sound.MoneyEarned, "MoneyEarned"),
+                SoundEffect(Sound.ButtonClick, "ButtonClick")
             };
             Array.Sort(mSounds);
 
@@ -56,6 +58,7 @@ namespace KernelPanic
             eventCenter.Subscribe(Event.Id.BuildingPlaced, PlaySound);
             eventCenter.Subscribe(Event.Id.BuildingSold, PlaySound);
             eventCenter.Subscribe(Event.Id.ProjectileShot, PlaySound);
+            eventCenter.Subscribe(Event.Id.ButtonClicked, PlaySound);
             eventCenter.Subscribe(Event.Id.PlayMusic, PlayMusic);
         }
         
@@ -112,22 +115,24 @@ namespace KernelPanic
                     switch (e.Get<Tower>(Event.Key.Tower))
                     {
                         case CdThrower _:
-                            Lookup(Sound.DiscShoot).Play(0.5f,1,0);
+                            Lookup(Sound.DiscShoot).Play(0.3f,0,0);
                             break;
                         case ShockField _:
-                            Lookup(Sound.ElectroShock).Play(0.4f,0,0);
+                            Lookup(Sound.ElectroShock).Play(0.2f,0,0);
                             break;
                         case CursorShooter _:
-                            Lookup(Sound.CursorShoot).Play(0.4f,0,0);
+                            Lookup(Sound.CursorShoot).Play(0.03f,0.3f,0);
                             break;
                         case Antivirus _:
-                            Lookup(Sound.CursorShoot).Play(0.4f,0,0);
+                            Lookup(Sound.CursorShoot).Play(0.3f,0,0);
                             break;
                         case WifiRouter _:
-                            Lookup(Sound.CursorShoot).Play(0.4f,0,0);
+                            Lookup(Sound.CursorShoot).Play(0.3f,0,0);
                             break;
                     }
-
+                    break;
+                case Event.Id.ButtonClicked:
+                    Lookup(Sound.ButtonClick).Play(0.5f,1,0);
                     break;
             }
         }

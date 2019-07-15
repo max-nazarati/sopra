@@ -113,7 +113,6 @@ namespace KernelPanic
                 {
                     if (selectedButton is Button oldSelection)
                         oldSelection.Enabled = true;
-
                     btn.Enabled = false;
                     newGameButton.Enabled = true;
 

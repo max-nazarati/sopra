@@ -34,6 +34,8 @@ namespace KernelPanic.Events
             KilledUnit,
             ProjectileShot,
             PlayMusic,
+            ButtonClicked,
+            
 
             DamagedBase,
             GameWon,
@@ -246,6 +248,14 @@ namespace KernelPanic.Events
                 {
                     [Key.Buyer] = player,
                     [Key.Price] = player.Bitcoins
+                }
+            };
+        
+        internal static Event ButtonClicked() =>
+            new Event(Id.GameWon)
+            {
+                mPayload =
+                {
                 }
             };
 
