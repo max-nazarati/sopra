@@ -42,14 +42,10 @@ namespace KernelPanic.ArtificialIntelligence
         public void Update(int[] defenceData, GameTime gameTime)
         {
             base.Update();
-            int numberOfChoices = 3;
-            for (int i = 0; i < numberOfChoices; i++)
-            {
-                var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => (double)x));
-                var choice = mDefenseDecisionMaker.Revert(choiceEncoded);
-                // Console.WriteLine(String.Join(",", defenceData.Select(p => p.ToString()).ToArray()));
-                BuySingleTower(choice);
-            }
+            var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => (double)x));
+            var choice = mDefenseDecisionMaker.Revert(choiceEncoded);
+            // Console.WriteLine(String.Join(",", defenceData.Select(p => p.ToString()).ToArray()));
+            BuySingleTower(choice);
         }
 
         private void BuySingleTower(string choice)
