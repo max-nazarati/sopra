@@ -144,8 +144,8 @@ namespace KernelPanic.ArtificialIntelligence
         } */
 
         public string Revert(int prediction) => mCodebook.Revert("Aktion", prediction);
-        public Codification Codebook { get => mCodebook; set => mCodebook = value; }
-        public DecisionTree Model { get => mModel; set => mModel = value; }
-        public DecisionSet Rules { get => mModel.ToRules();}
+        // public Codification Codebook { get => mCodebook; set => mCodebook = value; }
+        public DecisionTree Model { get => mModel; } //set => mModel = value; }
+        // public DecisionSet Rules { get => mModel.ToRules();}
     }
 }
