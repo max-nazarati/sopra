@@ -15,6 +15,8 @@ namespace KernelPanic
         [JsonProperty("cooldown")]
         private readonly PlayerIndexed<CooldownComponent> mCooldown;
 
+        private readonly IDisposable mSubscription;
+
         internal BitcoinManager(PlayerIndexed<Player> players) : this(players, InitialCooldown())
         {
         }
@@ -37,11 +39,14 @@ namespace KernelPanic
             Subscribe(players.A);
             Subscribe(players.B);
 
-            EventCenter.Default.Subscribe(Event.Id.SetupEnded, @event =>
-            {
-                mCooldown.A.Reset();
-                mCooldown.B.Reset();
-            });
+            mSubscription = EventCenter.Default.Subscribe(Event.Id.SetupEnded, @event => Reset(), null);
+        }
+
+        private void Reset()
+        {
+            mCooldown.A.Reset();
+            mCooldown.B.Reset();
+            mSubscription.Dispose();
         }
 
         private void Subscribe(Player player)
