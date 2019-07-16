@@ -131,11 +131,6 @@ namespace KernelPanic.Entities
         }
 
         #endregion
-
-        public void HitByEmp()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

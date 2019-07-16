@@ -51,6 +51,7 @@ namespace KernelPanic
             if (Grid.TileFromWorldPoint(position) is TileIndex tile)
                 return tile;
 
+            // pls dont change the exception name, hero.SlowPush depends on it
             throw new InvalidOperationException(
                 $"Required a tile for {position} but it is not inside the lane {Grid.Bounds}");
         }

@@ -318,13 +318,66 @@ namespace KernelPanic.Entities.Units
         }
 
         /// <summary>
-        /// try not to die while sieging.
+        /// try not to die while attacking.
         /// sets mTarget and ShouldMove
         /// </summary>
         protected virtual void SlowPush(InputManager inputManager, PositionProvider positionProvider)
         {
+            #region get all translation for the 8 adjacent tiles
+            var startPoint = positionProvider.RequireTile(Sprite.Position).ToPoint();
+            var neighboursPosition = new List<(int, int)>(8)
+            {
+                (-1, -1),  (0, -1), (1, -1),
+                (-1,  0),           (1,  0), // (0, 0) is the point itself
+                (-1,  1),  (0, 1),  (1,  1)
+            };
+            #endregion
+
+            #region add the points of the adjacent neighbours into a list (if they are on the lane)
+            var neighbours = new List<Point>();
+            foreach (var (x, y) in neighboursPosition)
+            {
+                try
+                {
+                    neighbours.Add(
+                        positionProvider.RequireTile(
+                            new Vector2(Sprite.Position.X + x * Grid.KachelSize,
+                                        Sprite.Position.Y + y * Grid.KachelSize)
+                            ).ToPoint());
+                }
+                catch (InvalidOperationException e)
+                {
+                    // just dont add the point
+                }
+            }
+            #endregion
+
+            #region calculate a heuristic for all neighbours and choose the best
+            var bestPoint = startPoint;
+            var bestValue = 0;
+            foreach (var point in neighbours)
+            {
+                var currentValue = PointHeuristic(point, positionProvider);
+                if (currentValue > bestValue)
+                {
+                    bestPoint = point;
+                    bestValue = currentValue;
+                }
+            }
+            #endregion
+
+            #region set the optimum as walking target
+            mAStar = positionProvider.MakePathFinding(this, startPoint, bestPoint);
+            mTarget = bestPoint * new Point(Grid.KachelSize);
+            ShouldMove = true;
+            #endregion
         }
-        
+
+        protected virtual int PointHeuristic(Point point, PositionProvider positionProvider)
+        {
+            return 0;
+        }
+
         #endregion
         
         #region Update
@@ -335,8 +388,13 @@ namespace KernelPanic.Entities.Units
             {
                 if (inputManager.KeyPressed(Keys.Space))
                 {
-                    StrategyStatus = StrategyStatus == Strategy.Attack ? Strategy.Human : Strategy.Attack;
-                }    
+                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Attack : Strategy.Human;
+                }
+
+                if (inputManager.KeyPressed(Keys.P))
+                {
+                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Econ : Strategy.Human;
+                }
             }
             // also updates the cooldown
             UpdateAbility(positionProvider, gameTime, inputManager);

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -146,6 +148,22 @@ namespace KernelPanic.Entities.Units
             // we are scaling bc we dont know the spriteManager in this context
             // seems to be doing fine, just had to figure out that we need a factor 2 bc of radius vs diameter
             mIndicator.ScaleToWidth(AbilityRange * mAbilityRangeAmplifier * 2);
+        }
+
+        protected override int PointHeuristic(Point point, PositionProvider positionProvider)
+        {
+            point *= new Point(Grid.KachelSize);
+            var result = 0;
+            foreach (var building in positionProvider.NearEntities<Building>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier / 2))
+            {
+                result -= 1;
+            }
+            foreach (var unit in positionProvider.NearEntities<Unit>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier / 2))
+            {
+                result += 1;
+            }
+             
+            return result;
         }
 
         protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)
