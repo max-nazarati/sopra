@@ -369,6 +369,12 @@
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/CursorShoot.mp3;sounds/CursorShoot.mp3
 
+#begin ../../KernelPanic/Content/sounds/SwooshFirefox.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/SwooshFirefox.mp3;sounds/SwooshFirefox.mp3
+
 #begin ../../KernelPanic/Content/sounds/ButtonClick.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor

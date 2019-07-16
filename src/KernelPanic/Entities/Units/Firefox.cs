@@ -4,6 +4,7 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
@@ -75,7 +76,7 @@ namespace KernelPanic.Entities.Units
             var direction = mouse - Sprite.Position;
             direction.Normalize();
             var jumpSegment = direction * JumpSegmentLength;
-
+            EventCenter.Default.Send(Event.HeroAbility(this));
             for (var _ = 0; _ < JumpDuration; _++)
             {
                 mAbility.Push(jumpSegment);

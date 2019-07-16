@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Units;
 using KernelPanic.Events;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -18,7 +19,8 @@ namespace KernelPanic
             CursorShoot,
             ElectroShock,
             MoneyEarned,
-            ButtonClick
+            ButtonClick,
+            SwooshFirefox
         }
 
         public enum Music
@@ -43,7 +45,8 @@ namespace KernelPanic
                 SoundEffect(Sound.CursorShoot, "sounds/CursorShoot"),
                 SoundEffect(Sound.ElectroShock, "sounds/ElectroShock"),
                 SoundEffect(Sound.MoneyEarned, "sounds/MoneyEarned"),
-                SoundEffect(Sound.ButtonClick, "sounds/ButtonClick")
+                SoundEffect(Sound.ButtonClick, "sounds/ButtonClick"),
+                SoundEffect(Sound.SwooshFirefox, "sounds/SwooshFirefox")
             };
             Array.Sort(mSounds);
 
@@ -59,7 +62,9 @@ namespace KernelPanic
             eventCenter.Subscribe(Event.Id.BuildingSold, PlaySound);
             eventCenter.Subscribe(Event.Id.ProjectileShot, PlaySound);
             eventCenter.Subscribe(Event.Id.ButtonClicked, PlaySound);
+            eventCenter.Subscribe(Event.Id.FirefoxJump, PlaySound);
             eventCenter.Subscribe(Event.Id.PlayMusic, PlayMusic);
+            eventCenter.Subscribe(Event.Id.HeroAbility, PlaySound);
         }
         
         private SoundEffect Lookup(Sound sound)
@@ -133,6 +138,15 @@ namespace KernelPanic
                     break;
                 case Event.Id.ButtonClicked:
                     Lookup(Sound.ButtonClick).Play(0.5f,1,0);
+                    break;
+                case Event.Id.HeroAbility:
+                    switch (e.Get<Hero>(Event.Key.Hero))
+                    {
+                        case Firefox _:
+                            Lookup(Sound.SwooshFirefox).Play(0.3f, 0, 0);
+                            break;
+                    }
+
                     break;
             }
         }

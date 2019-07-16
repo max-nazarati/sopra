@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
+using KernelPanic.Entities.Units;
 using KernelPanic.Players;
 using KernelPanic.Table;
 using KernelPanic.Tracking;
@@ -45,7 +46,8 @@ namespace KernelPanic.Events
 
             SetupEnded,
 
-            FirefoxJump            // TODO: Not sent yet.
+            FirefoxJump,            // TODO: Not sent yet.
+            HeroAbility
         }
 
         [JsonConverter(typeof(StringEnumConverter))]
@@ -167,6 +169,14 @@ namespace KernelPanic.Events
             /// </list>
             /// </summary>
             Price,
+            
+            /// <summary>
+            /// Of type <see cref="Hero"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.HeroAbility"/></description></item>
+            /// </list>
+            /// </summary>
+            Hero,
 
             /// <summary>
             /// Of type <see cref="int"/>, applies to
@@ -256,6 +266,15 @@ namespace KernelPanic.Events
             {
                 mPayload =
                 {
+                }
+            };
+        
+        internal static Event HeroAbility(Hero hero) =>
+            new Event(Id.HeroAbility)
+            {
+                mPayload =
+                {
+                    [Key.Hero] = hero
                 }
             };
 

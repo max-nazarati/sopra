@@ -363,6 +363,12 @@
 /processorParam:Quality=Best
 /build:sounds/CreditsSoundtrack.mp3
 
+#begin sounds/SwooshFirefox.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/SwooshFirefox.mp3
+
 #begin sounds/CursorShoot.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
