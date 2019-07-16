@@ -27,12 +27,16 @@ namespace KernelPanic.Table
         internal void Register(Building building, TileIndex tile)
         {
             building.Sprite.Position = mGrid.GetTile(tile).Position;
-            if (!(building is ShockField))
+
+            if (building is ShockField)
             {
-                building.State = BuildingState.Inactive;
-                mBuildingPoints.Add(tile.ToPoint());
+                building.State = BuildingState.Active;
+                mSpawnAction(building);
+                return;
             }
 
+            building.State = BuildingState.Inactive;
+            mBuildingPoints.Add(tile.ToPoint());
             mInactive.Add(building);
             mSpawnAction(building);
         }
