@@ -5,7 +5,7 @@ namespace KernelPanic.Sprites
 {
     internal sealed class ImageSprite : Sprite
     {
-        private Texture2D Texture { get; }
+        internal Texture2D Texture { get; }
         public Rectangle? SourceRectangle { /*internal*/ private get; set; }
 
         /// <summary>
