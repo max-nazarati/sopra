@@ -582,6 +582,11 @@ namespace KernelPanic
             return new ImageSprite(texture);
         }
 
+        internal ImageSprite CreateEmptyTexture(int width, int height)
+        {
+            return new ImageSprite(new Texture2D(GraphicsDevice, width, height));
+        }
+
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;
 
         /// <summary>

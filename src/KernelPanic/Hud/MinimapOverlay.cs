@@ -14,7 +14,7 @@ namespace KernelPanic.Hud
     {
         #region Member Variables
         
-        private Sprite mSprite;
+        private ImageSprite mSprite;
         private readonly PlayerIndexed<Player> mPlayers;
         private readonly SpriteManager mSpriteManager;
         private readonly float mRelativeSize; // how much of the screen should be the minimap [0, 1]
@@ -56,6 +56,7 @@ namespace KernelPanic.Hud
             mPlayers = players;
             mSpriteManager = spriteManager;
             mCamera = camera;
+            mSprite = spriteManager.CreateEmptyTexture(mSize, mSize);
 
             // filling the minimap with background color
             mData = new Color[mSize * mSize];
@@ -297,8 +298,7 @@ namespace KernelPanic.Hud
 
         private void UpdateTexture()
         {
-            mSprite = mSpriteManager.CreateColoredRectangle(mSize, mSize, mData);
-            mSprite.Position = mPosition;
+            mSprite.Texture.SetData(mData);
         }
         
         
