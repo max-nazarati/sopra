@@ -1,4 +1,4 @@
-
+﻿
 #----------------------------- Global Properties ----------------------------#
 
 /outputDir:bin/$(Platform)
@@ -315,12 +315,6 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/pause.png;pause.png
 
-#begin ../../KernelPanic/Content/sounds/TowerPlacement.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/TowerPlacement.mp3;sounds/TowerPlacement.mp3
-
 #begin ../../KernelPanic/Content/Saeule.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -345,48 +339,6 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/score_background.png;score_background.png
 
-#begin ../../KernelPanic/Content/sounds/MoneyEarned.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/MoneyEarned.mp3;sounds/MoneyEarned.mp3
-
-#begin ../../KernelPanic/Content/sounds/shoot.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/shoot.mp3;sounds/shoot.mp3
-
-#begin ../../KernelPanic/Content/sounds/DiscShoot.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/DiscShoot.mp3;sounds/DiscShoot.mp3
-
-#begin ../../KernelPanic/Content/sounds/CursorShoot.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/CursorShoot.mp3;sounds/CursorShoot.mp3
-
-#begin ../../KernelPanic/Content/sounds/SwooshFirefox.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/SwooshFirefox.mp3;sounds/SwooshFirefox.mp3
-
-#begin ../../KernelPanic/Content/sounds/ButtonClick.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/ButtonClick.mp3;sounds/ButtonClick.mp3
-
-#begin ../../KernelPanic/Content/sounds/ElectroShock.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/ElectroShock.mp3;sounds/ElectroShock.mp3
-
 #begin ../../KernelPanic/Content/skill_tile.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -399,12 +351,41 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/skill_tile.png;skill_tile.png
 
-#begin ../../KernelPanic/Content/StartMenuTitle.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:../../KernelPanic/Content/StartMenuTitle.spritefont;StartMenuTitle.spritefont
+#begin ../../KernelPanic/Content/sounds/ButtonClick.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/ButtonClick.mp3;sounds/ButtonClick.mp3
+
+#begin ../../KernelPanic/Content/sounds/CursorShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/CursorShoot.mp3;sounds/CursorShoot.mp3
+
+#begin ../../KernelPanic/Content/sounds/DiscShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/DiscShoot.mp3;sounds/DiscShoot.mp3
+
+#begin ../../KernelPanic/Content/sounds/ElectroShock.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/ElectroShock.mp3;sounds/ElectroShock.mp3
+
+#begin ../../KernelPanic/Content/sounds/MoneyEarned.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/MoneyEarned.mp3;sounds/MoneyEarned.mp3
+
+#begin ../../KernelPanic/Content/sounds/shoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/shoot.mp3;sounds/shoot.mp3
 
 #begin ../../KernelPanic/Content/sounds/Soundtrack1.mp3
 /importer:Mp3Importer
@@ -417,6 +398,157 @@
 /processor:SongProcessor
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/Soundtrack2.mp3;sounds/Soundtrack2.mp3
+
+#begin ../../KernelPanic/Content/sounds/SwooshFirefox.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/SwooshFirefox.mp3;sounds/SwooshFirefox.mp3
+
+#begin ../../KernelPanic/Content/sounds/TowerPlacement.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/TowerPlacement.mp3;sounds/TowerPlacement.mp3
+
+#begin ../../KernelPanic/Content/StartMenuTitle.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:../../KernelPanic/Content/StartMenuTitle.spritefont;StartMenuTitle.spritefont
+
+#begin ../../KernelPanic/Content/tiles/background_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/background_1.png;tiles/background_1.png
+
+#begin ../../KernelPanic/Content/tiles/background_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/background_2.png;tiles/background_2.png
+
+#begin ../../KernelPanic/Content/tiles/background_3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/background_3.png;tiles/background_3.png
+
+#begin ../../KernelPanic/Content/tiles/lane_corner_top_right.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/lane_corner_top_right.png;tiles/lane_corner_top_right.png
+
+#begin ../../KernelPanic/Content/tiles/lane_middle_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/lane_middle_1.png;tiles/lane_middle_1.png
+
+#begin ../../KernelPanic/Content/tiles/lane_middle_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/lane_middle_2.png;tiles/lane_middle_2.png
+
+#begin ../../KernelPanic/Content/tiles/lane_middle_3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/lane_middle_3.png;tiles/lane_middle_3.png
+
+#begin ../../KernelPanic/Content/tiles/lane_top_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/lane_top_1.png;tiles/lane_top_1.png
+
+#begin ../../KernelPanic/Content/tiles/lane_top_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/lane_top_2.png;tiles/lane_top_2.png
+
+#begin ../../KernelPanic/Content/tiles/lane_top_3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/lane_top_3.png;tiles/lane_top_3.png
+
+#begin ../../KernelPanic/Content/tiles/lane_top_right.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/tiles/lane_top_right.png;tiles/lane_top_right.png
 
 #begin ../../KernelPanic/Content/tower.png
 /importer:TextureImporter

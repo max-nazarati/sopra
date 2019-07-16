@@ -51,7 +51,18 @@ namespace KernelPanic
             StandingFox,
             VectorArrow,
             Pause,
-            ScoreBackground
+            ScoreBackground,
+            BackgroundTile1,
+            BackgroundTile2,
+            BackgroundTile3,
+            LaneMiddle1,
+            LaneMiddle2,
+            LaneMiddle3,
+            LaneTop1,
+            LaneTop2,
+            LaneTop3,
+            LaneTopRight,
+            LaneTopRightCorner
         }
 
         private enum Font
@@ -107,6 +118,17 @@ namespace KernelPanic
                 Texture(Image.VectorArrow, "vector_arrow"),
                 Texture(Image.Pause, "pause"),
                 Texture(Image.ScoreBackground, "score_background"),
+                Texture(Image.BackgroundTile1, "tiles/background_1"),
+                Texture(Image.BackgroundTile2, "tiles/background_2"),
+                Texture(Image.BackgroundTile3, "tiles/background_3"),
+                Texture(Image.LaneMiddle1, "tiles/lane_middle_1"),
+                Texture(Image.LaneMiddle2, "tiles/lane_middle_2"),
+                Texture(Image.LaneMiddle3, "tiles/lane_middle_3"),
+                Texture(Image.LaneTop1, "tiles/lane_top_1"),
+                Texture(Image.LaneTop2, "tiles/lane_top_2"),
+                Texture(Image.LaneTop3, "tiles/lane_top_3"),
+                Texture(Image.LaneTopRight, "tiles/lane_top_right"),
+                Texture(Image.LaneTopRightCorner, "tiles/lane_corner_top_right"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
