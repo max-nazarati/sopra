@@ -24,6 +24,7 @@ namespace KernelPanic.ArtificialIntelligence
             BuyEntity<Firefox>();
             BuyEntity<Settings>();
             BuyEntity<Bluescreen>();
+            BuyEntity<Bug>();
         }
         
         #endregion
