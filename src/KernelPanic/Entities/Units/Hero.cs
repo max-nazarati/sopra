@@ -346,7 +346,7 @@ namespace KernelPanic.Entities.Units
                                         Sprite.Position.Y + y * Grid.KachelSize)
                             ).ToPoint());
                 }
-                catch (InvalidOperationException e)
+                catch (InvalidOperationException)
                 {
                     // just dont add the point
                 }
