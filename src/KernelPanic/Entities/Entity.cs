@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
-using KernelPanic.Entities.Units;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Players;

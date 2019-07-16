@@ -1,6 +1,4 @@
 using System;
-using System.Globalization;
-using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Players;

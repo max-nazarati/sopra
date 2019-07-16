@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Entities;
-using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
 using KernelPanic.PathPlanning;

@@ -9,7 +9,6 @@ using KernelPanic.Purchasing;
 using KernelPanic.Table;
 using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 
 namespace KernelPanic.ArtificialIntelligence

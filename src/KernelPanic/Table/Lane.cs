@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Entities;
-using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
