@@ -72,6 +72,19 @@ namespace KernelPanic.Entities.Buildings
             Speed *= 2;
             FireTimer.Cooldown -= new TimeSpan(0, 0, 0,0,300);
             Damage *= 2;
+            switch (mLevel)
+            {
+                case TowerLevel.Second:
+                    Sprite.TintColor = Color.Green;
+                    break;
+                case TowerLevel.Third:
+                    Sprite.TintColor = Color.Red;
+                    break;
+                case TowerLevel.First:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
