@@ -1,18 +1,15 @@
-﻿using System;
-using System.Linq;
-using KernelPanic.Data;
+﻿using System.Linq;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
 using KernelPanic.Table;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
     internal static class CollisionManager
     {
-        private static readonly Random sRandom = new Random();
-
         internal static bool HandleMovement(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
         {
             if (!(object1 is Troupe a) || !(object2 is Troupe b))
@@ -21,32 +18,31 @@ namespace KernelPanic
             if (a is Thunderbird ^ b is Thunderbird)
                 return false;
 
-            return ChooseTroupeToReset2(a, b, positionProvider).ResetMovement();
+            var toReset = TroupeToReset(a, b, positionProvider);
+            return toReset != null && toReset.ResetMovement();
         }
 
-        private static Troupe ChooseTroupeToReset2(Troupe a, Troupe b, PositionProvider positionProvider)
+        private static Troupe TroupeToReset(Troupe a, Troupe b, PositionProvider positionProvider)
         {
-            var preferred = DecideByTileHeat(a, b, positionProvider) ?? DecideByMovement(a, b, positionProvider);
-            if (preferred != null)
-                return preferred;
+            if (!(a.MoveTarget is Vector2 aMoveTarget) || !(b.MoveTarget is Vector2 bMoveTarget))
+                return null;
 
-            Console.WriteLine("Using random :/");
-            return sRandom.Next(0, 1) == 0 ? a : b;
-        }
-
-        private static Troupe DecideByTileHeat(Troupe a, Troupe b, PositionProvider positionProvider)
-        {
-            if (!(positionProvider.Grid.TileFromWorldPoint(a.Sprite.Position) is TileIndex tileA))
+            if (!(positionProvider.Grid.TileFromWorldPoint(aMoveTarget) is TileIndex tileA))
                 return null;
         
-            if (!(positionProvider.Grid.TileFromWorldPoint(b.Sprite.Position) is TileIndex tileB))
+            if (!(positionProvider.Grid.TileFromWorldPoint(bMoveTarget) is TileIndex tileB))
                 return null;
 
             var pointA = tileA.Rescaled(1).First().ToPoint();
             var pointB = tileB.Rescaled(1).First().ToPoint();
 
             if (pointA == pointB)
-                return null;
+            {
+                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget);
+                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget);
+                
+                return aDistance < bDistance ? b : a;
+            }
 
             var heatA = positionProvider.TroupeData.TileHeat(pointA);
             var heatB = positionProvider.TroupeData.TileHeat(pointB);
@@ -54,36 +50,20 @@ namespace KernelPanic
             if (heatA == heatB)
                 return null;
 
-            Console.WriteLine("Successful with heat.");
-            return heatA < heatB ? a : b;
-        }
+            if (heatA < heatB)
+            {
+                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget);
+                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget) + Vector2.DistanceSquared(bMoveTarget, aMoveTarget);
 
-        private static Troupe DecideByMovement(Troupe a, Troupe b, PositionProvider positionProvider)
-        {
-            if (!(positionProvider.Grid.TileFromWorldPoint(a.Sprite.Position) is TileIndex tileA))
-                return null;
-        
-            if (!(positionProvider.Grid.TileFromWorldPoint(b.Sprite.Position) is TileIndex tileB))
-                return null;
+                return aDistance < bDistance ? b : a;
+            }
+            else
+            {
+                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget) + Vector2.DistanceSquared(aMoveTarget, bMoveTarget);
+                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget);
 
-            var lastMovementA = a.LastMovement;
-            if (Math.Abs(lastMovementA.LengthSquared()) < 0.001)
-                return a;
-
-            var lastMovementB = b.LastMovement;
-            if (Math.Abs(lastMovementB.LengthSquared()) < 0.001)
-                return b;
-
-            var nextMovementA = positionProvider.TroupeData.RelativeMovement(a);
-            var nextMovementB = positionProvider.TroupeData.RelativeMovement(b);
-
-            var angleA = Geometry.Angle(nextMovementA, lastMovementA);
-            var angleB = Geometry.Angle(nextMovementB, lastMovementB);
-            if (Math.Abs(angleA - angleB) < 0.001)
-                return null;
-
-            Console.WriteLine("Successful with angles.");
-            return angleA < angleB ? a : b;
+                return aDistance < bDistance ? b : a;
+            }
         }
 
         internal static void Handle(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
