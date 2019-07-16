@@ -218,6 +218,19 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
 
+        internal PatternSprite CreateBoardBackground(Rectangle bounds, int tileSize)
+        {
+            int rows = bounds.Height / 100;
+            int columns = bounds.Width / 100;
+            var tile = new ImageSprite(Lookup(Image.BackgroundTile1));
+            tile.ScaleToWidth(tileSize);
+            var sprite = new PatternSprite(tile, rows, columns)
+            {
+                Position = new Vector2(bounds.X, bounds.Y)
+            };
+            return sprite;
+        }
+
         #endregion
 
         #region Buildings

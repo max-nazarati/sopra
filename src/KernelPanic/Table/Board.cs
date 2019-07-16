@@ -34,6 +34,8 @@ namespace KernelPanic.Table
 
         private readonly Sprite mBase;
 
+        private readonly Sprite mBackground;
+
         internal enum GameState
         {
             Playing,
@@ -56,6 +58,14 @@ namespace KernelPanic.Table
         internal Board(SpriteManager spriteManager, bool deserializing = false)
         {
             mBase = CreateBase(spriteManager);
+            var backgroundBounds = Bounds;
+            // add border around lanes to background bounds
+            backgroundBounds.X -= 100;
+            backgroundBounds.Y -= 100;
+            backgroundBounds.Width += 200;
+            backgroundBounds.Height += 200;
+            mBackground = spriteManager.CreateBoardBackground(backgroundBounds, 100);
+
             if (deserializing)
             {
                 // If this is object is deserialized the other properties are set automatically later.
@@ -123,6 +133,7 @@ namespace KernelPanic.Table
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            mBackground.Draw(spriteBatch, gameTime);
             LeftLane.Draw(spriteBatch, gameTime);
             RightLane.Draw(spriteBatch, gameTime);
             mUpgradePool.Draw(spriteBatch, gameTime);
