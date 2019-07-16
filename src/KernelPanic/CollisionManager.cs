@@ -18,6 +18,9 @@ namespace KernelPanic
             if (a is Thunderbird ^ b is Thunderbird)
                 return false;
 
+            if (a.IsSmall && b.IsSmall && a.GetType() != b.GetType())
+                return false;
+
             var toReset = TroupeToReset(a, b, positionProvider);
             return toReset != null && toReset.ResetMovement();
         }
