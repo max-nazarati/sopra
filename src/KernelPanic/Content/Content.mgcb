@@ -424,11 +424,6 @@
 /processorParam:TextureFormat=Compressed
 /build:StartMenuTitle.spritefont
 
-#begin tiles/.DS_Store
-/importer:
-/processor:
-/build:tiles/.DS_Store
-
 #begin tiles/background_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
