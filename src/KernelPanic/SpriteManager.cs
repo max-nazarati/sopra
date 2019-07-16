@@ -220,8 +220,8 @@ namespace KernelPanic
 
         internal PatternSprite CreateBoardBackground(Rectangle bounds, int tileSize)
         {
-            int rows = bounds.Height / 100;
-            int columns = bounds.Width / 100;
+            var rows = bounds.Height / 100;
+            var columns = bounds.Width / 100;
             var tile = new ImageSprite(Lookup(Image.BackgroundTile1));
             tile.ScaleToWidth(tileSize);
             var sprite = new PatternSprite(tile, rows, columns)
@@ -285,7 +285,7 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
+        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay()
         {
             const float scale = 1.8f;
             const float hudWidth = scale * 318;
