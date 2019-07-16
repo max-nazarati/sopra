@@ -105,7 +105,7 @@ namespace KernelPanic.ArtificialIntelligence
         /// <returns>The set of rules</returns>
         public override String ToString()
         {
-            DecisionTree model = this.Model;
+            DecisionTree model = Model;
             DecisionSet rules = mModel.ToRules();
             String result = rules.ToString(mCodebook, "Aktion",
                 System.Globalization.CultureInfo.InvariantCulture);
