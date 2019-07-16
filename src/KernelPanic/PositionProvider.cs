@@ -98,7 +98,7 @@ namespace KernelPanic
 
         #region Path Finding
 
-        internal AStar MakePathFinding(Hero hero, Point target)
+        internal AStar MakePathFinding(Hero hero, Point[] target)
         {
             var start = RequireTile(hero).ToPoint();
             var otherHeroes = mEntities.AllEntities

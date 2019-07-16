@@ -86,13 +86,13 @@ namespace KernelPanic.Entities.Units
             var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
-            mAStar = positionProvider.MakePathFinding(this, target);
+            mAStar = positionProvider.MakePathFinding(this, new[] {target});
             mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
-                mAStar = positionProvider.MakePathFinding(this, target);
+                mAStar = positionProvider.MakePathFinding(this, new[] {target});
                 mPathVisualizer = positionProvider.Visualize(mAStar);
                 path = mAStar.Path;
             }
@@ -313,11 +313,12 @@ namespace KernelPanic.Entities.Units
 
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
         {
-            var basePosition = positionProvider.Target.HitBox[0];
+            var basePosition = positionProvider.Target.HitBox;
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
-            mTarget = new Point(basePosition.X * Grid.KachelSize, basePosition.Y * Grid.KachelSize);
             mAStar = positionProvider.MakePathFinding(this, basePosition);
+            mTarget = positionProvider.Grid.GetTile(new TileIndex(mAStar.Path[mAStar.Path.Count-1], 1)).Position.ToPoint();
+
             ShouldMove = true;
         }
 
@@ -371,7 +372,7 @@ namespace KernelPanic.Entities.Units
             #endregion
 
             #region set the optimum as walking target
-            mAStar = positionProvider.MakePathFinding(this, bestPoint);
+            mAStar = positionProvider.MakePathFinding(this, new[] {bestPoint});
             mTarget = bestPoint * new Point(Grid.KachelSize);
             ShouldMove = true;
             #endregion
