@@ -121,7 +121,7 @@ namespace KernelPanic.Entities.Units
             }
             else foreach (var troupe in mTroupesInRange)
             {
-                troupe.DealDamage(HealValue);
+                troupe.DealDamage(HealValue, positionProvider);
             }
 
             // Ability was successfully cast;

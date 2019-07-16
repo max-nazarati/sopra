@@ -123,11 +123,6 @@ namespace KernelPanic
                 entity.Update(positionProvider, inputManager, gameTime);
             }
 
-            mMidUpdate = false;
-            Add(mMidUpdateBuffer);
-            mMidUpdateBuffer.Clear();
-            mMidUpdate = true;
-            
             // Rebuild the quad-tree after movements and additions are done so that
             // overlaps and collisions can be determined correctly.
             QuadTree.Rebuild(entity => !entity.WantsRemoval);
@@ -148,12 +143,14 @@ namespace KernelPanic
                 CollisionManager.Handle(a, b, positionProvider);
             }
 
+            mMidUpdate = false;
+            Add(mMidUpdateBuffer);
+            mMidUpdateBuffer.Clear();
+
             foreach (var objects in mDrawObjects.Values)
             {
                 objects.RemoveAll(@object => @object.WantsRemoval);
             }
-
-            mMidUpdate = false;
         }
 
         #endregion

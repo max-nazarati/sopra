@@ -76,7 +76,7 @@ namespace KernelPanic.Entities.Projectiles
             if (!unit.WantsRemoval && mHitUnits.Add(unit))
             {
                 // The unit is still alive and wasn't hit before by this projectile.
-                HandleHit(unit, positionProvider.Owner);
+                HandleHit(unit, positionProvider.Owner, positionProvider);
             }
         }
 
@@ -86,10 +86,11 @@ namespace KernelPanic.Entities.Projectiles
         /// </summary>
         /// <param name="unit">The <see cref="Unit"/> hit by this <see cref="Projectile"/>.</param>
         /// <param name="owner">To determine who owns the <paramref name="unit"/>.</param>
-        private /*virtual*/ void HandleHit(Unit unit, Owner owner)
+        /// <param name="positionProvider"></param>
+        private /*virtual*/ void HandleHit(Unit unit, Owner owner, PositionProvider positionProvider)
         {
             EventCenter.Default.Send(Event.DamagedUnit(owner, this, unit));
-            if (unit.DealDamage(Damage))
+            if (unit.DealDamage(Damage, positionProvider))
                 EventCenter.Default.Send(Event.KilledUnit(owner, this, unit));
 
             if (SingleTarget)

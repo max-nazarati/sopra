@@ -44,12 +44,15 @@ namespace KernelPanic.Table
         }
 
         private readonly EntityGraph mEntityGraph;
+        private readonly Grid mGrid;
         private readonly Vector2[] mHeroSpawns;
         private SpawnQueue<Bug> mBugs;
         private SpawnQueue<Virus> mViruses;
         private SpawnQueue<Trojan> mTrojans;
         private SpawnQueue<Nokia> mNokias;
         private SpawnQueue<Thunderbird> mThunderbirds;
+        private readonly Dictionary<TileIndex, SpawnQueue<Troupe>> mAdditionalSpawns =
+            new Dictionary<TileIndex, SpawnQueue<Troupe>>();
 
         // TODO: We probably want to have more logic instead, maybe something like “is the tile free”.
         private readonly CooldownComponent mSpawnCooldown =
@@ -64,6 +67,7 @@ namespace KernelPanic.Table
         public UnitSpawner(Grid grid, EntityGraph entityGraph)
         {
             mEntityGraph = entityGraph;
+            mGrid = grid;
 
             mBugs = new SpawnQueue<Bug>(SpawnPoint(3, 2, grid));
             mViruses = new SpawnQueue<Virus>(SpawnPoint(5, 2, grid));
@@ -90,17 +94,39 @@ namespace KernelPanic.Table
             mTrojans.Spawn(mEntityGraph);
             mNokias.Spawn(mEntityGraph);
             mThunderbirds.Spawn(mEntityGraph);
+
+            foreach (var queue in mAdditionalSpawns.Values)
+            {
+                queue.Spawn(mEntityGraph);
+            }
+
             component.Reset();
         }
 
         /// <summary>
         /// Registers a unit for spawning.
         /// </summary>
-        /// <param name="unit">The unit to spawn.</param>
-        /// <param name="atBase">If <c>true</c> the units position is modified to be at the lanes base.</param>
-        internal void Register(Unit unit, bool atBase = true)
+        /// <param name="troupe">The unit to spawn.</param>
+        /// <param name="spawnTile">An alternative position compared to the base.</param>
+        internal void Register(Troupe troupe, TileIndex spawnTile)
         {
-            // TODO: Handle spawning of units which don't want to start at the base.
+            if (mAdditionalSpawns.TryGetValue(spawnTile, out var queue))
+            {
+                queue.Add(troupe);
+                return;
+            }
+            
+            queue = new SpawnQueue<Troupe>(mGrid.GetTile(spawnTile).Position);
+            queue.Add(troupe);
+            mAdditionalSpawns[spawnTile] = queue;
+        }
+
+        /// <summary>
+        /// Registers a unit for spawning.
+        /// </summary>
+        /// <param name="unit">The unit to spawn.</param>
+        internal void Register(Unit unit)
+        {
             switch (unit)
             {
                 case Hero hero:

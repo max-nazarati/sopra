@@ -5,6 +5,7 @@ using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
 using KernelPanic.Events;
 using KernelPanic.Players;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -59,12 +60,12 @@ namespace KernelPanic.Waves
                 var player = Players.Select(distinction);
                 var spawner = player.AttackingLane.UnitSpawner;
                 
-                void SpawnChild(Troupe troupe)
+                void SpawnChild(Troupe troupe, TileIndex tile)
                 {
                     player.ApplyUpgrades(troupe);
                     troupe.Wave = new WaveReference(wave.Index, SpawnChild);
                     troupes.Add(troupe);
-                    spawner.Register(troupe, false);
+                    spawner.Register(troupe, tile);
                 }
                 
                 foreach (var troupe in troupes)

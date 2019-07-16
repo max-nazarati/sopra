@@ -39,12 +39,12 @@ namespace KernelPanic.Entities.Buildings
 
             foreach(var unit in positionProvider.NearEntities<Unit>(this, Radius))
             {
-                if (this.Bounds.Intersects(unit.Bounds) && !mDamagedUnits.Contains(unit))
-                {
-                    unit.DealDamage(Damage);
-                    EventCenter.Default.Send(Event.ProjectileShot(this));
-                    mDamagedUnits.Add(unit);
-                }
+                if (!Bounds.Intersects(unit.Bounds) || mDamagedUnits.Contains(unit))
+                    continue;
+
+                unit.DealDamage(Damage, positionProvider);
+                EventCenter.Default.Send(Event.ProjectileShot(this));
+                mDamagedUnits.Add(unit);
             }
         }
     }

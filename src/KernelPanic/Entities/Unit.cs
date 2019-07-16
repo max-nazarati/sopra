@@ -110,21 +110,23 @@ namespace KernelPanic.Entities
         /// </para>
         /// </summary>
         /// <param name="damage">The number of life-points to subtract.</param>
+        /// <param name="positionProvider"></param>
         /// <returns><c>true</c> if this <see cref="Unit"/> died, <c>false</c> otherwise.</returns>
-        public bool DealDamage(int damage)
+        public bool DealDamage(int damage, PositionProvider positionProvider)
         {
             RemainingLife = Math.Min(MaximumLife, RemainingLife - damage);
             if (RemainingLife > 0)
                 return false;
 
-            DidDie();
+            DidDie(positionProvider);
             return true;
         }
 
         /// <summary>
         /// Can be overriden to act when this unit dies.
         /// </summary>
-        protected virtual void DidDie()
+        /// <param name="positionProvider"></param>
+        protected virtual void DidDie(PositionProvider positionProvider)
         {
             WantsRemoval = true;
         }
