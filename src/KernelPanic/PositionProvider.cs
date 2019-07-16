@@ -98,13 +98,6 @@ namespace KernelPanic
 
         #region Path Finding
 
-        internal AStar MakePathFinding(Point start, Point target)
-        {
-            var aStar = new AStar(start, target, TroupeData.BuildingMatrix);
-            aStar.CalculatePath();
-            return aStar;
-        }
-
         internal AStar MakePathFinding(Hero hero, Point target)
         {
             var start = RequireTile(hero).ToPoint();
