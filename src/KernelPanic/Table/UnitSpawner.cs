@@ -9,7 +9,7 @@ namespace KernelPanic.Table
 {
     internal sealed class UnitSpawner
     {
-        private struct SpawnQueue<T> where T : Entity
+        private struct SpawnQueue<T> where T : Unit
         {
             private readonly Queue<T> mQueue;
             private readonly Vector2 mInitialPosition;
@@ -24,7 +24,7 @@ namespace KernelPanic.Table
 
             internal void Add(T unit)
             {
-                unit.Sprite.Position = mInitialPosition;
+                unit.SetInitialPosition(mInitialPosition);
                 mQueue.Enqueue(unit);
             }
 

@@ -133,7 +133,7 @@ namespace KernelPanic
                 collisionHandled = false;
                 foreach (var (a, b) in QuadTree.Overlaps())
                 {
-                    collisionHandled |= CollisionManager.HandleMovement(a, b);
+                    collisionHandled |= CollisionManager.HandleMovement(a, b, positionProvider);
                 }
                 QuadTree.Rebuild();
             } while (collisionHandled);
