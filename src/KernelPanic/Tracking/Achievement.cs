@@ -252,8 +252,8 @@ namespace KernelPanic.Tracking
                         condition: PlayerAndBuildingMatches(Event.Key.Defender, typeof(ShockField)));
                     break;
                 case Achievement.JumpNRun:
-                    progressConnector.ConnectCounter(Event.Id.FirefoxJump, Event.Key.CrossedBuildingsCount, 50,
-                        e => e.IsActivePlayer(Event.Key.Attacker));
+                    progressConnector.ConnectCounter(Event.Id.FirefoxJump, target: 50,
+                        condition: e => e.IsActivePlayer(Event.Key.Attacker));
                     break;
 
                 case Achievement.NumberOfAchievements:
