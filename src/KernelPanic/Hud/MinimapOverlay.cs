@@ -14,14 +14,10 @@ namespace KernelPanic.Hud
     {
         #region Member Variables
         
-        private ImageSprite mSprite;
+        private readonly ImageSprite mSprite;
         private readonly PlayerIndexed<Player> mPlayers;
-        private readonly SpriteManager mSpriteManager;
-        private readonly float mRelativeSize; // how much of the screen should be the minimap [0, 1]
-        private int mSize;
+        private readonly int mSize;
         private readonly ICamera mCamera;
-        private readonly Vector2 mPosition;
-        private bool mSizeShouldChange;
         private float mScale;
         private int mRadius;
 
@@ -44,19 +40,17 @@ namespace KernelPanic.Hud
 
         #region Konstruktor
         
-        
         internal MinimapOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager, ICamera camera, float relativeSize = 0.3f)
         {
             var screenSizeX = spriteManager.ScreenSize.X;
             var screenSizeY = spriteManager.ScreenSize.Y;
-            Console.WriteLine(screenSizeX);
-            mRelativeSize = relativeSize;
-            mSize = (int)(Math.Min(screenSizeX, screenSizeY) * mRelativeSize);
-            mPosition = new Vector2(screenSizeX - mSize, screenSizeY - mSize);
+            mSize = (int)(Math.Min(screenSizeX, screenSizeY) * relativeSize);
             mPlayers = players;
-            mSpriteManager = spriteManager;
             mCamera = camera;
+
             mSprite = spriteManager.CreateEmptyTexture(mSize, mSize);
+            mSprite.SetOrigin(RelativePosition.BottomRight);
+            mSprite.Position = spriteManager.ScreenSize.ToVector2();
 
             // filling the minimap with background color
             mData = new Color[mSize * mSize];
@@ -115,12 +109,7 @@ namespace KernelPanic.Hud
             var bottomRight = laneRight.GetTile(pointBottomRight, RelativePosition.BottomRight).Position;
 
             mScale = Math.Max(bottomRight.X, bottomRight.Y) / mSize;
-            
-            Console.WriteLine("There will be " + mScale + " x " + mScale + " Pixel represented by 1 minimap Pixel");
-            // Console.WriteLine("There are a total of " + mSize * mSize + " Pixel.");
-            
-            mRadius = (int)(Grid.KachelSize / (mScale * 2)); // InitializeScale before mRadius
-            Console.WriteLine("KachelSize is: " + Grid.KachelSize + " and mScale is: " + mScale);
+            mRadius = (int)(Grid.KachelSize / (mScale * 2));
         }
 
         private void InitializeLaneData()
@@ -137,38 +126,23 @@ namespace KernelPanic.Hud
 
         public void Update()
         {
-            UpdateSize();
             UpdateData();
             UpdateTexture();
         }
 
-        private void UpdateSize()
-        {
-            if (!mSizeShouldChange) { return; }
-            var screenSizeX = mSpriteManager.ScreenSize.X;
-            var screenSizeY = mSpriteManager.ScreenSize.Y;
-            mSize = (int)(Math.Min(screenSizeX, screenSizeY) * mRelativeSize);
-        }
-
         private void UpdateData()
         {
-            for (int i = 0; i < mData.Length; i++)
+            for (var i = 0; i < mData.Length; i++)
             {
-                // mData[i] = CalculateColor(i);
                 mData[i] = mInitializedData[i];
             }
-            
+
             SetEntityColor(mPlayers.A.DefendingLane);
             SetEntityColor(mPlayers.B.DefendingLane);
-            SetScreenColor();
+            SetCameraRectangle();
         }
 
-        private void SetScreenColor()
-        {
-            DrawCameraRectangle();
-        }
-
-        private void DrawCameraRectangle()
+        private void SetCameraRectangle()
         {
             DrawRectangle(CameraRectangle());
         }
@@ -222,7 +196,6 @@ namespace KernelPanic.Hud
         private Color LaneColor(int i)
         {
             var point = CalculateWorldPosition(i);
-            // Console.WriteLine(point);
             if (mPlayers.A.DefendingLane.Contains(new Vector2(point.X, point.Y)))
             {
                 return mColorLaneA;
