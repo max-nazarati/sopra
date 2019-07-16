@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
@@ -150,19 +151,23 @@ namespace KernelPanic.Entities.Units
             mIndicator.ScaleToWidth(AbilityRange * mAbilityRangeAmplifier * 2);
         }
 
-        protected override int PointHeuristic(Point point, PositionProvider positionProvider)
+        protected override float PointHeuristic(Point point, PositionProvider positionProvider)
         {
             point *= new Point(Grid.KachelSize);
-            var result = 0;
+            var result = 0f;
             foreach (var building in positionProvider.NearEntities<Building>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
             {
                 result -= 2;
             }
-            foreach (var unit in positionProvider.NearEntities<Unit>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
+
+            foreach (var troupe in positionProvider.NearEntities<Troupe>(point.ToVector2(),
+                AbilityRange * mAbilityRangeAmplifier))
             {
-                result += 1;
+                var tile = positionProvider.RequireTile(troupe).Rescaled(1).First();
+                var heat = positionProvider.TroupeData.TileHeat(tile.ToPoint());
+                result += (heat ?? 1 ) < 10 ? 20 : (heat ?? 1 ) < 15 ? 16 : (heat ?? 1 ) < 20 ? 12 : (heat ?? 1 ) < 25 ? 8 : (heat ?? 1 ) < 30 ? 4 : (heat ?? 1 ) < 40 ? 2 : 1;
             }
-             
+
             return result;
         }
 
