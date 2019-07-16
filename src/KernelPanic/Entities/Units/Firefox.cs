@@ -87,21 +87,21 @@ namespace KernelPanic.Entities.Units
 
             CorrectJump(direction, JumpDuration, positionProvider);
         }
-        
+
         private void CorrectJump(Vector2 direction, int duration, PositionProvider positionProvider)
         {
             bool EntityIsBuilding(IGameObject gameObject) => gameObject is Building;
 
             var jumpFrame = direction * JumpSegmentLength;
             var goal = Sprite.Position + jumpFrame * duration;
-            
+
             // jump was too short
             while (positionProvider.HasEntityAt(goal, EntityIsBuilding))
             {
                 mAbility.Push(jumpFrame);
                 goal += jumpFrame;
             }
-            
+
             // jump was too long
             while (!positionProvider.Grid.Contains(goal) || positionProvider.HasEntityAt(goal, EntityIsBuilding))
             {
