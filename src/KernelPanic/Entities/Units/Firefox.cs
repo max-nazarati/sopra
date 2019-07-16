@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
-using Accord.Statistics.Kernels;
 using KernelPanic.Data;
-using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
@@ -70,15 +67,19 @@ namespace KernelPanic.Entities.Units
 
         protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
-            // debug
+            // AbilityState, CoolDown, sound...
             base.StartAbility(positionProvider, inputManager);
+            ShouldMove = false;
 
             // calculate the jump direction
             var mouse = mJumpTarget ?? inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
+            
+            // private const int JumpDuration = 10;
+            // private const int JumpSegmentLength = 30;
+            // we have _10_ Parts with a distance of _30_ each
             var jumpSegment = direction * JumpSegmentLength;
-            EventCenter.Default.Send(Event.HeroAbility(this));
             for (var _ = 0; _ < JumpDuration; _++)
             {
                 mAbility.Push(jumpSegment);
@@ -86,7 +87,6 @@ namespace KernelPanic.Entities.Units
 
             CorrectJump(direction, JumpDuration, positionProvider);
         }
-
         
         private void CorrectJump(Vector2 direction, int duration, PositionProvider positionProvider)
         {
@@ -105,6 +105,11 @@ namespace KernelPanic.Entities.Units
             // jump was too long
             while (!positionProvider.Grid.Contains(goal) || positionProvider.HasEntityAt(goal, EntityIsBuilding))
             {
+                if (mAbility.Count == 0)
+                {
+                    // Firefox might recognize itself as unity and tries to pop from empty stack
+                    return;
+                }
                 goal -= mAbility.Pop();
             }
         }
@@ -120,6 +125,8 @@ namespace KernelPanic.Entities.Units
             }
 
             var jumpDistance = mAbility.Pop();
+            // TODO check if firefox jumped over a tower, so we can track it in achievements
+            // TODO also give positionProvider as argument so we know which player got it
             Sprite.Position += jumpDistance;
         }
         #endregion Ability

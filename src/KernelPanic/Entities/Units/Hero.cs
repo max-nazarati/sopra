@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.PathPlanning;
@@ -286,9 +287,11 @@ namespace KernelPanic.Entities.Units
 #endif
             #endregion
             
-            AbilityStatus = AbilityState.Active; 
-            ShouldMove = false;
+            AbilityStatus = AbilityState.Active;
             Cooldown.Reset();
+            
+            // For sound
+            EventCenter.Default.Send(Event.HeroAbility(this));
         }
         
         protected virtual void ContinueAbility(GameTime gameTime)
