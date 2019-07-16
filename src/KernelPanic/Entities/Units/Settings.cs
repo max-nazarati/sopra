@@ -154,11 +154,11 @@ namespace KernelPanic.Entities.Units
         {
             point *= new Point(Grid.KachelSize);
             var result = 0;
-            foreach (var building in positionProvider.NearEntities<Building>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier / 2))
+            foreach (var building in positionProvider.NearEntities<Building>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
             {
                 result -= 1;
             }
-            foreach (var unit in positionProvider.NearEntities<Unit>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier / 2))
+            foreach (var unit in positionProvider.NearEntities<Unit>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
             {
                 result += 1;
             }

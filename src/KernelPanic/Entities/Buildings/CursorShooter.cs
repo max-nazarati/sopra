@@ -13,7 +13,7 @@ namespace KernelPanic.Entities.Buildings
     {
         protected override bool WantsRotation => true;
         
-        internal CursorShooter(SpriteManager spriteManager, SoundManager sounds)
+        internal CursorShooter(SpriteManager spriteManager)
             : base(40, 4, 2, 10,TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager)
         {
         }

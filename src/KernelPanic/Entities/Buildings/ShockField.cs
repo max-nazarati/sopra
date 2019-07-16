@@ -13,7 +13,7 @@ namespace KernelPanic.Entities.Buildings
     {
         private List<Unit> mDamagedUnits;
 
-        internal ShockField(SpriteManager spriteManager, SoundManager soundManager)
+        internal ShockField(SpriteManager spriteManager)
             : base(100, 1, 2, 0,TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager)
         {
             // The fire timer is not used by the Shockfield.
