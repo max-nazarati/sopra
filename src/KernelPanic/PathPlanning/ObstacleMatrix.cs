@@ -72,7 +72,7 @@ namespace KernelPanic.PathPlanning
                 for (var j = cutoutXStart * subTileCount; j < cutoutXEnd * subTileCount; ++j)
                 {
                     // Use our indexer because it automatically translates the coordinates in case there is a border.
-                    this[i, j] = true;
+                    this[i, j, false] = true;
                 }
             }
             
@@ -139,7 +139,7 @@ namespace KernelPanic.PathPlanning
             var tile = new TileIndex(row, column, SubTileCount);
             foreach (var scaledTile in tile.Rescaled(mChild.SubTileCount))
             {
-                mChild[scaledTile.Row, scaledTile.Column] = value;
+                mChild[scaledTile.Row, scaledTile.Column, false] = value;
             }
         }
 
@@ -154,19 +154,20 @@ namespace KernelPanic.PathPlanning
         /// Queries whether there is an obstacle at the given point.
         /// </summary>
         /// <param name="point">The point to ask about.</param>
+        /// <param name="safe"></param>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="point"/> lies outside this matrix.</exception>
-        internal bool this[Point point]
+        internal bool this[Point point, bool safe = true]
         {
-            get => this[point.Y, point.X];
-            set => this[point.Y, point.X] = value;
+            get => this[point.Y, point.X, safe];
+            set => this[point.Y, point.X, safe] = value;
         }
 
-        private bool this[int row, int column]
+        private bool this[int row, int column, bool safe]
         {
             get
             {
-                VerifyRange(nameof(row), ref row, 0);
-                VerifyRange(nameof(column), ref column, 1);
+                VerifyRange(nameof(row), ref row, 0, safe);
+                VerifyRange(nameof(column), ref column, 1, safe);
                 return mObstacles[row, column];
             }
             set
@@ -175,21 +176,24 @@ namespace KernelPanic.PathPlanning
                 if (mChild != null)
                     MarkChild(row, column, value);
 
-                VerifyRange(nameof(row), ref row, 0);
-                VerifyRange(nameof(column), ref column, 1);
+                VerifyRange(nameof(row), ref row, 0, safe);
+                VerifyRange(nameof(column), ref column, 1, safe);
                 mObstacles[row, column] = value;
             }
         }
 
-        private void VerifyRange(string name, ref int value, int dimension)
+        private void VerifyRange(string name, ref int value, int dimension, bool safe)
         {
-            var size = mObstacles.GetLength(dimension);
             var lowerBound = mHasBorder ? -1 : 0;
+            value -= lowerBound;
+
+            if (!safe)
+                return;
+
+            var size = mObstacles.GetLength(dimension);
             var upperBound = size - lowerBound;
             if (value < lowerBound || value > upperBound)
                 throw new ArgumentOutOfRangeException(name, value, $"not in range [{lowerBound}; {upperBound})");
-
-            value -= lowerBound;
         }
 
         #endregion
@@ -232,7 +236,7 @@ namespace KernelPanic.PathPlanning
             {
                 for (var col = 0; col < Columns; ++col)
                 {
-                    if (this[row, col] == obstacles)
+                    if (this[row, col, false] == obstacles)
                         yield return new TileIndex(row, col, SubTileCount);
                 }
             }

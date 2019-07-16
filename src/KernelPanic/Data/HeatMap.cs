@@ -56,7 +56,7 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="point">the point (x, y)</param>
         /// <returns><c>false</c> if it is blocked, <c>true</c> otherwise.</returns>
-        private bool IsWalkable(Point point) => !ObstacleMatrix[point];
+        private bool IsWalkable(Point point) => !ObstacleMatrix[point, false];
 
         /// <summary>
         /// Calculates the gradient, given point (x, y) i,e.:
