@@ -270,7 +270,7 @@ namespace KernelPanic.ArtificialIntelligence
 
         #endregion
 
-        public void MakeRandomChoice(GameTime gameTime)
+        private void MakeRandomChoice(GameTime gameTime)
         {
             Random numberGenerator = new Random();
             int number = numberGenerator.Next(0, 500);
