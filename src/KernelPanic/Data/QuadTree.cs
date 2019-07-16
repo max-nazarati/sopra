@@ -173,13 +173,20 @@ namespace KernelPanic.Data
             Split();
             
             // Try to move all objects one level down.
-            foreach (var value in new List<T>(mObjects))
+            var indicesToRemove = new List<int>(mObjects.Count);
+            for (var i = 0; i < mObjects.Count; i++)
             {
-                if (CalculatePosition(value) is SquareIndex square)
-                {
-                    mChildren[(int) square].Add(value);
-                    mObjects.Remove(value);
-                }
+                var value = mObjects[i];
+                if (!(CalculatePosition(value) is SquareIndex square))
+                    continue;
+
+                mChildren[(int) square].Add(value);
+                indicesToRemove.Add(i);
+            }
+
+            for (var i = indicesToRemove.Count - 1; i >= 0; i--)
+            {
+                mObjects.RemoveAt(indicesToRemove[i]);
             }
         }
 
