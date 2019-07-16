@@ -375,6 +375,12 @@
 /processorParam:Quality=Best
 /build:sounds/DiscShoot.mp3
 
+#begin sounds/WifiShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/WifiShoot.mp3
+
 #begin sounds/ElectroShock.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor

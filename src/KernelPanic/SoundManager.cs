@@ -17,6 +17,7 @@ namespace KernelPanic
             Shoot1,
             DiscShoot,
             CursorShoot,
+            WifiShoot,
             ElectroShock,
             MoneyEarned,
             ButtonClick,
@@ -43,6 +44,7 @@ namespace KernelPanic
                 SoundEffect(Sound.TowerPlacement, "sounds/TowerPlacement"),
                 SoundEffect(Sound.DiscShoot, "sounds/DiscShoot"),
                 SoundEffect(Sound.CursorShoot, "sounds/CursorShoot"),
+                SoundEffect(Sound.WifiShoot, "sounds/WifiShoot"),
                 SoundEffect(Sound.ElectroShock, "sounds/ElectroShock"),
                 SoundEffect(Sound.MoneyEarned, "sounds/MoneyEarned"),
                 SoundEffect(Sound.ButtonClick, "sounds/ButtonClick"),
@@ -132,7 +134,7 @@ namespace KernelPanic
                             Lookup(Sound.CursorShoot).Play(0.3f,0,0);
                             break;
                         case WifiRouter _:
-                            Lookup(Sound.CursorShoot).Play(0.3f,0,0);
+                            Lookup(Sound.WifiShoot).Play(0.3f,0,0);
                             break;
                     }
                     break;

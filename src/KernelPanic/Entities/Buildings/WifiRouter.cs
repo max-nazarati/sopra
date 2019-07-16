@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Projectiles;
+using KernelPanic.Events;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities.Buildings
@@ -20,6 +21,7 @@ namespace KernelPanic.Entities.Buildings
         protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
             direction = Vector2.Normalize(direction);
+            EventCenter.Default.Send(Event.ProjectileShot(this));
             for (var i = 0; i < 3; ++i)
             {
                 yield return new Projectile(this, direction, SpriteManager.CreateWifiProjectile(), 4 * i)
