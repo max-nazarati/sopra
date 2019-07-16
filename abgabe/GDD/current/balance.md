@@ -75,7 +75,7 @@ Truppe        |  K  |  LP  |  AS |  GS |  F
 Bug           |  2  |   4  |  1  |  4  |   -
 Virus         |  3  |  10  |  2  |  3  |   -
 Trojaner      | 30  |  30  |  6  |  2  | spawnt beim Tod 5 Bugs
-Nokia         | 30  | 100  | 15  |  1  |   -
+Nokia         | 50  | 100  | 15  |  1  |   -
 Thunderbird   | 15  |  15  |  3  |  2  | fliegt
 
 
