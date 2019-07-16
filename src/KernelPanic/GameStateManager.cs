@@ -111,7 +111,8 @@ namespace KernelPanic
                     rawInput.Claim(requiredClaim);
 
                 // Do the actual update.
-                state.Update(input, gameTime);
+                if (!DebugSettings.GamePaused)
+                    state.Update(input, gameTime);
 
                 // The call to Update filled newClickTargets via the reference in the InputManager.
                 info.ClickTargets = QuadTree<ClickTarget>.Create(newClickTargets);

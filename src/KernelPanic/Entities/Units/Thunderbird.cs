@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities.Units
@@ -27,12 +26,7 @@ namespace KernelPanic.Entities.Units
             mHitBox.Width = 53;
             mHitBox.Height = 55;
         }
-        
-        protected override void CalculateMovement(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
-        {
-            var currentTile = positionProvider.RequireTile(this);
-            var movement = positionProvider.RelativeMovementThunderbird(currentTile.ToPoint());
-            MoveTarget = Sprite.Position + movement;
-        }
+
+        internal override bool IsSmall => false;
     }
 }

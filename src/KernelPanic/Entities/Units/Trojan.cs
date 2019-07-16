@@ -28,6 +28,8 @@ namespace KernelPanic.Entities.Units
             mHitBox.Height = 45;
         }
 
+        internal override bool IsSmall => false;
+
         protected override void DidDie()
         {
             if (Wave.IsValid)

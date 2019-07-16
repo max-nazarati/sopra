@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
@@ -72,7 +71,7 @@ namespace KernelPanic.PathPlanning
         #region Overrides
 
         protected override bool IsWalkable(Point point) => !mObstacles[point];
-        protected override double CostIncrease => 0.5;
+        protected override double CostIncrease(Point point) => 0.5;
         protected override double EstimateCost(Point point)
         {
             // Euclidean heuristic.

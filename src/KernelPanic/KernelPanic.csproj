@@ -119,6 +119,7 @@
     <Compile Include="PathPlanning\BreadthFirstSearch.cs" />
     <Compile Include="PathPlanning\ObstacleMatrix.cs" />
     <Compile Include="PathPlanning\PathPlanner.cs" />
+    <Compile Include="PathPlanning\TroupePathData.cs" />
     <Compile Include="PathPlanning\Visualizer.cs" />
     <Compile Include="Players\IPlayerDistinction.cs" />
     <Compile Include="Players\Player.cs" />

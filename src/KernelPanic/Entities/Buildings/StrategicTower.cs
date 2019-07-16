@@ -249,7 +249,7 @@ namespace KernelPanic.Entities.Buildings
             {
                 case TowerStrategy.First:
                     var tile = positionProvider.Grid.TileFromWorldPoint(unit.Sprite.Position);
-                    var heat = tile is TileIndex tileIndex ? positionProvider.TileHeat(tileIndex.ToPoint()) : null;
+                    var heat = tile is TileIndex tileIndex ? positionProvider.TroupeData.TileHeat(tileIndex.ToPoint()) : null;
                     return heat;
 
                 case TowerStrategy.Strongest:

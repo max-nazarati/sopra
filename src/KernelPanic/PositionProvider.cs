@@ -5,6 +5,7 @@ using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
+using KernelPanic.Entities.Units;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -15,20 +16,23 @@ namespace KernelPanic
     {
         private readonly SpriteManager mSpriteManager;
         private readonly EntityGraph mEntities;
-        private readonly VectorField mVectorField;
-        private readonly VectorField mVectorFieldThunderbird;
 
         internal Grid Grid { get; }
         internal Owner Owner { get; }
         internal Base Target { get; }
+        internal TroupePathData TroupeData { get; }
 
-        internal PositionProvider(Grid grid, EntityGraph entities, SpriteManager spriteManager, VectorField vectorField, Base target, Owner owner)
+        internal PositionProvider(Base target,
+            Owner owner,
+            Grid grid,
+            EntityGraph entities,
+            TroupePathData troupeData,
+            SpriteManager spriteManager)
         {
             Grid = grid;
             mEntities = entities;
             mSpriteManager = spriteManager;
-            mVectorField = vectorField;
-            mVectorFieldThunderbird = VectorField.GetVectorFieldThunderbird(vectorField.Size, grid.LaneSide);
+            TroupeData = troupeData;
             Target = target;
             Owner = owner;
         }
@@ -43,12 +47,12 @@ namespace KernelPanic
 
         internal TileIndex RequireTile(Entity entity)
         {
-            return RequireTile(entity.Sprite.Position);
+            return RequireTile(entity.Sprite.Position, entity is Troupe troupe && troupe.IsSmall ? 2 : 1);
         }
 
-        internal TileIndex RequireTile(Vector2 position)
+        internal TileIndex RequireTile(Vector2 position, int subTileCount = 1)
         {
-            if (Grid.TileFromWorldPoint(position) is TileIndex tile)
+            if (Grid.TileFromWorldPoint(position, subTileCount) is TileIndex tile)
                 return tile;
 
             // pls dont change the exception name, hero.SlowPush depends on it
@@ -94,28 +98,9 @@ namespace KernelPanic
 
         #region Path Finding
 
-        public Vector2 RelativeMovement(Point point)
+        internal AStar MakePathFinding(Point start, Point target)
         {
-            var rectangle = new Rectangle(new Point(-Grid.KachelSize), new Point(Grid.KachelSize * 2));
-            return rectangle.At(mVectorField[point]);
-        }
-
-        public Vector2 RelativeMovementThunderbird(Point point)
-        {
-            var rectangle = new Rectangle(new Point(-Grid.KachelSize), new Point(Grid.KachelSize * 2));
-            return rectangle.At(mVectorFieldThunderbird[point]);
-        }
-
-        internal int? TileHeat(Point point)
-        {
-            return (int?) mVectorField.HeatMap[point];
-        }
-
-        internal AStar MakePathFinding(Entity entity, Point start, Point target)
-        {
-            var matrixObstacles = new ObstacleMatrix(Grid);
-            matrixObstacles.Raster(mEntities.AllEntities, e => e != entity && e.GetType() != typeof(ShockField));
-            var aStar = new AStar(start, target, matrixObstacles);
+            var aStar = new AStar(start, target, TroupeData.BuildingMatrix);
             aStar.CalculatePath();
             return aStar;
         }

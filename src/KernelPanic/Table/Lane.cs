@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
@@ -42,15 +41,12 @@ namespace KernelPanic.Table
         [JsonProperty]
         private readonly Side mLaneSide;
 
-        private HeatMap mHeatMap;
-        private VectorField mVectorField;
-
         internal EntityGraph EntityGraph { get; private set; }
         internal UnitSpawner UnitSpawner { get; private set; }
         internal BuildingSpawner BuildingSpawner { get; private set; }
         internal Grid Grid { get; private set; }
 
-        // private BuildingSpawner mBuildingSpawner;
+        private TroupePathData mTroupeData;
 
         #endregion
 
@@ -104,25 +100,22 @@ namespace KernelPanic.Table
         /// <summary>
         /// Performs the initialization common to deserialized lanes and lanes created at runtime.
         /// </summary>
-        /// <param name="entities">Entities to be added to the <see cref="EntityGraph"/> and the <see cref="mHeatMap"/>.</param>
+        /// <param name="entities">Entities to be added to the <see cref="EntityGraph"/>.</param>
         private void Initialize(IReadOnlyCollection<Entity> entities = null)
         {
             Grid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             EntityGraph = new EntityGraph(LaneBorders);
-            UnitSpawner = new UnitSpawner(Grid, EntityGraph.Add);
-            
-            var obstacleMatrix = new ObstacleMatrix(Grid, 1, false);
-            mHeatMap = new HeatMap(obstacleMatrix);
-            BuildingSpawner = new BuildingSpawner(Grid, mHeatMap, EntityGraph.Add, 
+            UnitSpawner = new UnitSpawner(Grid, EntityGraph);
+            BuildingSpawner = new BuildingSpawner(Grid, EntityGraph.Add, 
                 entities?.OfType<Building>().Where(building => building.State == BuildingState.Inactive));
 
             if (entities?.Count > 0)
             {
                 EntityGraph.Add(entities);
-                obstacleMatrix.Raster(entities, entity => entity is Building && entity.GetType() != typeof(ShockField));
             }
 
-            UpdateHeatMap();
+            mTroupeData = new TroupePathData(Target.HitBox, Grid, entities?.OfType<Building>());
+            mTroupeData.Update(EntityGraph, true);
         }
 
         #endregion
@@ -131,18 +124,28 @@ namespace KernelPanic.Table
 
         internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
         {
-            // Maybe we want to do this only when new buildings were placed.
-            // remove heatmap grids that are marked as "Blocked" if building is sold
+            var buildingsChanged = false;
+            
+            // Block new buildings in the obstacle matrix.
+            foreach (var position in BuildingSpawner.NewBuildings())
+            {
+                buildingsChanged = true;
+                mTroupeData.BuildingMatrix[position] = true;
+            }
+
+            // Unblock sold buildings in the obstacle matrix.
             IEnumerable<Building> buildings = EntityGraph.Entities<Building>();
             foreach (var building in buildings.Where(building => building.WantsRemoval))
             {
+                buildingsChanged = true;
                 Vector2 position = building.Sprite.Position;
                 TileIndex tileIndex = Grid.TileFromWorldPoint(position).GetValueOrDefault();
-                mHeatMap.ObstacleMatrix[tileIndex.ToPoint()] = false;
+                mTroupeData.BuildingMatrix[tileIndex.ToPoint()] = false;
             }
-            UpdateHeatMap();
 
-            var positionProvider = new PositionProvider(Grid, EntityGraph, mSpriteManager, mVectorField, Target, owner);
+            mTroupeData.Update(EntityGraph, buildingsChanged);
+
+            var positionProvider = new PositionProvider(Target, owner, Grid, EntityGraph, mTroupeData, mSpriteManager);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
             UnitSpawner.Update(gameTime);
             BuildingSpawner.Update(positionProvider);
@@ -155,46 +158,8 @@ namespace KernelPanic.Table
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Grid.Draw(spriteBatch, gameTime);
-            if (Grid.LaneSide == Side.Left) Visualize(spriteBatch, gameTime);
+            mTroupeData.Visualize(mSpriteManager, spriteBatch, gameTime);
             EntityGraph.Draw(spriteBatch, gameTime);
-        }
-
-        #endregion
-
-        #region Heat Map Handling
-
-        private void UpdateHeatMap()
-        {
-            BreadthFirstSearch.UpdateHeatMap(mHeatMap, Target.HitBox);
-
-            if (mVectorField == null)
-                mVectorField = new VectorField(mHeatMap);
-            else
-                mVectorField.Update();
-        }
-
-        private void Visualize(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            Visualizer visualizer;
-
-            if (DebugSettings.VisualizeHeatMap)
-            {
-                visualizer = mHeatMap.Visualize(Grid, mSpriteManager);
-                visualizer.Draw(spriteBatch, gameTime);
-            }
-
-            if (DebugSettings.VisualizeVectors)
-            {
-                visualizer = mVectorField.Visualize(Grid, mSpriteManager);
-                visualizer.Draw(spriteBatch, gameTime);
-            }
-
-            if (!DebugSettings.VisualizeHeatMap && !DebugSettings.VisualizeVectors)
-                return;
-
-            var tileVisualizer = TileVisualizer.Border(1, Grid, mSpriteManager);
-            tileVisualizer.Append(Target.HitBox, Color.Blue);
-            tileVisualizer.Draw(spriteBatch, gameTime);
         }
 
         #endregion

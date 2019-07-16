@@ -83,13 +83,13 @@ namespace KernelPanic.Entities.Units
             var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
-            mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+            mAStar = positionProvider.MakePathFinding(startPoint, target);
             mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
-                mAStar = positionProvider.MakePathFinding(this, startPoint, target);
+                mAStar = positionProvider.MakePathFinding(startPoint, target);
                 mPathVisualizer = positionProvider.Visualize(mAStar);
                 path = mAStar.Path;
             }
@@ -313,7 +313,7 @@ namespace KernelPanic.Entities.Units
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
             mTarget = new Point(basePosition.X * Grid.KachelSize, basePosition.Y * Grid.KachelSize);
-            mAStar = positionProvider.MakePathFinding(this, startPoint, basePosition);
+            mAStar = positionProvider.MakePathFinding(startPoint, basePosition);
             ShouldMove = true;
         }
 

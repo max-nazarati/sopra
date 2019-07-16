@@ -11,7 +11,7 @@ namespace KernelPanic.PathPlanning
 
         protected abstract bool IsWalkable(Point point);
         protected abstract double EstimateCost(Point point);
-        protected abstract double CostIncrease { get; }
+        protected abstract double CostIncrease(Point point);
 
         /// <summary>
         /// Enumerates through the neighbours of a node. Only walkable nodes (see <see cref="IsWalkable"/>) are yielded.
@@ -20,7 +20,7 @@ namespace KernelPanic.PathPlanning
         /// <returns>An enumeration of all walkable neighbour nodes.</returns>
         private IEnumerable<Node> EnumerateNeighbours(Node node)
         {
-            var cost = node.Cost + CostIncrease;
+            var cost = node.Cost + CostIncrease(node.Position);
 
             Node CreateNode(int xOffset, int yOffset)
             {

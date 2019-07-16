@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Entities;
-using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Table
 {
@@ -12,14 +12,13 @@ namespace KernelPanic.Table
     {
         private readonly Action<Building> mSpawnAction;
         private readonly Grid mGrid;
-        private readonly HeatMap mHeatMap;
         private readonly List<Building> mInactive = new List<Building>();
+        private readonly List<Point> mBuildingPoints = new List<Point>();
 
-        public BuildingSpawner(Grid grid, HeatMap heatMap, Action<Building> spawnAction, IEnumerable<Building> inactive)
+        public BuildingSpawner(Grid grid, Action<Building> spawnAction, IEnumerable<Building> inactive)
         {
             mGrid = grid;
             mSpawnAction = spawnAction;
-            mHeatMap = heatMap;
 
             if (inactive != null)
                 mInactive.AddRange(inactive);
@@ -30,7 +29,7 @@ namespace KernelPanic.Table
             building.State = BuildingState.Inactive;
             building.Sprite.Position = mGrid.GetTile(tile).Position;
             if (!(building is ShockField))
-                mHeatMap.ObstacleMatrix[tile.ToPoint()] = true;
+                mBuildingPoints.Add(tile.ToPoint());
             mInactive.Add(building);
             mSpawnAction(building);
         }
@@ -45,6 +44,23 @@ namespace KernelPanic.Table
             }
 
             mInactive.RemoveAll(building => building.State != BuildingState.Inactive);
+        }
+
+        /// <summary>
+        /// Enumerates through all points where a building was placed since the last call to this function.
+        /// </summary>
+        /// <returns>All points where a building was placed.</returns>
+        internal IEnumerable<Point> NewBuildings()
+        {
+            try
+            {
+                foreach (var point in mBuildingPoints)
+                    yield return point;
+            }
+            finally
+            {
+                mBuildingPoints.Clear();
+            }
         }
     }
 }

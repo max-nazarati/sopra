@@ -26,5 +26,7 @@ namespace KernelPanic.Entities.Units
             mHitBox.Width = 18;
             mHitBox.Height = 39;
         }
+
+        internal override bool IsSmall => false;
     }
 }

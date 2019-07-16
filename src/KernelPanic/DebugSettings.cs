@@ -6,14 +6,14 @@ namespace KernelPanic
     internal static class DebugSettings
     {
         private static bool sVisualizeAStar;
-        private static bool sVisualizeHeatMap;
-        private static bool sVisualizeVectors;
+        private static TroupeDataVisualization sVectorFieldVisualization;
+        private static TroupeDataVisualization sHeatMapVisualization;
 
         private static bool sGamePaused;
 
         internal static bool VisualizeAStar => sVisualizeAStar;
-        internal static bool VisualizeHeatMap => sVisualizeHeatMap;
-        internal static bool VisualizeVectors => sVisualizeVectors;
+        internal static TroupeDataVisualization VectorFieldVisualization => sVectorFieldVisualization;
+        internal static TroupeDataVisualization HeatMapVisualization => sHeatMapVisualization;
 
         internal static bool GamePaused => sGamePaused;
 
@@ -25,11 +25,22 @@ namespace KernelPanic
                     b = !b;
             }
 
-            Toggles(Keys.H, ref sVisualizeHeatMap);
+            void Advances(Keys key, ref TroupeDataVisualization value, TroupeDataVisualization maximum)
+            {
+                if (inputManager.KeyPressed(key))
+                    value = value == maximum ? TroupeDataVisualization.None : value + 1;
+            }
+
             Toggles(Keys.G, ref sVisualizeAStar);
-            Toggles(Keys.V, ref sVisualizeVectors);
+            Advances(Keys.H, ref sHeatMapVisualization, TroupeDataVisualization.Small);
+            Advances(Keys.V, ref sVectorFieldVisualization, TroupeDataVisualization.Thunderbird);
 
             Toggles(Keys.P, ref sGamePaused);
+        }
+
+        internal enum TroupeDataVisualization
+        {
+            None, Normal, Small, Thunderbird
         }
     }
 }

@@ -15,12 +15,10 @@ namespace KernelPanic.Entities
     [DataContract]
     internal abstract class Unit : Entity
     {
-
         private ImageSprite mHealthBar;
         private ImageSprite mDamageBar;
 
-        [DataMember]
-        protected Vector2? MoveTarget { get; set; }
+        [DataMember] protected internal Vector2? MoveTarget { get; protected set; }
 
         /// <summary>
         /// The speed (GS) of this unit.
