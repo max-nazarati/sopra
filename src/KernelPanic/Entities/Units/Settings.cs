@@ -156,7 +156,7 @@ namespace KernelPanic.Entities.Units
             var result = 0;
             foreach (var building in positionProvider.NearEntities<Building>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
             {
-                result -= 1;
+                result -= 2;
             }
             foreach (var unit in positionProvider.NearEntities<Unit>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
             {

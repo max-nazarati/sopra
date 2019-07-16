@@ -355,7 +355,7 @@ namespace KernelPanic.Entities.Units
 
             #region calculate a heuristic for all neighbours and choose the best
             var bestPoint = startPoint;
-            var bestValue = 0;
+            var bestValue = 1;
             foreach (var point in neighbours)
             {
                 var currentValue = PointHeuristic(point, positionProvider);
