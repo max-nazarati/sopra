@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.ArtificialIntelligence
 {
-    enum Feature : int
+    internal enum Feature
     {
         Bitcoins = 0,
         Bug = 1,
