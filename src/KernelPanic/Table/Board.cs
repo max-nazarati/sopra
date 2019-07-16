@@ -48,7 +48,7 @@ namespace KernelPanic.Table
             get
             {
                 var bounds = Rectangle.Union(Lane.LeftBounds, Lane.RightBounds);
-                bounds.Inflate(100, 100);
+                bounds.Inflate(600, 600);
                 return bounds;
             }
         }
