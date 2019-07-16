@@ -63,8 +63,8 @@ namespace KernelPanic.PathPlanning
             mHeatMap = new HeatMap(BuildingMatrix);
             var smallHeatMap = new HeatMap(BuildingMatrix);
 
-            mVectorField = new VectorField(mHeatMap);
-            mSmallVectorField = new VectorField(smallHeatMap);
+            mVectorField = new VectorField(mHeatMap, target);
+            mSmallVectorField = new VectorField(smallHeatMap, target);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(grid.LaneRectangle.Size, grid.LaneSide);
         }
 
