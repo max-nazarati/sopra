@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Projectiles;
+using KernelPanic.Events;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Entities.Buildings
@@ -21,6 +22,7 @@ namespace KernelPanic.Entities.Buildings
         {
             var image = SpriteManager.CreateCursorShooter();
             image.ScaleToWidth(20);
+            EventCenter.Default.Send(Event.ProjectileShot(this));
             yield return new Projectile(this, direction, image)
             {
                 SingleTarget = true
