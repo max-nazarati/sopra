@@ -40,16 +40,16 @@ namespace KernelPanic.Waves
         /// <param name="players">The players.</param>
         internal void RemoveDead(PlayerIndexed<Player> players)
         {
-            void Remove(Player player)
+            void Remove(Player attacker, Player defender)
             {
-                var units = mUnits.Select(player);
+                var units = mUnits.Select(attacker);
                 var count = units.Count;
                 if (count > 0 && units.RemoveAll(unit => unit.WantsRemoval) == count)
-                    player.ExperiencePoints++;
+                    defender.ExperiencePoints++;
             }
 
-            Remove(players.A);
-            Remove(players.B);
+            Remove(players.A, players.B);
+            Remove(players.B, players.A);
         }
 
         /// <summary>
