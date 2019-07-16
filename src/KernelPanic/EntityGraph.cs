@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -90,9 +91,9 @@ namespace KernelPanic
         
         #region Querying
 
-        public bool HasEntityAt(Vector2 point)
+        public bool HasEntityAt(Vector2 point, Func<IGameObject, bool> predicate = null)
         {
-            return QuadTree.HasEntityAt(point);
+            return QuadTree.HasEntityAt(point, predicate);
         }
 
         internal IEnumerable<Entity> EntitiesAt(Vector2 point)

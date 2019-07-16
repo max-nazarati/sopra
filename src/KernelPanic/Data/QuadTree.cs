@@ -274,10 +274,11 @@ namespace KernelPanic.Data
         /// containing the given point.
         /// </summary>
         /// <param name="point">The point to check for.</param>
+        /// <param name="predicate">An optional filter for the entities at <paramref name="point"/>.</param>
         /// <returns><c>true</c> if such an entity is found, <c>false</c> otherwise.</returns>
-        internal bool HasEntityAt(Vector2 point)
+        internal bool HasEntityAt(Vector2 point, Func<T, bool> predicate = null)
         {
-            return EntitiesAt(point).Any();
+            return predicate == null ? EntitiesAt(point).Any() : EntitiesAt(point).Any(predicate);
         }
 
         internal IEnumerable<T> NearEntities(Vector2 point, float radius)
