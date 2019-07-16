@@ -20,7 +20,7 @@ namespace KernelPanic.Entities.Units
         }
 
         internal Virus(SpriteManager spriteManager)
-            : base(3, 5, 10, 2, spriteManager.CreateVirus(), spriteManager)
+            : base(3, 3, 10, 2, spriteManager.CreateVirus(), spriteManager)
         {
             mHitBox = Sprite.Bounds;
             mHitBox.Width = 22;

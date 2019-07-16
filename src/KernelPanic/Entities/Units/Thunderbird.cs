@@ -21,7 +21,7 @@ namespace KernelPanic.Entities.Units
         }
 
         internal Thunderbird(SpriteManager spriteManager)
-            : base(15, 3, 15, 3, spriteManager.CreateThunderbird(), spriteManager)
+            : base(15, 2, 15, 3, spriteManager.CreateThunderbird(), spriteManager)
         {
             mHitBox = Sprite.Bounds;
             mHitBox.Width = 53;

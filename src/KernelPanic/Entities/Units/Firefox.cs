@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+using Accord.Statistics.Kernels;
 using KernelPanic.Data;
 using KernelPanic.Events;
 using KernelPanic.Input;

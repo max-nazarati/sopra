@@ -30,7 +30,7 @@ namespace KernelPanic.Entities.Units
         #endregion
         
         internal Bluescreen(SpriteManager spriteManager)
-            : base(50, 9, 15, 0, TimeSpan.FromSeconds(1), spriteManager.CreateBluescreen(), spriteManager)
+            : base(50, 6, 15, 0, TimeSpan.FromSeconds(1), spriteManager.CreateBluescreen(), spriteManager)
         {
             mAbilityRange = 1000;
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);

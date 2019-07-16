@@ -12,9 +12,9 @@ namespace KernelPanic.Entities.Buildings
     internal sealed class CursorShooter : StrategicTower
     {
         protected override bool WantsRotation => true;
-
-        internal CursorShooter(SpriteManager spriteManager)
-            : base(20, 4, 2, 10,TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager)
+        
+        internal CursorShooter(SpriteManager spriteManager, SoundManager sounds)
+            : base(40, 4, 2, 10,TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager)
         {
         }
 

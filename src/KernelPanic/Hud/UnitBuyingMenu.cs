@@ -54,7 +54,8 @@ namespace KernelPanic.Hud
                 mButton.Action.Purchased += PurchasedUnit;
                 mButton.Button.Sprite.SetOrigin(RelativePosition.TopRight);
 
-                mInfoText = spriteManager.CreateText("Preis: 42");
+                var price = Entity.UnitInformationPrice(unitType);
+                mInfoText = spriteManager.CreateText("Preis: " + price);
                 mInfoText.SetOrigin(RelativePosition.TopRight);
                 mInfoText.X -= 175;
             }

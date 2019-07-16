@@ -20,7 +20,7 @@ namespace KernelPanic.Entities.Units
         }
 
         internal Nokia(SpriteManager spriteManager)
-            : base(30, 2, 100, 15, spriteManager.CreateNokia(), spriteManager)
+            : base(30, 1, 100, 15, spriteManager.CreateNokia(), spriteManager)
         {
             mHitBox = Sprite.Bounds;
             mHitBox.Width = 18;

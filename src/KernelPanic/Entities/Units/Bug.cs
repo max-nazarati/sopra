@@ -17,7 +17,7 @@ namespace KernelPanic.Entities.Units
         }
 
         internal Bug(SpriteManager spriteManager)
-            : base(2, 7, 4, 1, spriteManager.CreateBug(), spriteManager)
+            : base(2, 4, 4, 1, spriteManager.CreateBug(), spriteManager)
         {
             mHitBox = Sprite.Bounds;
             mHitBox.Width = 22;

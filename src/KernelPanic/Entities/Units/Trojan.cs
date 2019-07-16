@@ -21,7 +21,7 @@ namespace KernelPanic.Entities.Units
         }
 
         internal Trojan(SpriteManager spriteManager)
-            : base(20, 3, 30, 6, spriteManager.CreateTrojan(), spriteManager)
+            : base(30, 2, 30, 6, spriteManager.CreateTrojan(), spriteManager)
         {
             mHitBox = Sprite.Bounds;
             mHitBox.Width = 34;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Entities.Units;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Players;
@@ -24,6 +25,47 @@ namespace KernelPanic.Entities
 
         protected SpriteManager SpriteManager { get; }
 
+        internal static int UnitInformationPrice(Type unitType)
+        {
+
+            if (unitType == typeof(Firefox))
+            {
+                return 50;
+            }
+            if (unitType == typeof(Settings))
+            {
+                return 50;
+            }
+            if (unitType == typeof(Bluescreen))
+            {
+                return 50;
+            }
+            if (unitType == typeof(Bug))
+            {
+                return 2;
+            }
+            if (unitType == typeof(Virus))
+            {
+                return 3;
+            }
+            if (unitType == typeof(Trojan))
+            {
+                return 30;
+            }
+            if (unitType == typeof(Thunderbird))
+            {
+                return 15;
+            }
+            if (unitType == typeof(Nokia))
+            {
+                return 30;
+            }
+
+            // default
+            return 42;
+
+        }
+        
         protected Entity(int price, Sprite sprite, SpriteManager spriteManager)
         {
             Price = price;
