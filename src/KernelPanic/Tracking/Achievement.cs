@@ -215,7 +215,7 @@ namespace KernelPanic.Tracking
                         condition: PlayerAndUnitMatches(Event.Key.Defender, typeof(Nokia)));
                     break;
                 case Achievement.ManyWires:
-                    progressConnector.ConnectCounter(Event.Id.BuildingPlaced,
+                    progressConnector.ConnectCounter(Event.Id.BuildingPlaced, target: 500,
                         condition: PlayerAndBuildingMatches(Event.Key.Buyer, typeof(Cable)));
                     break;
                 case Achievement.Fool:
