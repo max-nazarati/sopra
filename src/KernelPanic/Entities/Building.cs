@@ -32,14 +32,13 @@ namespace KernelPanic.Entities
 
         /// <summary>
         /// Creates an object of type <typeparamref name="TBuilding"/> using reflection. <typeparamref name="TBuilding"/>
-        /// should have a two-argument constructor which takes a <see cref="SpriteManager"/> and a <see cref="SoundManager"/>.
+        /// should have a one-argument constructor which takes a <see cref="SpriteManager"/>.
         /// 
         /// <para>
         /// Prefer the explicit constructor if possible.
         /// </para>
         /// </summary>
         /// <param name="spriteManager">The <see cref="SpriteManager"/> passed to the constructor.</param>
-        /// <param name="soundManager"></param>
         /// <typeparam name="TBuilding">The type of <see cref="Unit"/> to create.</typeparam>
         /// <returns>A new instance of <typeparamref name="TBuilding"/>.</returns>
         internal static TBuilding Create<TBuilding>(SpriteManager spriteManager) where TBuilding : Building
