@@ -120,19 +120,39 @@ namespace KernelPanic
 
             mMidUpdate = true;
 
+            // Rebuild the quad-tree after movements and additions are done so that
+            // overlaps and collisions can be determined correctly.
+            MoveUnits(positionProvider, gameTime, inputManager);
+
+            QuadTree.Rebuild(entity => entity.WantsRemoval);
+
+            foreach (var objects in mDrawObjects.Values)
+            {
+                objects.RemoveAll(@object => @object.WantsRemoval);
+            }
+
+            FixMovementCollisions(positionProvider);
+            HandleCollisions(positionProvider);
+
+            mMidUpdate = false;
+            Add(mMidUpdateBuffer);
+            mMidUpdateBuffer.Clear();
+        }
+
+        private void MoveUnits(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        {
             foreach (var entity in QuadTree)
             {
                 if (!entity.WantsRemoval)
                     entity.Update(positionProvider, inputManager, gameTime);
                 
-                if (entity is Hero && entity.WantsRemoval)
-                    positionProvider.Owner[(Hero)entity].HeroDied((Hero)entity);
+                if (entity is Hero hero && hero.WantsRemoval)
+                    positionProvider.Owner[hero].HeroDied(hero);
             }
+        }
 
-            // Rebuild the quad-tree after movements and additions are done so that
-            // overlaps and collisions can be determined correctly.
-            QuadTree.Rebuild(entity => entity.WantsRemoval);
-
+        private void FixMovementCollisions(PositionProvider positionProvider)
+        {
             bool collisionHandled;
             do
             {
@@ -143,19 +163,13 @@ namespace KernelPanic
                 }
                 QuadTree.Rebuild();
             } while (collisionHandled);
+        }
 
+        private void HandleCollisions(PositionProvider positionProvider)
+        {
             foreach (var (a, b) in QuadTree.Overlaps())
             {
                 CollisionManager.Handle(a, b, positionProvider);
-            }
-
-            mMidUpdate = false;
-            Add(mMidUpdateBuffer);
-            mMidUpdateBuffer.Clear();
-
-            foreach (var objects in mDrawObjects.Values)
-            {
-                objects.RemoveAll(@object => @object.WantsRemoval);
             }
         }
 
