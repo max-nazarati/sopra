@@ -68,7 +68,7 @@ namespace KernelPanic.PathPlanning
                 for (var j = cutoutXStart * subTileCount; j < cutoutXEnd * subTileCount; ++j)
                 {
                     // Use our indexer because it automatically translates the coordinates in case there is a border.
-                    this[i, j, false] = true;
+                    this[i, j] = true;
                 }
             }
             
@@ -102,42 +102,34 @@ namespace KernelPanic.PathPlanning
         /// Queries whether there is an obstacle at the given point.
         /// </summary>
         /// <param name="point">The point to ask about.</param>
-        /// <param name="safe"></param>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="point"/> lies outside this matrix.</exception>
-        internal bool this[Point point, bool safe = true]
+        internal bool this[Point point]
         {
-            get => this[point.Y, point.X, safe];
-            set => this[point.Y, point.X, safe] = value;
+            get => this[point.Y, point.X];
+            set => this[point.Y, point.X] = value;
         }
 
-        private bool this[int row, int column, bool safe]
+        private bool this[int row, int column]
         {
             get
             {
-                VerifyRange(nameof(row), ref row, 0, safe);
-                VerifyRange(nameof(column), ref column, 1, safe);
+                // ReSharper disable once InvertIf, shows symmetry between getter & setter.
+                if (mHasBorder)
+                {
+                    row++;
+                    column++;
+                }
                 return mObstacles[row, column];
             }
             set
             {
-                VerifyRange(nameof(row), ref row, 0, safe);
-                VerifyRange(nameof(column), ref column, 1, safe);
+                if (mHasBorder)
+                {
+                    row++;
+                    column++;
+                }
                 mObstacles[row, column] = value;
             }
-        }
-
-        private void VerifyRange(string name, ref int value, int dimension, bool safe)
-        {
-            var lowerBound = mHasBorder ? -1 : 0;
-            value -= lowerBound;
-
-            if (!safe)
-                return;
-
-            var size = mObstacles.GetLength(dimension);
-            var upperBound = size - lowerBound;
-            if (value < lowerBound || value > upperBound)
-                throw new ArgumentOutOfRangeException(name, value, $"not in range [{lowerBound}; {upperBound})");
         }
 
         #endregion
@@ -180,7 +172,7 @@ namespace KernelPanic.PathPlanning
             {
                 for (var col = 0; col < Columns; ++col)
                 {
-                    if (this[row, col, false] == obstacles)
+                    if (this[row, col] == obstacles)
                         yield return new TileIndex(row, col, SubTileCount);
                 }
             }
