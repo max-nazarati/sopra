@@ -9,7 +9,7 @@ namespace KernelPanic.Table
 {
     internal sealed class UnitSpawner
     {
-        private struct SpawnQueue<T> where T : Unit
+        private struct SpawnQueue<T> where T : Troupe
         {
             private readonly Queue<T> mQueue;
             private readonly Vector2 mInitialPosition;
@@ -30,7 +30,11 @@ namespace KernelPanic.Table
 
             internal bool Spawn(EntityGraph entityGraph)
             {
-                if (mQueue.Count <= 0 || entityGraph.HasIntersectingEntity(mQueue.Peek()))
+                if (mQueue.Count == 0)
+                    return false;
+
+                var next = mQueue.Peek();
+                if (entityGraph.HasIntersectingEntity(next, o => o is Troupe t && next.CollidesWith(t)))
                     return false;
 
                 entityGraph.Add(mQueue.Dequeue());

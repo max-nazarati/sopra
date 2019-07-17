@@ -10,15 +10,32 @@ namespace KernelPanic
 {
     internal static class CollisionManager
     {
+        internal static bool CollidesWith(this Troupe troupe, Troupe other)
+        {
+            var bird1 = troupe is Thunderbird;
+            var bird2 = other is Thunderbird;
+
+            if (bird1 || bird2)
+            {
+                // If at least one is a bird they'll collide if both are birds.
+                return bird1 && bird2;
+            }
+            
+            // If both are not small they'll collide.
+            if (!troupe.IsSmall && !other.IsSmall)
+                return true;
+
+            // If one is small they won't collide.
+            if (!troupe.IsSmall || !other.IsSmall)
+                return false;
+
+            // Otherwise we have to small troupes which will collide if they have the same type.
+            return troupe.GetType() == other.GetType();
+        }
+    
         internal static bool HandleMovement(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
         {
-            if (!(object1 is Troupe a) || !(object2 is Troupe b))
-                return false;
-
-            if (a is Thunderbird ^ b is Thunderbird)
-                return false;
-
-            if (a.IsSmall && b.IsSmall && a.GetType() != b.GetType())
+            if (!(object1 is Troupe a) || !(object2 is Troupe b) || !a.CollidesWith(b))
                 return false;
 
             var toReset = TroupeToReset(a, b, positionProvider);
