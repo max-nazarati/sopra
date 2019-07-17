@@ -33,28 +33,31 @@ namespace KernelPanic
         {
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
             playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
-            
-            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 200);
+
+            var techDemo = CreateButton(stateManager.Sprite, "Tech-Demo", 200);
+            techDemo.Clicked += (button, input) => InGameState.PushTechDemo(stateManager);
+
+            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 300);
             optionsButton.Clicked += (button, input) =>
                 stateManager.Push(CreateOptionsMenu(stateManager));
             
-            var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 300);
+            var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 400);
             instructionsButton.Clicked += (button, input) => stateManager
                 .Push(CreateInstructionsMenu(stateManager));
             
-            var achievementsButton = CreateButton(stateManager.Sprite, "Achievements",400);
+            var achievementsButton = CreateButton(stateManager.Sprite, "Achievements",500);
             achievementsButton.Clicked += (button, input) => stateManager
                 .Push(CreateAchievementsMenu(stateManager));
             
-            var statisticsButton = CreateButton(stateManager.Sprite, "Statistiken", 500);
+            var statisticsButton = CreateButton(stateManager.Sprite, "Statistiken", 600);
             statisticsButton.Clicked += (button, input) => stateManager
                 .Push(CreateStatisticsMenu(stateManager));
 
-            var creditsButton = CreateButton(stateManager.Sprite, "Credits", 600);
+            var creditsButton = CreateButton(stateManager.Sprite, "Credits", 700);
             creditsButton.Clicked += (button, input) => stateManager
                 .Push(CreateCreditsMenu(stateManager));
             
-            var quitButton = CreateButton( stateManager.Sprite, "Beenden", 700);
+            var quitButton = CreateButton( stateManager.Sprite, "Beenden", 800);
             quitButton.Clicked += (button, input) => stateManager.ExitAction();
 
             return new MenuState(stateManager, stateManager.ExitAction)
@@ -63,6 +66,7 @@ namespace KernelPanic
                 {
                     CreateBackground(stateManager.Sprite),
                     playButton,
+                    techDemo,
                     optionsButton,
                     instructionsButton,
                     achievementsButton,

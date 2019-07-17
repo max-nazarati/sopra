@@ -50,6 +50,14 @@ namespace KernelPanic
             gameStateManager.Push(game.mHud);
         }
 
+        internal static void PushTechDemo(GameStateManager gameStateManager)
+        {
+            var game = new InGameState(null, 5, gameStateManager);
+            game.InitializeTechDemo();
+            gameStateManager.Restart(game);
+            gameStateManager.Push(game.mHud);
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -58,6 +66,11 @@ namespace KernelPanic
             {
                 EventCenter.Default.Send(Event.CloseAchievementPool(mAchievementPool));
             }
+        }
+
+        private void InitializeTechDemo()
+        {
+            // TODO: Initialize the tech demo.
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime)
