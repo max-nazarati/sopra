@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Table;
+using KernelPanic.Entities.Units;
 using KernelPanic.Entities;
 using KernelPanic.Events;
 using KernelPanic.Upgrades;
@@ -45,6 +46,58 @@ namespace KernelPanic.Players
 
         [DataMember]
         internal int FirefoxMaximum { get; private set; } = 1;
+        [DataMember]
+        internal int FirefoxCurrent { get; set; } = 0;
+        [DataMember]
+        internal int SettingsMaximum { get;} = 1;
+        [DataMember]
+        internal int SettingsCurrent { get; set; } = 0;
+        [DataMember]
+        internal int BlueScreenMaximum { get;} = 1;
+        [DataMember]
+        internal int BlueScreenCurrent { get; set; } = 0;
+
+        internal bool ValidHeroPurchase(Unit unit)
+        {
+            if (unit is Firefox)
+            {
+                var res = FirefoxMaximum > FirefoxCurrent;
+                if (res)
+                    FirefoxCurrent++;
+                return res;
+            }
+            else if (unit is Settings)
+            {
+                var res = SettingsMaximum > SettingsCurrent;
+                if (res)
+                    SettingsCurrent++;
+                return res;
+            }
+            else if (unit is Bluescreen)
+            {
+                var res = BlueScreenMaximum > BlueScreenCurrent;
+                if (res)
+                    BlueScreenCurrent++;
+                return res;
+            }
+            return false;
+        }
+
+        internal void HeroDied(Hero unit)
+        {
+            if (unit is Firefox)
+            {
+                FirefoxCurrent--;
+            }
+            else if (unit is Settings)
+            {
+                SettingsCurrent--;
+            }
+            else if (unit is Bluescreen)
+            {
+                BlueScreenCurrent--;
+            }
+        }
 
         [JsonConstructor]
         internal Player(Lane defendingLane, Lane attackingLane, int bitcoins)

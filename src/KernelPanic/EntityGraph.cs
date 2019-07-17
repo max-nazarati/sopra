@@ -9,6 +9,7 @@ using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using KernelPanic.Entities.Units;
 
 namespace KernelPanic
 {
@@ -119,9 +120,13 @@ namespace KernelPanic
 
             mMidUpdate = true;
 
-            foreach (var entity in QuadTree.Where(entity => !entity.WantsRemoval))
+            foreach (var entity in QuadTree)
             {
-                entity.Update(positionProvider, inputManager, gameTime);
+                if (!entity.WantsRemoval)
+                    entity.Update(positionProvider, inputManager, gameTime);
+                
+                if (entity is Hero && entity.WantsRemoval)
+                    positionProvider.Owner[(Hero)entity].HeroDied((Hero)entity);
             }
 
             // Rebuild the quad-tree after movements and additions are done so that
