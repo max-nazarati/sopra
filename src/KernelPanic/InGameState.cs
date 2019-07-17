@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using KernelPanic.Entities.Units;
 
 namespace KernelPanic
 {
@@ -70,7 +71,21 @@ namespace KernelPanic
 
         private void InitializeTechDemo()
         {
-            // TODO: Initialize the tech demo.
+            foreach (var kv in mHud.UnitBuyingMenu.BuyingActions)
+            {
+                if (typeof(Hero).IsAssignableFrom(kv.Key))
+                {
+                    // Skip heroes.
+                    continue;
+                }
+
+                for (var i = 0; i < 100; i++)
+                {
+                    mBoard.PlayerA.Bitcoins = mBoard.PlayerB.Bitcoins = 9999;
+                    kv.Value.TryPurchase(mBoard.PlayerA);
+                    kv.Value.TryPurchase(mBoard.PlayerB);
+                }
+            }
         }
 
         public override void Update(InputManager inputManager, GameTime gameTime)

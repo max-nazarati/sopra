@@ -12,8 +12,7 @@ namespace KernelPanic.Hud
     internal sealed class InGameOverlay: AGameState
     {
         internal ScoreOverlay ScoreOverlay { get; }
-
-        private readonly UnitBuyingMenu mUnitBuyingMenu;
+        internal UnitBuyingMenu UnitBuyingMenu { get; }
         private readonly BuildingBuyingMenu mBuildingBuyingMenu;
 
         private Entity mSelection;
@@ -33,7 +32,7 @@ namespace KernelPanic.Hud
             selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
 
             ScoreOverlay = new ScoreOverlay(players, gameStateManager.Sprite, time);
-            mUnitBuyingMenu = unitMenu;
+            UnitBuyingMenu = unitMenu;
             mBuildingBuyingMenu = buildingMenu;
             mMinimapOverlay = new MinimapOverlay(players, gameStateManager.Sprite, camera);
         }
@@ -42,7 +41,7 @@ namespace KernelPanic.Hud
             GameTime gameTime)
         {
             ScoreOverlay.Update(inputManager, gameTime);
-            mUnitBuyingMenu.Update(inputManager, gameTime);
+            UnitBuyingMenu.Update(inputManager, gameTime);
             mBuildingBuyingMenu.Update(inputManager, gameTime);
             mMinimapOverlay.Update();
         }
@@ -50,7 +49,7 @@ namespace KernelPanic.Hud
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             ScoreOverlay.Draw(spriteBatch, gameTime);
-            mUnitBuyingMenu.Draw(spriteBatch, gameTime);
+            UnitBuyingMenu.Draw(spriteBatch, gameTime);
             mBuildingBuyingMenu.Draw(spriteBatch, gameTime);
             mMinimapOverlay.Draw(spriteBatch, gameTime);
         }
