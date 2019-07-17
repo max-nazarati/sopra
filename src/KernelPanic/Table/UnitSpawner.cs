@@ -43,6 +43,8 @@ namespace KernelPanic.Table
                 entityGraph.Add(mQueue.Dequeue());
                 return true;
             }
+
+            internal IEnumerable<Troupe> QueuedUnits => mQueue;
         }
 
         private static Vector2 SpawnPoint(Grid grid, int row, int subTileCount = 1)
@@ -172,5 +174,13 @@ namespace KernelPanic.Table
             mThunderbirds.Spawn(mEntityGraph);
             mSpawnCooldown.Update(gameTime);
         }
+
+        internal IEnumerable<Troupe> QueuedUnits =>
+            mBugs.QueuedUnits
+                .Concat(mViruses.QueuedUnits)
+                .Concat(mTrojans.QueuedUnits)
+                .Concat(mNokias.QueuedUnits)
+                .Concat(mThunderbirds.QueuedUnits)
+                .Concat(mAdditionalSpawns.Values.SelectMany(queue => queue.QueuedUnits));
     }
 }

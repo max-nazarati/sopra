@@ -130,6 +130,8 @@ namespace KernelPanic.Players
             // Apply the new upgrade to all existing entities.
             foreach (var unit in AttackingLane.EntityGraph.Entities<Unit>())
                 upgrade.Apply(unit);
+            foreach (var unit in AttackingLane.UnitSpawner.QueuedUnits)
+                upgrade.Apply(unit);
             foreach (var building in DefendingLane.EntityGraph.Entities<Building>())
                 upgrade.Apply(building);
         }
