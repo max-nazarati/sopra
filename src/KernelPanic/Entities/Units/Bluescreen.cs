@@ -22,6 +22,8 @@ namespace KernelPanic.Entities.Units
 
         private Emp[] mEmps;
 
+        protected override Point HitBoxSize => new Point(64, 64);
+
         #region Upgrades
         internal bool TargetsTwoTower { private get; set; }
         private const double EmpDuration = 5;
@@ -47,8 +49,6 @@ namespace KernelPanic.Entities.Units
             Cooldown = new CooldownComponent(Cooldown.Cooldown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
-
-        public override Rectangle Bounds => Sprite.Bounds;
 
         #region Ability 
 

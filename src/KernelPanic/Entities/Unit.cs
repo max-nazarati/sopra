@@ -50,6 +50,19 @@ namespace KernelPanic.Entities
         protected delegate void MoveTargetReachedDelegate(Vector2 target);
         protected event MoveTargetReachedDelegate MoveTargetReached;
 
+        protected abstract Point HitBoxSize { get; }
+
+        public override Rectangle Bounds
+        {
+            get
+            {
+                var (width, height) = HitBoxSize;
+                var x = (int) (Sprite.X - width / 2f);
+                var y = (int) (Sprite.Y - height / 2f);
+                return new Rectangle(x, y, width, height);
+            }
+        }
+
         protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
             : base(price, sprite, spriteManager)
         {

@@ -4,24 +4,11 @@ namespace KernelPanic.Entities.Units
 {
     internal sealed class Bug : Troupe
     {
-        private Rectangle mHitBox;
-
-        public override Rectangle Bounds
-        {
-            get
-            {
-                mHitBox.X = Sprite.Bounds.X + 26;
-                mHitBox.Y = Sprite.Bounds.Y + 35;
-                return mHitBox;
-            }
-        }
+        protected override Point HitBoxSize => new Point(22, 11);
 
         internal Bug(SpriteManager spriteManager)
             : base(2, 4, 4, 1, spriteManager.CreateBug(), spriteManager)
         {
-            mHitBox = Sprite.Bounds;
-            mHitBox.Width = 22;
-            mHitBox.Height = 11;
         }
 
         internal override bool IsSmall => true;

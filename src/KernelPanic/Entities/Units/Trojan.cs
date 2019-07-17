@@ -9,24 +9,11 @@ namespace KernelPanic.Entities.Units
     {
         [JsonProperty] internal int ChildCount { get; set; } = 5;
 
-        private Rectangle mHitBox;
-
-        public override Rectangle Bounds
-        {
-            get
-            {
-                mHitBox.X = Sprite.Bounds.X + 15;
-                mHitBox.Y = Sprite.Bounds.Y + 8;
-                return mHitBox;
-            }
-        }
+        protected override Point HitBoxSize => new Point(34, 45);
 
         internal Trojan(SpriteManager spriteManager)
             : base(30, 2, 30, 6, spriteManager.CreateTrojan(), spriteManager)
         {
-            mHitBox = Sprite.Bounds;
-            mHitBox.Width = 34;
-            mHitBox.Height = 45;
         }
 
         internal override bool IsSmall => false;

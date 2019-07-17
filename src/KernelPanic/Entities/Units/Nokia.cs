@@ -7,24 +7,11 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Nokia : Troupe
     {
-        private Rectangle mHitBox;
-
-        public override Rectangle Bounds
-        {
-            get
-            {
-                mHitBox.X = Sprite.Bounds.X + 24;
-                mHitBox.Y = Sprite.Bounds.Y + 12;
-                return mHitBox;
-            }
-        }
+        protected override Point HitBoxSize => new Point(18, 39);
 
         internal Nokia(SpriteManager spriteManager)
             : base(50, 1, 100, 15, spriteManager.CreateNokia(), spriteManager)
         {
-            mHitBox = Sprite.Bounds;
-            mHitBox.Width = 18;
-            mHitBox.Height = 39;
         }
 
         internal override bool IsSmall => false;
