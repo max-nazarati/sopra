@@ -8,14 +8,14 @@ namespace KernelPanic
         private static bool sVisualizeAStar;
         private static TroupeDataVisualization sVectorFieldVisualization;
         private static TroupeDataVisualization sHeatMapVisualization;
-
         private static bool sGamePaused;
+        private static bool sShowHitBoxes;
 
         internal static bool VisualizeAStar => sVisualizeAStar;
         internal static TroupeDataVisualization VectorFieldVisualization => sVectorFieldVisualization;
         internal static TroupeDataVisualization HeatMapVisualization => sHeatMapVisualization;
-
         internal static bool GamePaused => sGamePaused;
+        internal static bool ShowHitBoxes => sShowHitBoxes;
 
         internal static void Update(InputManager inputManager)
         {
@@ -34,8 +34,8 @@ namespace KernelPanic
             Toggles(Keys.G, ref sVisualizeAStar);
             Advances(Keys.H, ref sHeatMapVisualization, TroupeDataVisualization.Small);
             Advances(Keys.V, ref sVectorFieldVisualization, TroupeDataVisualization.Thunderbird);
-
             Toggles(Keys.P, ref sGamePaused);
+            Toggles(Keys.B, ref sShowHitBoxes);
         }
 
         internal enum TroupeDataVisualization

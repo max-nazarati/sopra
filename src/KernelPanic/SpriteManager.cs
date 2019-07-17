@@ -374,46 +374,56 @@ namespace KernelPanic
         
         #endregion
 
-        #region Selection
-        
-        private const int SelectionBorderThickness = 12;
-        private Texture2D CreateSelectionBorderTexture(Color color)
-        {
-            const int line = Grid.KachelSize + 2 * SelectionBorderThickness; 
-            var texture = new Texture2D(GraphicsDevice, line, line);
+        #region Borders
 
+        /// <summary>
+        /// Creates a texture of the given <paramref name="size"/> which is transparent save for the a border with the
+        /// given <paramref name="thickness"/>. Note that the border is inside <paramref name="size"/>.
+        /// </summary>
+        /// <param name="size">The size of the resulting texture.</param>
+        /// <param name="thickness">The thickness of the border.</param>
+        /// <param name="color">The color of the border.</param>
+        /// <returns>A transparent texture with a border.</returns>
+        private Texture2D CreateBorderTexture(Point size, int thickness, Color color)
+        {
+            var data = new Color[size.X * size.Y];
             var lineIdx = 0;
-            var data = new Color[texture.Width * texture.Height];
 
             // Fill top and bottom border.
-            for (var i = 0; i < SelectionBorderThickness; ++i, ++lineIdx)
+            for (var i = 0; i < thickness; ++i, ++lineIdx)
             {
-                for (var j = 0; j < line; ++j)
+                for (var j = 0; j < size.X; ++j)
                 {
-                    // Multiply lineIdx with this because we skip over multiple lines.
-                    data[j + line * (lineIdx + Grid.KachelSize + SelectionBorderThickness)] = color;
-                    data[j + line * lineIdx] = color;
+                    data[j + size.X] = color;
+                    data[j + size.X * (size.Y - lineIdx - 1)] = color;
                 }
             }
 
             // Fill rows in between.
-            for (var i = 0; i < Grid.KachelSize; ++i, ++lineIdx)
+            for (var i = thickness; i < size.Y - thickness; ++i, ++lineIdx)
             {
                 // Fill the left and right border.
-                for (var j = 0; j < SelectionBorderThickness; ++j)
+                for (var j = 0; j < thickness; ++j)
                 {
-                    // Multiply only lineIdx with line, because we move inside on line.
-                    data[j + line * lineIdx + Grid.KachelSize + SelectionBorderThickness] = color;
-                    data[j + line * lineIdx] = color;
+                    data[j + size.X * lineIdx] = color;
+                    data[size.X - 1 - j + size.X * lineIdx] = color;
                 }
 
                 // Fill in between.
-                for (var j = 0; j < Grid.KachelSize; ++j)
-                    data[lineIdx * line + SelectionBorderThickness + j] = Color.Transparent;
+                for (var j = thickness; j < size.X - thickness; ++j)
+                    data[j + lineIdx * size.X] = Color.Transparent;
             }
 
+            var texture = new Texture2D(GraphicsDevice, size.X, size.Y);
             texture.SetData(data);
             return texture;
+        }
+
+        private Texture2D CreateSelectionBorderTexture(Color color)
+        {
+            const int thickness = 12;
+            var size = new Point(Grid.KachelSize + 2 * thickness);
+            return CreateBorderTexture(size, thickness, color);
         }
 
         internal ImageSprite CreateSelectionBorder()
@@ -422,7 +432,12 @@ namespace KernelPanic
             sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
-        
+
+        internal ImageSprite CreateHitBoxBorder(Point size)
+        {
+            return new ImageSprite(CreateBorderTexture(size, 1, Color.Red));
+        }
+
         #endregion
         
         #region Base
