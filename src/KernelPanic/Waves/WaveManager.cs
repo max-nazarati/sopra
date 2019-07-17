@@ -36,11 +36,14 @@ namespace KernelPanic.Waves
         /// </summary>
         private Wave CurrentWave => mAliveWaves.Count == 0 ? null : mAliveWaves[mAliveWaves.Count - 1];
 
+        private readonly CooldownComponent mNextWaveTimer = new CooldownComponent(TimeSpan.FromSeconds(1), false);
+
         [JsonConstructor]
         public WaveManager(PlayerIndexed<Player> players)
         {
             mTroupes = new PlayerIndexed<List<Troupe>>(new List<Troupe>(), new List<Troupe>());
             Players = players;
+            mNextWaveTimer.CooledDown += SpawnWave;
         }
 
         private void Activate()
@@ -48,15 +51,18 @@ namespace KernelPanic.Waves
             if (mTroupes.A.Count == 0 && mTroupes.B.Count == 0)
                 return;
 
-            var wave = new Wave(++mLastIndex, mTroupes);
-            mAliveWaves.Add(wave);
+            mAliveWaves.Add(new Wave(++mLastIndex, mTroupes));
+            mTroupes = mTroupes.Map(troupes => new List<Troupe>(troupes.Select(t => t.Clone())));
+            mNextWaveTimer.Enabled = true;
+        }
 
-            // We have to clone the units before they are modified by Spawn.
-            var unitsCopy = mTroupes.Map(troupes => new List<Troupe>(troupes.Select(t => t.Clone())));
+        private void SpawnWave(CooldownComponent component)
+        {
+            var wave = CurrentWave;
 
             void Spawn(StaticDistinction distinction)
             {
-                var troupes = mTroupes.Select(distinction);
+                var troupes = wave.Troupes.Select(distinction);
                 var player = Players.Select(distinction);
                 var spawner = player.AttackingLane.UnitSpawner;
                 
@@ -75,10 +81,9 @@ namespace KernelPanic.Waves
                     spawner.Register(troupe);
                 }
             }
-            
+
             Spawn(new StaticDistinction(true));
             Spawn(new StaticDistinction(false));
-            mTroupes = unitsCopy;
         }
 
         internal void Add(IPlayerDistinction player, Unit unit)
@@ -103,6 +108,8 @@ namespace KernelPanic.Waves
 
         internal void Update(GameTime gameTime)
         {
+            mNextWaveTimer.Update(gameTime);
+
             // 1. Remove all units from the waves that are either dead or have reached the base.
             //    This awards experience points.
             foreach (var wave in mAliveWaves)
