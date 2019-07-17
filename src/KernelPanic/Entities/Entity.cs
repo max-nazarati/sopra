@@ -14,8 +14,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic.Entities
 {
     [DataContract]
-    [KnownType(typeof(Unit))]
-    [KnownType(typeof(Building))]
     internal abstract class Entity : IPriced, IGameObject
     {
         internal Sprite Sprite { get; private set; }

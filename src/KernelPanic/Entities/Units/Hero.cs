@@ -20,7 +20,6 @@ using Microsoft.Xna.Framework.Input;
 namespace KernelPanic.Entities.Units
 {
     [DataContract]
-    [KnownType(typeof(Firefox))]
     internal abstract class Hero : Unit
     {
         #region MemberVariables
