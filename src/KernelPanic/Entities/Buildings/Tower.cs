@@ -31,7 +31,7 @@ namespace KernelPanic.Entities.Buildings
             Sprite sprite,
             SpriteManager spriteManager) : base(price, sprite, spriteManager)
         {
-            FireTimer = new CooldownComponent(cooldown);
+            FireTimer = new CooldownComponent(cooldown, false);
             Radius = radius * Grid.KachelSize;
             Damage = damage;
             Speed = speed;
