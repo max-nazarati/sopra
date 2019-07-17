@@ -46,8 +46,16 @@ namespace KernelPanic.Hud
             {
                 UnitType = unitType;
                 mCounter = 0;
-                mCounterSprite = spriteManager.CreateText("0");
+                if (!unitType.IsSubclassOf(typeof(Hero)))
+                {
+                    mCounterSprite = spriteManager.CreateText("0");
+                }
+                else
+                {
+                    mCounterSprite = spriteManager.CreateText("");
+                }
                 mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterRight);
+
 
                 // When a unit is purchased, increase its counter.
                 mButton = button;
@@ -63,7 +71,7 @@ namespace KernelPanic.Hud
             private void PurchasedUnit(IPlayerDistinction buyer, Unit resource)
             {
                 // Only increment the counter if the buyer is the active player.
-                if (buyer.Select(mCounterSprite, null) is TextSprite sprite)
+                if (buyer.Select(mCounterSprite, null) is TextSprite sprite && !(resource is Hero))
                 {
                     sprite.Text = (++mCounter).ToString();
                 }
