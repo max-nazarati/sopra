@@ -205,7 +205,8 @@ namespace KernelPanic.Data
         /// <param name="predicate">Used to filter the objects.</param>
         internal void Rebuild(Func<T, bool> predicate = null)
         {
-            var allEntities = new List<T>(predicate == null ? this : this.Where(predicate));
+            var allEntities = new List<T>(Count);
+            allEntities.AddRange(predicate == null ? this : this.Where(predicate));
             Clear();
             Add(allEntities);
         }
