@@ -12,19 +12,22 @@ namespace KernelPanic.Table
         private struct SpawnQueue<T> where T : Troupe
         {
             private readonly Queue<T> mQueue;
-            private readonly Vector2 mInitialPosition;
+            private readonly Vector2[] mSpawnPoints;
+            private int mSpawnIndex;
 
-            internal SpawnQueue(Vector2 spawnPoint)
+            internal SpawnQueue(params Vector2[] spawnPoints)
             {
+                mSpawnIndex = 0;
                 mQueue = new Queue<T>();
-                mInitialPosition = spawnPoint;
+                mSpawnPoints = spawnPoints;
             }
 
             internal bool Empty => mQueue.Count == 0;
 
             internal void Add(T unit)
             {
-                unit.SetInitialPosition(mInitialPosition);
+                unit.SetInitialPosition(mSpawnPoints[mSpawnIndex]);
+                mSpawnIndex = (mSpawnIndex + 1) % mSpawnPoints.Length;
                 mQueue.Enqueue(unit);
             }
 
@@ -42,7 +45,7 @@ namespace KernelPanic.Table
             }
         }
 
-        private static Vector2 SpawnPoint(int row, int subTileCount, Grid grid)
+        private static Vector2 SpawnPoint(Grid grid, int row, int subTileCount = 1)
         {
             var tile = grid.LaneSide == Lane.Side.Left
                 ? new TileIndex(row, (grid.LaneRectangle.Width - 1) * subTileCount, subTileCount)
@@ -76,19 +79,23 @@ namespace KernelPanic.Table
             mEntityGraph = entityGraph;
             mGrid = grid;
 
-            mBugs = new SpawnQueue<Bug>(SpawnPoint(3, 2, grid));
-            mViruses = new SpawnQueue<Virus>(SpawnPoint(5, 2, grid));
-            mTrojans = new SpawnQueue<Trojan>(SpawnPoint(6, 1, grid));
-            mNokias = new SpawnQueue<Nokia>(SpawnPoint(8, 1, grid));
-            mThunderbirds = new SpawnQueue<Thunderbird>(SpawnPoint(4, 1, grid));
+            mBugs = new SpawnQueue<Bug>(SpawnPoint(grid, 3, 2));
+            mViruses = new SpawnQueue<Virus>(SpawnPoint(grid, 5, 2));
+            mTrojans = new SpawnQueue<Trojan>(SpawnPoint(grid, 6));
+            mNokias = new SpawnQueue<Nokia>(SpawnPoint(grid, 8));
+            mThunderbirds = new SpawnQueue<Thunderbird>(
+                SpawnPoint(grid, 1),
+                SpawnPoint(grid, 3),
+                SpawnPoint(grid, 6),
+                SpawnPoint(grid, 8));
 
             mHeroSpawns = new[]
             {
-                SpawnPoint(5, 1, grid),
-                SpawnPoint(7, 1, grid),
-                SpawnPoint(3, 1, grid),
-                SpawnPoint(9, 1, grid),
-                SpawnPoint(0, 1, grid)
+                SpawnPoint(grid, 5),
+                SpawnPoint(grid, 7),
+                SpawnPoint(grid, 3),
+                SpawnPoint(grid, 9),
+                SpawnPoint(grid, 0)
             };
 
             mSpawnCooldown.CooledDown += component =>
