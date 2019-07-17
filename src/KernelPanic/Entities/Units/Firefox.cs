@@ -27,7 +27,6 @@ namespace KernelPanic.Entities.Units
             : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), spriteManager.CreateFirefox(), spriteManager)
         {
             mIndicator = spriteManager.CreateJumpIndicator();
-            Console.Write(Sprite.Bounds);
         }
 
         protected override void CompleteClone()
