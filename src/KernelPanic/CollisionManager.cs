@@ -53,8 +53,8 @@ namespace KernelPanic
             if (!(positionProvider.Grid.TileFromWorldPoint(bMoveTarget) is TileIndex tileB))
                 return null;
 
-            var pointA = tileA.Rescaled(1).First().ToPoint();
-            var pointB = tileB.Rescaled(1).First().ToPoint();
+            var pointA = tileA.BaseTile.ToPoint();
+            var pointB = tileB.BaseTile.ToPoint();
 
             if (pointA == pointB)
             {

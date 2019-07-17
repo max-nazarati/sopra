@@ -148,7 +148,7 @@ namespace KernelPanic.Entities.Units
             foreach (var troupe in positionProvider.NearEntities<Troupe>(point.ToVector2(),
                 AbilityRange * mAbilityRangeAmplifier))
             {
-                var tile = positionProvider.RequireTile(troupe).Rescaled(1).First();
+                var tile = positionProvider.RequireTile(troupe).BaseTile;
                 var heat = positionProvider.TroupeData.TileHeat(tile.ToPoint());
                 result += (heat ?? 1 ) < 10 ? 20 : (heat ?? 1 ) < 15 ? 16 : (heat ?? 1 ) < 20 ? 12 : (heat ?? 1 ) < 25 ? 8 : (heat ?? 1 ) < 30 ? 4 : (heat ?? 1 ) < 40 ? 2 : 1;
             }

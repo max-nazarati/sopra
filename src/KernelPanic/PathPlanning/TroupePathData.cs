@@ -75,7 +75,7 @@ namespace KernelPanic.PathPlanning
                 return Vector2.Zero;
 
             var size = mGrid.GetTile(tile).Size;
-            var vector = RelativeMovement(tile.Rescaled(1).First(), SelectVectorField(troupe));
+            var vector = RelativeMovement(tile.BaseTile, SelectVectorField(troupe));
             return vector * size;
         }
 
