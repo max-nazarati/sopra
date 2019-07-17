@@ -44,7 +44,11 @@ namespace KernelPanic.Table
 
         private readonly Sprite mSprite;
 
-        public Rectangle Bounds => mSprite.Bounds;
+        public Rectangle Bounds => new Rectangle(
+            LaneRectangle.X * KachelSize,
+            LaneRectangle.Y * KachelSize,
+            LaneRectangle.Width * KachelSize,
+            LaneRectangle.Height * KachelSize);
 
         internal Grid(Rectangle laneBounds, SpriteManager sprites, Lane.Side laneSide)
         {
