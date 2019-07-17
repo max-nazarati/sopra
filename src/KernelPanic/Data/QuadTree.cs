@@ -193,25 +193,72 @@ namespace KernelPanic.Data
                 Add(element);
             }
         }
+
+        #endregion
+
+        #region Rebuilding
         
         /// <summary>
-        /// Rebuilds this <see cref="QuadTree{T}"/> using the updated bounds. If <paramref name="predicate"/> is given,
-        /// only the objects are kept for which <c>true</c> is returned.
+        /// Rebuilds this <see cref="QuadTree{T}"/> using the updated bounds. If <paramref name="removePredicate"/> is
+        /// given, all objects are removed for which <c>true</c> is returned.
         /// </summary>
-        /// <param name="predicate">Used to filter the objects.</param>
-        internal void Rebuild(Func<T, bool> predicate = null)
+        /// <param name="removePredicate">Used to filter the objects.</param>
+        internal void Rebuild(Func<T, bool> removePredicate = null)
         {
-            var allEntities = new List<T>(Count);
-            allEntities.AddRange(predicate == null ? this : this.Where(predicate));
-            Clear();
-            Add(allEntities);
+            var sink = new List<T>();
+            RebuildImpl(removePredicate, sink);
+            Add(sink);
         }
 
-        /*internal*/ private void Clear()
+        private void RebuildImpl(Func<T, bool> removePredicate, List<T> parentSink)
         {
-            mObjects.Clear();
-            mChildren = null;
-            Count = 0;
+            RebuildObjects(removePredicate, parentSink);
+            
+            if (mChildren != null)
+                RebuildChildren(removePredicate, parentSink);
+        }
+
+        private void RebuildObjects(Func<T, bool> removePredicate, ICollection<T> parentSink)
+        {
+            var bounds = mBounds;
+            var removed = mObjects.RemoveAll(value =>
+            {
+                if (removePredicate != null && removePredicate(value))
+                    return true;
+                if (bounds.Contains(value.Bounds))
+                    return false;
+                parentSink.Add(value);
+                return true;
+            });
+
+            Count -= removed;
+        }
+
+        private void RebuildChildren(Func<T, bool> removePredicate, List<T> parentSink)
+        {
+            var index = parentSink.Count;
+            foreach (var child in mChildren)
+                child.RebuildImpl(removePredicate, parentSink);
+
+            var count = parentSink.Count;
+            Count -= count - index;
+
+            for (var i = index; i < count; ++i)
+            {
+                var value = parentSink[i];
+                if (!mBounds.Contains(value.Bounds))
+                {
+                    if (i != index)
+                        parentSink[index] = value;
+
+                    ++index;
+                    continue;
+                }
+
+                Add(value);
+            }
+            
+            parentSink.RemoveRange(index, count - index);
         }
 
         #endregion

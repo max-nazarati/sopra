@@ -131,7 +131,7 @@ namespace KernelPanic
 
             // Rebuild the quad-tree after movements and additions are done so that
             // overlaps and collisions can be determined correctly.
-            QuadTree.Rebuild(entity => !entity.WantsRemoval);
+            QuadTree.Rebuild(entity => entity.WantsRemoval);
 
             bool collisionHandled;
             do
