@@ -97,6 +97,11 @@ namespace KernelPanic
             return QuadTree.HasEntityAt(point, predicate);
         }
 
+        internal bool HasIntersectingEntity(IGameObject gameObject)
+        {
+            return QuadTree.EntitiesAt(gameObject.Bounds).Any();
+        }
+
         internal IEnumerable<Entity> EntitiesAt(Vector2 point)
         {
             return QuadTree.EntitiesAt(point).OfType<Entity>();

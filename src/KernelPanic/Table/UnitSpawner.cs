@@ -28,10 +28,13 @@ namespace KernelPanic.Table
                 mQueue.Enqueue(unit);
             }
 
-            internal void Spawn(EntityGraph entityGraph)
+            internal bool Spawn(EntityGraph entityGraph)
             {
-                if (mQueue.Count > 0)
-                    entityGraph.Add(mQueue.Dequeue());
+                if (mQueue.Count <= 0 || entityGraph.HasIntersectingEntity(mQueue.Peek()))
+                    return false;
+
+                entityGraph.Add(mQueue.Dequeue());
+                return true;
             }
         }
 
@@ -54,7 +57,7 @@ namespace KernelPanic.Table
         private readonly Dictionary<TileIndex, SpawnQueue<Troupe>> mAdditionalSpawns =
             new Dictionary<TileIndex, SpawnQueue<Troupe>>();
 
-        // TODO: We probably want to have more logic instead, maybe something like “is the tile free”.
+        // Only units spawned somewhere in the lane use the cooldown.
         private readonly CooldownComponent mSpawnCooldown =
             new CooldownComponent(TimeSpan.FromSeconds(0.5), false) {Enabled = false};
 
@@ -84,23 +87,17 @@ namespace KernelPanic.Table
                 SpawnPoint(0, 1, grid)
             };
 
-            mSpawnCooldown.CooledDown += Spawn;
-        }
-
-        private void Spawn(CooldownComponent component)
-        {
-            mBugs.Spawn(mEntityGraph);
-            mViruses.Spawn(mEntityGraph);
-            mTrojans.Spawn(mEntityGraph);
-            mNokias.Spawn(mEntityGraph);
-            mThunderbirds.Spawn(mEntityGraph);
-
-            foreach (var queue in mAdditionalSpawns.Values)
+            mSpawnCooldown.CooledDown += component =>
             {
-                queue.Spawn(mEntityGraph);
-            }
-
-            component.Reset();
+                var spawned = false;
+                foreach (var queue in mAdditionalSpawns.Values)
+                {
+                    spawned |= queue.Spawn(mEntityGraph);
+                }
+                
+                if (spawned)
+                    component.Reset();
+            };
         }
 
         /// <summary>
@@ -119,6 +116,7 @@ namespace KernelPanic.Table
             queue = new SpawnQueue<Troupe>(mGrid.GetTile(spawnTile).Position);
             queue.Add(troupe);
             mAdditionalSpawns[spawnTile] = queue;
+            mSpawnCooldown.Enabled = true;
         }
 
         /// <summary>
@@ -152,12 +150,15 @@ namespace KernelPanic.Table
                     mThunderbirds.Add(thunderbird);
                     break;
             }
-
-            mSpawnCooldown.Enabled = true;
         }
 
         internal void Update(GameTime gameTime)
         {
+            mBugs.Spawn(mEntityGraph);
+            mViruses.Spawn(mEntityGraph);
+            mTrojans.Spawn(mEntityGraph);
+            mNokias.Spawn(mEntityGraph);
+            mThunderbirds.Spawn(mEntityGraph);
             mSpawnCooldown.Update(gameTime);
         }
     }
