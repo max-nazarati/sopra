@@ -76,7 +76,7 @@ namespace KernelPanic.Table
         internal bool Ready =>
             mBugs.Empty && mViruses.Empty && mTrojans.Empty && mNokias.Empty && mThunderbirds.Empty;
 
-        public UnitSpawner(Grid grid, EntityGraph entityGraph)
+        public UnitSpawner(Grid grid, EntityGraph entityGraph, List<Troupe> restored)
         {
             mEntityGraph = entityGraph;
             mGrid = grid;
@@ -111,6 +111,15 @@ namespace KernelPanic.Table
                 if (spawned)
                     component.Reset();
             };
+            
+            if (restored == null)
+                return;
+
+            // We restore all units from the base and ignore the additional spawns.
+            foreach (var troupe in restored)
+            {
+                Register(troupe);
+            }
         }
 
         /// <summary>

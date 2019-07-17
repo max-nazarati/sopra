@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Units;
 using KernelPanic.Input;
 using KernelPanic.PathPlanning;
 using Microsoft.Xna.Framework;
@@ -99,21 +100,23 @@ namespace KernelPanic.Table
         /// <summary>
         /// Performs the initialization common to deserialized lanes and lanes created at runtime.
         /// </summary>
-        /// <param name="entities">Entities to be added to the <see cref="EntityGraph"/>.</param>
-        private void Initialize(IReadOnlyCollection<Entity> entities = null)
+        private void Initialize()
         {
             Grid = new Grid(LaneBoundsInTiles(mLaneSide), mSpriteManager, mLaneSide);
             EntityGraph = new EntityGraph(LaneBorders);
-            UnitSpawner = new UnitSpawner(Grid, EntityGraph);
-            BuildingSpawner = new BuildingSpawner(Grid, EntityGraph.Add, 
-                entities?.OfType<Building>().Where(building => building.State == BuildingState.Inactive));
 
-            if (entities?.Count > 0)
+            var incompleteBuildings = mEntitiesSerializing?
+                    .OfType<Building>()
+                    .Where(building => building.State == BuildingState.Inactive);
+            BuildingSpawner = new BuildingSpawner(Grid, EntityGraph.Add, incompleteBuildings);
+            UnitSpawner = new UnitSpawner(Grid, EntityGraph, mQueuedUnitsSerializing);
+
+            if (mEntitiesSerializing?.Count > 0)
             {
-                EntityGraph.Add(entities);
+                EntityGraph.Add(mEntitiesSerializing);
             }
 
-            mTroupeData = new TroupePathData(Target.HitBox, Grid, entities?.OfType<Building>());
+            mTroupeData = new TroupePathData(Target.HitBox, Grid, mEntitiesSerializing?.OfType<Building>());
             mTroupeData.Update(EntityGraph, true);
         }
 
@@ -170,12 +173,19 @@ namespace KernelPanic.Table
         /// </summary>
         [JsonProperty]
         internal List<Entity> mEntitiesSerializing;
+        
+        /// <summary>
+        /// Stores/receives the queued units during serialization. Don't use it outside of this!
+        /// </summary>
+        [JsonProperty]
+        internal List<Troupe> mQueuedUnitsSerializing;
 
         [OnSerializing]
         private void BeforeSerialization(StreamingContext context)
         {
             // Store the current entities.
-            mEntitiesSerializing = new List<Entity>(EntityGraph.AllEntities);
+            mEntitiesSerializing = EntityGraph.AllEntities.ToList();
+            mQueuedUnitsSerializing = UnitSpawner.QueuedUnits.ToList();
         }
 
         [OnSerialized]
@@ -183,13 +193,15 @@ namespace KernelPanic.Table
         {
             // Reset this secondary storage.
             mEntitiesSerializing = null;
+            mQueuedUnitsSerializing = null;
         }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            Initialize(mEntitiesSerializing);
+            Initialize();
             mEntitiesSerializing = null;
+            mQueuedUnitsSerializing = null;
         }
 
         #endregion
