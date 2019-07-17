@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
 {
-    [DataContract]
     internal sealed class QuadTree<T>: IEnumerable<T> where T: IBounded
     {
         #region Properties & Constants
@@ -24,10 +22,8 @@ namespace KernelPanic.Data
         // size and position of the current node
         private Rectangle mBounds;
 
-        [DataMember(Name = "Objects")]
         private readonly List<T> mObjects;
         
-        [DataMember(Name = "Children")]
         private QuadTree<T>[] mChildren;
 
         /*internal*/ private int Count { get; /*private*/ set; }
@@ -36,7 +32,7 @@ namespace KernelPanic.Data
 
         #region Constructor
 
-        internal QuadTree(Rectangle bounds) : this(1, bounds)
+        /*internal*/ private QuadTree(Rectangle bounds) : this(1, bounds)
         {
         }
 
