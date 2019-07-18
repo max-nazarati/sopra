@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -139,9 +140,12 @@ namespace KernelPanic.Entities.Units
         {
             point *= new Point(Grid.KachelSize);
             var result = 0f;
-            foreach (var building in positionProvider.NearEntities<Building>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
+            foreach (var tower in positionProvider.NearEntities<Tower>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
             {
-                result -= 2;
+                if (Vector2.DistanceSquared(tower.Bounds.Center.ToVector2(), Bounds.Center.ToVector2()) < tower.Radius * tower.Radius)
+                {
+                    result -= 10;
+                }
             }
 
             foreach (var troupe in positionProvider.NearEntities<Troupe>(point.ToVector2(),
