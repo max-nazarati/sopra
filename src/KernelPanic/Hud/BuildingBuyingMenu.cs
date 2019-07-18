@@ -79,14 +79,14 @@ namespace KernelPanic.Hud
 
                     if (button == selectedButton)
                     {
-                        buildingBuyer.SetBuilding(null);
+                        buildingBuyer.Building = null;
                         selectedButton = null;
                         return;
                     }
 
                     button.ViewPressed = true;
                     selectedButton = button;
-                    buildingBuyer.SetBuilding(element.Building);
+                    buildingBuyer.Building = element.Building;
                 };
             }
         }
