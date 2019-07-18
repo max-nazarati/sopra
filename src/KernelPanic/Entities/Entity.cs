@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
@@ -14,6 +15,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace KernelPanic.Entities
 {
     [DataContract]
+    [DebuggerDisplay("at {Sprite.Position}")]
     internal abstract class Entity : IPriced, IGameObject
     {
         internal Sprite Sprite { get; private set; }
