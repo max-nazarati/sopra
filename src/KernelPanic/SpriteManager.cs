@@ -39,7 +39,6 @@ namespace KernelPanic
             Cd,
             Cursor,
             WifiProjectile,
-            Fan,
             FanPropeller,
             Mouse,
             Router,
@@ -103,7 +102,6 @@ namespace KernelPanic
                 Texture(Image.CdThrower, "towers/cd_thrower"),
                 Texture(Image.Cursor, "towers/cursor"),
                 Texture(Image.WifiProjectile, "towers/WifiProjectile"),
-                Texture(Image.Fan, "towers/fan"),
                 Texture(Image.FanPropeller, "towers/fanPropeller"),
                 Texture(Image.Mouse, "towers/mouse"),
                 Texture(Image.Router, "towers/router"),
@@ -236,8 +234,7 @@ namespace KernelPanic
         #region Buildings
 
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
-        internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Fan));
-        internal ImageSprite CreateVentilatorPropeller() => new ImageSprite(Lookup(Image.FanPropeller));
+        internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.FanPropeller));
         internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
         internal ImageSprite CreateCable() => new ImageSprite(Lookup(Image.Cable));
         internal ImageSprite CreateShockField() => new ImageSprite(Lookup(Image.ShockField));
