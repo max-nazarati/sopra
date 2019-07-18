@@ -140,6 +140,27 @@ namespace KernelPanic.Table
         }
 
         /// <summary>
+        /// Tests if the given <paramref name="tile"/> lies in this grid.
+        /// </summary>
+        /// <param name="tile">The tile to test for.</param>
+        /// <returns><c>true</c> if the tile is inside, <c>false</c> otherwise.</returns>
+        internal bool Contains(TileIndex tile)
+        {
+            var baseTile = tile.BaseTile;
+            var inMain = 0 <= baseTile.Column && baseTile.Column < LaneRectangle.Width
+                      && 0 <= baseTile.Row && baseTile.Row < LaneRectangle.Height;
+
+            if (!inMain)
+                return false;
+
+            var cutout = TileCutout;
+            var inCutout = cutout.Left <= tile.Column && tile.Column < cutout.Right
+                        && cutout.Top <= tile.Row && tile.Row < cutout.Bottom;
+
+            return !inCutout;
+        }
+
+        /// <summary>
         /// Calculates the origin of the tile identified by <paramref name="index"/>.
         /// </summary>
         /// <param name="index">The index of the tile.</param>
