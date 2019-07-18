@@ -122,9 +122,7 @@ namespace KernelPanic.Table
                 EntityGraph.Add(mEntitiesSerializing);
             }
 
-            var spawn = Base.SpawnPoints(LaneSize, mLaneSide);
-            var target = Base.TargetPoints(LaneSize, mLaneSide);
-            mTroupeData = new TroupePathData(spawn, target, Grid, mEntitiesSerializing?.OfType<Building>());
+            mTroupeData = new TroupePathData(this, mEntitiesSerializing?.OfType<Building>());
             mTroupeData.Update(EntityGraph, true);
         }
 

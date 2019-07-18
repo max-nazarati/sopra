@@ -50,17 +50,14 @@ namespace KernelPanic.PathPlanning
 
         private readonly Grid mGrid;
 
-        internal TroupePathData(
-            IReadOnlyCollection<Point> spawn,
-            IReadOnlyCollection<Point> target,
-            Grid grid,
-            IEnumerable<Building> initialBuildings)
+        internal TroupePathData(Lane lane, IEnumerable<Building> initialBuildings)
         {
-            mGrid = grid;
-            mTarget = target;
+            mGrid = lane.Grid;
+            mTarget = lane.TargetPoints;
 
-            BuildingMatrix = new ObstacleMatrix(grid);
-            foreach (var point in spawn)
+            BuildingMatrix = new ObstacleMatrix(mGrid);
+            var spawnPoints = lane.SpawnPoints;
+            foreach (var point in spawnPoints)
                 BuildingMatrix[point] = true;
             if (initialBuildings != null)
                 BuildingMatrix.Raster(initialBuildings);
@@ -68,12 +65,12 @@ namespace KernelPanic.PathPlanning
             mHeatMap = new HeatMap(BuildingMatrix);
             var smallHeatMap = new HeatMap(BuildingMatrix);
 
-            var spawnDirection = grid.LaneSide == Lane.Side.Left
+            var spawnDirection = mGrid.LaneSide == Lane.Side.Left
                 ? RelativePosition.CenterLeft
                 : RelativePosition.CenterRight;
-            mVectorField = new VectorField(mHeatMap, spawn, spawnDirection, target);
-            mSmallVectorField = new VectorField(smallHeatMap, spawn, spawnDirection, target);
-            mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(grid.LaneRectangle.Size, grid.LaneSide);
+            mVectorField = new VectorField(mHeatMap, spawnPoints, spawnDirection, mTarget);
+            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, mTarget);
+            mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(mGrid.LaneRectangle.Size, mGrid.LaneSide);
         }
 
         internal Vector2 RelativeMovement(Troupe troupe, Vector2? position = null)
