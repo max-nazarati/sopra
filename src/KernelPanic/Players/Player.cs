@@ -47,34 +47,29 @@ namespace KernelPanic.Players
         [DataMember]
         internal int FirefoxMaximum { get; private set; } = 1;
         [DataMember]
-        internal int FirefoxCurrent { get; set; } = 0;
+        internal int FirefoxCurrent { get; set; }
         [DataMember]
         internal int SettingsMaximum { get;} = 1;
         [DataMember]
-        internal int SettingsCurrent { get; set; } = 0;
+        internal int SettingsCurrent { get; set; }
         [DataMember]
         internal int BlueScreenMaximum { get;} = 1;
         [DataMember]
-        internal int BlueScreenCurrent { get; set; } = 0;
+        internal int BlueScreenCurrent { get; set; }
 
         internal bool ValidHeroPurchase(Unit unit)
         {
-            if (unit is Firefox)
+            switch (unit)
             {
-                return FirefoxMaximum > FirefoxCurrent;
-                
+                case Firefox _:
+                    return FirefoxMaximum > FirefoxCurrent;
+                case Settings _:
+                    return SettingsMaximum > SettingsCurrent;
+                case Bluescreen _:
+                    return BlueScreenMaximum > BlueScreenCurrent;
+                default:
+                    return false;
             }
-            else if (unit is Settings)
-            {
-                return SettingsMaximum > SettingsCurrent;
-                
-            }
-            else if (unit is Bluescreen)
-            {
-                return BlueScreenMaximum > BlueScreenCurrent;
-                
-            }
-            return false;
         }
 
         internal void IncrementHeroCount(Unit unit)

@@ -52,7 +52,7 @@ namespace KernelPanic.Hud
                 }
                 else
                 {
-                    mCounterSprite = spriteManager.CreateText("");
+                    mCounterSprite = spriteManager.CreateText();
                 }
                 mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterRight);
 
