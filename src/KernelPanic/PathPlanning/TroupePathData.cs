@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Entities;
@@ -65,11 +66,24 @@ namespace KernelPanic.PathPlanning
             mHeatMap = new HeatMap(BuildingMatrix);
             var smallHeatMap = new HeatMap(BuildingMatrix);
 
-            var spawnDirection = mGrid.LaneSide == Lane.Side.Left
-                ? RelativePosition.CenterLeft
-                : RelativePosition.CenterRight;
-            mVectorField = new VectorField(mHeatMap, spawnPoints, spawnDirection, mTarget);
-            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, mTarget);
+            RelativePosition spawnDirection, targetDirection;
+            switch (mGrid.LaneSide)
+            {
+                case Lane.Side.Left:
+                    spawnDirection = RelativePosition.CenterLeft;
+                    targetDirection = RelativePosition.CenterRight;
+                    break;
+                case Lane.Side.Right:
+                    spawnDirection = RelativePosition.CenterRight;
+                    targetDirection = RelativePosition.CenterLeft;
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException(nameof(mGrid.LaneSide),
+                        (int) mGrid.LaneSide,
+                        typeof(Lane.Side));
+            }
+            mVectorField = new VectorField(mHeatMap, spawnPoints, spawnDirection, mTarget, targetDirection);
+            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, mTarget, targetDirection);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(mGrid.LaneRectangle.Size, mGrid.LaneSide);
         }
 

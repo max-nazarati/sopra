@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using KernelPanic.PathPlanning;
@@ -37,7 +36,8 @@ namespace KernelPanic.Data
         /// <param name="spawn"></param>
         /// <param name="spawnDirection"></param>
         /// <param name="target"></param>
-        internal VectorField(HeatMap heatMap, IEnumerable<Point> spawn, RelativePosition spawnDirection, IEnumerable<Point> target)
+        /// <param name="targetDirection"></param>
+        internal VectorField(HeatMap heatMap, IEnumerable<Point> spawn, RelativePosition spawnDirection, IEnumerable<Point> target, RelativePosition targetDirection)
         {
             HeatMap = heatMap;
             mRelativeField = new RelativePosition[heatMap.Height, heatMap.Width];
@@ -45,7 +45,7 @@ namespace KernelPanic.Data
             foreach (var (column, row) in spawn)
                 mRelativeField[row, column] = spawnDirection;
             foreach (var (column, row) in target)
-                mRelativeField[row, column] = RelativePosition.CenterRight;
+                mRelativeField[row, column] = targetDirection;
         }
 
         private VectorField(RelativePosition[,] vectorField)
