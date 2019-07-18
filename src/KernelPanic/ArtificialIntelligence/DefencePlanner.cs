@@ -13,7 +13,8 @@ namespace KernelPanic.ArtificialIntelligence
         private readonly DecisionTreeClassifier mDefenseDecisionMaker;
         private int mBuildX;
         private int mBuildY;
-        private readonly int mBoundX = 18;
+        private const int LowerBoundX = 8;
+        private const int UpperBoundX = 17;
         private bool mBuildForward;
 
         public DefencePlanner(Player player, SpriteManager spriteManager) : base(player)
@@ -45,7 +46,6 @@ namespace KernelPanic.ArtificialIntelligence
             base.Update();
             var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => (double)x));
             var choice = mDefenseDecisionMaker.Revert(choiceEncoded);
-            // Console.WriteLine(String.Join(",", defenceData.Select(p => p.ToString()).ToArray()));
             BuySingleTower(choice);
         }
 
@@ -89,8 +89,8 @@ namespace KernelPanic.ArtificialIntelligence
 
         private void UpdateBuildPosition()
         {
-            if (mBuildX < 16 && mBuildForward) mBuildX += 1;
-            else if (mBuildX > 9 && !mBuildForward) mBuildX -= 1;
+            if (mBuildX < UpperBoundX - 1 && mBuildForward) mBuildX += 1;
+            else if (mBuildX > LowerBoundX + 1 && !mBuildForward) mBuildX -= 1;
             else
             {
                 if (mBuildForward)

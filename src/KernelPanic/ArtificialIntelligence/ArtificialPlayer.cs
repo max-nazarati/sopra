@@ -232,6 +232,9 @@ namespace KernelPanic.ArtificialIntelligence
                         case Firefox _:
                             mAttackData[(int) Feature.Firefox]++;
                             break;
+                        case Bluescreen _:
+                            mAttackData[(int) Feature.Bluescreen]++;
+                            break;
                     }
 
                     break;
@@ -239,8 +242,6 @@ namespace KernelPanic.ArtificialIntelligence
                     var buildingType = handler.Get<Building>(Event.Key.Building);
                     switch (buildingType)
                     {
-                        //case Bluescreen _:
-                        //    break;
                         case Cable _:
                             mAttackData[(int) Feature.Cable]++;
                             break;
