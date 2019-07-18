@@ -94,10 +94,10 @@ namespace KernelPanic.Selection
             if (ProcessLane(mLeftLane, leftOnlyBuildings) || ProcessLane(mRightLane, false))
                 return;
 
-            if (leftOnlyBuildings && mRightLane.Contains(mouse))
+            if (leftOnlyBuildings && mLeftLane.Contains(mouse))
                 return;
 
-            if (mSelection == null || !mLeftLane.Contains(mouse) || !mRightLane.Contains(mouse))
+            if (mSelection == null || !(mLeftLane.Contains(mouse) || mRightLane.Contains(mouse)))
                 return;
 
             if (inputManager.MousePressed(InputManager.MouseButton.Left))
