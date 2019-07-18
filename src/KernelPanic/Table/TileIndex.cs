@@ -84,5 +84,8 @@ namespace KernelPanic.Table
 
         public override bool Equals(object obj) =>
             obj is TileIndex other && Equals(other);
+
+        public static bool operator ==(TileIndex a, TileIndex b) => a.Equals(b);
+        public static bool operator !=(TileIndex a, TileIndex b) => !a.Equals(b);
     }
 }
