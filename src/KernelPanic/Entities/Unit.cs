@@ -147,7 +147,6 @@ namespace KernelPanic.Entities
 
         private bool mSlowedDown;
         private Vector2 mLastPosition;
-        private Vector2 mPreviousPosition;
 
         /// <summary>
         /// Slows this unit for the next frame.
@@ -221,22 +220,17 @@ namespace KernelPanic.Entities
             WantsRemoval = true;
         }
 
-        internal Vector2 LastMovement => Sprite.Position - mLastPosition;
-        internal Vector2 PreviousMovement => mLastPosition - mPreviousPosition;
-
         internal bool ResetMovement()
         {
             if (Sprite.Position == mLastPosition)
                 return false;
 
             Sprite.Position = mLastPosition;
-            mLastPosition = mPreviousPosition;
             return true;
         }
 
         internal void SetInitialPosition(Vector2 position)
         {
-            mPreviousPosition = position;
             mLastPosition = position;
             Sprite.Position = position;
         }
@@ -256,7 +250,6 @@ namespace KernelPanic.Entities
 
             CalculateMovement(null, positionProvider, inputManager);
 
-            mPreviousPosition = mLastPosition;
             mLastPosition = Sprite.Position;
             var move = ShouldMove && MoveTarget is Vector2 target
                 ? PerformMove(target, positionProvider, inputManager)
