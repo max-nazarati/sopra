@@ -12,9 +12,6 @@ namespace KernelPanic.Data
 
         private readonly RelativePosition[,] mRelativeField;
 
-        internal int Width => mRelativeField.GetLength(1);
-        internal int Height => mRelativeField.GetLength(0);
-
         /// <summary>
         /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
         /// </summary>
