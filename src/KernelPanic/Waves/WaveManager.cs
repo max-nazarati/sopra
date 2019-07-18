@@ -104,6 +104,10 @@ namespace KernelPanic.Waves
                 buyer.ApplyUpgrades(clone);
                 buyer.AttackingLane.UnitSpawner.Register(clone);
             }
+            else
+            {
+                buyer.Bitcoins += unit.Price;
+            }
         }
 
         internal void Update(GameTime gameTime)
