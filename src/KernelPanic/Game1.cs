@@ -54,6 +54,7 @@ namespace KernelPanic
         /// </summary>
         protected override void Initialize()
         {
+            // IsFixedTimeStep = false; // this can experimented with, we need to make everything time based or tick based then tho
             IsMouseVisible = true;
             mSoundManager = new SoundManager(Content);
             EventCenter.Default.Subscribe(Event.Id.AchievementUnlocked, @event =>
