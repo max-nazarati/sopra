@@ -1,6 +1,5 @@
 ﻿using Accord.MachineLearning.DecisionTrees;
 using Accord.MachineLearning.DecisionTrees.Learning;
-using Accord.MachineLearning.DecisionTrees.Rules;
 using Accord.Math;
 using Accord.Math.Optimization.Losses;
 using Accord.Statistics.Filters;
@@ -91,6 +90,7 @@ namespace KernelPanic.ArtificialIntelligence
             mDataSet = resulTable;
         }
 
+        /*
         /// <summary>
         /// Translate tree into set of rules, e.g.:
         ///                     /   \
@@ -102,6 +102,7 @@ namespace KernelPanic.ArtificialIntelligence
         /// yes: (1 >= 10)
         /// </summary>
         /// <returns>The set of rules</returns>
+        */
         public override String ToString()
         {
             var model = Model;
