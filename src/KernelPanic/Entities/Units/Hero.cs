@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Events;
@@ -75,6 +76,18 @@ namespace KernelPanic.Entities.Units
             if (projectionStart != null)
                 return;
 
+            if (MoveTarget == null && mTarget is TileIndex tileTarget)
+            {
+                MoveTargetReached(positionProvider, tileTarget);
+            }
+
+            if (MoveTarget != null && mTarget == null)
+            {
+                // We have a MoveTarget but we don't have a tile target, that means we are doing the last steps in the
+                // direction of the enemy base. We don't want to allow any more changes to the path at this point.
+                return;
+            }
+
             UpdateTarget(positionProvider, inputManager);
 
             if (!(mTarget?.ToPoint() is Point target))
@@ -94,22 +107,19 @@ namespace KernelPanic.Entities.Units
                 path = mAStar.Path;
             }
 
-            if (path.Count > 2)
-            {
-                MoveTarget = positionProvider.Grid.GetTile(new TileIndex(path[1], 1)).Position;
-            }
-            else
-            {
-                MoveTarget = positionProvider.Grid.GetTile(new TileIndex(target, 1)).Position;
-                MoveTargetReached += MoveTargetReachedHandler;
-            }
+            var nextTarget = new TileIndex(path.Count > 2 ? path[1] : target, 1);
+            MoveTarget = positionProvider.Grid.GetTile(nextTarget).Position;
         }
 
-        private void MoveTargetReachedHandler(Vector2 target)
+        private void MoveTargetReached(PositionProvider positionProvider, TileIndex tileTarget)
         {
+            var troupeData = positionProvider.TroupeData;
+            if (troupeData.Target.Contains(tileTarget.ToPoint()))
+                MoveTarget = Sprite.Position + troupeData.RelativeMovement(this);
+
             mAStar = null;
+            mTarget = null;
             mPathVisualizer = null;
-            MoveTargetReached -= MoveTargetReachedHandler;
         }
 
         /// <summary>
@@ -141,7 +151,6 @@ namespace KernelPanic.Entities.Units
 
             ShouldMove = true;
             mTarget = target;
-            MoveTargetReached -= MoveTargetReachedHandler;
         }
 
         private Point FindNearestWalkableField(Point target)
@@ -400,10 +409,6 @@ namespace KernelPanic.Entities.Units
             }
             // also updates the cooldown
             UpdateAbility(positionProvider, gameTime, inputManager);
-            
-            // Check if we still want to move to the same target, etc.
-            // also sets mAStar to the current version.
-            UpdateTarget(positionProvider, inputManager);
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, inputManager, gameTime);

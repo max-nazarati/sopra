@@ -47,9 +47,6 @@ namespace KernelPanic.Entities
 
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
-        protected delegate void MoveTargetReachedDelegate(Vector2 target);
-        protected event MoveTargetReachedDelegate MoveTargetReached;
-
         protected abstract Point HitBoxSize { get; }
 
         public override Rectangle Bounds
@@ -185,7 +182,6 @@ namespace KernelPanic.Entities
 
             if (targetDistance < 0.01)
             {
-                MoveTargetReached?.Invoke(target);
                 MoveTarget = null;
                 return null;
             }

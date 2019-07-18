@@ -47,14 +47,14 @@ namespace KernelPanic.PathPlanning
         /// <summary>
         /// The target of all troupes.
         /// </summary>
-        private readonly IReadOnlyCollection<Point> mTarget;
+        internal IReadOnlyCollection<Point> Target { get; }
 
         private readonly Grid mGrid;
 
         internal TroupePathData(Lane lane, IEnumerable<Building> initialBuildings)
         {
             mGrid = lane.Grid;
-            mTarget = lane.TargetPoints;
+            Target = lane.TargetPoints;
 
             BuildingMatrix = new ObstacleMatrix(mGrid);
             var spawnPoints = lane.SpawnPoints;
@@ -82,19 +82,20 @@ namespace KernelPanic.PathPlanning
                         (int) mGrid.LaneSide,
                         typeof(Lane.Side));
             }
-            mVectorField = new VectorField(mHeatMap, spawnPoints, spawnDirection, mTarget, targetDirection);
-            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, mTarget, targetDirection);
+            mVectorField = new VectorField(mHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
+            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(mGrid.LaneRectangle.Size, mGrid.LaneSide);
         }
 
-        internal Vector2 RelativeMovement(Troupe troupe, Vector2? position = null)
+        internal Vector2 RelativeMovement(Unit unit, Vector2? position = null)
         {
-            var maybeTile = mGrid.TileFromWorldPoint(position ?? troupe.Sprite.Position, troupe.IsSmall ? 2 : 1);
+            var subTiles = unit is Troupe troupe && troupe.IsSmall ? 2 : 1;
+            var maybeTile = mGrid.TileFromWorldPoint(position ?? unit.Sprite.Position, subTiles);
             if (!(maybeTile is TileIndex tile))
                 return Vector2.Zero;
 
             var size = mGrid.GetTile(tile).Size;
-            var vector = RelativeMovement(tile.BaseTile, SelectVectorField(troupe));
+            var vector = RelativeMovement(tile.BaseTile, SelectVectorField(unit));
             return vector * size;
         }
 
@@ -126,7 +127,7 @@ namespace KernelPanic.PathPlanning
         {
             if (buildingsChanged)
             {
-                BreadthFirstSearch.UpdateHeatMap(mHeatMap, mTarget);
+                BreadthFirstSearch.UpdateHeatMap(mHeatMap, Target);
                 mVectorField.Update();
             }
             
@@ -138,7 +139,7 @@ namespace KernelPanic.PathPlanning
             if (!buildingsChanged && !hadLargeUnits && mLargeUnits.Count == 0)
                 return;
 
-            BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, mTarget, mLargeUnits);
+            BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, Target, mLargeUnits);
             mSmallVectorField.Update();
         }
 
@@ -203,7 +204,7 @@ namespace KernelPanic.PathPlanning
             }
 
             var tileVisualizer = TileVisualizer.Border(1, mGrid, spriteManager);
-            tileVisualizer.Append(mTarget, Color.Blue);
+            tileVisualizer.Append(Target, Color.Blue);
             tileVisualizer.Draw(spriteBatch, gameTime);
         }
     }
