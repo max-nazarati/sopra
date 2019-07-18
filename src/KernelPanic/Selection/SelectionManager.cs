@@ -20,22 +20,22 @@ namespace KernelPanic.Selection
         /// <summary>
         /// The <see cref="Lane"/> with this <see cref="Player"/>'s <see cref="Unit"/>s.
         /// </summary>
-        private readonly Lane mOwnedLane;
+        private readonly Lane mLeftLane;
 
         /// <summary>
         /// The <see cref="Lane"/> with the enemy's <see cref="Unit"/>s.
         /// </summary>
-        private readonly Lane mEnemyLane;
+        private readonly Lane mRightLane;
 
         private readonly Sprite mSelectionBorder;
 
         [DataMember]
         private Entity mSelection;
 
-        internal SelectionManager(Lane ownedLane, Lane enemyLane, SpriteManager spriteManager)
+        internal SelectionManager(Lane leftLane, Lane rightLane, SpriteManager spriteManager)
         {
-            mOwnedLane = ownedLane;
-            mEnemyLane = enemyLane;
+            mLeftLane = leftLane;
+            mRightLane = rightLane;
             mSelectionBorder = spriteManager.CreateSelectionBorder();
         }
 
@@ -59,7 +59,7 @@ namespace KernelPanic.Selection
             }
         }
 
-        internal void Update(InputManager inputManager)
+        internal void Update(InputManager inputManager, bool leftOnlyBuildings)
         {
             if (Selection?.WantsRemoval == true)
             {
@@ -74,22 +74,30 @@ namespace KernelPanic.Selection
             
             var mouse = inputManager.TranslatedMousePosition;
 
-            bool ProcessLane(Lane lane)
+            bool ProcessLane(Lane lane, bool onlyBuildings)
             {
-                if (!(lane.EntityGraph.EntitiesAt(mouse).FirstOrDefault() is Entity entity))
+                var mouseEntities = lane.EntityGraph.EntitiesAt(mouse);
+                var maybeSelection = onlyBuildings
+                        ? mouseEntities.FirstOrDefault(e => e is Building)
+                        : mouseEntities.FirstOrDefault();
+
+                if (!(maybeSelection is Entity entity))
                     return false;
 
                 if (!inputManager.MousePressed(InputManager.MouseButton.Left))
                     return false;
 
-                Selection = entity;
+                Selection = Selection == entity ? null : entity;
                 return true;
             }
-            
-            if (ProcessLane(mOwnedLane) || ProcessLane(mEnemyLane))
+
+            if (ProcessLane(mLeftLane, leftOnlyBuildings) || ProcessLane(mRightLane, false))
                 return;
 
-            if (mSelection == null || !mOwnedLane.Contains(mouse) && !mEnemyLane.Contains(mouse))
+            if (leftOnlyBuildings && mRightLane.Contains(mouse))
+                return;
+
+            if (mSelection == null || !mLeftLane.Contains(mouse) || !mRightLane.Contains(mouse))
                 return;
 
             if (inputManager.MousePressed(InputManager.MouseButton.Left))

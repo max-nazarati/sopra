@@ -34,7 +34,7 @@ namespace KernelPanic.Hud
                     : spriteManager.ScreenSize.X - InputManager.ScreenBorderDistance,
                 InputManager.ScreenBorderDistance);
 
-        internal void Update(InputManager inputManager, GameTime gameTime)
+        internal virtual void Update(InputManager inputManager, GameTime gameTime)
         {
             foreach (var element in Elements)
             {
