@@ -291,7 +291,7 @@ namespace KernelPanic
             const float padding = scale * 5;
             const float topPadding = scale * 8;
             var font = Lookup(Font.Hud);
-            var leftBoarder = (int)((float)ScreenSize.X / 2 - (hudWidth / 2));
+            var leftBoarder = (int)((float)ScreenSize.X / 2 - hudWidth / 2);
 
             var leftMoneyText = new TextSprite(font, "00000 $")
             {
@@ -325,7 +325,7 @@ namespace KernelPanic
             rightText.SetOrigin(RelativePosition.TopRight);
             var clockText = new TextSprite(font, "00:00:00")
             {
-                Position = new Vector2(hudWidth / 2, (hudHeight/2) + topPadding)
+                Position = new Vector2(hudWidth / 2, hudHeight / 2 + topPadding)
             };
             clockText.SetOrigin(RelativePosition.CenterTop);
 

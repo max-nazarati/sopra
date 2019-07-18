@@ -302,7 +302,7 @@ namespace KernelPanic.Tracking
                 Achievement.HighInference,
                 Achievement.Nutcracker,
                 Achievement.ManyWires,
-                Achievement.Fool,
+                Achievement.Fool
             };
 
         internal static Achievement[] PerGame =>
@@ -316,7 +316,7 @@ namespace KernelPanic.Tracking
                 Achievement.Shockfield,
                 Achievement.Hacker,
                 Achievement.AntiVirus,
-                Achievement.JumpNRun,
+                Achievement.JumpNRun
             };
 
         #endregion

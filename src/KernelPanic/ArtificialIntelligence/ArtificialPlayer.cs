@@ -273,8 +273,8 @@ namespace KernelPanic.ArtificialIntelligence
 
         private void MakeRandomChoice(GameTime gameTime)
         {
-            Random numberGenerator = new Random();
-            int number = numberGenerator.Next(0, 500);
+            var numberGenerator = new Random();
+            var number = numberGenerator.Next(0, 500);
             if (number == 0) mAttackPlanner.Update(mAttackData, gameTime);
             if (number == 1) mDefencePlanner.BuyRandomTower(gameTime);
         }
