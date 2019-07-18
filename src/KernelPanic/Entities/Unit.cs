@@ -223,12 +223,7 @@ namespace KernelPanic.Entities
 
         private void CheckBaseReached(PositionProvider positionProvider)
         {
-            if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
-                return;
-
-            EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
-            positionProvider.DamageBase(AttackStrength);
-            WantsRemoval = true;
+            // TODO: Implement
         }
 
         internal Vector2 LastMovement => Sprite.Position - mLastPosition;

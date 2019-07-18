@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using KernelPanic.PathPlanning;
@@ -33,11 +34,16 @@ namespace KernelPanic.Data
         /// with each square additionally normalized.
         /// </example>
         /// <param name="heatMap">The heat map.</param>
-        internal VectorField(HeatMap heatMap, IEnumerable<Point> target)
+        /// <param name="spawn"></param>
+        /// <param name="spawnDirection"></param>
+        /// <param name="target"></param>
+        internal VectorField(HeatMap heatMap, IEnumerable<Point> spawn, RelativePosition spawnDirection, IEnumerable<Point> target)
         {
             HeatMap = heatMap;
             mRelativeField = new RelativePosition[heatMap.Height, heatMap.Width];
 
+            foreach (var (column, row) in spawn)
+                mRelativeField[row, column] = spawnDirection;
             foreach (var (column, row) in target)
                 mRelativeField[row, column] = RelativePosition.CenterRight;
         }

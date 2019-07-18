@@ -312,7 +312,8 @@ namespace KernelPanic.Entities.Units
 
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
         {
-            var basePosition = positionProvider.Target.HitBox;
+            var grid = positionProvider.Grid;
+            var basePosition = Base.TargetPoints(grid.LaneRectangle.Size, grid.LaneSide);
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
             mAStar = positionProvider.MakePathFinding(this, basePosition);

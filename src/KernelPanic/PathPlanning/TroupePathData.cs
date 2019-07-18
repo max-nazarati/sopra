@@ -46,25 +46,33 @@ namespace KernelPanic.PathPlanning
         /// <summary>
         /// The target of all troupes.
         /// </summary>
-        private readonly ICollection<Point> mTarget;
+        private readonly IReadOnlyCollection<Point> mTarget;
 
         private readonly Grid mGrid;
 
-        internal TroupePathData(ICollection<Point> target, Grid grid, IEnumerable<Building> initialBuildings)
+        internal TroupePathData(
+            IReadOnlyCollection<Point> spawn,
+            IReadOnlyCollection<Point> target,
+            Grid grid,
+            IEnumerable<Building> initialBuildings)
         {
-            mTarget = target;
             mGrid = grid;
+            mTarget = target;
 
             BuildingMatrix = new ObstacleMatrix(grid);
-
+            foreach (var point in spawn)
+                BuildingMatrix[point] = true;
             if (initialBuildings != null)
                 BuildingMatrix.Raster(initialBuildings);
 
             mHeatMap = new HeatMap(BuildingMatrix);
             var smallHeatMap = new HeatMap(BuildingMatrix);
 
-            mVectorField = new VectorField(mHeatMap, target);
-            mSmallVectorField = new VectorField(smallHeatMap, target);
+            var spawnDirection = grid.LaneSide == Lane.Side.Left
+                ? RelativePosition.CenterLeft
+                : RelativePosition.CenterRight;
+            mVectorField = new VectorField(mHeatMap, spawn, spawnDirection, target);
+            mSmallVectorField = new VectorField(smallHeatMap, spawn, spawnDirection, target);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(grid.LaneRectangle.Size, grid.LaneSide);
         }
 

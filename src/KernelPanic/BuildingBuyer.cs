@@ -82,15 +82,10 @@ namespace KernelPanic
                 return;
             }
 
-            var startTile =
-                Lane.Grid.LaneSide == Lane.Side.Left
-                        ? new Point(Lane.Grid.LaneRectangle.Width - 1, Grid.LaneWidthInTiles / 2)
-                        : new Point(0, Lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2);
-
             var buildingMatrix = new ObstacleMatrix(Lane.Grid);
             buildingMatrix.Raster(Lane.EntityGraph.Entities<Building>(), b => b.GetType() != typeof(ShockField));
             buildingMatrix.Raster(new[] {mBuilding}, b => b.GetType() != typeof(ShockField));
-            var pathFinder = new AStar(startTile, Lane.Target.HitBox, buildingMatrix);
+            var pathFinder = new AStar(Lane.SpawnPoints[0], Lane.TargetPoints, buildingMatrix);
             mBuilding.State = pathFinder.CalculatePath() ? BuildingState.Valid : BuildingState.Invalid;
         }
 
