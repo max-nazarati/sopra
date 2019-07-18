@@ -170,16 +170,13 @@ namespace KernelPanic.Entities
         /// </summary>
         /// <param name="projectionStart">An alternative to the units current position.</param>
         /// <param name="positionProvider">The current <see cref="PositionProvider"/>.</param>
-        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
         /// <param name="inputManager">The <see cref="InputManager"/> associated with this update cycle.</param>
         protected abstract void CalculateMovement(Vector2? projectionStart,
             PositionProvider positionProvider,
-            GameTime gameTime,
             InputManager inputManager);
 
         private Vector2? PerformMove(Vector2 target,
             PositionProvider positionProvider,
-            GameTime gameTime,
             InputManager inputManager)
         {
             var initialTarget = target;
@@ -208,7 +205,7 @@ namespace KernelPanic.Entities
                 theMove += targetMove;
 
                 MoveTarget = null;
-                CalculateMovement(target, positionProvider, gameTime, inputManager);
+                CalculateMovement(target, positionProvider, inputManager);
                 if (!(MoveTarget is Vector2 projectedTarget))
                 {
                     MoveTarget = initialTarget;
@@ -261,12 +258,12 @@ namespace KernelPanic.Entities
             base.Update(positionProvider, inputManager, gameTime);
 
 
-            CalculateMovement(null, positionProvider, gameTime, inputManager);
+            CalculateMovement(null, positionProvider, inputManager);
 
             mPreviousPosition = mLastPosition;
             mLastPosition = Sprite.Position;
             var move = ShouldMove && MoveTarget is Vector2 target
-                ? PerformMove(target, positionProvider, gameTime, inputManager)
+                ? PerformMove(target, positionProvider, inputManager)
                 : null;
 
             if (move is Vector2 theMove)

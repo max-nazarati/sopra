@@ -24,7 +24,6 @@ namespace KernelPanic.Entities.Units
 
         protected override void CalculateMovement(Vector2? projectionStart,
             PositionProvider positionProvider,
-            GameTime gameTime,
             InputManager inputManager)
         {
             if (projectionStart == null && MoveTarget != null)

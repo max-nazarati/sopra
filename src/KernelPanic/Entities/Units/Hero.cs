@@ -43,9 +43,11 @@ namespace KernelPanic.Entities.Units
 
         [DataMember]
         protected internal CooldownComponent Cooldown { get; set; }
-        internal AStar mAStar; // save the AStar for path-drawing
+
         private TileIndex? mTarget;
+        protected AStar mAStar; // save the AStar for path-drawing
         private Visualizer mPathVisualizer;
+
         internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
         protected Strategy StrategyStatus { get; set; }
@@ -68,13 +70,12 @@ namespace KernelPanic.Entities.Units
 
         protected override void CalculateMovement(Vector2? projectionStart,
             PositionProvider positionProvider,
-            GameTime gameTime,
             InputManager inputManager)
         {
             if (projectionStart != null)
                 return;
 
-            UpdateTarget(positionProvider, gameTime, inputManager);
+            UpdateTarget(positionProvider, inputManager);
 
             if (!(mTarget?.ToPoint() is Point target))
             {
@@ -116,9 +117,8 @@ namespace KernelPanic.Entities.Units
         /// also sets mShouldMove true
         /// </summary>
         /// <param name="positionProvider"></param>
-        /// <param name="gameTime"></param>
         /// <param name="inputManager"></param>
-        private void UpdateTarget(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        private void UpdateTarget(PositionProvider positionProvider, InputManager inputManager)
         {
             if (StrategyStatus == Strategy.Attack)
             {
@@ -403,7 +403,7 @@ namespace KernelPanic.Entities.Units
             
             // Check if we still want to move to the same target, etc.
             // also sets mAStar to the current version.
-            UpdateTarget(positionProvider, gameTime, inputManager);
+            UpdateTarget(positionProvider, inputManager);
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, inputManager, gameTime);
