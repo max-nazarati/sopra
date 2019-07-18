@@ -47,30 +47,29 @@ namespace KernelPanic.Entities
 
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
-        protected delegate void MoveTargetReachedDelegate(Vector2 target);
-        protected event MoveTargetReachedDelegate MoveTargetReached;
-
-        protected abstract Point HitBoxSize { get; }
+        [DataMember]
+        private Point mHitBoxSize;
 
         public override Rectangle Bounds
         {
             get
             {
-                var (width, height) = HitBoxSize;
+                var (width, height) = mHitBoxSize;
                 var x = (int) (Sprite.X - width / 2f);
                 var y = (int) (Sprite.Y - height / 2f);
                 return new Rectangle(x, y, width, height);
             }
         }
 
-        protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
-            : base(price, sprite, spriteManager)
+        protected Unit(int price, int speed, int life, int attackStrength, Point hitBoxSize, Sprite sprite, SpriteManager spriteManager)
+            : base(price, hitBoxSize, sprite, spriteManager)
         {
             Speed = speed;
             MaximumLife = life;
             RemainingLife = life;
             AttackStrength = attackStrength;
             ShouldMove = true;
+            mHitBoxSize = hitBoxSize;
             mHealthBar = spriteManager.CreateColoredRectangle(1, 1, new[] { new Color(0.0f, 1.0f, 0.0f, 1.0f) });
             mHealthBar.SetOrigin(RelativePosition.TopLeft);
             mDamageBar = spriteManager.CreateColoredRectangle(1, 1, new[] { new Color(1.0f, 0.0f, 0.0f, 1.0f) });
@@ -150,7 +149,6 @@ namespace KernelPanic.Entities
 
         private bool mSlowedDown;
         private Vector2 mLastPosition;
-        private Vector2 mPreviousPosition;
 
         /// <summary>
         /// Slows this unit for the next frame.
@@ -170,16 +168,13 @@ namespace KernelPanic.Entities
         /// </summary>
         /// <param name="projectionStart">An alternative to the units current position.</param>
         /// <param name="positionProvider">The current <see cref="PositionProvider"/>.</param>
-        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
         /// <param name="inputManager">The <see cref="InputManager"/> associated with this update cycle.</param>
         protected abstract void CalculateMovement(Vector2? projectionStart,
             PositionProvider positionProvider,
-            GameTime gameTime,
             InputManager inputManager);
 
         private Vector2? PerformMove(Vector2 target,
             PositionProvider positionProvider,
-            GameTime gameTime,
             InputManager inputManager)
         {
             var initialTarget = target;
@@ -188,7 +183,6 @@ namespace KernelPanic.Entities
 
             if (targetDistance < 0.01)
             {
-                MoveTargetReached?.Invoke(target);
                 MoveTarget = null;
                 return null;
             }
@@ -208,7 +202,7 @@ namespace KernelPanic.Entities
                 theMove += targetMove;
 
                 MoveTarget = null;
-                CalculateMovement(target, positionProvider, gameTime, inputManager);
+                CalculateMovement(target, positionProvider, inputManager);
                 if (!(MoveTarget is Vector2 projectedTarget))
                 {
                     MoveTarget = initialTarget;
@@ -221,18 +215,12 @@ namespace KernelPanic.Entities
             }
         }
 
-        private void CheckBaseReached(PositionProvider positionProvider)
+        internal void DamageBase(PositionProvider positionProvider)
         {
-            if (!positionProvider.Target.HitBox.Any(p => positionProvider.TileBounds(p).Intersects(Sprite.Bounds)))
-                return;
-
             EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
-            positionProvider.DamageBase(AttackStrength);
+            positionProvider.Target.Power = Math.Max(0, positionProvider.Target.Power - AttackStrength);
             WantsRemoval = true;
         }
-
-        internal Vector2 LastMovement => Sprite.Position - mLastPosition;
-        internal Vector2 PreviousMovement => mLastPosition - mPreviousPosition;
 
         internal bool ResetMovement()
         {
@@ -240,13 +228,11 @@ namespace KernelPanic.Entities
                 return false;
 
             Sprite.Position = mLastPosition;
-            mLastPosition = mPreviousPosition;
             return true;
         }
 
         internal void SetInitialPosition(Vector2 position)
         {
-            mPreviousPosition = position;
             mLastPosition = position;
             Sprite.Position = position;
         }
@@ -264,18 +250,16 @@ namespace KernelPanic.Entities
             base.Update(positionProvider, inputManager, gameTime);
 
 
-            CalculateMovement(null, positionProvider, gameTime, inputManager);
+            CalculateMovement(null, positionProvider, inputManager);
 
-            mPreviousPosition = mLastPosition;
             mLastPosition = Sprite.Position;
             var move = ShouldMove && MoveTarget is Vector2 target
-                ? PerformMove(target, positionProvider, gameTime, inputManager)
+                ? PerformMove(target, positionProvider, inputManager)
                 : null;
 
             if (move is Vector2 theMove)
             {
                 Sprite.Position += theMove;
-                CheckBaseReached(positionProvider);
             }
             
             UpdateHealthBar();

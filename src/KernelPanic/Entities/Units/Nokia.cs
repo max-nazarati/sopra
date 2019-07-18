@@ -7,10 +7,10 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Nokia : Troupe
     {
-        protected override Point HitBoxSize => new Point(18, 39);
+        private static Point HitBoxSize => new Point(18, 39);
 
         internal Nokia(SpriteManager spriteManager)
-            : base(50, 1, 100, 15, spriteManager.CreateNokia(), spriteManager)
+            : base(50, 1, 100, 15, HitBoxSize, spriteManager.CreateNokia(), spriteManager)
         {
         }
 

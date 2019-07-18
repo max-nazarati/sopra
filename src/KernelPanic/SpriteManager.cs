@@ -387,31 +387,30 @@ namespace KernelPanic
         private Texture2D CreateBorderTexture(Point size, int thickness, Color color)
         {
             var data = new Color[size.X * size.Y];
-            var lineIdx = 0;
 
             // Fill top and bottom border.
-            for (var i = 0; i < thickness; ++i, ++lineIdx)
+            for (var row = 0; row < thickness; ++row)
             {
-                for (var j = 0; j < size.X; ++j)
+                for (var col = 0; col < size.X; ++col)
                 {
-                    data[j + size.X] = color;
-                    data[j + size.X * (size.Y - lineIdx - 1)] = color;
+                    data[col + size.X * row] = color;
+                    data[col + size.X * (size.Y - row - 2)] = color;
                 }
             }
 
             // Fill rows in between.
-            for (var i = thickness; i < size.Y - thickness; ++i, ++lineIdx)
+            for (var row = thickness; row < size.Y - thickness; ++row)
             {
                 // Fill the left and right border.
-                for (var j = 0; j < thickness; ++j)
+                for (var col = 0; col < thickness; ++col)
                 {
-                    data[j + size.X * lineIdx] = color;
-                    data[size.X - 1 - j + size.X * lineIdx] = color;
+                    data[col + size.X * row] = color;
+                    data[size.X - 1 - col + size.X * row] = color;
                 }
 
                 // Fill in between.
-                for (var j = thickness; j < size.X - thickness; ++j)
-                    data[j + lineIdx * size.X] = Color.Transparent;
+                for (var col = thickness; col < size.X - thickness; ++col)
+                    data[col + size.X * row] = Color.Transparent;
             }
 
             var texture = new Texture2D(GraphicsDevice, size.X, size.Y);

@@ -90,7 +90,14 @@ namespace KernelPanic
 
         public override void Update(InputManager inputManager, GameTime gameTime)
         {
-            if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.ScoreOverlay.Pause)
+            var escapePressed = inputManager.KeyPressed(Keys.Escape);
+            if (escapePressed && mBuildingBuyer.Building != null)
+            {
+                mBuildingBuyer.Building = null;
+                escapePressed = false;
+            }
+
+            if (escapePressed || !inputManager.IsActive || mHud.ScoreOverlay.Pause)
             {
                 GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this));
                 mHud.ScoreOverlay.Pause = false;

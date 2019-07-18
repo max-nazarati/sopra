@@ -21,10 +21,10 @@ namespace KernelPanic.Entities.Units
         private const int JumpDuration = 10;
         private const int JumpSegmentLength = 30;
 
-        protected override Point HitBoxSize => new Point(56, 29);
+        private static Point HitBoxSize => new Point(56, 29);
 
         internal Firefox(SpriteManager spriteManager)
-            : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), spriteManager.CreateFirefox(), spriteManager)
+            : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), HitBoxSize, spriteManager.CreateFirefox(), spriteManager)
         {
             mIndicator = spriteManager.CreateJumpIndicator();
         }

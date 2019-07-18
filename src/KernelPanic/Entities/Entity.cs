@@ -26,7 +26,7 @@ namespace KernelPanic.Entities
 
         private Sprite mHitBoxSprite;
 
-        protected Entity(int price, Sprite sprite, SpriteManager spriteManager)
+        protected Entity(int price, Point hitBoxSize, Sprite sprite, SpriteManager spriteManager)
         {
             Price = price;
             Sprite = sprite;
@@ -34,11 +34,8 @@ namespace KernelPanic.Entities
             mInfoText = spriteManager.CreateText($"Preis: {price}");
             mInfoText.SetOrigin(RelativePosition.CenterRight);
             mInfoText.TextColor = Color.White;
-            SpriteManager = spriteManager;
-
-            // ReSharper disable once VirtualMemberCallInConstructor
-            // ›Bounds‹ depends only on ›Sprite‹ which is set here (plus some specific adjustments).
-            mHitBoxSprite = spriteManager.CreateHitBoxBorder(Bounds.Size);
+            SpriteManager = spriteManager; 
+            mHitBoxSprite = spriteManager.CreateHitBoxBorder(hitBoxSize);
         }
 
         #region Cloning
@@ -49,7 +46,7 @@ namespace KernelPanic.Entities
         protected virtual void CompleteClone()
         {
             Sprite = Sprite.Clone();
-            mHitBoxSprite = mHitBoxSprite.Clone();
+            mHitBoxSprite = mHitBoxSprite?.Clone();
         }
 
         /// <summary>

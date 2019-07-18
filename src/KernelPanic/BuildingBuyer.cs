@@ -16,8 +16,9 @@ namespace KernelPanic
     internal sealed class BuildingBuyer
     {
         private readonly Player mPlayer;
-        private Building mBuilding;
         private TileIndex? mPosition;
+
+        internal Building Building { get; set; }
 
         private Lane Lane => mPlayer.DefendingLane;
 
@@ -26,14 +27,9 @@ namespace KernelPanic
             mPlayer = player;
         }
 
-        internal void SetBuilding(Building building)
-        {
-            mBuilding = building;
-        }
-
         internal void Update(InputManager input)
         {
-            if (mBuilding == null)
+            if (Building == null)
                 return;
 
             UpdatePosition(input);
@@ -72,39 +68,34 @@ namespace KernelPanic
             }
 
             mPosition = tile;
-            mBuilding.Sprite.Position = tilePoint;
+            Building.Sprite.Position = tilePoint;
         }
 
         private void CheckPath()
         {
-            if (mBuilding == null || mPosition == null)
+            if (Building == null || mPosition == null)
             {
                 return;
             }
 
-            var startTile =
-                Lane.Grid.LaneSide == Lane.Side.Left
-                        ? new Point(Lane.Grid.LaneRectangle.Width - 1, Grid.LaneWidthInTiles / 2)
-                        : new Point(0, Lane.Grid.LaneRectangle.Height - Grid.LaneWidthInTiles / 2);
-
             var buildingMatrix = new ObstacleMatrix(Lane.Grid);
             buildingMatrix.Raster(Lane.EntityGraph.Entities<Building>(), b => b.GetType() != typeof(ShockField));
-            buildingMatrix.Raster(new[] {mBuilding}, b => b.GetType() != typeof(ShockField));
-            var pathFinder = new AStar(startTile, Lane.Target.HitBox, buildingMatrix);
-            mBuilding.State = pathFinder.CalculatePath() ? BuildingState.Valid : BuildingState.Invalid;
+            buildingMatrix.Raster(new[] {Building}, b => b.GetType() != typeof(ShockField));
+            var pathFinder = new AStar(Lane.SpawnPoints[0], Lane.TargetPoints, buildingMatrix);
+            Building.State = pathFinder.CalculatePath() ? BuildingState.Valid : BuildingState.Invalid;
         }
 
         private bool TryPurchase()
         {
-            if (mBuilding == null
-                || mBuilding.State != BuildingState.Valid
+            if (Building == null
+                || Building.State != BuildingState.Valid
                 || !(mPosition is TileIndex tile)
-                || !PurchasableAction<Building>.TryPurchase(mPlayer, mBuilding))
+                || !PurchasableAction<Building>.TryPurchase(mPlayer, Building))
             {
                 return false;
             }
 
-            var clone = mBuilding.Clone();
+            var clone = Building.Clone();
             mPlayer.DefendingLane.BuildingSpawner.Register(clone, tile);
             mPlayer.ApplyUpgrades(clone);
 
@@ -117,12 +108,12 @@ namespace KernelPanic
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if (mPosition.HasValue)
-                mBuilding?.Draw(spriteBatch, gameTime);
+                Building?.Draw(spriteBatch, gameTime);
         }
 
         internal static bool Buy(Player player, Building building, Point tile)
         {
-            var buyer = new BuildingBuyer(player) {mBuilding = building};
+            var buyer = new BuildingBuyer(player) {Building = building};
             buyer.SetPosition(new TileIndex(tile, 1));
             buyer.CheckPath();
             return buyer.TryPurchase();

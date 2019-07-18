@@ -38,6 +38,9 @@ namespace KernelPanic.Table
         [JsonProperty]
         internal Base Target { get; /* required for deserialization */ private set; }
 
+        internal Point[] SpawnPoints => Base.SpawnPoints(LaneSize, mLaneSide);
+        internal Point[] TargetPoints => Base.TargetPoints(LaneSize, mLaneSide);
+
         [JsonProperty]
         private readonly Side mLaneSide;
 
@@ -52,8 +55,10 @@ namespace KernelPanic.Table
 
         #region Size, position and bound functions
 
+        private static Point LaneSize => new Point(18, 42);
+
         private static Rectangle LaneBoundsInTiles(Side laneSide) =>
-            new Rectangle(laneSide == Side.Left ? 0 : 30, 0, 18, 42);
+            new Rectangle(laneSide == Side.Left ? 0 : 30, 0, LaneSize.X, LaneSize.Y);
 
         private static Rectangle LaneBoundsInPixel(Side laneSide)
         {
@@ -74,8 +79,9 @@ namespace KernelPanic.Table
         {
             get
             {
+                var targetSide = mLaneSide == Side.Left ? Side.Right : Side.Left;
                 var borders = new List<LaneBorder>(8);
-                borders.AddRange(LaneBorder.Borders(Grid.Bounds, Grid.KachelSize, true));
+                borders.AddRange(LaneBorder.Borders(Grid.Bounds, Grid.KachelSize, true, targetSide));
                 borders.AddRange(LaneBorder.Borders(Grid.PixelCutout, Grid.KachelSize, false));
                 return borders;
             }
@@ -88,7 +94,7 @@ namespace KernelPanic.Table
         public Lane(Side laneSide, SpriteManager sprites) : this(sprites)
         {
             mLaneSide = laneSide;
-            Target = new Base(LaneBoundsInTiles(laneSide).Size, laneSide);
+            Target = new Base();
             Initialize();
         }
 
@@ -116,7 +122,7 @@ namespace KernelPanic.Table
                 EntityGraph.Add(mEntitiesSerializing);
             }
 
-            mTroupeData = new TroupePathData(Target.HitBox, Grid, mEntitiesSerializing?.OfType<Building>());
+            mTroupeData = new TroupePathData(this, mEntitiesSerializing?.OfType<Building>());
             mTroupeData.Update(EntityGraph, true);
         }
 
