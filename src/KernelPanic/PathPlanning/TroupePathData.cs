@@ -167,6 +167,9 @@ namespace KernelPanic.PathPlanning
             {
                 var movement = RelativeMovement(tile, mVectorField);
                 tile = new TileIndex(tile.Row + (int) movement.Y, tile.Column + (int) movement.X, tile.SubTileCount);
+                if (!mGrid.Contains(tile))
+                    yield break;
+
                 yield return tile;
             }
         }
