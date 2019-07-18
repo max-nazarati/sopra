@@ -14,11 +14,11 @@ namespace KernelPanic.Hud
     internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element>
     {
         private Button mSelectedButton;
-        private BuildingBuyer mBuildingBuyer;
+        private readonly BuildingBuyer mBuildingBuyer;
 
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
-            private TextSprite mInfoText;
+            private readonly TextSprite mInfoText;
             internal Button Button { get; }
             internal Building Building { get; }
 

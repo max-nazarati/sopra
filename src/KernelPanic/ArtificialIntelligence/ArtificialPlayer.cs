@@ -38,7 +38,7 @@ namespace KernelPanic.ArtificialIntelligence
         private AttackPlanner mAttackPlanner;
         private DefencePlanner mDefencePlanner;
         private UpgradePlanner mUpgradePlanner;
-        private int[] mDefenceData;
+        private readonly int[] mDefenceData;
         private int[] mAttackData;
         private int mAttackMoney;
         private int mDefenceMoney;

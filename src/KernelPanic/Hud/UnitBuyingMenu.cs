@@ -23,7 +23,7 @@ namespace KernelPanic.Hud
             private readonly PurchaseButton<ImageButton, Unit> mButton;
             private readonly TextSprite mCounterSprite;
             private int mCounter;
-            private TextSprite mInfoText;
+            private readonly TextSprite mInfoText;
 
             Vector2 IPositioned.Position
             {

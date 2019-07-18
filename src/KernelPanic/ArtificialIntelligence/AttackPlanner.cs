@@ -12,7 +12,7 @@ namespace KernelPanic.ArtificialIntelligence
     internal sealed class AttackPlanner : Planner
     {
         private readonly Dictionary<Type, PurchasableAction<Unit>> mActions;
-        private double[] mUnitDistribution;
+        private readonly double[] mUnitDistribution;
         private const int NumberOfUnits = 8;
         private const int IndexBug = 0;
         private const int IndexVirus = 1;
