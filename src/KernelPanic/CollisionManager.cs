@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using KernelPanic.Entities;
+﻿using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
@@ -10,6 +9,8 @@ namespace KernelPanic
 {
     internal static class CollisionManager
     {
+        #region Movement Collisions
+
         internal static bool CollidesWith(this Troupe troupe, Troupe other)
         {
             var bird1 = troupe is Thunderbird;
@@ -47,16 +48,15 @@ namespace KernelPanic
             if (!(a.MoveTarget is Vector2 aMoveTarget) || !(b.MoveTarget is Vector2 bMoveTarget))
                 return null;
 
-            if (!(positionProvider.Grid.TileFromWorldPoint(aMoveTarget) is TileIndex tileA))
+            var subTiles = a.IsSmall ? 2 : 1;
+
+            if (!(positionProvider.Grid.TileFromWorldPoint(aMoveTarget, subTiles) is TileIndex tileA))
                 return null;
         
-            if (!(positionProvider.Grid.TileFromWorldPoint(bMoveTarget) is TileIndex tileB))
+            if (!(positionProvider.Grid.TileFromWorldPoint(bMoveTarget, subTiles) is TileIndex tileB))
                 return null;
 
-            var pointA = tileA.BaseTile.ToPoint();
-            var pointB = tileB.BaseTile.ToPoint();
-
-            if (pointA == pointB)
+            if (tileA == tileB)
             {
                 var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget);
                 var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget);
@@ -64,11 +64,18 @@ namespace KernelPanic
                 return aDistance < bDistance ? b : a;
             }
 
-            var heatA = positionProvider.TroupeData.TileHeat(pointA);
-            var heatB = positionProvider.TroupeData.TileHeat(pointB);
+            if (a is Thunderbird)
+            {
+                return ResetByTiles(a, b, tileA, tileB, positionProvider);
+            }
+
+            var heatA = positionProvider.TroupeData.TileHeat(tileA.BaseTile.ToPoint());
+            var heatB = positionProvider.TroupeData.TileHeat(tileB.BaseTile.ToPoint());
 
             if (heatA == heatB)
-                return null;
+            {
+                return ResetByTiles(a, b, tileA, tileB, positionProvider);
+            }
 
             if (heatA < heatB)
             {
@@ -85,6 +92,29 @@ namespace KernelPanic
                 return aDistance < bDistance ? b : a;
             }
         }
+
+        private static Troupe ResetByTiles(Troupe a, Troupe b, TileIndex targetA, TileIndex targetB, PositionProvider positionProvider)
+        {
+            var subTiles = a.IsSmall ? 2 : 1;
+            var currentA = positionProvider.RequireTile(a.Sprite.Position, subTiles);
+            var currentB = positionProvider.RequireTile(b.Sprite.Position, subTiles);
+
+            if (currentA == targetB)
+            {
+                // ›B‹ has to go where ›A‹ is. Reset ›B‹.
+                return b;
+            }
+
+            if (currentB == targetA)
+            {
+                // ›A‹ has to go where ›B‹ is. Reset ›A‹.
+                return a;
+            }
+
+            return null;
+        }
+
+        #endregion
 
         internal static void Handle(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
         {
@@ -111,7 +141,6 @@ namespace KernelPanic
                 default:
                     return false;
             }
-
         }
     }
 }
