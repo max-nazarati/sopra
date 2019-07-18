@@ -75,6 +75,7 @@ namespace KernelPanic.Hud
                 {
                     sprite.Text = (++mCounter).ToString();
                 }
+                
             }
 
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -110,7 +111,7 @@ namespace KernelPanic.Hud
                 var action = new PurchasableAction<Unit>(unit);
                 action.Purchased += waveManager.Add;
                 var button = new ImageButton(spriteManager, image, 70, 70);
-                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, action, button);
+                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, unit, action, button);
             }
 
             Element CreateElement<TUnit>() where TUnit : Unit

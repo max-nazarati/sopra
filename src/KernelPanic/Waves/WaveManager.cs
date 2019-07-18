@@ -89,25 +89,17 @@ namespace KernelPanic.Waves
         internal void Add(IPlayerDistinction player, Unit unit)
         {
             var buyer = Players.Select(player);
-            if (unit is Troupe || buyer.ValidHeroPurchase(unit))
+            EventCenter.Default.Send(Event.BoughtUnit(buyer, unit));
+            
+            var clone = unit.Clone();
+            if (clone is Troupe troupe)
             {
-
-                EventCenter.Default.Send(Event.BoughtUnit(buyer, unit));
-
-                var clone = unit.Clone();
-                if (clone is Troupe troupe)
-                {
-                    mTroupes.Select(player).Add(troupe);
-                    return;
-                }
-
-                buyer.ApplyUpgrades(clone);
-                buyer.AttackingLane.UnitSpawner.Register(clone);
+                mTroupes.Select(player).Add(troupe);
+                return;
             }
-            else
-            {
-                buyer.Bitcoins += unit.Price;
-            }
+
+            buyer.ApplyUpgrades(clone);
+            buyer.AttackingLane.UnitSpawner.Register(clone);
         }
 
         internal void Update(GameTime gameTime)

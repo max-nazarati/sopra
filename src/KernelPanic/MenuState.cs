@@ -231,12 +231,34 @@ namespace KernelPanic
             // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
             backButton.Clicked += stateManager.PopOnClick;
-            
+            var title = stateManager.Sprite.CreateText("Spielanleitung");
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            title.X = screenMid + title.Width/2;
+            title.Y = 100;
+            title.SetOrigin(RelativePosition.TopRight);
+
+            var instr = stateManager.Sprite.CreateText("" +
+                "- Mittlerer Maus-Click:    erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen\n" +
+                "- Rechter Maus-Click:    Bewegungsziel für Heroes angeben / un-togglet Hero-Fähigkeit.\n" +
+                "- Linker Maus-Click:       Objekte kaufen/auswählen / GUI Buttons drücken.\n" +
+                "-Kamera-Bewegung:      Mauszeiger zum Bildschirmrand bringen / WASD.\n" +
+                "-Kamera-Zoom:              Scroll-Wheel.\n\n" +
+                "-Esc-Taste:    Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
+                "                             ins vorherige Menu-Screen gelangen.\n" +
+                "-V-Taste:       (un)toggle Path-finding Debug-Modus\n" +
+                "-Q-Taste:       alternative zu mittlerem Maus-Click\n" +
+                "-E-Taste:       un-togglet Hero-Fähigkeit\n");
+
+
+            instr.Y = title.Y + 50;
+
             return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
+                    new StaticComponent(title),
+                    new StaticComponent(instr),
                     backButton
                 }
             };

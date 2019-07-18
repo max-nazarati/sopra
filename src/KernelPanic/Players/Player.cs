@@ -61,26 +61,36 @@ namespace KernelPanic.Players
         {
             if (unit is Firefox)
             {
-                var res = FirefoxMaximum > FirefoxCurrent;
-                if (res)
-                    FirefoxCurrent++;
-                return res;
+                return FirefoxMaximum > FirefoxCurrent;
+                
             }
             else if (unit is Settings)
             {
-                var res = SettingsMaximum > SettingsCurrent;
-                if (res)
-                    SettingsCurrent++;
-                return res;
+                return SettingsMaximum > SettingsCurrent;
+                
             }
             else if (unit is Bluescreen)
             {
-                var res = BlueScreenMaximum > BlueScreenCurrent;
-                if (res)
-                    BlueScreenCurrent++;
-                return res;
+                return BlueScreenMaximum > BlueScreenCurrent;
+                
             }
             return false;
+        }
+
+        internal void IncrementHeroCount(Unit unit)
+        {
+            if (unit is Firefox)
+            {
+                ++FirefoxCurrent;
+            }
+            else if (unit is Settings)
+            {
+                ++SettingsCurrent;
+            }
+            else if (unit is Bluescreen)
+            {
+                ++BlueScreenCurrent;
+            }
         }
 
         internal void HeroDied(Hero unit)

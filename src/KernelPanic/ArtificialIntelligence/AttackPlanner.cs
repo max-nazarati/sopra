@@ -36,12 +36,12 @@ namespace KernelPanic.ArtificialIntelligence
             eventCenter.Subscribe(Event.Id.KilledUnit,
                 e => UpdateHeuristic(Event.Id.KilledUnit, e),
                 e => !e.IsActivePlayer(Event.Key.Attacker));
-            BuyEntity<Firefox>();
-            BuyEntity<Settings>();
-            BuyEntity<Bluescreen>();
+            //BuyEntity<Firefox>();
+            //BuyEntity<Settings>();
+            //BuyEntity<Bluescreen>();
             BuyEntity<Bug>();
         }
-        
+
         #endregion
 
         private void BuyEntity<T>(int amount=1) where T : Unit

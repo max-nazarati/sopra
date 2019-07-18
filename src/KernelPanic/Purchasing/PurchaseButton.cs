@@ -5,6 +5,8 @@ using KernelPanic.Interface;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using KernelPanic.Entities;
+using KernelPanic.Entities.Units;
 
 namespace KernelPanic.Purchasing
 {
@@ -36,6 +38,8 @@ namespace KernelPanic.Purchasing
         /// </summary>
         internal bool PossiblyEnabled { /*internal*/ private get; set; } = true;
 
+        internal Unit Unit { get; private set; }
+
         #region IPositioned/IBounded
 
         public Vector2 Position
@@ -66,10 +70,23 @@ namespace KernelPanic.Purchasing
             Button.Clicked += Purchase;
         }
 
+        internal PurchaseButton(Player player, Unit unit, TAction action, TButton button)
+        {
+            Player = player;
+            Action = action;
+            Button = button;
+            Unit = unit;
+            Button.Clicked += Purchase;
+        }
+
         public void Update(InputManager inputManager, GameTime gameTime)
         {
             Button.Update(inputManager, gameTime);
             Button.Enabled = PossiblyEnabled && Action.Available(Player);
+            if (Player.ValidHeroPurchase(Unit))
+            {
+                PossiblyEnabled = true;
+            }           
         }
 
         /// <inheritdoc />
@@ -80,6 +97,21 @@ namespace KernelPanic.Purchasing
 
         private void Purchase(Button sender, InputManager inputManager)
         {
+            if (!(Unit is null))
+            {
+                if (Unit is Hero)
+                {
+                    if (Player.ValidHeroPurchase(Unit))
+                    {
+                        Player.IncrementHeroCount(Unit);
+                        if (!Player.ValidHeroPurchase(Unit))
+                            PossiblyEnabled = false;
+                    }
+                }
+                if (!Action.TryPurchase(Player))
+                    throw new InvalidOperationException($"Player {Player} was not able to purchase {Action}");
+                return;
+            }
             if (!Action.TryPurchase(Player))
                 throw new InvalidOperationException($"Player {Player} was not able to purchase {Action}");
         }
@@ -100,6 +132,10 @@ namespace KernelPanic.Purchasing
         /// <param name="button"></param>
         internal PurchaseButton(Player player, PurchasableAction<TResource> action, TButton button)
             : base(player, action, button)
+        {
+        }
+        internal PurchaseButton(Player player, Unit unit, PurchasableAction<TResource> action, TButton button)
+            : base(player, unit, action, button)
         {
         }
     }
