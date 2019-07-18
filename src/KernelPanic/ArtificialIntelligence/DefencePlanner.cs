@@ -1,6 +1,7 @@
 using System;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Events;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 
@@ -23,9 +24,13 @@ namespace KernelPanic.ArtificialIntelligence
             mDefenseDecisionMaker = new DecisionTreeClassifier();
             mDefenseDecisionMaker.ReaderCsv("sopra_defense_train.csv");
             mDefenseDecisionMaker.TrainModel();
-            /*Console.WriteLine(mDefenseDecisionMaker.Rules.ToString(mDefenseDecisionMaker.Codebook,
-                "Aktion",
-                System.Globalization.CultureInfo.InvariantCulture));*/
+            var eventCenter = EventCenter.Default;
+            eventCenter.Subscribe(Event.Id.BuildingPlaced,
+                e =>
+                {
+                    UpdateBuildPosition();
+                },
+                e => !e.IsActivePlayer(Event.Key.Buyer));
             mSpriteManager = spriteManager;
         }
 
@@ -59,71 +64,45 @@ namespace KernelPanic.ArtificialIntelligence
             switch (choice)
             {
                 case "Kabel":
-                    if (mBuildX < mBoundX && mBuildY < 18)
-                    {
-                        BuyBuilding<Cable>(new Point(mBuildX, mBuildY));
-                        UpdateBuildPosition();
-                    }
-
+                    BuyBuilding<Cable>(new Point(mBuildX, mBuildY));
                     break;
                 case "Mauszeigerschütze":
-                    if (mBuildX < mBoundX && mBuildY < 18)
-                    {
-                        BuyBuilding<CursorShooter>(new Point(mBuildX, mBuildY));
-                        UpdateBuildPosition();
-                    }
-
+                    BuyBuilding<CursorShooter>(new Point(mBuildX, mBuildY));
                     break;
                 case "CD-Werfer":
-                    if (mBuildX < mBoundX && mBuildY < 18)
-                    {
-                        BuyBuilding<CdThrower>(new Point(mBuildX, mBuildY));
-                        UpdateBuildPosition();
-                    }
-
+                    BuyBuilding<CdThrower>(new Point(mBuildX, mBuildY));
                     break;
                 case "Antivirusprogramm":
-                    if (mBuildX < mBoundX && mBuildY < 18)
-                    {
-                        BuyBuilding<Antivirus>(new Point(mBuildX, mBuildY));
-                        UpdateBuildPosition();
-                    }
-
+                    BuyBuilding<Antivirus>(new Point(mBuildX, mBuildY));
                     break;
                 case "Lüftung":
-                    if (mBuildX < mBoundX && mBuildY < 18)
-                    {
-                        BuyBuilding<Ventilator>(new Point(mBuildX, mBuildY));
-                        UpdateBuildPosition();
-                    }
-
+                    BuyBuilding<Ventilator>(new Point(mBuildX, mBuildY));
                     break;
                 case "Wifi-Router":
-                    if (mBuildX < mBoundX && mBuildY < 18)
-                    {
-                        BuyBuilding<WifiRouter>(new Point(mBuildX, mBuildY));
-                        UpdateBuildPosition();
-                    }
-
+                    BuyBuilding<WifiRouter>(new Point(mBuildX, mBuildY));
                     break;
                 case "Schockfeld":
-                    if (mBuildX < mBoundX && mBuildY < 18)
-                    {
-                        BuyBuilding<ShockField>(new Point(mBuildX, mBuildY));
-                        UpdateBuildPosition();
-                    }
-
+                    BuyBuilding<ShockField>(new Point(mBuildX, mBuildY));
                     break;
             }
         }
 
         private void UpdateBuildPosition()
         {
-            if (mBuildX < 17 && mBuildForward) mBuildX += 1;
-            else if (mBuildX > 8 && !mBuildForward) mBuildX -= 1;
+            if (mBuildX < 16 && mBuildForward) mBuildX += 1;
+            else if (mBuildX > 9 && !mBuildForward) mBuildX -= 1;
             else
             {
-                mBuildForward = !mBuildForward;
+                if (mBuildForward)
+                {
+                    mBuildForward = false;
+                    mBuildX++;
+                }
+                else
+                {
+                    mBuildForward = true;
+                    mBuildX--;
+                }
                 mBuildY += 2;
             }
         }

@@ -33,7 +33,7 @@ namespace KernelPanic.ArtificialIntelligence
         ShockField = 15
     }
 
-    internal sealed class ArtificialPlayer : Player
+    internal sealed class ArtificialPlayer : Player, IDisposable
     {
         private AttackPlanner mAttackPlanner;
         private DefencePlanner mDefencePlanner;
@@ -302,6 +302,11 @@ namespace KernelPanic.ArtificialIntelligence
             mNeedOffensiveUnits = false;
 
             MakeRandomChoice(gameTime);
+        }
+
+        public void Dispose()
+        {
+            // TODO
         }
     }
 }
