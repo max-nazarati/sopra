@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
+using KernelPanic.Events;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using Microsoft.Xna.Framework;
@@ -12,6 +13,15 @@ namespace KernelPanic.ArtificialIntelligence
     {
         private readonly Dictionary<Type, PurchasableAction<Unit>> mActions;
         private double[] mUnitDistribution;
+        private const int NumberOfUnits = 8;
+        private const int IndexBug = 0;
+        private const int IndexVirus = 1;
+        private const int IndexTrojaner = 2;
+        private const int IndexNokia = 3;
+        private const int IndexThunderbird = 4;
+        private const int IndexSettings = 5;
+        private const int IndexFirefox = 6;
+        private const int IndexBluescreen = 7;
 
         #region Konstruktor
 
@@ -19,6 +29,13 @@ namespace KernelPanic.ArtificialIntelligence
         {
             mActions = actions;
             mUnitDistribution = new[] {1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d};
+            var eventCenter = EventCenter.Default;
+            eventCenter.Subscribe(Event.Id.DamagedBase,
+                e => UpdateHeuristic(Event.Id.DamagedBase, e),
+                e => e.IsActivePlayer(Event.Key.Defender));
+            eventCenter.Subscribe(Event.Id.KilledUnit,
+                e => UpdateHeuristic(Event.Id.KilledUnit, e),
+                e => !e.IsActivePlayer(Event.Key.Attacker));
             BuyEntity<Firefox>();
             BuyEntity<Settings>();
             BuyEntity<Bluescreen>();
@@ -35,7 +52,7 @@ namespace KernelPanic.ArtificialIntelligence
             }
         }
 
-        #region Update
+        #region Heuristic
 
         /// <summary>
         /// Choose randomly a unit based on distribution - this is done
@@ -49,7 +66,7 @@ namespace KernelPanic.ArtificialIntelligence
         /// <returns></returns>
         public string MakeChoice()
         {
-            string[] choices = new[] {"Bug", "Virus", "Trojaner", "Nokia", "Thunderbird", "Settings", "Firefox", "Bluescreen"};
+            string[] choices = new[] { "Bug", "Virus", "Trojaner", "Nokia", "Thunderbird", "Settings", "Firefox", "Bluescreen" };
 
             Random numberGenerator = new Random();
             double number = numberGenerator.NextDouble();
@@ -67,6 +84,94 @@ namespace KernelPanic.ArtificialIntelligence
 
             return choices[choiceIndex];
         }
+
+        private int UnitTypeToIndex(Unit type)
+        {
+            int index;
+            switch (type)
+            {
+                case Bug _:
+                    index = IndexBug;
+                    break;
+                case Virus _:
+                    index = IndexVirus;
+                    break;
+                case Trojan _:
+                    index = IndexTrojaner;
+                    break;
+                case Nokia _:
+                    index = IndexNokia;
+                    break;
+                case Thunderbird _:
+                    index = IndexThunderbird;
+                    break;
+                case Settings _:
+                    index = IndexSettings;
+                    break;
+                case Firefox _:
+                    index = IndexFirefox;
+                    break;
+                case Bluescreen _:
+                    index = IndexBluescreen;
+                    break;
+                default:
+                    index = -1;
+                    break;
+            }
+
+            return index;
+        }
+
+        private void UpdateHeuristic(Event.Id id, Event handler)
+        {
+            double weight;
+            Unit unitType;
+            switch (id)
+            {
+                case Event.Id.DamagedBase:
+                    weight = 0.005;
+                    unitType = handler.Get<Unit>(Event.Key.Unit);
+                    IncreaseUnitProbability(UnitTypeToIndex(unitType), weight);
+                    break;
+                case Event.Id.KilledUnit:
+                    weight = 0.0001;
+                    unitType = handler.Get<Unit>(Event.Key.Unit);
+                    DecreaseUnitProbability(UnitTypeToIndex(unitType), weight);
+                    break;
+            }
+        }
+
+        public void IncreaseUnitProbability(int unitIndex, double probability)
+        {
+            if (mUnitDistribution[unitIndex] >= 1)
+            {
+                return;
+            }
+
+            mUnitDistribution[unitIndex] += probability;
+            for (int i = 0; i < NumberOfUnits; i++)
+            {
+                mUnitDistribution[i] /= (1 + probability);
+            }
+        }
+
+        public void DecreaseUnitProbability(int unitIndex, double probability)
+        {
+            if (mUnitDistribution[unitIndex] <= 0)
+            {
+                return;
+            }
+            mUnitDistribution[unitIndex] -= probability;
+            for (int i = 0; i < NumberOfUnits; i++)
+            {
+                mUnitDistribution[i] /= (1 - probability);
+            }
+        }
+
+        #endregion
+
+        #region Update
+
 
         public void BuySingleUnit(string choice)
         {
@@ -103,12 +208,33 @@ namespace KernelPanic.ArtificialIntelligence
         {
             base.Update();
             var choice = MakeChoice();
-                // Console.WriteLine(String.Join(",", defenceData.Select(p => p.ToString()).ToArray()));
             BuySingleUnit(choice);
-            // TroupeParade();
+            // Console.WriteLine("Distribution of Attackplanner: \n");
+            // Console.WriteLine(DistributionToString());
+            // Console.WriteLine("\n ========== \n");
         }
-        
+
         #endregion
+
+
+        #region Visualization
         
+        /*
+        public string DistributionToString()
+        {
+            string result = "";
+            result += "Bug: " + mUnitDistribution[0] + "\n";
+            result += "Virus: " + mUnitDistribution[1] + "\n";
+            result += "Trojaner: " + mUnitDistribution[2] + "\n";
+            result += "Nokia: " + mUnitDistribution[3] + "\n";
+            result += "Thunderbird: " + mUnitDistribution[4] + "\n";
+            result += "Settings: " + mUnitDistribution[5] + "\n";
+            result += "Firefox: " + mUnitDistribution[6] + "\n";
+            result += "Bluescreen: " + mUnitDistribution[7];
+
+            return result;
+        } */
+
+        #endregion
     }
 }
