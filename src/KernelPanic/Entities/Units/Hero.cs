@@ -44,7 +44,7 @@ namespace KernelPanic.Entities.Units
         [DataMember]
         protected internal CooldownComponent Cooldown { get; set; }
         internal AStar mAStar; // save the AStar for path-drawing
-        private Point? mTarget; // the target we wish to move to (world position)
+        private TileIndex? mTarget;
         private Visualizer mPathVisualizer;
         internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
@@ -76,13 +76,10 @@ namespace KernelPanic.Entities.Units
 
             UpdateTarget(positionProvider, gameTime, inputManager);
 
-            if (!(mTarget?.ToVector2() is Vector2 targetVector))
+            if (!(mTarget?.ToPoint() is Point target))
             {
                 return;
             }
-            
-            // set the target Position for the AStar (latest updated target should be saved in mTarget)
-            var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
             mAStar = positionProvider.MakePathFinding(this, new[] {target});
@@ -110,7 +107,6 @@ namespace KernelPanic.Entities.Units
         private void MoveTargetReachedHandler(Vector2 target)
         {
             mAStar = null;
-            mTarget = null;
             mPathVisualizer = null;
             MoveTargetReached -= MoveTargetReachedHandler;
         }
@@ -134,14 +130,17 @@ namespace KernelPanic.Entities.Units
             {
                 SlowPush(inputManager, positionProvider);
             }
+
             // only check for new target of selected and Right Mouse Button was pressed
             if (!Selected) return;
             if (!inputManager.MousePressed(InputManager.MouseButton.Right)) return;
 
             var mouse = inputManager.TranslatedMousePosition;
-            if (positionProvider.Grid.GridPointFromWorldPoint(mouse)?.Position == null) return;
-            mTarget = new Point((int)mouse.X, (int)mouse.Y);
+            if (!(positionProvider.Grid.TileFromWorldPoint(mouse) is TileIndex target))
+                return;
+
             ShouldMove = true;
+            mTarget = target;
             MoveTargetReached -= MoveTargetReachedHandler;
         }
 
@@ -317,8 +316,7 @@ namespace KernelPanic.Entities.Units
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
             mAStar = positionProvider.MakePathFinding(this, basePosition);
-            mTarget = positionProvider.Grid.GetTile(new TileIndex(mAStar.Path[mAStar.Path.Count-1], 1)).Position.ToPoint();
-
+            mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
             ShouldMove = true;
         }
 
@@ -363,17 +361,16 @@ namespace KernelPanic.Entities.Units
             foreach (var point in neighbours)
             {
                 var currentValue = PointHeuristic(point, positionProvider);
-                if (currentValue > bestValue)
-                {
-                    bestPoint = point;
-                    bestValue = currentValue;
-                }
+                if (currentValue <= bestValue)
+                    continue;
+
+                bestPoint = point;
+                bestValue = currentValue;
             }
             #endregion
 
             #region set the optimum as walking target
             mAStar = positionProvider.MakePathFinding(this, new[] {bestPoint});
-            mTarget = bestPoint * new Point(Grid.KachelSize);
             ShouldMove = true;
             #endregion
         }
