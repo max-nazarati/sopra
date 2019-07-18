@@ -57,8 +57,8 @@ namespace KernelPanic.Entities.Units
 
         #region Konstruktor / Create
 
-        protected Hero(int price, int speed, int life, int attackStrength, TimeSpan coolDown, Sprite sprite, SpriteManager spriteManager)
-            : base(price, speed, life, attackStrength, sprite, spriteManager)
+        protected Hero(int price, int speed, int life, int attackStrength, TimeSpan coolDown, Point hitBoxSize, Sprite sprite, SpriteManager spriteManager)
+            : base(price, speed, life, attackStrength, hitBoxSize, sprite, spriteManager)
         {
             ShouldMove = false;
             Cooldown = new CooldownComponent(coolDown, false);

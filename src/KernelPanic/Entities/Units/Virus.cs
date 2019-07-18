@@ -7,10 +7,10 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Virus : Troupe
     {
-        protected override Point HitBoxSize => new Point(22, 22);
+        private static Point HitBoxSize => new Point(22, 22);
 
         internal Virus(SpriteManager spriteManager)
-            : base(3, 3, 10, 2, spriteManager.CreateVirus(), spriteManager)
+            : base(3, 3, 10, 2, HitBoxSize, spriteManager.CreateVirus(), spriteManager)
         {
         }
 

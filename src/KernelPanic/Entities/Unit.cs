@@ -47,27 +47,29 @@ namespace KernelPanic.Entities
 
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
-        protected abstract Point HitBoxSize { get; }
+        [DataMember]
+        private Point mHitBoxSize;
 
         public override Rectangle Bounds
         {
             get
             {
-                var (width, height) = HitBoxSize;
+                var (width, height) = mHitBoxSize;
                 var x = (int) (Sprite.X - width / 2f);
                 var y = (int) (Sprite.Y - height / 2f);
                 return new Rectangle(x, y, width, height);
             }
         }
 
-        protected Unit(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
-            : base(price, sprite, spriteManager)
+        protected Unit(int price, int speed, int life, int attackStrength, Point hitBoxSize, Sprite sprite, SpriteManager spriteManager)
+            : base(price, hitBoxSize, sprite, spriteManager)
         {
             Speed = speed;
             MaximumLife = life;
             RemainingLife = life;
             AttackStrength = attackStrength;
             ShouldMove = true;
+            mHitBoxSize = hitBoxSize;
             mHealthBar = spriteManager.CreateColoredRectangle(1, 1, new[] { new Color(0.0f, 1.0f, 0.0f, 1.0f) });
             mHealthBar.SetOrigin(RelativePosition.TopLeft);
             mDamageBar = spriteManager.CreateColoredRectangle(1, 1, new[] { new Color(1.0f, 0.0f, 0.0f, 1.0f) });

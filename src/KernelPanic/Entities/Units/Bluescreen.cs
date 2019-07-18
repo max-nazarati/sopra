@@ -22,7 +22,7 @@ namespace KernelPanic.Entities.Units
 
         private Emp[] mEmps;
 
-        protected override Point HitBoxSize => new Point(64, 64);
+        private static Point HitBoxSize => new Point(64, 64);
 
         #region Upgrades
         internal bool TargetsTwoTower { private get; set; }
@@ -32,7 +32,7 @@ namespace KernelPanic.Entities.Units
         #endregion
         
         internal Bluescreen(SpriteManager spriteManager)
-            : base(50, 6, 15, 0, TimeSpan.FromSeconds(1), spriteManager.CreateBluescreen(), spriteManager)
+            : base(50, 6, 15, 0, TimeSpan.FromSeconds(1), HitBoxSize, spriteManager.CreateBluescreen(), spriteManager)
         {
             mAbilityRange = 1000;
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
