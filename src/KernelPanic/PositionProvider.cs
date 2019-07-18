@@ -119,8 +119,6 @@ namespace KernelPanic
 
         #endregion
 
-        public void DamageBase(int damage) => Target.Power = Math.Max(0, Target.Power - damage);
-
         internal void AddProjectile(Projectile projectile)
         {
             mEntities.Add(projectile);

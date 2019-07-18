@@ -221,9 +221,11 @@ namespace KernelPanic.Entities
             }
         }
 
-        private void CheckBaseReached(PositionProvider positionProvider)
+        internal void DamageBase(PositionProvider positionProvider)
         {
-            // TODO: Implement
+            EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
+            positionProvider.Target.Power = Math.Max(0, positionProvider.Target.Power - AttackStrength);
+            WantsRemoval = true;
         }
 
         internal Vector2 LastMovement => Sprite.Position - mLastPosition;
@@ -270,7 +272,6 @@ namespace KernelPanic.Entities
             if (move is Vector2 theMove)
             {
                 Sprite.Position += theMove;
-                CheckBaseReached(positionProvider);
             }
             
             UpdateHealthBar();

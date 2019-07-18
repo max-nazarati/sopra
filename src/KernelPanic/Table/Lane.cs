@@ -79,8 +79,9 @@ namespace KernelPanic.Table
         {
             get
             {
+                var targetSide = mLaneSide == Side.Left ? Side.Right : Side.Left;
                 var borders = new List<LaneBorder>(8);
-                borders.AddRange(LaneBorder.Borders(Grid.Bounds, Grid.KachelSize, true));
+                borders.AddRange(LaneBorder.Borders(Grid.Bounds, Grid.KachelSize, true, targetSide));
                 borders.AddRange(LaneBorder.Borders(Grid.PixelCutout, Grid.KachelSize, false));
                 return borders;
             }
