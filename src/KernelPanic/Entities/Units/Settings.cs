@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
