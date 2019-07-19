@@ -193,7 +193,7 @@ namespace KernelPanic
             var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
             var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
             musicOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(musicOnOffButton);
-            
+
             var effectsButton = CreateButton(stateManager.Sprite, "Soundeffekte", 325, 150);
             var effectsOnOffButton = CreateButton(stateManager.Sprite, "aus", 325, -150);
             effectsOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(effectsOnOffButton);
@@ -201,8 +201,12 @@ namespace KernelPanic
             var volumeButton = CreateButton(stateManager.Sprite, "Lautstärke", 450, 150);
             var volumeRegulatorButton = CreateButton(stateManager.Sprite, "Mittel",450, -150);
             
-            var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 575, 150);
-            var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus",575, -150);
+            var keyInputsButton = CreateButton(stateManager.Sprite, "Steuerung", 575, 150);
+            keyInputsButton.Clicked += (button, input) => stateManager
+                .Push(CreateKeyInputMenu(stateManager));
+
+            var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 700, 150);
+            var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus",700, -150);
             fullScreenWindowButton.Clicked += (button, input) => ChangeScreenSize(fullScreenWindowButton, stateManager.GraphicsDeviceManager);
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
@@ -219,9 +223,32 @@ namespace KernelPanic
                     effectsOnOffButton,
                     volumeButton,
                     volumeRegulatorButton,
+                    keyInputsButton,
                     backButton,
                     fullscreen,
                     fullScreenWindowButton
+                }
+            };
+        }
+        
+        private static MenuState CreateKeyInputMenu(GameStateManager stateManager)
+        {
+            // TODO: Write Game Instructions.
+            var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
+            backButton.Clicked += stateManager.PopOnClick;
+            var title = stateManager.Sprite.CreateText("Tastaturbelegung");
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            title.X = screenMid + title.Width/2;
+            title.Y = 100;
+            title.SetOrigin(RelativePosition.TopRight);
+
+            return new MenuState(stateManager)
+            {
+                mComponents = new InterfaceComponent[]
+                {
+                    CreateBackgroundWithoutText(stateManager.Sprite),
+                    new StaticComponent(title),
+                    backButton
                 }
             };
         }

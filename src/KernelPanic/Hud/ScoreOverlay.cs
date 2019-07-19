@@ -53,8 +53,8 @@ namespace KernelPanic.Hud
         {
             mPowerTexts.A.Text = mPlayers.A.Base.Power + "%";
             mPowerTexts.B.Text = mPlayers.B.Base.Power + "%";
-            mMoneyTexts.A.Text = mPlayers.A.Bitcoins + "$";
-            mMoneyTexts.B.Text = mPlayers.B.Bitcoins + "$";
+            mMoneyTexts.A.Text = mPlayers.A.Bitcoins + " Bitcoin   ";
+            mMoneyTexts.B.Text = mPlayers.B.Bitcoins + " Bitcoin";
             mExperienceTexts.A.Text = mPlayers.A.ExperiencePoints + " EP";
             mExperienceTexts.B.Text = mPlayers.B.ExperiencePoints + " EP";
 

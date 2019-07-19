@@ -282,7 +282,8 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay()
+        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right
+            , TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay()
         {
             const float scale = 1.8f;
             const float hudWidth = scale * 318;
