@@ -7,7 +7,6 @@ using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic.Entities.Units
 {
@@ -87,7 +86,7 @@ namespace KernelPanic.Entities.Units
 
         protected override void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
         {
-            if (/*TODO ask if we are back in base */ true) // ask for base tile hit
+            if (true) // ask for base tile hit
             {
                 base.UpdateCooldown(gameTime, positionProvider);
             }
@@ -96,7 +95,6 @@ namespace KernelPanic.Entities.Units
         protected override void TryActivateAbility(InputManager inputManager, bool button = false)
         {
             // TODO show the cooldown and disable the click ability (or make it active i dunno, im just a comment not a cop)
-            Console.WriteLine("TODO: settings ability is passive");
         }
 
         
@@ -137,7 +135,77 @@ namespace KernelPanic.Entities.Units
             mIndicator.ScaleToWidth(AbilityRange * mAbilityRangeAmplifier * 2);
         }
 
-        protected override float PointHeuristic(Point point, PositionProvider positionProvider)
+        /// <summary>
+        /// try not to die while attacking.
+        /// sets mTarget and ShouldMove
+        /// </summary>
+        protected override void AutonomousAttack(InputManager inputManager, PositionProvider positionProvider)
+        {
+            #region get all translation for the 8 adjacent tiles
+            var startPoint = positionProvider.RequireTile(Sprite.Position).ToPoint();
+            var neighboursPosition = new List<(int, int)>()
+            {
+                         (-1, -1),  (0, -1), (1, -1),
+                         (-1,  0),           (1,  0), // (0, 0) is the point itself
+                         (-1,  1),  (0, 1),  (1,  1),
+
+                // increases the radius by 1:
+                (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2),
+                (-2, -1),                             (2, -1),
+                (-2,  0),                             (2,  0),
+                (-2,  1),                             (2,  1),
+                (-2,  2), (-1,  2), (0,  2), (1,  2), (2,  2)
+            };
+            #endregion
+
+            #region add the points of the adjacent neighbours into a list (if they are on the lane)
+            var neighbours = new List<Point>();
+            foreach (var (x, y) in neighboursPosition)
+            {
+                try
+                {
+                    neighbours.Add(
+                        positionProvider.RequireTile(
+                            new Vector2(Sprite.Position.X + x * Grid.KachelSize,
+                                        Sprite.Position.Y + y * Grid.KachelSize)
+                            ).ToPoint());
+                }
+                catch (InvalidOperationException)
+                {
+                    // just dont add the point
+                }
+            }
+            #endregion
+
+            #region calculate a heuristic for all neighbours and choose the best
+            var bestPoint = startPoint;
+            var bestValue = 0f;
+            foreach (var point in neighbours)
+            {
+                var currentValue = PointHeuristic(point, positionProvider);
+                if (currentValue <= bestValue)
+                    continue;
+
+                bestPoint = point;
+                bestValue = currentValue;
+            }
+            #endregion
+
+            #region set the optimum as walking target
+            mAStar = positionProvider.MakePathFinding(this, new[] {bestPoint});
+            if (mAStar.Path != null)
+            {
+                if (mAStar.Path[mAStar.Path.Count - 1] is Point target)
+                {
+                    mTarget = new TileIndex(target, 1);
+                }
+            }
+
+            ShouldMove = true;
+            #endregion
+        }
+
+        private float PointHeuristic(Point point, PositionProvider positionProvider)
         {
             point *= new Point(Grid.KachelSize);
             var result = 0f;
@@ -149,7 +217,7 @@ namespace KernelPanic.Entities.Units
                 var tile = positionProvider.RequireTile(troupe).BaseTile;
                 var heat = positionProvider.TroupeData.TileHeat(tile.ToPoint());
                 result += 10; // just setting a base value
-                var factor = troupe.MaximumLife - troupe.RemainingLife;
+                var factor = 1 + troupe.MaximumLife - troupe.RemainingLife;
                 result += factor * (heat ?? 1 ) < 10 ? 20 : (heat ?? 1 ) < 15 ? 16 : (heat ?? 1 ) < 20 ? 12 : (heat ?? 1 ) < 25 ? 8 : (heat ?? 1 ) < 30 ? 4 : (heat ?? 1 ) < 40 ? 2 : 1;
             }
 

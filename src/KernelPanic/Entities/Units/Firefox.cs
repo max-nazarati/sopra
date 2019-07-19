@@ -120,11 +120,12 @@ namespace KernelPanic.Entities.Units
 
         #region KI
 
-        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
+        protected override void AutonomousAttack(InputManager inputManager, PositionProvider positionProvider)
         {
             // moving
-            base.AttackBase(inputManager, positionProvider);
-              SmartJump(inputManager, positionProvider);
+            base.AutonomousAttack(inputManager, positionProvider);
+            // jumping
+            SmartJump(inputManager, positionProvider);
         }
 
         private void SmartJump(InputManager inputManager, PositionProvider positionProvider)
@@ -152,7 +153,7 @@ namespace KernelPanic.Entities.Units
                 // TODO find a good check if we should wait before jumping
                 //      so we dont waste it.
                 
-                if (distance[i] < 250) // TODO this distance is hardcoded and therefore bad
+                if (distance[i] < 300) // TODO this distance is hardcoded and therefore bad
                 {
                     mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[i], 1)).Position;
                     cSharpHasNoElseAfterAForLoopLikeWtfIsThisAnApesLanguage = true;

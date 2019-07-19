@@ -36,8 +36,7 @@ namespace KernelPanic.Entities.Units
         protected enum Strategy
         {
             Human = 0,
-            Attack,
-            Econ
+            Autonomous
         }
         
         #endregion
@@ -45,7 +44,7 @@ namespace KernelPanic.Entities.Units
         [DataMember]
         protected internal CooldownComponent Cooldown { get; set; }
 
-        private TileIndex? mTarget;
+        protected TileIndex? mTarget;
         protected AStar mAStar; // save the AStar for path-drawing
         private Visualizer mPathVisualizer;
 
@@ -130,15 +129,9 @@ namespace KernelPanic.Entities.Units
         /// <param name="inputManager"></param>
         private void UpdateTarget(PositionProvider positionProvider, InputManager inputManager)
         {
-            if (StrategyStatus == Strategy.Attack)
+            if (StrategyStatus == Strategy.Autonomous)
             {
-                AttackBase(inputManager, positionProvider);
-                return;
-            }
-
-            if (StrategyStatus == Strategy.Econ)
-            {
-                SlowPush(inputManager, positionProvider);
+                AutonomousAttack(inputManager, positionProvider);
                 return;
             }
 
@@ -319,7 +312,7 @@ namespace KernelPanic.Entities.Units
 
         #region KI
 
-        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
+        protected virtual void AutonomousAttack(InputManager inputManager, PositionProvider positionProvider)
         {
             var grid = positionProvider.Grid;
             var basePosition = Base.TargetPoints(grid.LaneRectangle.Size, grid.LaneSide);
@@ -329,82 +322,6 @@ namespace KernelPanic.Entities.Units
             mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
             ShouldMove = true;
         }
-
-        /// <summary>
-        /// try not to die while attacking.
-        /// sets mTarget and ShouldMove
-        /// </summary>
-        protected virtual void SlowPush(InputManager inputManager, PositionProvider positionProvider)
-        {
-            #region get all translation for the 8 adjacent tiles
-            var startPoint = positionProvider.RequireTile(Sprite.Position).ToPoint();
-            var neighboursPosition = new List<(int, int)>()
-            {
-                         (-1, -1),  (0, -1), (1, -1),
-                         (-1,  0),           (1,  0), // (0, 0) is the point itself
-                         (-1,  1),  (0, 1),  (1,  1),
-
-                // increases the radius by 1:
-                (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2),
-                (-2, -1),                             (2, -1),
-                (-2,  0),                             (2,  0),
-                (-2,  1),                             (2,  1),
-                (-2,  2), (-1,  2), (0,  2), (1,  2), (2,  2)
-            };
-            #endregion
-
-            #region add the points of the adjacent neighbours into a list (if they are on the lane)
-            var neighbours = new List<Point>();
-            foreach (var (x, y) in neighboursPosition)
-            {
-                try
-                {
-                    neighbours.Add(
-                        positionProvider.RequireTile(
-                            new Vector2(Sprite.Position.X + x * Grid.KachelSize,
-                                        Sprite.Position.Y + y * Grid.KachelSize)
-                            ).ToPoint());
-                }
-                catch (InvalidOperationException)
-                {
-                    // just dont add the point
-                }
-            }
-            #endregion
-
-            #region calculate a heuristic for all neighbours and choose the best
-            var bestPoint = startPoint;
-            var bestValue = 0f;
-            foreach (var point in neighbours)
-            {
-                var currentValue = PointHeuristic(point, positionProvider);
-                if (currentValue <= bestValue)
-                    continue;
-
-                bestPoint = point;
-                bestValue = currentValue;
-            }
-            #endregion
-            
-            #region set the optimum as walking target
-            mAStar = positionProvider.MakePathFinding(this, new[] {bestPoint});
-            if (mAStar.Path != null)
-            {
-                if (mAStar.Path[mAStar.Path.Count - 1] is Point target)
-                {
-                    mTarget = new TileIndex(target, 1);
-                }
-            }
-            
-            ShouldMove = true;
-            #endregion
-        }
-
-        protected virtual float PointHeuristic(Point point, PositionProvider positionProvider)
-        {
-            return 0;
-        }
-
         #endregion
 
         #region Update
@@ -415,12 +332,7 @@ namespace KernelPanic.Entities.Units
             {
                 if (inputManager.KeyPressed(Keys.Space))
                 {
-                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Attack : Strategy.Human;
-                }
-
-                if (inputManager.KeyPressed(Keys.O))
-                {
-                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Econ : Strategy.Human;
+                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Autonomous : Strategy.Human;
                 }
             }
             // also updates the cooldown
