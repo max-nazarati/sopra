@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Events;
@@ -17,6 +18,7 @@ namespace KernelPanic.ArtificialIntelligence
         private const int UpperBoundX = 17;
         private bool mBuildForward;
 
+        [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "That is the way the filename is spelled")]
         public DefencePlanner(Player player, SpriteManager spriteManager) : base(player)
         {
             mBuildX = 8;
@@ -41,23 +43,25 @@ namespace KernelPanic.ArtificialIntelligence
                 Console.WriteLine("Wanted to build " + typeof(T) + " at " + tile + " which is not possible.");
         }
 
-        public void Update(int[] defenceData, GameTime gameTime)
+        public void Update(int[] defenceData)
         {
             base.Update();
-            var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll<int, double>(defenceData, x => (double)x));
+            var choiceEncoded = mDefenseDecisionMaker.Predict(Array.ConvertAll/*<int, double>*/(defenceData, x => (double)x));
             var choice = mDefenseDecisionMaker.Revert(choiceEncoded);
             BuySingleTower(choice);
         }
 
-        public void BuyRandomTower(GameTime gameTime)
+        [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "Those strings are correct in the csv context")]
+        public void BuyRandomTower()
         {
             string[] choices = {"Kabel", "Mauszeigerschütze", "CD-Werfer", "Antivirusprogramm", "Lüftung", "Wifi-Router", "Schockfeld"};
-            Random numberGenerator = new Random();
-            int number = numberGenerator.Next(0, 6);
-            string choice = choices[number];
+            var numberGenerator = new Random();
+            var number = numberGenerator.Next(0, 6);
+            var choice = choices[number];
             BuySingleTower(choice);
         }
 
+        [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "Those strings are correct in the csv context")]
         private void BuySingleTower(string choice)
         {
             // if (!mFirstTime) return;

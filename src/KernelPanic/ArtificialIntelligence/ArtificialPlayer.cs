@@ -276,7 +276,7 @@ namespace KernelPanic.ArtificialIntelligence
             var numberGenerator = new Random();
             var number = numberGenerator.Next(0, 500);
             if (number == 0) mAttackPlanner.Update(mAttackData, gameTime);
-            if (number == 1) mDefencePlanner.BuyRandomTower(gameTime);
+            if (number == 1) mDefencePlanner.BuyRandomTower();
         }
 
         public void Update(GameTime gameTime)
@@ -291,11 +291,11 @@ namespace KernelPanic.ArtificialIntelligence
             SetData();
             
             if (mNeedOffensiveUnits) mAttackPlanner.Update(mAttackData, gameTime);
-            if (mEnemyBoughtUnit) mDefencePlanner.Update(mDefenceData, gameTime);
+            if (mEnemyBoughtUnit) mDefencePlanner.Update(mDefenceData);
             if (mBaseTookDamageAi)
             {
-                mDefencePlanner.Update(mDefenceData, gameTime);
-                mDefencePlanner.BuyRandomTower(gameTime);
+                mDefencePlanner.Update(mDefenceData);
+                mDefencePlanner.BuyRandomTower();
             }
             mUpgradePlanner.Update();
             mEnemyBoughtUnit = false;
