@@ -36,9 +36,10 @@ namespace KernelPanic.ArtificialIntelligence
             eventCenter.Subscribe(Event.Id.KilledUnit,
                 e => UpdateHeuristic(Event.Id.KilledUnit, e),
                 e => !e.IsActivePlayer(Event.Key.Attacker));
-            //BuyEntity<Firefox>();
-            //BuyEntity<Settings>();
-            //BuyEntity<Bluescreen>();
+            // TODO delete those calls after Heros are finished
+            // BuyEntity<Firefox>();
+            BuyEntity<Settings>();
+            BuyEntity<Bluescreen>();
             BuyEntity<Bug>();
         }
 

@@ -110,7 +110,7 @@ namespace KernelPanic.Entities.Units
             var nextTarget = new TileIndex(path.Count > 2 ? path[1] : target, 1);
             MoveTarget = positionProvider.Grid.GetTile(nextTarget).Position;
         }
-
+        
         private void MoveTargetReached(PositionProvider positionProvider, TileIndex tileTarget)
         {
             var troupeData = positionProvider.TroupeData;
@@ -139,6 +139,7 @@ namespace KernelPanic.Entities.Units
             if (StrategyStatus == Strategy.Econ)
             {
                 SlowPush(inputManager, positionProvider);
+                return;
             }
 
             // only check for new target of selected and Right Mouse Button was pressed
@@ -337,11 +338,18 @@ namespace KernelPanic.Entities.Units
         {
             #region get all translation for the 8 adjacent tiles
             var startPoint = positionProvider.RequireTile(Sprite.Position).ToPoint();
-            var neighboursPosition = new List<(int, int)>(8)
+            var neighboursPosition = new List<(int, int)>()
             {
-                (-1, -1),  (0, -1), (1, -1),
-                (-1,  0),           (1,  0), // (0, 0) is the point itself
-                (-1,  1),  (0, 1),  (1,  1)
+                         (-1, -1),  (0, -1), (1, -1),
+                         (-1,  0),           (1,  0), // (0, 0) is the point itself
+                         (-1,  1),  (0, 1),  (1,  1),
+
+                // increases the radius by 1:
+                (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2),
+                (-2, -1),                             (2, -1),
+                (-2,  0),                             (2,  0),
+                (-2,  1),                             (2,  1),
+                (-2,  2), (-1,  2), (0,  2), (1,  2), (2,  2)
             };
             #endregion
 
@@ -366,7 +374,7 @@ namespace KernelPanic.Entities.Units
 
             #region calculate a heuristic for all neighbours and choose the best
             var bestPoint = startPoint;
-            var bestValue = 1f;
+            var bestValue = 0f;
             foreach (var point in neighbours)
             {
                 var currentValue = PointHeuristic(point, positionProvider);
@@ -377,9 +385,17 @@ namespace KernelPanic.Entities.Units
                 bestValue = currentValue;
             }
             #endregion
-
+            
             #region set the optimum as walking target
             mAStar = positionProvider.MakePathFinding(this, new[] {bestPoint});
+            if (mAStar.Path != null)
+            {
+                if (mAStar.Path[mAStar.Path.Count - 1] is Point target)
+                {
+                    mTarget = new TileIndex(target, 1);
+                }
+            }
+            
             ShouldMove = true;
             #endregion
         }
@@ -390,7 +406,7 @@ namespace KernelPanic.Entities.Units
         }
 
         #endregion
-        
+
         #region Update
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
@@ -402,7 +418,7 @@ namespace KernelPanic.Entities.Units
                     StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Attack : Strategy.Human;
                 }
 
-                if (inputManager.KeyPressed(Keys.P))
+                if (inputManager.KeyPressed(Keys.O))
                 {
                     StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Econ : Strategy.Human;
                 }

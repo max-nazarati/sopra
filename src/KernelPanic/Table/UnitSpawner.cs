@@ -151,6 +151,8 @@ namespace KernelPanic.Table
             {
                 case Hero hero:
                 {
+                    // TODO fix the Unhandled Exception:
+                    // System.InvalidOperationException: Sequence contains no matching element thrown here
                     hero.Sprite.Position = mHeroSpawns.First(point => !mEntityGraph.HasEntityAt(point));
                     mEntityGraph.Add(hero);
                     return;

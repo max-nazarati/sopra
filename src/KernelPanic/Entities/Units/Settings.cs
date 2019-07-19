@@ -7,6 +7,7 @@ using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic.Entities.Units
 {
@@ -140,22 +141,27 @@ namespace KernelPanic.Entities.Units
         {
             point *= new Point(Grid.KachelSize);
             var result = 0f;
-            foreach (var tower in positionProvider.NearEntities<Tower>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
-            {
-                if (Vector2.DistanceSquared(tower.Bounds.Center.ToVector2(), Bounds.Center.ToVector2()) < tower.Radius * tower.Radius)
-                {
-                    result -= 10;
-                }
-            }
 
+            // every unit counted positive
             foreach (var troupe in positionProvider.NearEntities<Troupe>(point.ToVector2(),
                 AbilityRange * mAbilityRangeAmplifier))
             {
                 var tile = positionProvider.RequireTile(troupe).BaseTile;
                 var heat = positionProvider.TroupeData.TileHeat(tile.ToPoint());
-                result += (heat ?? 1 ) < 10 ? 20 : (heat ?? 1 ) < 15 ? 16 : (heat ?? 1 ) < 20 ? 12 : (heat ?? 1 ) < 25 ? 8 : (heat ?? 1 ) < 30 ? 4 : (heat ?? 1 ) < 40 ? 2 : 1;
+                result += 10; // just setting a base value
+                var factor = troupe.MaximumLife - troupe.RemainingLife;
+                result += factor * (heat ?? 1 ) < 10 ? 20 : (heat ?? 1 ) < 15 ? 16 : (heat ?? 1 ) < 20 ? 12 : (heat ?? 1 ) < 25 ? 8 : (heat ?? 1 ) < 30 ? 4 : (heat ?? 1 ) < 40 ? 2 : 1;
             }
 
+            // every tower is negative
+            foreach (var tower in positionProvider.NearEntities<Tower>(point.ToVector2(), 3 * AbilityRange))
+            {
+                if (Vector2.DistanceSquared(tower.Bounds.Center.ToVector2(), Bounds.Center.ToVector2()) < tower.Radius * tower.Radius)
+                {
+                    result /= 1.5f;
+                    result -= 1;
+                }
+            }
             return result;
         }
 
