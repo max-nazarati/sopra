@@ -107,7 +107,6 @@ namespace KernelPanic
 
         private void PlaySound(Event e)
         {
-            Console.WriteLine(e.Kind);
             switch (e.Kind)
             {
                 case Event.Id.BuildingPlaced:

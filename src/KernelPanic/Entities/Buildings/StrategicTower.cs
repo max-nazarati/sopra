@@ -65,7 +65,7 @@ namespace KernelPanic.Entities.Buildings
             }
             timer.Reset();
         }
-        
+
         private void UpdateLevel(SpriteManager spriteManager)
         {
             Radius *= 1.2f;
