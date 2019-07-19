@@ -7,24 +7,11 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Thunderbird : Troupe
     {
-        private Rectangle mHitBox;
-
-        public override Rectangle Bounds
-        {
-            get
-            {
-                mHitBox.X = Sprite.Bounds.X + 5;
-                mHitBox.Y = Sprite.Bounds.Y + 2;
-                return mHitBox;
-            }
-        }
+        private static Point HitBoxSize => new Point(53, 55);
 
         internal Thunderbird(SpriteManager spriteManager)
-            : base(15, 2, 15, 3, spriteManager.CreateThunderbird(), spriteManager)
+            : base(15, 2, 15, 3, HitBoxSize, spriteManager.CreateThunderbird(), spriteManager)
         {
-            mHitBox = Sprite.Bounds;
-            mHitBox.Width = 53;
-            mHitBox.Height = 55;
         }
 
         internal override bool IsSmall => false;

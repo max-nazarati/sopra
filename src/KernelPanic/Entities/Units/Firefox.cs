@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
-using Accord.Statistics.Kernels;
 using KernelPanic.Data;
-using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,26 +20,13 @@ namespace KernelPanic.Entities.Units
         private readonly ImageSprite mIndicator;
         private const int JumpDuration = 10;
         private const int JumpSegmentLength = 30;
-        private Rectangle mHitBox;
 
-        public override Rectangle Bounds
-        {
-            get
-            {
-                mHitBox.X = Sprite.Bounds.X + 4;
-                mHitBox.Y = Sprite.Bounds.Y + 19;
-                return mHitBox;
-            }
-        }
+        private static Point HitBoxSize => new Point(56, 29);
 
         internal Firefox(SpriteManager spriteManager)
-            : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), spriteManager.CreateFirefox(), spriteManager)
+            : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), HitBoxSize, spriteManager.CreateFirefox(), spriteManager)
         {
             mIndicator = spriteManager.CreateJumpIndicator();
-            mHitBox = Sprite.Bounds;
-            mHitBox.Width = 56;
-            mHitBox.Height = 29;
-            Console.Write(Sprite.Bounds);
         }
 
         protected override void CompleteClone()
@@ -70,15 +54,19 @@ namespace KernelPanic.Entities.Units
 
         protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
-            // debug
+            // AbilityState, CoolDown, sound...
             base.StartAbility(positionProvider, inputManager);
+            ShouldMove = false;
 
             // calculate the jump direction
             var mouse = mJumpTarget ?? inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
+            
+            // private const int JumpDuration = 10;
+            // private const int JumpSegmentLength = 30;
+            // we have _10_ Parts with a distance of _30_ each
             var jumpSegment = direction * JumpSegmentLength;
-            EventCenter.Default.Send(Event.HeroAbility(this));
             for (var _ = 0; _ < JumpDuration; _++)
             {
                 mAbility.Push(jumpSegment);
@@ -87,22 +75,28 @@ namespace KernelPanic.Entities.Units
             CorrectJump(direction, JumpDuration, positionProvider);
         }
 
-        
         private void CorrectJump(Vector2 direction, int duration, PositionProvider positionProvider)
         {
+            bool EntityIsBuilding(IGameObject gameObject) => gameObject is Building;
+
             var jumpFrame = direction * JumpSegmentLength;
             var goal = Sprite.Position + jumpFrame * duration;
-            
+
             // jump was too short
-            while (positionProvider.HasEntityAt(goal))
+            while (positionProvider.HasEntityAt(goal, EntityIsBuilding))
             {
                 mAbility.Push(jumpFrame);
                 goal += jumpFrame;
             }
-            
+
             // jump was too long
-            while (!positionProvider.Grid.Contains(goal) || positionProvider.HasEntityAt(goal))
+            while (!positionProvider.Grid.Contains(goal) || positionProvider.HasEntityAt(goal, EntityIsBuilding))
             {
+                if (mAbility.Count == 0)
+                {
+                    // Firefox might recognize itself as unity and tries to pop from empty stack
+                    return;
+                }
                 goal -= mAbility.Pop();
             }
         }
@@ -118,6 +112,8 @@ namespace KernelPanic.Entities.Units
             }
 
             var jumpDistance = mAbility.Pop();
+            // TODO check if firefox jumped over a tower, so we can track it in achievements
+            // TODO also give positionProvider as argument so we know which player got it
             Sprite.Position += jumpDistance;
         }
         #endregion Ability

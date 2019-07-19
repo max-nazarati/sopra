@@ -39,7 +39,6 @@ namespace KernelPanic
             Cd,
             Cursor,
             WifiProjectile,
-            Fan,
             FanPropeller,
             Mouse,
             Router,
@@ -103,7 +102,6 @@ namespace KernelPanic
                 Texture(Image.CdThrower, "towers/cd_thrower"),
                 Texture(Image.Cursor, "towers/cursor"),
                 Texture(Image.WifiProjectile, "towers/WifiProjectile"),
-                Texture(Image.Fan, "towers/fan"),
                 Texture(Image.FanPropeller, "towers/fanPropeller"),
                 Texture(Image.Mouse, "towers/mouse"),
                 Texture(Image.Router, "towers/router"),
@@ -220,8 +218,8 @@ namespace KernelPanic
 
         internal PatternSprite CreateBoardBackground(Rectangle bounds, int tileSize)
         {
-            int rows = bounds.Height / 100;
-            int columns = bounds.Width / 100;
+            var rows = bounds.Height / 100;
+            var columns = bounds.Width / 100;
             var tile = new ImageSprite(Lookup(Image.BackgroundTile1));
             tile.ScaleToWidth(tileSize);
             var sprite = new PatternSprite(tile, rows, columns)
@@ -236,8 +234,7 @@ namespace KernelPanic
         #region Buildings
 
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
-        internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.Fan));
-        internal ImageSprite CreateVentilatorPropeller() => new ImageSprite(Lookup(Image.FanPropeller));
+        internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.FanPropeller));
         internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
         internal ImageSprite CreateCable() => new ImageSprite(Lookup(Image.Cable));
         internal ImageSprite CreateShockField() => new ImageSprite(Lookup(Image.ShockField));
@@ -285,7 +282,7 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay(Point powerIndicatorSize, Point clockSize)
+        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay()
         {
             const float scale = 1.8f;
             const float hudWidth = scale * 318;
@@ -294,7 +291,7 @@ namespace KernelPanic
             const float padding = scale * 5;
             const float topPadding = scale * 8;
             var font = Lookup(Font.Hud);
-            var leftBoarder = (int)((float)ScreenSize.X / 2 - (hudWidth / 2));
+            var leftBoarder = (int)((float)ScreenSize.X / 2 - hudWidth / 2);
 
             var leftMoneyText = new TextSprite(font, "00000 $")
             {
@@ -328,7 +325,7 @@ namespace KernelPanic
             rightText.SetOrigin(RelativePosition.TopRight);
             var clockText = new TextSprite(font, "00:00:00")
             {
-                Position = new Vector2(hudWidth / 2, (hudHeight/2) + topPadding)
+                Position = new Vector2(hudWidth / 2, hudHeight / 2 + topPadding)
             };
             clockText.SetOrigin(RelativePosition.CenterTop);
 
@@ -374,46 +371,55 @@ namespace KernelPanic
         
         #endregion
 
-        #region Selection
-        
-        private const int SelectionBorderThickness = 12;
-        private Texture2D CreateSelectionBorderTexture(Color color)
-        {
-            const int line = Grid.KachelSize + 2 * SelectionBorderThickness; 
-            var texture = new Texture2D(GraphicsDevice, line, line);
+        #region Borders
 
-            var lineIdx = 0;
-            var data = new Color[texture.Width * texture.Height];
+        /// <summary>
+        /// Creates a texture of the given <paramref name="size"/> which is transparent save for the a border with the
+        /// given <paramref name="thickness"/>. Note that the border is inside <paramref name="size"/>.
+        /// </summary>
+        /// <param name="size">The size of the resulting texture.</param>
+        /// <param name="thickness">The thickness of the border.</param>
+        /// <param name="color">The color of the border.</param>
+        /// <returns>A transparent texture with a border.</returns>
+        private Texture2D CreateBorderTexture(Point size, int thickness, Color color)
+        {
+            var data = new Color[size.X * size.Y];
 
             // Fill top and bottom border.
-            for (var i = 0; i < SelectionBorderThickness; ++i, ++lineIdx)
+            for (var row = 0; row < thickness; ++row)
             {
-                for (var j = 0; j < line; ++j)
+                for (var col = 0; col < size.X; ++col)
                 {
-                    // Multiply lineIdx with this because we skip over multiple lines.
-                    data[j + line * (lineIdx + Grid.KachelSize + SelectionBorderThickness)] = color;
-                    data[j + line * lineIdx] = color;
+                    data[col + size.X * row] = color;
+                    data[col + size.X * (size.Y - row - 2)] = color;
                 }
             }
 
             // Fill rows in between.
-            for (var i = 0; i < Grid.KachelSize; ++i, ++lineIdx)
+            for (var row = thickness; row < size.Y - thickness; ++row)
             {
                 // Fill the left and right border.
-                for (var j = 0; j < SelectionBorderThickness; ++j)
+                for (var col = 0; col < thickness; ++col)
                 {
-                    // Multiply only lineIdx with line, because we move inside on line.
-                    data[j + line * lineIdx + Grid.KachelSize + SelectionBorderThickness] = color;
-                    data[j + line * lineIdx] = color;
+                    data[col + size.X * row] = color;
+                    data[size.X - 1 - col + size.X * row] = color;
                 }
 
                 // Fill in between.
-                for (var j = 0; j < Grid.KachelSize; ++j)
-                    data[lineIdx * line + SelectionBorderThickness + j] = Color.Transparent;
+                for (var col = thickness; col < size.X - thickness; ++col)
+                    data[col + size.X * row] = Color.Transparent;
             }
 
+            var texture = new Texture2D(GraphicsDevice, size.X, size.Y);
             texture.SetData(data);
             return texture;
+        }
+
+        private Texture2D CreateSelectionBorderTexture(Color color)
+        {
+            const int thickness = 12;
+            var size = new Point(Grid.KachelSize + 2 * thickness);
+            return CreateBorderTexture(size, thickness, color);
         }
 
         internal ImageSprite CreateSelectionBorder()
@@ -422,7 +428,12 @@ namespace KernelPanic
             sprite.SetOrigin(RelativePosition.Center);
             return sprite;
         }
-        
+
+        internal ImageSprite CreateHitBoxBorder(Point size)
+        {
+            return new ImageSprite(CreateBorderTexture(size, 1, Color.Red));
+        }
+
         #endregion
         
         #region Base
@@ -580,6 +591,11 @@ namespace KernelPanic
             var texture = new Texture2D(GraphicsDevice, width, height);
             texture.SetData(color);
             return new ImageSprite(texture);
+        }
+
+        internal ImageSprite CreateEmptyTexture(int width, int height)
+        {
+            return new ImageSprite(new Texture2D(GraphicsDevice, width, height));
         }
 
         internal Point ScreenSize => GraphicsDevice.Viewport.Bounds.Size;

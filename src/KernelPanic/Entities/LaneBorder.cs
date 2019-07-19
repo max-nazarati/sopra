@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using KernelPanic.Input;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,13 +9,15 @@ namespace KernelPanic.Entities
     internal struct LaneBorder : IGameObject
     {
         public Rectangle Bounds { get; }
+        internal bool IsTargetBorder { get; }
 
-        private LaneBorder(Rectangle bounds)
+        private LaneBorder(Rectangle bounds, bool targetBorder)
         {
             Bounds = bounds;
+            IsTargetBorder = targetBorder;
         }
 
-        internal static IEnumerable<LaneBorder> Borders(Rectangle rectangle, int width, bool outside)
+        internal static IEnumerable<LaneBorder> Borders(Rectangle rectangle, int width, bool outside, Lane.Side? targetSide = null)
         {
             var ifOutside = outside ? 1 : 0;
             var ifInside = outside ? 0 : 1;
@@ -38,7 +41,13 @@ namespace KernelPanic.Entities
             var right = left;
             right.Offset(rectangle.Width + plusMinusMul * width, 0);
 
-            return new[] {new LaneBorder(top), new LaneBorder(left), new LaneBorder(bottom), new LaneBorder(right)};
+            return new[]
+            {
+                new LaneBorder(top, false),
+                new LaneBorder(left, targetSide == Lane.Side.Left),
+                new LaneBorder(bottom, false),
+                new LaneBorder(right, targetSide == Lane.Side.Right)
+            };
         }
 
         int? IGameObject.DrawLevel => null;

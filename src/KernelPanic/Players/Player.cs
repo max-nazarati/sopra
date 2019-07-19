@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Table;
+using KernelPanic.Entities.Units;
 using KernelPanic.Entities;
 using KernelPanic.Events;
 using KernelPanic.Upgrades;
@@ -45,6 +46,63 @@ namespace KernelPanic.Players
 
         [DataMember]
         internal int FirefoxMaximum { get; private set; } = 1;
+        [DataMember]
+        internal int FirefoxCurrent { get; set; }
+        [DataMember]
+        internal int SettingsMaximum { get;} = 1;
+        [DataMember]
+        internal int SettingsCurrent { get; set; }
+        [DataMember]
+        internal int BlueScreenMaximum { get;} = 1;
+        [DataMember]
+        internal int BlueScreenCurrent { get; set; }
+
+        internal bool ValidHeroPurchase(Unit unit)
+        {
+            switch (unit)
+            {
+                case Firefox _:
+                    return FirefoxMaximum > FirefoxCurrent;
+                case Settings _:
+                    return SettingsMaximum > SettingsCurrent;
+                case Bluescreen _:
+                    return BlueScreenMaximum > BlueScreenCurrent;
+                default:
+                    return false;
+            }
+        }
+
+        internal void IncrementHeroCount(Unit unit)
+        {
+            if (unit is Firefox)
+            {
+                ++FirefoxCurrent;
+            }
+            else if (unit is Settings)
+            {
+                ++SettingsCurrent;
+            }
+            else if (unit is Bluescreen)
+            {
+                ++BlueScreenCurrent;
+            }
+        }
+
+        internal void HeroDied(Hero unit)
+        {
+            if (unit is Firefox)
+            {
+                FirefoxCurrent--;
+            }
+            else if (unit is Settings)
+            {
+                SettingsCurrent--;
+            }
+            else if (unit is Bluescreen)
+            {
+                BlueScreenCurrent--;
+            }
+        }
 
         [JsonConstructor]
         internal Player(Lane defendingLane, Lane attackingLane, int bitcoins)
@@ -76,6 +134,8 @@ namespace KernelPanic.Players
 
             // Apply the new upgrade to all existing entities.
             foreach (var unit in AttackingLane.EntityGraph.Entities<Unit>())
+                upgrade.Apply(unit);
+            foreach (var unit in AttackingLane.UnitSpawner.QueuedUnits)
                 upgrade.Apply(unit);
             foreach (var building in DefendingLane.EntityGraph.Entities<Building>())
                 upgrade.Apply(building);

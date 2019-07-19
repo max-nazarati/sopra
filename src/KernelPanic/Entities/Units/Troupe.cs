@@ -7,8 +7,8 @@ namespace KernelPanic.Entities.Units
 {
     internal abstract class Troupe : Unit
     {
-        protected Troupe(int price, int speed, int life, int attackStrength, Sprite sprite, SpriteManager spriteManager)
-            : base(price, speed, life, attackStrength, sprite, spriteManager)
+        protected Troupe(int price, int speed, int life, int attackStrength, Point hitBoxSize, Sprite sprite, SpriteManager spriteManager)
+            : base(price, speed, life, attackStrength, hitBoxSize, sprite, spriteManager)
         {
             Speed = speed;
         }
@@ -24,7 +24,6 @@ namespace KernelPanic.Entities.Units
 
         protected override void CalculateMovement(Vector2? projectionStart,
             PositionProvider positionProvider,
-            GameTime gameTime,
             InputManager inputManager)
         {
             if (projectionStart == null && MoveTarget != null)

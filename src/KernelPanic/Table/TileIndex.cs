@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Table
@@ -59,6 +60,12 @@ namespace KernelPanic.Table
             }
         }
 
+        /// <summary>
+        /// Calculates the base tile, that is the <see cref="TileIndex"/> with <see cref="SubTileCount"/> equal to one,
+        /// which contains <c>this</c> tile.
+        /// </summary>
+        internal TileIndex BaseTile => Rescaled(1).First();
+
         public override string ToString() => $"[row: {Row}, col: {Column}, sub-tiles: {SubTileCount}]";
 
         public override int GetHashCode()
@@ -77,5 +84,8 @@ namespace KernelPanic.Table
 
         public override bool Equals(object obj) =>
             obj is TileIndex other && Equals(other);
+
+        public static bool operator ==(TileIndex a, TileIndex b) => a.Equals(b);
+        public static bool operator !=(TileIndex a, TileIndex b) => !a.Equals(b);
     }
 }

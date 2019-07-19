@@ -7,24 +7,11 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Virus : Troupe
     {
-        private Rectangle mHitBox;
-
-        public override Rectangle Bounds
-        {
-            get
-            {
-                mHitBox.X = Sprite.Bounds.X + 21;
-                mHitBox.Y = Sprite.Bounds.Y + 21;
-                return mHitBox;
-            }
-        }
+        private static Point HitBoxSize => new Point(22, 22);
 
         internal Virus(SpriteManager spriteManager)
-            : base(3, 3, 10, 2, spriteManager.CreateVirus(), spriteManager)
+            : base(3, 3, 10, 2, HitBoxSize, spriteManager.CreateVirus(), spriteManager)
         {
-            mHitBox = Sprite.Bounds;
-            mHitBox.Width = 22;
-            mHitBox.Height = 22;
         }
 
         internal override bool IsSmall => true;

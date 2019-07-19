@@ -12,8 +12,8 @@ namespace KernelPanic.Waves
         internal int Index { get; }
 
         [JsonProperty]
-        private readonly PlayerIndexed<List<Troupe>> mUnits;
-        
+        internal PlayerIndexed<List<Troupe>> Troupes { get; }
+
         /// <summary>
         /// A <see cref="Wave"/> is unbalanced, if one player doesn't have any troupes.
         /// </summary>
@@ -21,16 +21,16 @@ namespace KernelPanic.Waves
         internal bool Unbalanced { get; }
 
         /// <summary>
-        /// Creates a new <see cref="Wave"/> with the given index and units.
+        /// Creates a new <see cref="Wave"/> with the given index and troupes.
         /// </summary>
         /// <param name="index">The <see cref="Wave"/>'s index.</param>
-        /// <param name="units">The <see cref="Unit"/>'s initially in this wave.</param>
+        /// <param name="troupes">The <see cref="Unit"/>'s initially in this wave.</param>
         [JsonConstructor]
-        internal Wave(int index, PlayerIndexed<List<Troupe>> units)
+        internal Wave(int index, PlayerIndexed<List<Troupe>> troupes)
         {
             Index = index;
-            mUnits = units;
-            Unbalanced = units.A.Count == 0 || units.B.Count == 0;
+            Troupes = troupes;
+            Unbalanced = troupes.A.Count == 0 || troupes.B.Count == 0;
         }
 
         /// <summary>
@@ -40,26 +40,26 @@ namespace KernelPanic.Waves
         /// <param name="players">The players.</param>
         internal void RemoveDead(PlayerIndexed<Player> players)
         {
-            void Remove(Player player)
+            void Remove(IPlayerDistinction attacker, Player defender)
             {
-                var units = mUnits.Select(player);
+                var units = Troupes.Select(attacker);
                 var count = units.Count;
                 if (count > 0 && units.RemoveAll(unit => unit.WantsRemoval) == count)
-                    player.ExperiencePoints++;
+                    defender.ExperiencePoints++;
             }
 
-            Remove(players.A);
-            Remove(players.B);
+            Remove(players.A, players.B);
+            Remove(players.B, players.A);
         }
 
         /// <summary>
         /// Returns <c>true</c> if at least one player has no more <see cref="Unit"/>s in this <see cref="Wave"/>.
         /// </summary>
-        internal bool AtLeastPartiallyDefeated => mUnits.A.Count == 0 || mUnits.B.Count == 0;
+        internal bool AtLeastPartiallyDefeated => Troupes.A.Count == 0 || Troupes.B.Count == 0;
 
         /// <summary>
         /// Returns <c>true</c> if neither player has <see cref="Unit"/>s remaining in this <see cref="Wave"/>.
         /// </summary>
-        internal bool FullyDefeated => mUnits.A.Count == 0 && mUnits.B.Count == 0;
+        internal bool FullyDefeated => Troupes.A.Count == 0 && Troupes.B.Count == 0;
     }
 }

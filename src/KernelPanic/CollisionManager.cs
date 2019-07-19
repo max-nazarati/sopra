@@ -1,90 +1,120 @@
-﻿using System;
-using System.Linq;
-using KernelPanic.Data;
-using KernelPanic.Entities;
+﻿using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
 using KernelPanic.Table;
+using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
     internal static class CollisionManager
     {
-        private static readonly Random sRandom = new Random();
+        #region Movement Collisions
 
+        internal static bool CollidesWith(this Troupe troupe, Troupe other)
+        {
+            var bird1 = troupe is Thunderbird;
+            var bird2 = other is Thunderbird;
+
+            if (bird1 || bird2)
+            {
+                // If at least one is a bird they'll collide if both are birds.
+                return bird1 && bird2;
+            }
+            
+            // If both are not small they'll collide.
+            if (!troupe.IsSmall && !other.IsSmall)
+                return true;
+
+            // If one is small they won't collide.
+            if (!troupe.IsSmall || !other.IsSmall)
+                return false;
+
+            // Otherwise we have to small troupes which will collide if they have the same type.
+            return troupe.GetType() == other.GetType();
+        }
+    
         internal static bool HandleMovement(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
         {
-            if (!(object1 is Troupe a) || !(object2 is Troupe b))
+            if (!(object1 is Troupe a) || !(object2 is Troupe b) || !a.CollidesWith(b))
                 return false;
 
-            if (a is Thunderbird ^ b is Thunderbird)
-                return false;
-
-            return ChooseTroupeToReset2(a, b, positionProvider).ResetMovement();
+            var toReset = TroupeToReset(a, b, positionProvider);
+            return toReset != null && toReset.ResetMovement();
         }
 
-        private static Troupe ChooseTroupeToReset2(Troupe a, Troupe b, PositionProvider positionProvider)
+        private static Troupe TroupeToReset(Troupe a, Troupe b, PositionProvider positionProvider)
         {
-            var preferred = DecideByTileHeat(a, b, positionProvider) ?? DecideByMovement(a, b, positionProvider);
-            if (preferred != null)
-                return preferred;
+            if (!(a.MoveTarget is Vector2 aMoveTarget) || !(b.MoveTarget is Vector2 bMoveTarget))
+                return null;
 
-            Console.WriteLine("Using random :/");
-            return sRandom.Next(0, 1) == 0 ? a : b;
-        }
+            var subTiles = a.IsSmall ? 2 : 1;
 
-        private static Troupe DecideByTileHeat(Troupe a, Troupe b, PositionProvider positionProvider)
-        {
-            if (!(positionProvider.Grid.TileFromWorldPoint(a.Sprite.Position) is TileIndex tileA))
+            if (!(positionProvider.Grid.TileFromWorldPoint(aMoveTarget, subTiles) is TileIndex tileA))
                 return null;
         
-            if (!(positionProvider.Grid.TileFromWorldPoint(b.Sprite.Position) is TileIndex tileB))
+            if (!(positionProvider.Grid.TileFromWorldPoint(bMoveTarget, subTiles) is TileIndex tileB))
                 return null;
 
-            var pointA = tileA.Rescaled(1).First().ToPoint();
-            var pointB = tileB.Rescaled(1).First().ToPoint();
+            if (tileA == tileB)
+            {
+                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget);
+                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget);
+                
+                return aDistance < bDistance ? b : a;
+            }
 
-            if (pointA == pointB)
-                return null;
+            if (a is Thunderbird)
+            {
+                return ResetByTiles(a, b, tileA, tileB, positionProvider);
+            }
 
-            var heatA = positionProvider.TroupeData.TileHeat(pointA);
-            var heatB = positionProvider.TroupeData.TileHeat(pointB);
+            var heatA = positionProvider.TroupeData.TileHeat(tileA.BaseTile.ToPoint());
+            var heatB = positionProvider.TroupeData.TileHeat(tileB.BaseTile.ToPoint());
 
             if (heatA == heatB)
-                return null;
+            {
+                return ResetByTiles(a, b, tileA, tileB, positionProvider);
+            }
 
-            Console.WriteLine("Successful with heat.");
-            return heatA < heatB ? a : b;
+            if (heatA < heatB)
+            {
+                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget);
+                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget) + Vector2.DistanceSquared(bMoveTarget, aMoveTarget);
+
+                return aDistance < bDistance ? b : a;
+            }
+            else
+            {
+                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget) + Vector2.DistanceSquared(aMoveTarget, bMoveTarget);
+                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget);
+
+                return aDistance < bDistance ? b : a;
+            }
         }
 
-        private static Troupe DecideByMovement(Troupe a, Troupe b, PositionProvider positionProvider)
+        private static Troupe ResetByTiles(Troupe a, Troupe b, TileIndex targetA, TileIndex targetB, PositionProvider positionProvider)
         {
-            if (!(positionProvider.Grid.TileFromWorldPoint(a.Sprite.Position) is TileIndex tileA))
-                return null;
-        
-            if (!(positionProvider.Grid.TileFromWorldPoint(b.Sprite.Position) is TileIndex tileB))
-                return null;
+            var subTiles = a.IsSmall ? 2 : 1;
+            var currentA = positionProvider.RequireTile(a.Sprite.Position, subTiles);
+            var currentB = positionProvider.RequireTile(b.Sprite.Position, subTiles);
 
-            var lastMovementA = a.LastMovement;
-            if (Math.Abs(lastMovementA.LengthSquared()) < 0.001)
-                return a;
-
-            var lastMovementB = b.LastMovement;
-            if (Math.Abs(lastMovementB.LengthSquared()) < 0.001)
+            if (currentA == targetB)
+            {
+                // ›B‹ has to go where ›A‹ is. Reset ›B‹.
                 return b;
+            }
 
-            var nextMovementA = positionProvider.TroupeData.RelativeMovement(a);
-            var nextMovementB = positionProvider.TroupeData.RelativeMovement(b);
+            if (currentB == targetA)
+            {
+                // ›A‹ has to go where ›B‹ is. Reset ›A‹.
+                return a;
+            }
 
-            var angleA = Geometry.Angle(nextMovementA, lastMovementA);
-            var angleB = Geometry.Angle(nextMovementB, lastMovementB);
-            if (Math.Abs(angleA - angleB) < 0.001)
-                return null;
-
-            Console.WriteLine("Successful with angles.");
-            return angleA < angleB ? a : b;
+            return null;
         }
+
+        #endregion
 
         internal static void Handle(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
         {
@@ -103,7 +133,11 @@ namespace KernelPanic
                 case Projectile projectile when object2 is LaneBorder:
                     projectile.RadiusReached();
                     return true;
-                
+
+                case Unit unit when object2 is LaneBorder border && border.IsTargetBorder:
+                    unit.DamageBase(positionProvider);
+                    return true;
+
                 case Emp emp when object2 is Tower tower:
                     emp.Hit(tower);
                     return true;
@@ -111,7 +145,6 @@ namespace KernelPanic
                 default:
                     return false;
             }
-
         }
     }
 }

@@ -23,7 +23,7 @@ namespace KernelPanic.Hud
             private readonly PurchaseButton<ImageButton, Unit> mButton;
             private readonly TextSprite mCounterSprite;
             private int mCounter;
-            private TextSprite mInfoText;
+            private readonly TextSprite mInfoText;
 
             Vector2 IPositioned.Position
             {
@@ -46,15 +46,23 @@ namespace KernelPanic.Hud
             {
                 UnitType = unitType;
                 mCounter = 0;
-                mCounterSprite = spriteManager.CreateText("0");
+                if (!unitType.IsSubclassOf(typeof(Hero)))
+                {
+                    mCounterSprite = spriteManager.CreateText("0");
+                }
+                else
+                {
+                    mCounterSprite = spriteManager.CreateText();
+                }
                 mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterRight);
+
 
                 // When a unit is purchased, increase its counter.
                 mButton = button;
                 mButton.Action.Purchased += PurchasedUnit;
                 mButton.Button.Sprite.SetOrigin(RelativePosition.TopRight);
 
-                var price = Entity.UnitInformationPrice(unitType);
+                var price = button.Action.Price;
                 mInfoText = spriteManager.CreateText("Preis: " + price);
                 mInfoText.SetOrigin(RelativePosition.TopRight);
                 mInfoText.X -= 175;
@@ -63,10 +71,11 @@ namespace KernelPanic.Hud
             private void PurchasedUnit(IPlayerDistinction buyer, Unit resource)
             {
                 // Only increment the counter if the buyer is the active player.
-                if (buyer.Select(mCounterSprite, null) is TextSprite sprite)
+                if (buyer.Select(mCounterSprite, null) is TextSprite sprite && !(resource is Hero))
                 {
                     sprite.Text = (++mCounter).ToString();
                 }
+                
             }
 
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -102,7 +111,7 @@ namespace KernelPanic.Hud
                 var action = new PurchasableAction<Unit>(unit);
                 action.Purchased += waveManager.Add;
                 var button = new ImageButton(spriteManager, image, 70, 70);
-                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, action, button);
+                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, unit, action, button);
             }
 
             Element CreateElement<TUnit>() where TUnit : Unit

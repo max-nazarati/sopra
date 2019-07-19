@@ -33,28 +33,31 @@ namespace KernelPanic
         {
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
             playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
-            
-            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 200);
+
+            var techDemo = CreateButton(stateManager.Sprite, "Tech-Demo", 200);
+            techDemo.Clicked += (button, input) => InGameState.PushTechDemo(stateManager);
+
+            var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 300);
             optionsButton.Clicked += (button, input) =>
                 stateManager.Push(CreateOptionsMenu(stateManager));
             
-            var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 300);
+            var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 400);
             instructionsButton.Clicked += (button, input) => stateManager
                 .Push(CreateInstructionsMenu(stateManager));
             
-            var achievementsButton = CreateButton(stateManager.Sprite, "Achievements",400);
+            var achievementsButton = CreateButton(stateManager.Sprite, "Achievements",500);
             achievementsButton.Clicked += (button, input) => stateManager
                 .Push(CreateAchievementsMenu(stateManager));
             
-            var statisticsButton = CreateButton(stateManager.Sprite, "Statistiken", 500);
+            var statisticsButton = CreateButton(stateManager.Sprite, "Statistiken", 600);
             statisticsButton.Clicked += (button, input) => stateManager
                 .Push(CreateStatisticsMenu(stateManager));
 
-            var creditsButton = CreateButton(stateManager.Sprite, "Credits", 600);
+            var creditsButton = CreateButton(stateManager.Sprite, "Credits", 700);
             creditsButton.Clicked += (button, input) => stateManager
                 .Push(CreateCreditsMenu(stateManager));
             
-            var quitButton = CreateButton( stateManager.Sprite, "Beenden", 700);
+            var quitButton = CreateButton( stateManager.Sprite, "Beenden", 800);
             quitButton.Clicked += (button, input) => stateManager.ExitAction();
 
             return new MenuState(stateManager, stateManager.ExitAction)
@@ -63,6 +66,7 @@ namespace KernelPanic
                 {
                     CreateBackground(stateManager.Sprite),
                     playButton,
+                    techDemo,
                     optionsButton,
                     instructionsButton,
                     achievementsButton,
@@ -227,12 +231,34 @@ namespace KernelPanic
             // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
             backButton.Clicked += stateManager.PopOnClick;
-            
+            var title = stateManager.Sprite.CreateText("Spielanleitung");
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            title.X = screenMid + title.Width/2;
+            title.Y = 100;
+            title.SetOrigin(RelativePosition.TopRight);
+
+            var instr = stateManager.Sprite.CreateText("" +
+                "- Mittlerer Maus-Click:    erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen\n" +
+                "- Rechter Maus-Click:    Bewegungsziel für Heroes angeben / un-togglet Hero-Fähigkeit.\n" +
+                "- Linker Maus-Click:       Objekte kaufen/auswählen / GUI Buttons drücken.\n" +
+                "-Kamera-Bewegung:      Mauszeiger zum Bildschirmrand bringen / WASD.\n" +
+                "-Kamera-Zoom:              Scroll-Wheel.\n\n" +
+                "-Esc-Taste:    Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
+                "                             ins vorherige Menu-Screen gelangen.\n" +
+                "-V-Taste:       (un)toggle Path-finding Debug-Modus\n" +
+                "-Q-Taste:       alternative zu mittlerem Maus-Click\n" +
+                "-E-Taste:       un-togglet Hero-Fähigkeit\n");
+
+
+            instr.Y = title.Y + 50;
+
             return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
+                    new StaticComponent(title),
+                    new StaticComponent(instr),
                     backButton
                 }
             };

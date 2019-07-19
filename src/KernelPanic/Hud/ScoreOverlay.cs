@@ -5,7 +5,6 @@ using KernelPanic.Input;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
 namespace KernelPanic.Hud
 {
@@ -32,7 +31,7 @@ namespace KernelPanic.Hud
             mPlayers = players;
             mPlayTime = new PlayTime(time);
 
-            var sprites = spriteManager.CreateScoreDisplay(PowerIndicatorSize, ClockSize);
+            var sprites = spriteManager.CreateScoreDisplay();
             mSprite = sprites.Main;
             mPowerTexts = new PlayerIndexed<TextSprite>(sprites.Left, sprites.Right);
             mMoneyTexts = new PlayerIndexed<TextSprite>(sprites.LeftMoney, sprites.RightMoney);

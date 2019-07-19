@@ -9,33 +9,45 @@ namespace KernelPanic.Table
 {
     internal sealed class UnitSpawner
     {
-        private struct SpawnQueue<T> where T : Unit
+        private struct SpawnQueue<T> where T : Troupe
         {
             private readonly Queue<T> mQueue;
-            private readonly Vector2 mInitialPosition;
+            private readonly Vector2[] mSpawnPoints;
+            private int mSpawnIndex;
 
-            internal SpawnQueue(Vector2 spawnPoint)
+            internal SpawnQueue(params Vector2[] spawnPoints)
             {
+                mSpawnIndex = 0;
                 mQueue = new Queue<T>();
-                mInitialPosition = spawnPoint;
+                mSpawnPoints = spawnPoints;
             }
 
             internal bool Empty => mQueue.Count == 0;
 
             internal void Add(T unit)
             {
-                unit.SetInitialPosition(mInitialPosition);
+                unit.SetInitialPosition(mSpawnPoints[mSpawnIndex]);
+                mSpawnIndex = (mSpawnIndex + 1) % mSpawnPoints.Length;
                 mQueue.Enqueue(unit);
             }
 
-            internal void Spawn(EntityGraph entityGraph)
+            internal bool Spawn(EntityGraph entityGraph)
             {
-                if (mQueue.Count > 0)
-                    entityGraph.Add(mQueue.Dequeue());
+                if (mQueue.Count == 0)
+                    return false;
+
+                var next = mQueue.Peek();
+                if (entityGraph.HasIntersectingEntity(next, o => o is Troupe t && next.CollidesWith(t)))
+                    return false;
+
+                entityGraph.Add(mQueue.Dequeue());
+                return true;
             }
+
+            internal IEnumerable<Troupe> QueuedUnits => mQueue;
         }
 
-        private static Vector2 SpawnPoint(int row, int subTileCount, Grid grid)
+        private static Vector2 SpawnPoint(Grid grid, int row, int subTileCount = 1)
         {
             var tile = grid.LaneSide == Lane.Side.Left
                 ? new TileIndex(row, (grid.LaneRectangle.Width - 1) * subTileCount, subTileCount)
@@ -54,7 +66,7 @@ namespace KernelPanic.Table
         private readonly Dictionary<TileIndex, SpawnQueue<Troupe>> mAdditionalSpawns =
             new Dictionary<TileIndex, SpawnQueue<Troupe>>();
 
-        // TODO: We probably want to have more logic instead, maybe something like “is the tile free”.
+        // Only units spawned somewhere in the lane use the cooldown.
         private readonly CooldownComponent mSpawnCooldown =
             new CooldownComponent(TimeSpan.FromSeconds(0.5), false) {Enabled = false};
 
@@ -64,43 +76,50 @@ namespace KernelPanic.Table
         internal bool Ready =>
             mBugs.Empty && mViruses.Empty && mTrojans.Empty && mNokias.Empty && mThunderbirds.Empty;
 
-        public UnitSpawner(Grid grid, EntityGraph entityGraph)
+        public UnitSpawner(Grid grid, EntityGraph entityGraph, List<Troupe> restored)
         {
             mEntityGraph = entityGraph;
             mGrid = grid;
 
-            mBugs = new SpawnQueue<Bug>(SpawnPoint(3, 2, grid));
-            mViruses = new SpawnQueue<Virus>(SpawnPoint(5, 2, grid));
-            mTrojans = new SpawnQueue<Trojan>(SpawnPoint(6, 1, grid));
-            mNokias = new SpawnQueue<Nokia>(SpawnPoint(8, 1, grid));
-            mThunderbirds = new SpawnQueue<Thunderbird>(SpawnPoint(4, 1, grid));
+            mBugs = new SpawnQueue<Bug>(SpawnPoint(grid, 3, 2));
+            mViruses = new SpawnQueue<Virus>(SpawnPoint(grid, 5, 2));
+            mTrojans = new SpawnQueue<Trojan>(SpawnPoint(grid, 6));
+            mNokias = new SpawnQueue<Nokia>(SpawnPoint(grid, 8));
+            mThunderbirds = new SpawnQueue<Thunderbird>(
+                SpawnPoint(grid, 1),
+                SpawnPoint(grid, 3),
+                SpawnPoint(grid, 6),
+                SpawnPoint(grid, 8));
 
             mHeroSpawns = new[]
             {
-                SpawnPoint(5, 1, grid),
-                SpawnPoint(7, 1, grid),
-                SpawnPoint(3, 1, grid),
-                SpawnPoint(9, 1, grid),
-                SpawnPoint(0, 1, grid)
+                SpawnPoint(grid, 5),
+                SpawnPoint(grid, 7),
+                SpawnPoint(grid, 3),
+                SpawnPoint(grid, 9),
+                SpawnPoint(grid, 0)
             };
 
-            mSpawnCooldown.CooledDown += Spawn;
-        }
-
-        private void Spawn(CooldownComponent component)
-        {
-            mBugs.Spawn(mEntityGraph);
-            mViruses.Spawn(mEntityGraph);
-            mTrojans.Spawn(mEntityGraph);
-            mNokias.Spawn(mEntityGraph);
-            mThunderbirds.Spawn(mEntityGraph);
-
-            foreach (var queue in mAdditionalSpawns.Values)
+            mSpawnCooldown.CooledDown += component =>
             {
-                queue.Spawn(mEntityGraph);
-            }
+                var spawned = false;
+                foreach (var queue in mAdditionalSpawns.Values)
+                {
+                    spawned |= queue.Spawn(mEntityGraph);
+                }
+                
+                if (spawned)
+                    component.Reset();
+            };
+            
+            if (restored == null)
+                return;
 
-            component.Reset();
+            // We restore all units from the base and ignore the additional spawns.
+            foreach (var troupe in restored)
+            {
+                Register(troupe);
+            }
         }
 
         /// <summary>
@@ -119,6 +138,7 @@ namespace KernelPanic.Table
             queue = new SpawnQueue<Troupe>(mGrid.GetTile(spawnTile).Position);
             queue.Add(troupe);
             mAdditionalSpawns[spawnTile] = queue;
+            mSpawnCooldown.Enabled = true;
         }
 
         /// <summary>
@@ -152,13 +172,24 @@ namespace KernelPanic.Table
                     mThunderbirds.Add(thunderbird);
                     break;
             }
-
-            mSpawnCooldown.Enabled = true;
         }
 
         internal void Update(GameTime gameTime)
         {
+            mBugs.Spawn(mEntityGraph);
+            mViruses.Spawn(mEntityGraph);
+            mTrojans.Spawn(mEntityGraph);
+            mNokias.Spawn(mEntityGraph);
+            mThunderbirds.Spawn(mEntityGraph);
             mSpawnCooldown.Update(gameTime);
         }
+
+        internal IEnumerable<Troupe> QueuedUnits =>
+            mBugs.QueuedUnits
+                .Concat(mViruses.QueuedUnits)
+                .Concat(mTrojans.QueuedUnits)
+                .Concat(mNokias.QueuedUnits)
+                .Concat(mThunderbirds.QueuedUnits)
+                .Concat(mAdditionalSpawns.Values.SelectMany(queue => queue.QueuedUnits));
     }
 }

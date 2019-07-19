@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Buildings;
-using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -22,30 +21,17 @@ namespace KernelPanic.Entities.Units
         private const int HealValue = -5;
         private readonly ImageSprite mTroupeMarker;
 
-        private Rectangle mHitBox;
-
-        public override Rectangle Bounds
-        {
-            get
-            {
-                mHitBox.X = Sprite.Bounds.X + 4;
-                mHitBox.Y = Sprite.Bounds.Y + 3;
-                return mHitBox;
-            }
-        }
+        private static Point HitBoxSize => new Point(56, 59);
 
         // Heilt alle zwei Sekunden, Truppen im Radius von 1 Kachel um 2 LP
         internal Settings(SpriteManager spriteManager)
-            : base(50, 4, 25, 0, TimeSpan.FromSeconds(1), spriteManager.CreateSettings(), spriteManager)
+            : base(50, 4, 25, 0, TimeSpan.FromSeconds(1), HitBoxSize, spriteManager.CreateSettings(), spriteManager)
         {
             mIndicator = spriteManager.CreateHealIndicator(AbilityRange * mAbilityRangeAmplifier);
             mTroupesInRange = new List<Troupe>();
             mTroupeMarker = spriteManager.CreateTroupeMarker();
-            mHitBox = Sprite.Bounds;
-            mHitBox.Width = 56;
-            mHitBox.Height = 58;
         }
-        
+
         protected override void CompleteClone()
         {
             base.CompleteClone(); 
@@ -150,19 +136,26 @@ namespace KernelPanic.Entities.Units
             mIndicator.ScaleToWidth(AbilityRange * mAbilityRangeAmplifier * 2);
         }
 
-        protected override int PointHeuristic(Point point, PositionProvider positionProvider)
+        protected override float PointHeuristic(Point point, PositionProvider positionProvider)
         {
             point *= new Point(Grid.KachelSize);
-            var result = 0;
-            foreach (var building in positionProvider.NearEntities<Building>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
+            var result = 0f;
+            foreach (var tower in positionProvider.NearEntities<Tower>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
             {
-                result -= 2;
+                if (Vector2.DistanceSquared(tower.Bounds.Center.ToVector2(), Bounds.Center.ToVector2()) < tower.Radius * tower.Radius)
+                {
+                    result -= 10;
+                }
             }
-            foreach (var unit in positionProvider.NearEntities<Unit>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
+
+            foreach (var troupe in positionProvider.NearEntities<Troupe>(point.ToVector2(),
+                AbilityRange * mAbilityRangeAmplifier))
             {
-                result += 1;
+                var tile = positionProvider.RequireTile(troupe).BaseTile;
+                var heat = positionProvider.TroupeData.TileHeat(tile.ToPoint());
+                result += (heat ?? 1 ) < 10 ? 20 : (heat ?? 1 ) < 15 ? 16 : (heat ?? 1 ) < 20 ? 12 : (heat ?? 1 ) < 25 ? 8 : (heat ?? 1 ) < 30 ? 4 : (heat ?? 1 ) < 40 ? 2 : 1;
             }
-             
+
             return result;
         }
 

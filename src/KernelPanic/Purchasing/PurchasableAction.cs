@@ -3,7 +3,7 @@ using KernelPanic.Players;
 
 namespace KernelPanic.Purchasing
 {
-    internal class PurchasableAction<TResource> where TResource : IPriced
+    internal class PurchasableAction<TResource> : IPriced where TResource : IPriced
     {
         public delegate void Delegate(Player buyer, TResource resource);
 
@@ -83,5 +83,9 @@ namespace KernelPanic.Purchasing
                     throw new InvalidOperationException();
             }
         }
+
+        public int Price => mResource.Price;
+
+        public Currency Currency => mResource.Currency;
     }
 }

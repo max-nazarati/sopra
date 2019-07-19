@@ -42,10 +42,8 @@ namespace KernelPanic.Sprites
         /// <inheritdoc />
         // TODO: This doesn't factor in rotation which might distort the surrounding rectangle.
         //       But maybe we don't even want this but the current behaviour.
-        public virtual Rectangle Bounds
-        {
-            get => KernelPanic.Data.Bounds.ContainingRectangle(Position - Scale * Origin, Size);
-        }
+        public virtual Rectangle Bounds =>
+            KernelPanic.Data.Bounds.ContainingRectangle(Position - Scale * Origin, Size);
 
         /// <summary>
         /// A color mixed into the texture when drawing it. On a <see cref="TextSprite"/> this is the same as using

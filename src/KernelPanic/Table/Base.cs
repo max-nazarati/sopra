@@ -6,28 +6,31 @@ namespace KernelPanic.Table
     internal sealed class Base
     {
         [JsonProperty] public int Power { get; set; } = 100;
-        [JsonProperty] internal Point[] HitBox { get; private set; }
 
-        [JsonConstructor]
-        private Base()
+        internal static Point[] SpawnPoints(Point laneSize, Lane.Side side)
         {
-        }
-
-        internal Base(Point laneSize, Lane.Side side)
-        {
-            HitBox = new Point[Grid.LaneWidthInTiles];
-            var offset = side == Lane.Side.Left ? laneSize.Y - Grid.LaneWidthInTiles : 0;
+            var spawns = new Point[Grid.LaneWidthInTiles];
             for (var i = 0; i < Grid.LaneWidthInTiles; ++i)
             {
-                if (side == Lane.Side.Left)
-                {
-                    HitBox[i] = new Point(laneSize.X - 1, offset + i);
-                }
-                else
-                {
-                    HitBox[i] = new Point(0, offset + i);
-                }
+                spawns[i] = side == Lane.Side.Left
+                    ? new Point(laneSize.X - 1, i)
+                    : new Point(0, laneSize.Y - 1 - i);
             }
+
+            return spawns;
+        }
+
+        internal static Point[] TargetPoints(Point laneSize, Lane.Side side)
+        {
+            var targets = new Point[Grid.LaneWidthInTiles];
+            for (var i = 0; i < Grid.LaneWidthInTiles; ++i)
+            {
+                targets[i] = side == Lane.Side.Left
+                    ? new Point(laneSize.X - 1, laneSize.Y - 1 - i)
+                    : new Point(0, i);
+            }
+
+            return targets;
         }
     }
 }

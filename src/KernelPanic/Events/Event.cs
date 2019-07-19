@@ -153,14 +153,6 @@ namespace KernelPanic.Events
             /// <summary>
             /// Of type <see cref="int"/>, applies to
             /// <list type="bullet">
-            /// <item><description><see cref="Id.FirefoxJump"/></description></item>
-            /// </list>
-            /// </summary>
-            CrossedBuildingsCount,
-
-            /// <summary>
-            /// Of type <see cref="int"/>, applies to
-            /// <list type="bullet">
             /// <item><description><see cref="Id.BoughtUnit"/></description></item>
             /// <item><description><see cref="Id.BuildingPlaced"/></description></item>
             /// <item><description><see cref="Id.BuildingImproved"/></description></item>
@@ -275,6 +267,15 @@ namespace KernelPanic.Events
                 mPayload =
                 {
                     [Key.Hero] = hero
+                }
+            };
+
+        internal static Event FirefoxJumped(Owner owner, Firefox firefox) =>
+            new Event(Id.FirefoxJump)
+            {
+                mPayload =
+                {
+                    [Key.Attacker] = owner[firefox],
                 }
             };
 

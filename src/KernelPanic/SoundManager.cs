@@ -105,10 +105,6 @@ namespace KernelPanic
             MediaPlayer.Stop();
         }
 
-        /// <summary>
-        /// plays the sound according to the given string
-        /// <param name="sound"><see cref="Sound"/> to play.</param>
-        /// </summary>
         private void PlaySound(Event e)
         {
             Console.WriteLine(e.Kind);

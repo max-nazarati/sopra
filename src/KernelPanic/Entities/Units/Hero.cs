@@ -3,8 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.PathPlanning;
@@ -19,7 +21,6 @@ using Microsoft.Xna.Framework.Input;
 namespace KernelPanic.Entities.Units
 {
     [DataContract]
-    [KnownType(typeof(Firefox))]
     internal abstract class Hero : Unit
     {
         #region MemberVariables
@@ -43,9 +44,11 @@ namespace KernelPanic.Entities.Units
 
         [DataMember]
         protected internal CooldownComponent Cooldown { get; set; }
-        internal AStar mAStar; // save the AStar for path-drawing
-        private Point? mTarget; // the target we wish to move to (world position)
+
+        private TileIndex? mTarget;
+        protected AStar mAStar; // save the AStar for path-drawing
         private Visualizer mPathVisualizer;
+
         internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
         protected Strategy StrategyStatus { get; set; }
@@ -54,8 +57,8 @@ namespace KernelPanic.Entities.Units
 
         #region Konstruktor / Create
 
-        protected Hero(int price, int speed, int life, int attackStrength, TimeSpan coolDown, Sprite sprite, SpriteManager spriteManager)
-            : base(price, speed, life, attackStrength, sprite, spriteManager)
+        protected Hero(int price, int speed, int life, int attackStrength, TimeSpan coolDown, Point hitBoxSize, Sprite sprite, SpriteManager spriteManager)
+            : base(price, speed, life, attackStrength, hitBoxSize, sprite, spriteManager)
         {
             ShouldMove = false;
             Cooldown = new CooldownComponent(coolDown, false);
@@ -68,51 +71,55 @@ namespace KernelPanic.Entities.Units
 
         protected override void CalculateMovement(Vector2? projectionStart,
             PositionProvider positionProvider,
-            GameTime gameTime,
             InputManager inputManager)
         {
             if (projectionStart != null)
                 return;
 
-            UpdateTarget(positionProvider, gameTime, inputManager);
+            if (MoveTarget == null && mTarget is TileIndex tileTarget)
+            {
+                MoveTargetReached(positionProvider, tileTarget);
+            }
 
-            if (!(mTarget?.ToVector2() is Vector2 targetVector))
+            if (MoveTarget != null && mTarget == null)
+            {
+                // We have a MoveTarget but we don't have a tile target, that means we are doing the last steps in the
+                // direction of the enemy base. We don't want to allow any more changes to the path at this point.
+                return;
+            }
+
+            UpdateTarget(positionProvider, inputManager);
+
+            if (!(mTarget?.ToPoint() is Point target))
             {
                 return;
             }
-            
-            // set the target Position for the AStar (latest updated target should be saved in mTarget)
-            var target = positionProvider.RequireTile(targetVector).ToPoint();
 
             // calculate the path
-            mAStar = positionProvider.MakePathFinding(this, target);
+            mAStar = positionProvider.MakePathFinding(this, new[] {target});
             mPathVisualizer = positionProvider.Visualize(mAStar);
             var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
-                mAStar = positionProvider.MakePathFinding(this, target);
+                mAStar = positionProvider.MakePathFinding(this, new[] {target});
                 mPathVisualizer = positionProvider.Visualize(mAStar);
                 path = mAStar.Path;
             }
 
-            if (path.Count > 2)
-            {
-                MoveTarget = positionProvider.Grid.GetTile(new TileIndex(path[1], 1)).Position;
-            }
-            else
-            {
-                MoveTarget = positionProvider.Grid.GetTile(new TileIndex(target, 1)).Position;
-                MoveTargetReached += MoveTargetReachedHandler;
-            }
+            var nextTarget = new TileIndex(path.Count > 2 ? path[1] : target, 1);
+            MoveTarget = positionProvider.Grid.GetTile(nextTarget).Position;
         }
 
-        private void MoveTargetReachedHandler(Vector2 target)
+        private void MoveTargetReached(PositionProvider positionProvider, TileIndex tileTarget)
         {
+            var troupeData = positionProvider.TroupeData;
+            if (troupeData.Target.Contains(tileTarget.ToPoint()))
+                MoveTarget = Sprite.Position + troupeData.RelativeMovement(this);
+
             mAStar = null;
             mTarget = null;
             mPathVisualizer = null;
-            MoveTargetReached -= MoveTargetReachedHandler;
         }
 
         /// <summary>
@@ -120,9 +127,8 @@ namespace KernelPanic.Entities.Units
         /// also sets mShouldMove true
         /// </summary>
         /// <param name="positionProvider"></param>
-        /// <param name="gameTime"></param>
         /// <param name="inputManager"></param>
-        private void UpdateTarget(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        private void UpdateTarget(PositionProvider positionProvider, InputManager inputManager)
         {
             if (StrategyStatus == Strategy.Attack)
             {
@@ -134,15 +140,17 @@ namespace KernelPanic.Entities.Units
             {
                 SlowPush(inputManager, positionProvider);
             }
+
             // only check for new target of selected and Right Mouse Button was pressed
             if (!Selected) return;
             if (!inputManager.MousePressed(InputManager.MouseButton.Right)) return;
 
             var mouse = inputManager.TranslatedMousePosition;
-            if (positionProvider.Grid.GridPointFromWorldPoint(mouse)?.Position == null) return;
-            mTarget = new Point((int)mouse.X, (int)mouse.Y);
+            if (!(positionProvider.Grid.TileFromWorldPoint(mouse) is TileIndex target))
+                return;
+
             ShouldMove = true;
-            MoveTargetReached -= MoveTargetReachedHandler;
+            mTarget = target;
         }
 
         private Point FindNearestWalkableField(Point target)
@@ -286,9 +294,11 @@ namespace KernelPanic.Entities.Units
 #endif
             #endregion
             
-            AbilityStatus = AbilityState.Active; 
-            ShouldMove = false;
+            AbilityStatus = AbilityState.Active;
             Cooldown.Reset();
+            
+            // For sound
+            EventCenter.Default.Send(Event.HeroAbility(this));
         }
         
         protected virtual void ContinueAbility(GameTime gameTime)
@@ -310,11 +320,12 @@ namespace KernelPanic.Entities.Units
 
         internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
         {
-            var basePosition = positionProvider.Target.HitBox[0];
+            var grid = positionProvider.Grid;
+            var basePosition = Base.TargetPoints(grid.LaneRectangle.Size, grid.LaneSide);
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
-            mTarget = new Point(basePosition.X * Grid.KachelSize, basePosition.Y * Grid.KachelSize);
             mAStar = positionProvider.MakePathFinding(this, basePosition);
+            mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
             ShouldMove = true;
         }
 
@@ -346,7 +357,7 @@ namespace KernelPanic.Entities.Units
                                         Sprite.Position.Y + y * Grid.KachelSize)
                             ).ToPoint());
                 }
-                catch (InvalidOperationException e)
+                catch (InvalidOperationException)
                 {
                     // just dont add the point
                 }
@@ -355,26 +366,25 @@ namespace KernelPanic.Entities.Units
 
             #region calculate a heuristic for all neighbours and choose the best
             var bestPoint = startPoint;
-            var bestValue = 1;
+            var bestValue = 1f;
             foreach (var point in neighbours)
             {
                 var currentValue = PointHeuristic(point, positionProvider);
-                if (currentValue > bestValue)
-                {
-                    bestPoint = point;
-                    bestValue = currentValue;
-                }
+                if (currentValue <= bestValue)
+                    continue;
+
+                bestPoint = point;
+                bestValue = currentValue;
             }
             #endregion
 
             #region set the optimum as walking target
-            mAStar = positionProvider.MakePathFinding(this, bestPoint);
-            mTarget = bestPoint * new Point(Grid.KachelSize);
+            mAStar = positionProvider.MakePathFinding(this, new[] {bestPoint});
             ShouldMove = true;
             #endregion
         }
 
-        protected virtual int PointHeuristic(Point point, PositionProvider positionProvider)
+        protected virtual float PointHeuristic(Point point, PositionProvider positionProvider)
         {
             return 0;
         }
@@ -399,10 +409,6 @@ namespace KernelPanic.Entities.Units
             }
             // also updates the cooldown
             UpdateAbility(positionProvider, gameTime, inputManager);
-            
-            // Check if we still want to move to the same target, etc.
-            // also sets mAStar to the current version.
-            UpdateTarget(positionProvider, gameTime, inputManager);
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, inputManager, gameTime);

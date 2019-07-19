@@ -215,7 +215,7 @@ namespace KernelPanic.Tracking
                         condition: PlayerAndUnitMatches(Event.Key.Defender, typeof(Nokia)));
                     break;
                 case Achievement.ManyWires:
-                    progressConnector.ConnectCounter(Event.Id.BuildingPlaced,
+                    progressConnector.ConnectCounter(Event.Id.BuildingPlaced, target: 500,
                         condition: PlayerAndBuildingMatches(Event.Key.Buyer, typeof(Cable)));
                     break;
                 case Achievement.Fool:
@@ -252,8 +252,8 @@ namespace KernelPanic.Tracking
                         condition: PlayerAndBuildingMatches(Event.Key.Defender, typeof(ShockField)));
                     break;
                 case Achievement.JumpNRun:
-                    progressConnector.ConnectCounter(Event.Id.FirefoxJump, Event.Key.CrossedBuildingsCount, 50,
-                        e => e.IsActivePlayer(Event.Key.Attacker));
+                    progressConnector.ConnectCounter(Event.Id.FirefoxJump, target: 50,
+                        condition: e => e.IsActivePlayer(Event.Key.Attacker));
                     break;
 
                 case Achievement.NumberOfAchievements:
@@ -302,7 +302,7 @@ namespace KernelPanic.Tracking
                 Achievement.HighInference,
                 Achievement.Nutcracker,
                 Achievement.ManyWires,
-                Achievement.Fool,
+                Achievement.Fool
             };
 
         internal static Achievement[] PerGame =>
@@ -316,7 +316,7 @@ namespace KernelPanic.Tracking
                 Achievement.Shockfield,
                 Achievement.Hacker,
                 Achievement.AntiVirus,
-                Achievement.JumpNRun,
+                Achievement.JumpNRun
             };
 
         #endregion

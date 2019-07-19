@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Accord;
-using Accord.IO;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using KernelPanic.Input;
@@ -36,7 +34,7 @@ namespace KernelPanic.Hud
                     : spriteManager.ScreenSize.X - InputManager.ScreenBorderDistance,
                 InputManager.ScreenBorderDistance);
 
-        internal void Update(InputManager inputManager, GameTime gameTime)
+        internal virtual void Update(InputManager inputManager, GameTime gameTime)
         {
             foreach (var element in Elements)
             {

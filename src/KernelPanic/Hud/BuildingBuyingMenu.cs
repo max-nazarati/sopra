@@ -7,14 +7,18 @@ using KernelPanic.Input;
 using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Table;
+using Microsoft.Xna.Framework.Input;
 
 namespace KernelPanic.Hud
 {
     internal sealed class BuildingBuyingMenu : BuyingMenuOverlay<BuildingBuyingMenu.Element>
     {
+        private Button mSelectedButton;
+        private readonly BuildingBuyer mBuildingBuyer;
+
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
-            private TextSprite mInfoText;
+            private readonly TextSprite mInfoText;
             internal Button Button { get; }
             internal Building Building { get; }
 
@@ -64,31 +68,41 @@ namespace KernelPanic.Hud
         private BuildingBuyingMenu(BuildingBuyer buildingBuyer, SpriteManager spriteManager, params Element[] elements)
             : base(MenuPosition(Lane.Side.Left, spriteManager), elements)
         {
-            Button selectedButton = null;
+            mBuildingBuyer = buildingBuyer;
 
             foreach (var element in Elements)
             {
                 element.Button.Clicked += (button, input) =>
                 {
-                    if (selectedButton != null)
-                    {
-                        // ReSharper disable once PossibleNullReferenceException
-                        // ReSharper does not understand the check above.
-                        selectedButton.ViewPressed = false;
-                    }
-
-                    if (button == selectedButton)
-                    {
-                        buildingBuyer.SetBuilding(null);
-                        selectedButton = null;
+                    if (Deselect(button))
                         return;
-                    }
 
                     button.ViewPressed = true;
-                    selectedButton = button;
-                    buildingBuyer.SetBuilding(element.Building);
+                    mSelectedButton = button;
+                    mBuildingBuyer.Building = element.Building;
                 };
             }
+        }
+
+        internal override void Update(InputManager inputManager, GameTime gameTime)
+        {
+            base.Update(inputManager, gameTime);
+
+            if (mSelectedButton != null && inputManager.KeyPressed(Keys.Escape))
+                Deselect(mSelectedButton);
+        }
+
+        private bool Deselect(IDrawable button)
+        {
+            if (mSelectedButton != null)
+                mSelectedButton.ViewPressed = false;
+
+            if (mSelectedButton != button)
+                return false;
+
+            mSelectedButton = null;
+            mBuildingBuyer.Building = null;
+            return true;
         }
 
         internal static BuildingBuyingMenu Create(BuildingBuyer buildingBuyer,

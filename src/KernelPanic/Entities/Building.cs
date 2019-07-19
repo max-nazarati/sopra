@@ -24,7 +24,7 @@ namespace KernelPanic.Entities
             "Ensures that all buildings take a SoundManager in their constructor, which is required for Building.Create to work."
         )]
         protected Building(int price, Sprite sprite, SpriteManager spriteManager)
-            : base(price, sprite, spriteManager)
+            : base(price, new Point(Table.Grid.KachelSize), sprite, spriteManager)
         {
             BitcoinWorth = price;
             sprite.ScaleToWidth(Table.Grid.KachelSize);

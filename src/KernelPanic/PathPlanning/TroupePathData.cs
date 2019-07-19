@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Entities;
@@ -46,36 +47,55 @@ namespace KernelPanic.PathPlanning
         /// <summary>
         /// The target of all troupes.
         /// </summary>
-        private readonly ICollection<Point> mTarget;
+        internal IReadOnlyCollection<Point> Target { get; }
 
         private readonly Grid mGrid;
 
-        internal TroupePathData(ICollection<Point> target, Grid grid, IEnumerable<Building> initialBuildings)
+        internal TroupePathData(Lane lane, IEnumerable<Building> initialBuildings)
         {
-            mTarget = target;
-            mGrid = grid;
+            mGrid = lane.Grid;
+            Target = lane.TargetPoints;
 
-            BuildingMatrix = new ObstacleMatrix(grid);
-
+            BuildingMatrix = new ObstacleMatrix(mGrid);
+            var spawnPoints = lane.SpawnPoints;
+            foreach (var point in spawnPoints)
+                BuildingMatrix[point] = true;
             if (initialBuildings != null)
                 BuildingMatrix.Raster(initialBuildings);
 
             mHeatMap = new HeatMap(BuildingMatrix);
             var smallHeatMap = new HeatMap(BuildingMatrix);
 
-            mVectorField = new VectorField(mHeatMap);
-            mSmallVectorField = new VectorField(smallHeatMap);
-            mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(grid.LaneRectangle.Size, grid.LaneSide);
+            RelativePosition spawnDirection, targetDirection;
+            switch (mGrid.LaneSide)
+            {
+                case Lane.Side.Left:
+                    spawnDirection = RelativePosition.CenterLeft;
+                    targetDirection = RelativePosition.CenterRight;
+                    break;
+                case Lane.Side.Right:
+                    spawnDirection = RelativePosition.CenterRight;
+                    targetDirection = RelativePosition.CenterLeft;
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException(nameof(mGrid.LaneSide),
+                        (int) mGrid.LaneSide,
+                        typeof(Lane.Side));
+            }
+            mVectorField = new VectorField(mHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
+            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
+            mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(mGrid.LaneRectangle.Size, mGrid.LaneSide);
         }
 
-        internal Vector2 RelativeMovement(Troupe troupe, Vector2? position = null)
+        internal Vector2 RelativeMovement(Unit unit, Vector2? position = null)
         {
-            var maybeTile = mGrid.TileFromWorldPoint(position ?? troupe.Sprite.Position, troupe.IsSmall ? 2 : 1);
+            var subTiles = unit is Troupe troupe && troupe.IsSmall ? 2 : 1;
+            var maybeTile = mGrid.TileFromWorldPoint(position ?? unit.Sprite.Position, subTiles);
             if (!(maybeTile is TileIndex tile))
                 return Vector2.Zero;
 
             var size = mGrid.GetTile(tile).Size;
-            var vector = RelativeMovement(tile.Rescaled(1).First(), SelectVectorField(troupe));
+            var vector = RelativeMovement(tile.BaseTile, SelectVectorField(unit));
             return vector * size;
         }
 
@@ -107,7 +127,7 @@ namespace KernelPanic.PathPlanning
         {
             if (buildingsChanged)
             {
-                BreadthFirstSearch.UpdateHeatMap(mHeatMap, mTarget);
+                BreadthFirstSearch.UpdateHeatMap(mHeatMap, Target);
                 mVectorField.Update();
             }
             
@@ -119,7 +139,7 @@ namespace KernelPanic.PathPlanning
             if (!buildingsChanged && !hadLargeUnits && mLargeUnits.Count == 0)
                 return;
 
-            BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, mTarget, mLargeUnits);
+            BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, Target, mLargeUnits);
             mSmallVectorField.Update();
         }
 
@@ -147,6 +167,9 @@ namespace KernelPanic.PathPlanning
             {
                 var movement = RelativeMovement(tile, mVectorField);
                 tile = new TileIndex(tile.Row + (int) movement.Y, tile.Column + (int) movement.X, tile.SubTileCount);
+                if (!mGrid.Contains(tile))
+                    yield break;
+
                 yield return tile;
             }
         }
@@ -184,7 +207,7 @@ namespace KernelPanic.PathPlanning
             }
 
             var tileVisualizer = TileVisualizer.Border(1, mGrid, spriteManager);
-            tileVisualizer.Append(mTarget, Color.Blue);
+            tileVisualizer.Append(Target, Color.Blue);
             tileVisualizer.Draw(spriteBatch, gameTime);
         }
     }

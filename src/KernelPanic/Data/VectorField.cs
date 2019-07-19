@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using KernelPanic.PathPlanning;
 using KernelPanic.Table;
@@ -10,9 +11,6 @@ namespace KernelPanic.Data
         internal HeatMap HeatMap { get; }
 
         private readonly RelativePosition[,] mRelativeField;
-
-        internal int Width => mRelativeField.GetLength(1);
-        internal int Height => mRelativeField.GetLength(0);
 
         /// <summary>
         /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
@@ -35,10 +33,19 @@ namespace KernelPanic.Data
         /// with each square additionally normalized.
         /// </example>
         /// <param name="heatMap">The heat map.</param>
-        internal VectorField(HeatMap heatMap)
+        /// <param name="spawn"></param>
+        /// <param name="spawnDirection"></param>
+        /// <param name="target"></param>
+        /// <param name="targetDirection"></param>
+        internal VectorField(HeatMap heatMap, IEnumerable<Point> spawn, RelativePosition spawnDirection, IEnumerable<Point> target, RelativePosition targetDirection)
         {
             HeatMap = heatMap;
             mRelativeField = new RelativePosition[heatMap.Height, heatMap.Width];
+
+            foreach (var (column, row) in spawn)
+                mRelativeField[row, column] = spawnDirection;
+            foreach (var (column, row) in target)
+                mRelativeField[row, column] = targetDirection;
         }
 
         private VectorField(RelativePosition[,] vectorField)
@@ -58,51 +65,80 @@ namespace KernelPanic.Data
                 }
             }
         }
-        
+
+        #region Thunderbird's vector field
+
         internal static VectorField GetVectorFieldThunderbird(Point size, Lane.Side laneSide)
         {
-            const RelativePosition left = RelativePosition.CenterLeft;
-            const RelativePosition right = RelativePosition.CenterRight;
-            const RelativePosition up = RelativePosition.CenterTop;
-            const RelativePosition down = RelativePosition.CenterBottom;
+            const RelativePosition topMovement = RelativePosition.CenterLeft;
+            const RelativePosition botMovement = RelativePosition.CenterRight;
             var thunderBirdField = new RelativePosition[size.Y, size.X];
 
-            for (var row = 0; row < size.Y; ++row)
+            // Fill top and bottom.
+            for (var row = 0; row < Grid.LaneWidthInTiles; ++row)
             {
                 for (var col = 0; col < size.X; ++col)
                 {
-                    switch (laneSide)
-                    {
-                        case Lane.Side.Right when row + col < 18:
-                            // distance to left, top
-                            thunderBirdField[row, col] = left;
-                            break;
-                        case Lane.Side.Right when size.Y - row + col < 18:
-                            // distance to left, bottom
-                            thunderBirdField[row, col] = right;
-                            break;
-                        case Lane.Side.Right:
-                            thunderBirdField[row, col] = up;
-                            break;
-                        case Lane.Side.Left when row + (size.X - 1) - col < 18:
-                            // distance to right, top
-                            thunderBirdField[row, col] = left;
-                            break;
-                        case Lane.Side.Left when size.Y - row + (size.X - 1) - col < 18:
-                            // distance to right, bottom
-                            thunderBirdField[row, col] = right;
-                            break;
-                        case Lane.Side.Left:
-                            thunderBirdField[row, col] = down;
-                            break;
-                        default:
-                            throw new InvalidEnumArgumentException(nameof(laneSide), (int)laneSide, typeof(Lane.Side));
-                    }
+                    thunderBirdField[row, col] = topMovement;
+                    thunderBirdField[size.Y - 1 - row, col] = botMovement;
                 }
             }
-            var res = new VectorField(thunderBirdField);
-            return res;
+
+            int middleOffset;
+            RelativePosition verticalMovement;
+            switch (laneSide)
+            {
+                case Lane.Side.Left:
+                    middleOffset = 0;
+                    verticalMovement = RelativePosition.CenterBottom;
+                    FillLeftTriangles(size, verticalMovement, thunderBirdField);
+                    break;
+                case Lane.Side.Right:
+                    middleOffset = size.X - Grid.LaneWidthInTiles;
+                    verticalMovement = RelativePosition.CenterTop;
+                    FillRightTriangles(size, verticalMovement, thunderBirdField);
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException(nameof(laneSide), (int) laneSide, typeof(Lane.Side));
+            }
+
+            // Fill the vertical part.
+            for (var row = Grid.LaneWidthInTiles; row < size.Y - Grid.LaneWidthInTiles; ++row)
+            {
+                for (var col = 0; col < Grid.LaneWidthInTiles; ++col)
+                {
+                    thunderBirdField[row, col + middleOffset] = verticalMovement;
+                }
+            }
+
+            return new VectorField(thunderBirdField);
         }
+
+        private static void FillLeftTriangles(Point size, RelativePosition movement, RelativePosition[,] field)
+        {
+            for (var row = 0; row < Grid.LaneWidthInTiles; ++row)
+            {
+                for (var col = 0; col <= row; ++col)
+                {
+                    field[row, col] = movement;
+                    field[size.Y - 2 - row, col] = movement;
+                }
+            }
+        }
+
+        private static void FillRightTriangles(Point size, RelativePosition movement, RelativePosition[,] field)
+        {
+            for (var row = 0; row < Grid.LaneWidthInTiles; ++row)
+            {
+                for (var col = 0; col <= row; ++col)
+                {
+                    field[row + 1, size.X - 1 - col] = movement;
+                    field[size.Y - 1 - row, size.X - 1 - col] = movement;
+                }
+            }
+        }
+
+        #endregion
 
         public RelativePosition this[Point point] => mRelativeField[point.Y, point.X];
 

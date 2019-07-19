@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -8,6 +9,7 @@ using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using KernelPanic.Entities.Units;
 
 namespace KernelPanic
 {
@@ -90,9 +92,15 @@ namespace KernelPanic
         
         #region Querying
 
-        public bool HasEntityAt(Vector2 point)
+        public bool HasEntityAt(Vector2 point, Func<IGameObject, bool> predicate = null)
         {
-            return QuadTree.HasEntityAt(point);
+            return QuadTree.HasEntityAt(point, predicate);
+        }
+
+        internal bool HasIntersectingEntity(IGameObject gameObject, Func<IGameObject, bool> predicate = null)
+        {
+            var entities = QuadTree.EntitiesAt(gameObject.Bounds);
+            return predicate == null ? entities.Any() : entities.Any(predicate);
         }
 
         internal IEnumerable<Entity> EntitiesAt(Vector2 point)
@@ -118,15 +126,39 @@ namespace KernelPanic
 
             mMidUpdate = true;
 
-            foreach (var entity in QuadTree.Where(entity => !entity.WantsRemoval))
-            {
-                entity.Update(positionProvider, inputManager, gameTime);
-            }
-
             // Rebuild the quad-tree after movements and additions are done so that
             // overlaps and collisions can be determined correctly.
-            QuadTree.Rebuild(entity => !entity.WantsRemoval);
+            MoveUnits(positionProvider, gameTime, inputManager);
 
+            QuadTree.Rebuild(entity => entity.WantsRemoval);
+
+            foreach (var objects in mDrawObjects.Values)
+            {
+                objects.RemoveAll(@object => @object.WantsRemoval);
+            }
+
+            FixMovementCollisions(positionProvider);
+            HandleCollisions(positionProvider);
+
+            mMidUpdate = false;
+            Add(mMidUpdateBuffer);
+            mMidUpdateBuffer.Clear();
+        }
+
+        private void MoveUnits(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        {
+            foreach (var entity in QuadTree)
+            {
+                if (!entity.WantsRemoval)
+                    entity.Update(positionProvider, inputManager, gameTime);
+                
+                if (entity is Hero hero && hero.WantsRemoval)
+                    positionProvider.Owner[hero].HeroDied(hero);
+            }
+        }
+
+        private void FixMovementCollisions(PositionProvider positionProvider)
+        {
             bool collisionHandled;
             do
             {
@@ -137,19 +169,13 @@ namespace KernelPanic
                 }
                 QuadTree.Rebuild();
             } while (collisionHandled);
+        }
 
+        private void HandleCollisions(PositionProvider positionProvider)
+        {
             foreach (var (a, b) in QuadTree.Overlaps())
             {
                 CollisionManager.Handle(a, b, positionProvider);
-            }
-
-            mMidUpdate = false;
-            Add(mMidUpdateBuffer);
-            mMidUpdateBuffer.Clear();
-
-            foreach (var objects in mDrawObjects.Values)
-            {
-                objects.RemoveAll(@object => @object.WantsRemoval);
             }
         }
 

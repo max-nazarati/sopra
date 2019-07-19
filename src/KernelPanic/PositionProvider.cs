@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Entities;
-using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
 using KernelPanic.PathPlanning;
@@ -89,23 +88,16 @@ namespace KernelPanic
             return mEntities.QuadTree.EntitiesAt(entity.Bounds).OfType<T>();
         }
 
-        internal bool HasEntityAt(Vector2 point)
+        internal bool HasEntityAt(Vector2 point, Func<IGameObject, bool> predicate = null)
         {
-            return mEntities.HasEntityAt(point);
+            return mEntities.HasEntityAt(point, predicate);
         }
 
         #endregion
 
         #region Path Finding
 
-        internal AStar MakePathFinding(Point start, Point target)
-        {
-            var aStar = new AStar(start, target, TroupeData.BuildingMatrix);
-            aStar.CalculatePath();
-            return aStar;
-        }
-
-        internal AStar MakePathFinding(Hero hero, Point target)
+        internal AStar MakePathFinding(Hero hero, Point[] target)
         {
             var start = RequireTile(hero).ToPoint();
             var otherHeroes = mEntities.AllEntities
@@ -126,8 +118,6 @@ namespace KernelPanic
         }
 
         #endregion
-
-        public void DamageBase(int damage) => Target.Power = Math.Max(0, Target.Power - damage);
 
         internal void AddProjectile(Projectile projectile)
         {

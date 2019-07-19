@@ -9,12 +9,11 @@ using KernelPanic.Purchasing;
 using KernelPanic.Table;
 using KernelPanic.Upgrades;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 
 namespace KernelPanic.ArtificialIntelligence
 {
-    enum Feature : int
+    internal enum Feature
     {
         Bitcoins = 0,
         Bug = 1,
@@ -34,12 +33,12 @@ namespace KernelPanic.ArtificialIntelligence
         ShockField = 15
     }
 
-    internal sealed class ArtificialPlayer : Player
+    internal sealed class ArtificialPlayer : Player, IDisposable
     {
         private AttackPlanner mAttackPlanner;
         private DefencePlanner mDefencePlanner;
         private UpgradePlanner mUpgradePlanner;
-        private int[] mDefenceData;
+        private readonly int[] mDefenceData;
         private int[] mAttackData;
         private int mAttackMoney;
         private int mDefenceMoney;
@@ -233,6 +232,9 @@ namespace KernelPanic.ArtificialIntelligence
                         case Firefox _:
                             mAttackData[(int) Feature.Firefox]++;
                             break;
+                        case Bluescreen _:
+                            mAttackData[(int) Feature.Bluescreen]++;
+                            break;
                     }
 
                     break;
@@ -240,8 +242,6 @@ namespace KernelPanic.ArtificialIntelligence
                     var buildingType = handler.Get<Building>(Event.Key.Building);
                     switch (buildingType)
                     {
-                        //case Bluescreen _:
-                        //    break;
                         case Cable _:
                             mAttackData[(int) Feature.Cable]++;
                             break;
@@ -271,10 +271,10 @@ namespace KernelPanic.ArtificialIntelligence
 
         #endregion
 
-        public void MakeRandomChoice(GameTime gameTime)
+        private void MakeRandomChoice(GameTime gameTime)
         {
-            Random numberGenerator = new Random();
-            int number = numberGenerator.Next(0, 500);
+            var numberGenerator = new Random();
+            var number = numberGenerator.Next(0, 500);
             if (number == 0) mAttackPlanner.Update(mAttackData, gameTime);
             if (number == 1) mDefencePlanner.BuyRandomTower(gameTime);
         }
@@ -303,6 +303,11 @@ namespace KernelPanic.ArtificialIntelligence
             mNeedOffensiveUnits = false;
 
             MakeRandomChoice(gameTime);
+        }
+
+        public void Dispose()
+        {
+            // TODO
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
 {
-    [DataContract]
     internal sealed class QuadTree<T>: IEnumerable<T> where T: IBounded
     {
         #region Properties & Constants
@@ -24,10 +22,8 @@ namespace KernelPanic.Data
         // size and position of the current node
         private Rectangle mBounds;
 
-        [DataMember(Name = "Objects")]
         private readonly List<T> mObjects;
         
-        [DataMember(Name = "Children")]
         private QuadTree<T>[] mChildren;
 
         /*internal*/ private int Count { get; /*private*/ set; }
@@ -36,7 +32,7 @@ namespace KernelPanic.Data
 
         #region Constructor
 
-        internal QuadTree(Rectangle bounds) : this(1, bounds)
+        /*internal*/ private QuadTree(Rectangle bounds) : this(1, bounds)
         {
         }
 
@@ -173,13 +169,20 @@ namespace KernelPanic.Data
             Split();
             
             // Try to move all objects one level down.
-            foreach (var value in new List<T>(mObjects))
+            var indicesToRemove = new List<int>(mObjects.Count);
+            for (var i = 0; i < mObjects.Count; i++)
             {
-                if (CalculatePosition(value) is SquareIndex square)
-                {
-                    mChildren[(int) square].Add(value);
-                    mObjects.Remove(value);
-                }
+                var value = mObjects[i];
+                if (!(CalculatePosition(value) is SquareIndex square))
+                    continue;
+
+                mChildren[(int) square].Add(value);
+                indicesToRemove.Add(i);
+            }
+
+            for (var i = indicesToRemove.Count - 1; i >= 0; i--)
+            {
+                mObjects.RemoveAt(indicesToRemove[i]);
             }
         }
 
@@ -190,24 +193,72 @@ namespace KernelPanic.Data
                 Add(element);
             }
         }
+
+        #endregion
+
+        #region Rebuilding
         
         /// <summary>
-        /// Rebuilds this <see cref="QuadTree{T}"/> using the updated bounds. If <paramref name="predicate"/> is given,
-        /// only the objects are kept for which <c>true</c> is returned.
+        /// Rebuilds this <see cref="QuadTree{T}"/> using the updated bounds. If <paramref name="removePredicate"/> is
+        /// given, all objects are removed for which <c>true</c> is returned.
         /// </summary>
-        /// <param name="predicate">Used to filter the objects.</param>
-        internal void Rebuild(Func<T, bool> predicate = null)
+        /// <param name="removePredicate">Used to filter the objects.</param>
+        internal void Rebuild(Func<T, bool> removePredicate = null)
         {
-            var allEntities = new List<T>(predicate == null ? this : this.Where(predicate));
-            Clear();
-            Add(allEntities);
+            var sink = new List<T>();
+            RebuildImpl(removePredicate, sink);
+            Add(sink);
         }
 
-        /*internal*/ private void Clear()
+        private void RebuildImpl(Func<T, bool> removePredicate, List<T> parentSink)
         {
-            mObjects.Clear();
-            mChildren = null;
-            Count = 0;
+            RebuildObjects(removePredicate, parentSink);
+            
+            if (mChildren != null)
+                RebuildChildren(removePredicate, parentSink);
+        }
+
+        private void RebuildObjects(Func<T, bool> removePredicate, ICollection<T> parentSink)
+        {
+            var bounds = mBounds;
+            var removed = mObjects.RemoveAll(value =>
+            {
+                if (removePredicate != null && removePredicate(value))
+                    return true;
+                if (bounds.Contains(value.Bounds))
+                    return false;
+                parentSink.Add(value);
+                return true;
+            });
+
+            Count -= removed;
+        }
+
+        private void RebuildChildren(Func<T, bool> removePredicate, List<T> parentSink)
+        {
+            var index = parentSink.Count;
+            foreach (var child in mChildren)
+                child.RebuildImpl(removePredicate, parentSink);
+
+            var count = parentSink.Count;
+            Count -= count - index;
+
+            for (var i = index; i < count; ++i)
+            {
+                var value = parentSink[i];
+                if (!mBounds.Contains(value.Bounds))
+                {
+                    if (i != index)
+                        parentSink[index] = value;
+
+                    ++index;
+                    continue;
+                }
+
+                Add(value);
+            }
+            
+            parentSink.RemoveRange(index, count - index);
         }
 
         #endregion
@@ -267,10 +318,11 @@ namespace KernelPanic.Data
         /// containing the given point.
         /// </summary>
         /// <param name="point">The point to check for.</param>
+        /// <param name="predicate">An optional filter for the entities at <paramref name="point"/>.</param>
         /// <returns><c>true</c> if such an entity is found, <c>false</c> otherwise.</returns>
-        internal bool HasEntityAt(Vector2 point)
+        internal bool HasEntityAt(Vector2 point, Func<T, bool> predicate = null)
         {
-            return EntitiesAt(point).Any();
+            return predicate == null ? EntitiesAt(point).Any() : EntitiesAt(point).Any(predicate);
         }
 
         internal IEnumerable<T> NearEntities(Vector2 point, float radius)

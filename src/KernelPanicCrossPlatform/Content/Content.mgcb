@@ -622,18 +622,6 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/towers/cursor.png;towers/cursor.png
 
-#begin ../../KernelPanic/Content/towers/fan.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/towers/fan.png;towers/fan.png
-
 #begin ../../KernelPanic/Content/towers/fanPropeller.png
 /importer:TextureImporter
 /processor:TextureProcessor

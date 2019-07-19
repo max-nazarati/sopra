@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using KernelPanic.Entities.Units;
 
 namespace KernelPanic
 {
@@ -50,6 +51,14 @@ namespace KernelPanic
             gameStateManager.Push(game.mHud);
         }
 
+        internal static void PushTechDemo(GameStateManager gameStateManager)
+        {
+            var game = new InGameState(null, 5, gameStateManager);
+            game.InitializeTechDemo();
+            gameStateManager.Restart(game);
+            gameStateManager.Push(game.mHud);
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -57,6 +66,25 @@ namespace KernelPanic
             if (disposing)
             {
                 EventCenter.Default.Send(Event.CloseAchievementPool(mAchievementPool));
+            }
+        }
+
+        private void InitializeTechDemo()
+        {
+            foreach (var kv in mHud.UnitBuyingMenu.BuyingActions)
+            {
+                if (typeof(Hero).IsAssignableFrom(kv.Key))
+                {
+                    // Skip heroes.
+                    continue;
+                }
+
+                for (var i = 0; i < 100; i++)
+                {
+                    mBoard.PlayerA.Bitcoins = mBoard.PlayerB.Bitcoins = 9999;
+                    kv.Value.TryPurchase(mBoard.PlayerA);
+                    kv.Value.TryPurchase(mBoard.PlayerB);
+                }
             }
         }
 
@@ -72,8 +100,8 @@ namespace KernelPanic
             // Update the overall play time.
             GameStateManager.Statistics.Update(gameTime);
 
+            mSelectionManager.Update(inputManager, mBuildingBuyer.Building != null);
             mBuildingBuyer.Update(inputManager);
-            mSelectionManager.Update(inputManager);
 
             mBoard.Update(gameTime, inputManager);
             var gameState = mBoard.CheckGameState();
