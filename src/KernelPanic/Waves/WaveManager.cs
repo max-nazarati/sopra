@@ -119,12 +119,14 @@ namespace KernelPanic.Waves
 
             foreach (var wave in mAliveWaves.Where(wave => wave.FullyDefeatedByHuman && !mByHumanDefeatedWavesList.Contains(wave)))
             {
+                if (wave.OriginalTroupeCountB == 0) continue;
                 mByHumanDefeatedWavesList.Add(wave);
                 mByHumanDefeatedWaves++;
             }
             
             foreach (var wave in mAliveWaves.Where(wave => wave.FullyDefeatedByComputer && !mByComputerDefeatedWavesList.Contains(wave)))
             {
+                if (wave.OriginalTroupeCountA == 0) continue;
                 mByComputerDefeatedWavesList.Add(wave);
                 mByComputerDefeatedWaves++;
             }
