@@ -33,7 +33,7 @@ namespace KernelPanic.Entities.Units
             Indicating, Starting, Active, Finished, CoolingDown
         }
 
-        protected enum Strategy
+        protected internal enum Strategy
         {
             Human = 0,
             Autonomous
@@ -50,7 +50,7 @@ namespace KernelPanic.Entities.Units
 
         internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
-        protected Strategy StrategyStatus { get; set; }
+        protected internal Strategy StrategyStatus { get; set; }
 
         #endregion
 

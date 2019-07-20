@@ -309,5 +309,15 @@ namespace KernelPanic.ArtificialIntelligence
         {
             // TODO
         }
+
+        internal override void ApplyUpgrades(Entity entity)
+        {
+            base.ApplyUpgrades(entity);
+            if (entity is Hero hero)
+            {
+                hero.StrategyStatus = Hero.Strategy.Autonomous;
+            }
+        }
+
     }
 }
