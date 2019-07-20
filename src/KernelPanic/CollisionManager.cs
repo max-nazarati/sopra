@@ -45,6 +45,18 @@ namespace KernelPanic
 
         private static Troupe TroupeToReset(Troupe a, Troupe b, PositionProvider positionProvider)
         {
+            // If one unit was already reset, we reset the other.
+            if (a.MovementResettable && !b.MovementResettable)
+                return a;
+            if (b.MovementResettable && !a.MovementResettable)
+                return b;
+
+            if (!a.MovementResettable && !b.MovementResettable)
+            {
+                // Shouldn't they already have collided in the last frame?
+                return null;
+            }
+
             if (!(a.MoveTarget is Vector2 aMoveTarget) || !(b.MoveTarget is Vector2 bMoveTarget))
                 return null;
 

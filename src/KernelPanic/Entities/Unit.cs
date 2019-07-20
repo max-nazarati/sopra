@@ -232,6 +232,8 @@ namespace KernelPanic.Entities
             return true;
         }
 
+        internal bool MovementResettable => Sprite.Position != mLastPosition;
+
         internal virtual void SetInitialPosition(Vector2 position)
         {
             mLastPosition = position;
