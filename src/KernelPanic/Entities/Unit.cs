@@ -187,31 +187,37 @@ namespace KernelPanic.Entities
                 return null;
             }
 
-            var actualSpeed = mSlowedDown ? Speed / 2 : Speed;
+            var remainingSpeed = mSlowedDown ? Speed / 2 : Speed;
             mSlowedDown = false;
 
-            var theMove = Vector2.Zero;
+            var accumulatedMovement = Vector2.Zero;
 
             while (true)
             {
                 var normalizedMove = targetMove / targetDistance;
 
-                if (targetDistance > actualSpeed)
-                    return theMove + normalizedMove * actualSpeed;
+                // Movement can be completed, speed will get completely used
+                if (targetDistance > remainingSpeed)
+                    return accumulatedMovement + normalizedMove * remainingSpeed;
 
-                theMove += targetMove;
+                accumulatedMovement += targetMove;
+                remainingSpeed -= targetDistance;
 
+                // we exceeded our target, there is still speed left:
+                // calculate a new position we want to reach, but now from the previous target as startPoint
                 MoveTarget = null;
                 CalculateMovement(target, positionProvider, inputManager);
+
+                // We couldn't find a new target (we possibly reached the enemy base)
                 if (!(MoveTarget is Vector2 projectedTarget))
                 {
                     MoveTarget = initialTarget;
-                    return theMove;
+                    return accumulatedMovement;
                 }
 
-                targetMove = projectedTarget - target;
-                targetDistance = targetMove.Length();
+                // set the new place we want to reach and the vector to get there
                 target = projectedTarget;
+                targetMove = projectedTarget - target;
             }
         }
 
