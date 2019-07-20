@@ -46,7 +46,7 @@ namespace KernelPanic.Events
 
             SetupEnded,
 
-            FirefoxJump,            // TODO: Not sent yet.
+            FirefoxJump,
             HeroAbility
         }
 

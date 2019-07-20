@@ -154,7 +154,7 @@ namespace KernelPanic.Tracking
                 case Achievement.Shockfield:
                     return "Besiege in einem Spiel 50 Einheiten mit Schockfeldern.";
                 case Achievement.JumpNRun:
-                    return "Springe in einem Spiel mit der Firefox-Einheit über 50 Gebäude.";
+                    return "Springe in einem Spiel mit der Firefox-Einheit über 10 Gebäude.";
 
                 case Achievement.NumberOfAchievements:
                     goto default;
@@ -252,7 +252,7 @@ namespace KernelPanic.Tracking
                         condition: PlayerAndBuildingMatches(Event.Key.Defender, typeof(ShockField)));
                     break;
                 case Achievement.JumpNRun:
-                    progressConnector.ConnectCounter(Event.Id.FirefoxJump, target: 50,
+                    progressConnector.ConnectCounter(Event.Id.FirefoxJump, target: 10,
                         condition: e => e.IsActivePlayer(Event.Key.Attacker));
                     break;
 
