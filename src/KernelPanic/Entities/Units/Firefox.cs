@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
@@ -14,6 +15,7 @@ namespace KernelPanic.Entities.Units
 {
     
     [DataContract]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Firefox : Hero
     {
         private Stack<Vector2> mAbility = new Stack<Vector2>();
