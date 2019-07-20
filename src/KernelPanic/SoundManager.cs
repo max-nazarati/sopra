@@ -11,7 +11,7 @@ namespace KernelPanic
 {
     internal sealed class SoundManager
     {
-        public enum Sound
+        private enum Sound
         {
             TowerPlacement,
             Shoot1,
@@ -25,7 +25,7 @@ namespace KernelPanic
             SwooshFirefox
         }
 
-        public enum Music
+        private enum Music
         {
             Soundtrack1,
             Soundtrack2
@@ -33,6 +33,8 @@ namespace KernelPanic
         
         private readonly (Sound sound, SoundEffect soundEffect)[] mSounds;
         private readonly (Music music, Song song)[] mSongs;
+
+        private float mVolume = 1;
 
         internal SoundManager(ContentManager contentManager)
         {
@@ -68,6 +70,7 @@ namespace KernelPanic
             eventCenter.Subscribe(Event.Id.ButtonClicked, PlaySound);
             eventCenter.Subscribe(Event.Id.FirefoxJump, PlaySound);
             eventCenter.Subscribe(Event.Id.PlayMusic, PlayMusic);
+            eventCenter.Subscribe(Event.Id.ChangeSoundVolume, ChangeSoundVolume);
             eventCenter.Subscribe(Event.Id.HeroAbility, PlaySound);
         }
         
@@ -105,44 +108,60 @@ namespace KernelPanic
             MediaPlayer.Stop();
         }
 
+        private void ChangeSoundVolume(Event e)
+        {
+            switch (mVolume)
+            {
+                case 1.0f:
+                    mVolume = 1.5f;
+                    break;
+                case 1.5f:
+                    mVolume = 0.5f;
+                    break;
+                case 0.5f:
+                    mVolume = 1.0f;
+                    break;
+            }
+        }
+
         private void PlaySound(Event e)
         {
             switch (e.Kind)
             {
                 case Event.Id.BuildingPlaced:
-                    Lookup(Sound.TowerPlacement).Play(0.3f,1,0);
+                    Lookup(Sound.TowerPlacement).Play(0.3f * mVolume,1,0);
                     break;
                 case Event.Id.BuildingSold:
-                    Lookup(Sound.MoneyEarned).Play(0.5f,1,0);
+                    Lookup(Sound.MoneyEarned).Play(0.5f * mVolume,1,0);
                     break;
                 case Event.Id.ProjectileShot:
                     switch (e.Get<Tower>(Event.Key.Tower))
                     {
                         case CdThrower _:
-                            Lookup(Sound.DiscShoot).Play(0.3f,0,0);
+                            Lookup(Sound.DiscShoot).Play(0.3f * mVolume,0,0);
                             break;
                         case ShockField _:
-                            Lookup(Sound.ElectroShock).Play(0.2f,0,0);
+                            Lookup(Sound.ElectroShock).Play(0.2f * mVolume,0,0);
                             break;
                         case CursorShooter _:
-                            Lookup(Sound.CursorShoot).Play(0.03f,0.3f,0);
+                            Lookup(Sound.CursorShoot).Play(0.03f * mVolume,0.3f,0);
                             break;
                         case Antivirus _:
-                            Lookup(Sound.AntivirusShoot).Play(0.3f,0,0);
+                            Lookup(Sound.AntivirusShoot).Play(0.3f * mVolume,0,0);
                             break;
                         case WifiRouter _:
-                            Lookup(Sound.WifiShoot).Play(0.3f,0,0);
+                            Lookup(Sound.WifiShoot).Play(0.3f * mVolume,0,0);
                             break;
                     }
                     break;
                 case Event.Id.ButtonClicked:
-                    Lookup(Sound.ButtonClick).Play(0.25f,1,0);
+                    Lookup(Sound.ButtonClick).Play(0.25f * mVolume,1,0);
                     break;
                 case Event.Id.HeroAbility:
                     switch (e.Get<Hero>(Event.Key.Hero))
                     {
                         case Firefox _:
-                            Lookup(Sound.SwooshFirefox).Play(0.3f, 0, 0);
+                            Lookup(Sound.SwooshFirefox).Play(0.3f * mVolume, 0, 0);
                             break;
                     }
 

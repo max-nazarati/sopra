@@ -35,6 +35,7 @@ namespace KernelPanic.Events
             KilledUnit,
             ProjectileShot,
             PlayMusic,
+            ChangeSoundVolume,
             ButtonClicked,
             
 
@@ -227,6 +228,14 @@ namespace KernelPanic.Events
         
         internal static Event PlayMusic() =>
             new Event(Id.PlayMusic)
+            {
+                mPayload =
+                {
+                }
+            };
+        
+        internal static Event ChangeSoundVolume() =>
+            new Event(Id.ChangeSoundVolume)
             {
                 mPayload =
                 {

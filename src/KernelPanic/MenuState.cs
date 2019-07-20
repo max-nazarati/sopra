@@ -169,8 +169,7 @@ namespace KernelPanic
             switch (soundOnOffButton.Title)
             {
                 case "an":
-                    soundOnOffButton.Title = "aus"; 
-                    // soundManager.StopMusic();
+                    soundOnOffButton.Title = "aus";
                     break;
                 case "aus":
                     soundOnOffButton.Title = "an";
@@ -178,6 +177,28 @@ namespace KernelPanic
                     break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
+                    break;
+            }
+        }
+
+        private static void ChangeSoundVolume(TextButton volumeButton)
+        {
+            switch (volumeButton.Title)
+            {
+                case "Mittel":
+                    volumeButton.Title = "Hoch";
+                    EventCenter.Default.Send(Event.ChangeSoundVolume());
+                    break;
+                case "Hoch":
+                    volumeButton.Title = "Niedrig";
+                    EventCenter.Default.Send(Event.ChangeSoundVolume());
+                    break;
+                case "Niedrig":
+                    volumeButton.Title = "Mittel";
+                    EventCenter.Default.Send(Event.ChangeSoundVolume());
+                    break;
+                default:
+                    Console.WriteLine("No valid button title for VolumeButton.");
                     break;
             }
         }
@@ -200,6 +221,7 @@ namespace KernelPanic
 
             var volumeButton = CreateButton(stateManager.Sprite, "Lautstärke", 450, 150);
             var volumeRegulatorButton = CreateButton(stateManager.Sprite, "Mittel",450, -150);
+            volumeRegulatorButton.Clicked += (button, input) => ChangeSoundVolume(volumeRegulatorButton);
             
             var keyInputsButton = CreateButton(stateManager.Sprite, "Steuerung", 575, 150);
             keyInputsButton.Clicked += (button, input) => stateManager
