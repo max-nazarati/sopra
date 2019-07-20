@@ -61,7 +61,8 @@ namespace KernelPanic
             LaneTop2,
             LaneTop3,
             LaneTopRight,
-            LaneTopRightCorner
+            LaneTopRightCorner,
+            BitcoinLogo
         }
 
         private enum Font
@@ -127,6 +128,7 @@ namespace KernelPanic
                 Texture(Image.LaneTop3, "tiles/lane_top_3"),
                 Texture(Image.LaneTopRight, "tiles/lane_top_right"),
                 Texture(Image.LaneTopRightCorner, "tiles/lane_corner_top_right"),
+                Texture(Image.BitcoinLogo, "bitcoinLogo"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -332,9 +334,22 @@ namespace KernelPanic
 
             var hudSprite = new ImageSprite(Lookup(Image.ScoreBackground));
             hudSprite.ScaleToWidth(hudWidth);
+            var bitcoinSpriteLeft = new ImageSprite(Lookup(Image.BitcoinLogo))
+            {
+                Position = new Vector2(50, 12)
+            };
+            bitcoinSpriteLeft.ScaleToHeight(23);
+            
+            var bitcoinSpriteRight = new ImageSprite(Lookup(Image.BitcoinLogo))
+            {
+                Position = new Vector2(hudWidth-40, 12)
+            };
+            bitcoinSpriteRight.ScaleToHeight(23);
+            
             var sprite = new CompositeSprite
             {
-                Children = { hudSprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText },
+                Children = { hudSprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText
+                    , clockText, bitcoinSpriteLeft, bitcoinSpriteRight },
                 Position = new Vector2(leftBoarder, 0)
             };
             return (sprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText);
