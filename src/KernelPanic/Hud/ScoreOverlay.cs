@@ -71,8 +71,8 @@ namespace KernelPanic.Hud
             mPlayTime.Update(gameTime);
             mTextTime.Text = mPlayTime.Time;
 
-            mDefeatedWavesByHuman.Text = mWaveManager.mByHumanDefeatedWaves.ToString();
-            mDefeatedWavesByComputer.Text = mWaveManager.mByComputerDefeatedWaves.ToString();
+            mDefeatedWavesByHuman.Text = mWaveManager.mByHumanDefeatedWaves + " Wellen besiegt";
+            mDefeatedWavesByComputer.Text = mWaveManager.mByComputerDefeatedWaves + " Wellen besiegt";
 
             mPauseButton.Update(inputManager, gameTime);
         }

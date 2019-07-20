@@ -289,43 +289,50 @@ namespace KernelPanic
             , TextSprite DefeatedWavesByComputer) CreateScoreDisplay()
         {
             const float scale = 1.8f;
-            const float hudWidth = scale * 318;
+            const float hudWidth = scale * 650;
             const float moneyWidth = scale * 60;
             const float hudHeight = scale * 44;
             const float padding = scale * 5;
             const float topPadding = scale * 8;
             var font = Lookup(Font.Hud);
+            
             var leftBoarder = (int)((float)ScreenSize.X / 2 - hudWidth / 2);
 
             var leftMoneyText = new TextSprite(font, "00000 $")
             {
-                Position = new Vector2(padding, topPadding)
+                Position = new Vector2(padding * 20, topPadding)
             };
+            
             var leftEpText = new TextSprite(font, "000 EP")
             {
-                Position = new Vector2(moneyWidth + padding, topPadding)
+                Position = new Vector2(moneyWidth * 2 + padding*7, topPadding)
             };
+            
             var leftText = new TextSprite(font, "000%")
             {
-                Position = new Vector2(2 * moneyWidth + padding, topPadding),
+                Position = new Vector2(3 * moneyWidth + 5*padding, topPadding),
                 TintColor = Color.DarkBlue
             };
+            
             var rightMoneyText = new TextSprite(font, "00000$")
             {
-                Position = new Vector2(hudWidth - padding, topPadding)
+                Position = new Vector2(hudWidth - padding * 20, topPadding)
             };
             rightMoneyText.SetOrigin(RelativePosition.TopRight);
+            
             var rightEpText = new TextSprite(font, "000 EP")
             {
-                Position = new Vector2(hudWidth - moneyWidth - padding, topPadding),
+                Position = new Vector2(hudWidth - 2 * moneyWidth - padding*7, topPadding),
                 
             };
             rightEpText.SetOrigin(RelativePosition.TopRight);
+            
             var rightText = new TextSprite(font, "000%")
             {
-                Position = new Vector2(hudWidth - 2 * moneyWidth - padding, topPadding),
+                Position = new Vector2(hudWidth - 3 * moneyWidth - padding*5, topPadding),
                 TintColor = Color.DarkRed
             };
+            
             rightText.SetOrigin(RelativePosition.TopRight);
             
             var clockText = new TextSprite(font, "00:00:00")
@@ -336,27 +343,28 @@ namespace KernelPanic
             
             var defeatedWavesByHumanText = new TextSprite(font, "00:00:00")
             {
-                Position = new Vector2(-50, hudHeight / 4)
+                Position = new Vector2(50, topPadding)
             };
             defeatedWavesByHumanText.SetOrigin(RelativePosition.CenterTop);
             
             var defeatedWavesByComputerText = new TextSprite(font, "00:00:00")
             {
-                Position = new Vector2(hudWidth+50, hudHeight / 4)
+                Position = new Vector2(hudWidth-125, topPadding)
             };
             defeatedWavesByComputerText.SetOrigin(RelativePosition.CenterTop);
 
             var hudSprite = new ImageSprite(Lookup(Image.ScoreBackground));
-            hudSprite.ScaleToWidth(hudWidth);
+            hudSprite.DestinationRectangle = new Rectangle(hudSprite.Position.ToPoint()
+                , new Point((int)hudWidth,(int)hudHeight));
             var bitcoinSpriteLeft = new ImageSprite(Lookup(Image.BitcoinLogo))
             {
-                Position = new Vector2(50, 12)
+                Position = new Vector2(padding * 20 + leftMoneyText.Width/1.7f, 12)
             };
             bitcoinSpriteLeft.ScaleToHeight(23);
             
             var bitcoinSpriteRight = new ImageSprite(Lookup(Image.BitcoinLogo))
             {
-                Position = new Vector2(hudWidth-40, 12)
+                Position = new Vector2(hudWidth - padding * 20 - rightMoneyText.Width/1.7f, 12)
             };
             bitcoinSpriteRight.ScaleToHeight(23);
             
