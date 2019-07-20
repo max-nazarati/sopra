@@ -81,8 +81,8 @@ namespace KernelPanic
                 return ResetByTiles(a, b, tileA, tileB, positionProvider);
             }
 
-            var heatA = positionProvider.TroupeData.TileHeat(tileA.BaseTile.ToPoint());
-            var heatB = positionProvider.TroupeData.TileHeat(tileB.BaseTile.ToPoint());
+            var heatA = positionProvider.TroupeData.TileHeat(tileA.BaseTile.ToPoint(), a);
+            var heatB = positionProvider.TroupeData.TileHeat(tileB.BaseTile.ToPoint(), b);
 
             if (heatA == heatB)
             {
