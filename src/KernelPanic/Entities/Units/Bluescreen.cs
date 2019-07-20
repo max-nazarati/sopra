@@ -119,93 +119,17 @@ namespace KernelPanic.Entities.Units
             // Projectiles in mEmp will clear themselves and should not be deleted here
         }
 
-        protected override void UpdateAbility(PositionProvider positionProvider, GameTime gameTime, InputManager inputManager)
+        protected override void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
         {
-            #region DEBUG
-#if DEBUG
-            if (!Selected) { goto SwitchAbilityState; }
-            Console.WriteLine("################################################################################");
-            Console.WriteLine("[TIME:] " + gameTime.TotalGameTime);
-            Console.WriteLine(this + " WANTS TO UPDATED HIS ABILITY!");
-            Console.Write("CURRENT ABILITY STATE IS: ");
-
-            switch (AbilityStatus)
-            {
-                case AbilityState.Ready:
-                    Console.WriteLine("Ready");
-                    break;
-
-                case AbilityState.Indicating:
-                    Console.WriteLine("Indicating");
-                    break;
-
-                case AbilityState.Active:
-                    Console.WriteLine("Active");
-                    break;
-
-                case AbilityState.Starting:
-                    Console.WriteLine("Starting");
-                    break;
-
-                case AbilityState.Finished:
-                    Console.WriteLine("Finished");
-                    break;
-
-                case AbilityState.CoolingDown:
-                    Console.WriteLine("CoolingDown");
-                    break;
-            }
-
-            Console.WriteLine("################################################################################" + '\n');
-
-        SwitchAbilityState:
-#endif
-            #endregion
-
-            switch (AbilityStatus)
-            {
-                case AbilityState.Ready:
-                    // Here we should check if we should start to indicate the ability
-                    TryActivateAbility(inputManager);
-                    if (AbilityStatus == AbilityState.Indicating)
-                    {
-                        goto case AbilityState.Indicating;
-                    }
-                    break;
-
-                case AbilityState.Indicating:
-                    // sets the next AbilityState if wanted.
-                    IndicateAbility(positionProvider, inputManager);
-                    break;
-
-                case AbilityState.Starting:
-                    // initialize the ability
-                    StartAbility(positionProvider, inputManager);
-                    break;
-
-                case AbilityState.Active:
-                    // take one action per update cycle until the ability is finished
-                    ContinueAbility(positionProvider ,gameTime);
-                    break;
-
-                case AbilityState.Finished:
-                    // finally cleaning up has to be done and starting to cool down
-                    FinishAbility(positionProvider);
-                    break;
-
-                case AbilityState.CoolingDown:
-                    var currtile = positionProvider.RequireTile(this);
-                    Console.WriteLine(currtile.Row - Grid.LaneWidthInTiles);
-                    var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - currtile.Column == 2
-                        && currtile.Row < Grid.LaneWidthInTiles :
-                        currtile.Column == 1 && currtile.Row > Grid.LaneWidthInTiles;
+            var currTile = positionProvider.RequireTile(this);
+            Console.WriteLine(currTile.Row - Grid.LaneWidthInTiles);
+            var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - currTile.Column == 2
+                                                                            && currTile.Row < Grid.LaneWidthInTiles :
+                currTile.Column == 1 && currTile.Row > Grid.LaneWidthInTiles;
                     
-                    if (inBase)
-                        UpdateCooldown(gameTime, positionProvider);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
+            if (inBase)
+            {
+                base.UpdateCooldown(gameTime, positionProvider);
             }
         }
 

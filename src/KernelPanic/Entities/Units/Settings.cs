@@ -83,14 +83,6 @@ namespace KernelPanic.Entities.Units
             }
         }
 
-        protected override void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
-        {
-            if (true) // ask for base tile hit
-            {
-                base.UpdateCooldown(gameTime, positionProvider);
-            }
-        }
-
         protected override void TryActivateAbility(InputManager inputManager, bool button = false)
         {
             // TODO show the cooldown and disable the click ability (or make it active i dunno, im just a comment not a cop)
