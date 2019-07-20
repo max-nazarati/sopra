@@ -107,14 +107,14 @@ namespace KernelPanic.Entities.Units
             }
         }
 
-        protected override void ContinueAbility(GameTime gameTime)
+        protected override void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
         {
             AbilityStatus = AbilityState.Finished;
         }
         
-        protected override void FinishAbility()
+        protected override void FinishAbility(PositionProvider positionProvider)
         {
-            base.FinishAbility();
+            base.FinishAbility(positionProvider);
             // Projectiles in mEmp will clear themselves and should not be deleted here
         }
         

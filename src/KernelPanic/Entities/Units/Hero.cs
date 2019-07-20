@@ -223,12 +223,12 @@ namespace KernelPanic.Entities.Units
                 
                 case AbilityState.Active:
                     // take one action per update cycle until the ability is finished
-                    ContinueAbility(gameTime);
+                    ContinueAbility(positionProvider, gameTime);
                     break;
 
                 case AbilityState.Finished:
                     // finally cleaning up has to be done and starting to cool down
-                    FinishAbility();
+                    FinishAbility(positionProvider);
                     break;
 
                 case AbilityState.CoolingDown:
@@ -295,13 +295,13 @@ namespace KernelPanic.Entities.Units
             EventCenter.Default.Send(Event.HeroAbility(this));
         }
         
-        protected virtual void ContinueAbility(GameTime gameTime)
+        protected virtual void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
         {
             // Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
             AbilityStatus = AbilityState.Finished;
         }
 
-        protected virtual void FinishAbility()
+        protected virtual void FinishAbility(PositionProvider positionProvider)
         {
             ShouldMove = true;
             AbilityStatus = AbilityState.CoolingDown;
@@ -322,6 +322,7 @@ namespace KernelPanic.Entities.Units
             mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
             ShouldMove = true;
         }
+
         #endregion
 
         #region Update
@@ -330,6 +331,7 @@ namespace KernelPanic.Entities.Units
         {
             if (Selected)
             {
+                // TODO remove this for the final version
                 if (inputManager.KeyPressed(Keys.Space))
                 {
                     StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Autonomous : Strategy.Human;

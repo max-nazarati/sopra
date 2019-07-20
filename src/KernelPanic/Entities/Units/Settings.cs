@@ -23,7 +23,6 @@ namespace KernelPanic.Entities.Units
 
         private static Point HitBoxSize => new Point(56, 59);
 
-        // Heilt alle zwei Sekunden, Truppen im Radius von 1 Kachel um 2 LP
         internal Settings(SpriteManager spriteManager)
             : base(50, 4, 25, 0, TimeSpan.FromSeconds(1), HitBoxSize, spriteManager.CreateSettings(), spriteManager)
         {

@@ -4,7 +4,9 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Events;
 using KernelPanic.Input;
+using KernelPanic.Players;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -20,6 +22,7 @@ namespace KernelPanic.Entities.Units
         private readonly ImageSprite mIndicator;
         private const int JumpDuration = 10;
         private const int JumpSegmentLength = 30;
+        private HashSet<Building> mJumpedBuildings;
 
         private static Point HitBoxSize => new Point(56, 29);
 
@@ -57,6 +60,9 @@ namespace KernelPanic.Entities.Units
             // AbilityState, CoolDown, sound...
             base.StartAbility(positionProvider, inputManager);
             ShouldMove = false;
+
+            // Achievement Data
+            mJumpedBuildings = new HashSet<Building>();
 
             // calculate the jump direction
             var mouse = mJumpTarget ?? inputManager.TranslatedMousePosition;
@@ -101,7 +107,7 @@ namespace KernelPanic.Entities.Units
             }
         }
 
-        protected override void ContinueAbility(GameTime gameTime)
+        protected override void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
         {
             if (mAbility.Count == 0)
             {
@@ -112,10 +118,32 @@ namespace KernelPanic.Entities.Units
             }
 
             var jumpDistance = mAbility.Pop();
-            // TODO check if firefox jumped over a tower, so we can track it in achievements
-            // TODO also give positionProvider as argument so we know which player got it
             Sprite.Position += jumpDistance;
+
+            bool EntityIsBuilding(IGameObject gameObject) => gameObject is Building;
+
+            // TODO we are accessing entity graph twice here... makes me kinda sad
+            if (positionProvider.HasEntityAt(Sprite.Position, EntityIsBuilding))
+            {
+                // TODO we might get more towers here than we want...
+                var buildings = positionProvider.EntitiesAt<Building>(this);
+                foreach (var building in buildings)
+                {
+                    mJumpedBuildings.Add(building);
+                }
+            }
         }
+
+        protected override void FinishAbility(PositionProvider positionProvider)
+        {
+            base.FinishAbility(positionProvider);
+            // send one Event for every building we jumped
+            for (var i = 0; i < mJumpedBuildings.Count; i++)
+            {
+                EventCenter.Default.Send(Event.FirefoxJumped(positionProvider.Owner, this));
+            }
+        }
+
         #endregion Ability
 
         #region KI
@@ -165,9 +193,6 @@ namespace KernelPanic.Entities.Units
             TryActivateAbility(inputManager, true);
             StartAbility(positionProvider, inputManager);
         }
-
-
-
 
         #endregion
         
