@@ -396,7 +396,7 @@ namespace KernelPanic
             }
 
             // Fill rows in between.
-            for (var row = thickness; row < size.Y - thickness; ++row)
+            for (var row = thickness; row < size.Y - thickness - 1; ++row)
             {
                 // Fill the left and right border.
                 for (var col = 0; col < thickness; ++col)
