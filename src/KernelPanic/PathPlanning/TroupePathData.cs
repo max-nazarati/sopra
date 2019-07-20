@@ -123,20 +123,20 @@ namespace KernelPanic.PathPlanning
             return (int?) mHeatMap[point];
         }
 
-        internal void Update(EntityGraph entityGraph, bool buildingsChanged)
+        internal void Update(EntityGraph entityGraph)
         {
-            if (buildingsChanged)
+            if (BuildingMatrix.WasUpdated)
             {
                 BreadthFirstSearch.UpdateHeatMap(mHeatMap, Target);
                 mVectorField.Update();
             }
-            
+
             var hadLargeUnits = mLargeUnits.Count > 0;
             UpdateLargeUnits(entityGraph);
 
             // If there was no change in the buildings and the number of large units is and was zero, we can skip this
             // update.
-            if (!buildingsChanged && !hadLargeUnits && mLargeUnits.Count == 0)
+            if (!BuildingMatrix.WasUpdated && !hadLargeUnits && mLargeUnits.Count == 0)
                 return;
 
             BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, Target, mLargeUnits);

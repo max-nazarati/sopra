@@ -123,7 +123,7 @@ namespace KernelPanic.Table
             }
 
             mTroupeData = new TroupePathData(this, mEntitiesSerializing?.OfType<Building>());
-            mTroupeData.Update(EntityGraph, true);
+            mTroupeData.Update(EntityGraph);
         }
 
         #endregion
@@ -132,12 +132,11 @@ namespace KernelPanic.Table
 
         internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
         {
-            var buildingsChanged = false;
+            mTroupeData.BuildingMatrix.ResetUpdatedStatus();
             
             // Block new buildings in the obstacle matrix.
             foreach (var position in BuildingSpawner.NewBuildings())
             {
-                buildingsChanged = true;
                 mTroupeData.BuildingMatrix[position] = true;
             }
 
@@ -145,13 +144,12 @@ namespace KernelPanic.Table
             IEnumerable<Building> buildings = EntityGraph.Entities<Building>();
             foreach (var building in buildings.Where(building => building.WantsRemoval))
             {
-                buildingsChanged = true;
                 Vector2 position = building.Sprite.Position;
                 TileIndex tileIndex = Grid.TileFromWorldPoint(position).GetValueOrDefault();
                 mTroupeData.BuildingMatrix[tileIndex.ToPoint()] = false;
             }
 
-            mTroupeData.Update(EntityGraph, buildingsChanged);
+            mTroupeData.Update(EntityGraph);
 
             var positionProvider = new PositionProvider(Target, owner, Grid, EntityGraph, mTroupeData, mSpriteManager);
             EntityGraph.Update(positionProvider, gameTime, inputManager);
