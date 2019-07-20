@@ -3,6 +3,7 @@ using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
+using KernelPanic.Interface;
 using KernelPanic.Players;
 using KernelPanic.Table;
 using KernelPanic.Tracking;
@@ -35,6 +36,7 @@ namespace KernelPanic.Events
             KilledUnit,
             ProjectileShot,
             PlayMusic,
+            PlaySounds,
             ChangeSoundVolume,
             ButtonClicked,
             
@@ -196,6 +198,15 @@ namespace KernelPanic.Events
             /// </list>
             /// </summary>
             AchievementPool,
+            
+            /// <summary>
+            /// Of type <see cref="TextButton"/>, applies to
+            /// <list type="bullet">
+            /// <item><description><see cref="Id.PlayMusic"/></description></item>
+            /// <item><description><see cref="Id.PlaySounds"/></description></item>
+            /// </list>
+            /// </summary>
+            Button,
         }
 
         #region Creating events
@@ -226,11 +237,21 @@ namespace KernelPanic.Events
                 }
             };
         
-        internal static Event PlayMusic() =>
+        internal static Event PlayMusic(TextButton button) =>
             new Event(Id.PlayMusic)
             {
                 mPayload =
                 {
+                    [Key.Button] = button,
+                }
+            };
+        
+        internal static Event PlaySounds(TextButton button) =>
+            new Event(Id.PlaySounds)
+            {
+                mPayload =
+                {
+                    [Key.Button] = button,
                 }
             };
         

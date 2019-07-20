@@ -164,16 +164,35 @@ namespace KernelPanic
             };
         }
 
+        private static void TurnMusicOnOff(TextButton musicOnOffButton)
+        {
+            switch (musicOnOffButton.Title)
+            {
+                case "an":
+                    musicOnOffButton.Title = "aus";
+                    EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
+                    break;
+                case "aus":
+                    musicOnOffButton.Title = "an";
+                    EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
+                    break;
+                default:
+                    Console.WriteLine("No valid button title for musicOnOffButton.");
+                    break;
+            }
+        }
+
         private static void TurnSoundsOnOff(TextButton soundOnOffButton)
         {
             switch (soundOnOffButton.Title)
             {
                 case "an":
                     soundOnOffButton.Title = "aus";
+                    EventCenter.Default.Send(Event.PlaySounds(soundOnOffButton));
                     break;
                 case "aus":
                     soundOnOffButton.Title = "an";
-                    EventCenter.Default.Send(Event.PlayMusic());
+                    EventCenter.Default.Send(Event.PlaySounds(soundOnOffButton));
                     break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
@@ -213,7 +232,7 @@ namespace KernelPanic
         {
             var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
             var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
-            musicOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(musicOnOffButton);
+            musicOnOffButton.Clicked += (button, input) => TurnMusicOnOff(musicOnOffButton);
 
             var effectsButton = CreateButton(stateManager.Sprite, "Soundeffekte", 325, 150);
             var effectsOnOffButton = CreateButton(stateManager.Sprite, "aus", 325, -150);

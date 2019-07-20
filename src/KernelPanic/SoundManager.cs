@@ -3,6 +3,7 @@ using System.Diagnostics;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
 using KernelPanic.Events;
+using KernelPanic.Interface;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
@@ -34,10 +35,14 @@ namespace KernelPanic
         private readonly (Sound sound, SoundEffect soundEffect)[] mSounds;
         private readonly (Music music, Song song)[] mSongs;
 
-        private float mVolume = 1;
+        private float mVolume;
+        private bool mPlaySounds;
 
         internal SoundManager(ContentManager contentManager)
         {
+            mVolume = 1f;
+            mPlaySounds = true;
+            
             (Sound, SoundEffect) SoundEffect(Sound sound, string name) => (sound, contentManager.Load<SoundEffect>(name));
             (Music, Song) Song(Music music, string name) => (music, contentManager.Load<Song>(name));
             
@@ -70,6 +75,7 @@ namespace KernelPanic
             eventCenter.Subscribe(Event.Id.ButtonClicked, PlaySound);
             eventCenter.Subscribe(Event.Id.FirefoxJump, PlaySound);
             eventCenter.Subscribe(Event.Id.PlayMusic, PlayMusic);
+            eventCenter.Subscribe(Event.Id.PlaySounds, PlaySounds);
             eventCenter.Subscribe(Event.Id.ChangeSoundVolume, ChangeSoundVolume);
             eventCenter.Subscribe(Event.Id.HeroAbility, PlaySound);
         }
@@ -93,19 +99,31 @@ namespace KernelPanic
         /// </summary>
         private void PlayMusic(Event e)
         {
-            var values = Enum.GetValues(typeof(Music));
-            var random = new Random();
-            var randomBar = (Music)values.GetValue(random.Next(values.Length));
-            MediaPlayer.Play(Lookup(randomBar));
-            switch (e.Kind)
+            switch (e.Get<TextButton>(Event.Key.Button).Title)
             {
-                
+                case "an":
+                    var values = Enum.GetValues(typeof(Music));
+                    var random = new Random();
+                    var randomBar = (Music)values.GetValue(random.Next(values.Length));
+                    MediaPlayer.Play(Lookup(randomBar));
+                    break;
+                case "aus":
+                    MediaPlayer.Stop();
+                    break;
             }
         }
 
-        internal void StopMusic()
+        internal void PlaySounds(Event e)
         {
-            MediaPlayer.Stop();
+            switch (e.Get<TextButton>(Event.Key.Button).Title)
+            {
+                case "an":
+                    mPlaySounds = true;
+                    break;
+                case "aus":
+                    mPlaySounds = false;
+                    break;
+            }
         }
 
         private void ChangeSoundVolume(Event e)
@@ -126,6 +144,7 @@ namespace KernelPanic
 
         private void PlaySound(Event e)
         {
+            if (!mPlaySounds) return;
             switch (e.Kind)
             {
                 case Event.Id.BuildingPlaced:
