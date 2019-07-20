@@ -259,7 +259,6 @@ namespace KernelPanic.Entities
         {
             base.Update(positionProvider, inputManager, gameTime);
 
-
             CalculateMovement(null, positionProvider, inputManager);
 
             mLastPosition = Sprite.Position;

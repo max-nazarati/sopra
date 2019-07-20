@@ -23,8 +23,6 @@ namespace KernelPanic.Entities.Units
         private Tower mAbilityTargetOne;
         private Tower mAbilityTargetTwo;
 
-        private Emp[] mEmps;
-
         private static Point HitBoxSize => new Point(64, 64);
 
         #region Upgrades
@@ -41,25 +39,17 @@ namespace KernelPanic.Entities.Units
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
             mIndicatorTarget = spriteManager.CreateEmpIndicatorTarget();
             mEmpSprite = spriteManager.CreateEmp();
-
-            mEmps = new Emp[2];
         }
         
         protected override void CompleteClone()
         {
             base.CompleteClone();
-            mEmps = new Emp[2];
             Cooldown = new CooldownComponent(Cooldown.Cooldown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
         #region Ability 
 
-        private static double Distance(Vector2 a, Vector2 b)
-        {
-            return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
-        }
-            
         protected override void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // find nearest Tower in Range
@@ -69,7 +59,7 @@ namespace KernelPanic.Entities.Units
             double secondShortestDistance = mAbilityRange + 2;
             foreach (var tower in positionProvider.NearEntities<Tower>(Sprite.Position, mAbilityRange))
             {
-                var distance = Distance(tower.Sprite.Position, Sprite.Position);
+                var distance = Vector2.Distance(tower.Sprite.Position, Sprite.Position);
                 if (distance < shortestDistance)
                 {
                     // shift the old closest turret to the second place
@@ -89,7 +79,6 @@ namespace KernelPanic.Entities.Units
             }
 
             base.IndicateAbility(positionProvider, inputManager);
-            
         }
 
         protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
@@ -99,13 +88,13 @@ namespace KernelPanic.Entities.Units
             
             if (mAbilityTargetOne is Tower first)
             {
-                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite);
+                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite.Clone());
                 positionProvider.AddProjectile(empOne);
             }
 
             if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
             {
-                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite);
+                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite.Clone());
                 positionProvider.AddProjectile(empTwo);
             }
         }
@@ -113,12 +102,6 @@ namespace KernelPanic.Entities.Units
         protected override void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
         {
             AbilityStatus = AbilityState.Finished;
-        }
-        
-        protected override void FinishAbility(PositionProvider positionProvider)
-        {
-            base.FinishAbility(positionProvider);
-            // Projectiles in mEmp will clear themselves and should not be deleted here
         }
 
         protected override void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
@@ -132,8 +115,7 @@ namespace KernelPanic.Entities.Units
 
         #endregion Ability
 
-
-        private bool InBase(TileIndex tile, PositionProvider positionProvider)
+        private static bool InBase(TileIndex tile, PositionProvider positionProvider)
         {
             var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - tile.Column == 2
                                                                             && tile.Row < Grid.LaneWidthInTiles :
@@ -155,7 +137,6 @@ namespace KernelPanic.Entities.Units
 
                 // walk to the own base to refill
                 // TODO
-
                 var basePositionX = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - 2 : 1;
                 var basePositionY = positionProvider.Grid.LaneSide == Lane.Side.Left ? Grid.LaneWidthInTiles - 1 : 1;
                 var basePosition = new[] {new Point(basePositionX, basePositionY)};
@@ -169,7 +150,7 @@ namespace KernelPanic.Entities.Units
             {
                 if (positionProvider.NearEntities<Tower>(this, mAbilityRange).Any())
                 {
-                    TryActivateAbility(inputManager, true);
+                    IndicateAbility(positionProvider, inputManager);
                     StartAbility(positionProvider, inputManager);
                 }
                 // search for a tower
@@ -186,23 +167,7 @@ namespace KernelPanic.Entities.Units
             ShouldMove = true;
             */
         }
-        
-        #region Update
 
-        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
-        {
-            base.Update(positionProvider, inputManager, gameTime);
-            if (mEmps[0] is Emp empOne)
-            {
-                empOne.Update(positionProvider, inputManager, gameTime);
-            }
-            if (mEmps[1] is Emp empTwo)
-            {
-                empTwo.Update(positionProvider, inputManager, gameTime);
-            }
-        }
-
-        #endregion
         
         #region Draw
         
@@ -212,16 +177,6 @@ namespace KernelPanic.Entities.Units
             if (AbilityStatus == AbilityState.Indicating)
             {
                 DrawIndicator(spriteBatch, gameTime);
-            }
-            
-            // Drawing the Emps needs to get moved, so the emp doesnt die together with the bluescreen
-            if (mEmps[0] is Emp empOne)
-            {
-                empOne.Draw(spriteBatch, gameTime);
-            }
-            if (mEmps[1] is Emp empTwo)
-            {
-                empTwo.Draw(spriteBatch, gameTime);
             }
         }
 
