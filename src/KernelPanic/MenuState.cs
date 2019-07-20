@@ -29,7 +29,7 @@ namespace KernelPanic
             mEscapeAction = escapeAction;
         }
 
-        internal static MenuState CreateMainMenu(GameStateManager stateManager)
+        internal static MenuState CreateMainMenu(GameStateManager stateManager, InputManager inputManager)
         {
             var playButton = CreateButton(stateManager.Sprite, "Spielen", 100);
             playButton.Clicked += (button, input) => stateManager.Push(CreatePlayMenu(stateManager));
@@ -39,7 +39,7 @@ namespace KernelPanic
 
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 300);
             optionsButton.Clicked += (button, input) =>
-                stateManager.Push(CreateOptionsMenu(stateManager));
+                stateManager.Push(CreateOptionsMenu(stateManager, inputManager));
             
             var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 400);
             instructionsButton.Clicked += (button, input) => stateManager
@@ -188,7 +188,7 @@ namespace KernelPanic
             button.Title = graphics.IsFullScreen ? "an" : "aus";
         }
 
-        private static MenuState CreateOptionsMenu(GameStateManager stateManager)
+        private static MenuState CreateOptionsMenu(GameStateManager stateManager, InputManager inputManager)
         {
             var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
             var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
@@ -203,7 +203,7 @@ namespace KernelPanic
             
             var keyInputsButton = CreateButton(stateManager.Sprite, "Steuerung", 575, 150);
             keyInputsButton.Clicked += (button, input) => stateManager
-                .Push(CreateKeyInputMenu(stateManager));
+                .Push(CreateKeyInputMenu(stateManager, inputManager));
 
             var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 700, 150);
             var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus",700, -150);
@@ -230,8 +230,8 @@ namespace KernelPanic
                 }
             };
         }
-        
-        private static MenuState CreateKeyInputMenu(GameStateManager stateManager)
+
+        private static MenuState CreateKeyInputMenu(GameStateManager stateManager, InputManager inputManager)
         {
             // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
@@ -242,12 +242,17 @@ namespace KernelPanic
             title.Y = 100;
             title.SetOrigin(RelativePosition.TopRight);
 
+            var placeTower = CreateButton(stateManager.Sprite, inputManager.KeyPressed(Keys.A).ToString(), 400, -250);
+            var placeTowerChooseKey = CreateButton(stateManager.Sprite, "Turm platzieren", 400,250);
+
             return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     new StaticComponent(title),
+                    placeTower,
+                    placeTowerChooseKey,
                     backButton
                 }
             };
@@ -448,11 +453,11 @@ namespace KernelPanic
         }
 
         public static MenuState CreateGameOverScreen(GameStateManager stateManager,
-            Table.Board.GameState result)
+            Table.Board.GameState result, InputManager inputManager)
         {
             var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
             mainMenuButton.Clicked += (button, input) =>
-                stateManager.Restart(CreateMainMenu(stateManager));
+                stateManager.Restart(CreateMainMenu(stateManager, inputManager));
 
             var text = stateManager.Sprite.CreateText(result == Table.Board.GameState.AWon
                 ? "Du hast gewonnen!"
@@ -472,21 +477,21 @@ namespace KernelPanic
         }
 
         public static MenuState CreatePauseMenu(GameStateManager stateManager,
-            InGameState inGameState)
+            InGameState inGameState, InputManager inputManager)
         {
             var backButton = CreateButton(stateManager.Sprite, "Weiter Spielen", 200);
             backButton.Clicked += stateManager.PopOnClick;
 
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
             optionsButton.Clicked += (button, input) =>
-                stateManager.Push(CreateOptionsMenu(stateManager));
+                stateManager.Push(CreateOptionsMenu(stateManager, inputManager));
 
             var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
             saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);
 
             var mainMenuButton = CreateButton(stateManager.Sprite, "Hauptmenü", 575);
             mainMenuButton.Clicked += (button, input) =>
-                stateManager.Restart(CreateMainMenu(stateManager));
+                stateManager.Restart(CreateMainMenu(stateManager, inputManager));
 
             return new MenuState(stateManager)
             {

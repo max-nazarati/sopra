@@ -92,7 +92,7 @@ namespace KernelPanic
         {
             if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.ScoreOverlay.Pause)
             {
-                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this));
+                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, inputManager));
                 mHud.ScoreOverlay.Pause = false;
                 return;
             }
@@ -112,8 +112,8 @@ namespace KernelPanic
                 ? Event.GameWon(mBoard.PlayerA, mBoard.PlayerB)
                 : Event.GameLost(mBoard.PlayerB, mBoard.PlayerA));
 
-            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager));
-            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState));
+            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, inputManager));
+            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, inputManager));
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
