@@ -122,18 +122,22 @@ namespace KernelPanic.Entities.Units
         protected override void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
         {
             var currTile = positionProvider.RequireTile(this);
-            Console.WriteLine(currTile.Row - Grid.LaneWidthInTiles);
-            var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - currTile.Column == 2
-                                                                            && currTile.Row < Grid.LaneWidthInTiles :
-                currTile.Column == 1 && currTile.Row > Grid.LaneWidthInTiles;
-                    
-            if (inBase)
+            if (InBase(currTile, positionProvider))
             {
                 base.UpdateCooldown(gameTime, positionProvider);
             }
         }
 
         #endregion Ability
+
+
+        private bool InBase(TileIndex tile, PositionProvider positionProvider)
+        {
+            var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - tile.Column == 2
+                                                                            && tile.Row < Grid.LaneWidthInTiles :
+                tile.Column == 1 && tile.Row > Grid.LaneWidthInTiles;
+            return inBase;
+        }
 
         #region Update
 
