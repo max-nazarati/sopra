@@ -148,6 +148,7 @@ namespace KernelPanic.Entities
 
         private bool mSlowedDown;
         private Vector2 mLastPosition;
+        private Vector2? mLastMoveTarget;
 
         /// <summary>
         /// Slows this unit for the next frame.
@@ -227,6 +228,7 @@ namespace KernelPanic.Entities
                 return false;
 
             Sprite.Position = mLastPosition;
+            MoveTarget = mLastMoveTarget;
             return true;
         }
 
@@ -252,6 +254,7 @@ namespace KernelPanic.Entities
             CalculateMovement(null, positionProvider, inputManager);
 
             mLastPosition = Sprite.Position;
+            mLastMoveTarget = MoveTarget;
             var move = ShouldMove && MoveTarget is Vector2 target
                 ? PerformMove(target, positionProvider, inputManager)
                 : null;
