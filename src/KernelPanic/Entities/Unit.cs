@@ -216,8 +216,9 @@ namespace KernelPanic.Entities
                 }
 
                 // set the new place we want to reach and the vector to get there
-                target = projectedTarget;
                 targetMove = projectedTarget - target;
+                targetDistance = targetMove.Length();
+                target = projectedTarget;
             }
         }
 
