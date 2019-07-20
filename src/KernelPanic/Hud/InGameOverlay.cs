@@ -6,6 +6,7 @@ using KernelPanic.Selection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using KernelPanic.Waves;
 
 namespace KernelPanic.Hud
 {
@@ -20,7 +21,7 @@ namespace KernelPanic.Hud
 
         internal override bool IsOverlay => true;
 
-        internal InGameOverlay(PlayerIndexed<Player> players,
+        internal InGameOverlay(WaveManager waveManager,
             UnitBuyingMenu unitMenu,
             BuildingBuyingMenu buildingMenu,
             SelectionManager selectionManager,
@@ -31,10 +32,10 @@ namespace KernelPanic.Hud
             mSelection = selectionManager.Selection;
             selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
 
-            ScoreOverlay = new ScoreOverlay(players, gameStateManager.Sprite, time);
+            ScoreOverlay = new ScoreOverlay(waveManager, gameStateManager.Sprite, time);
             UnitBuyingMenu = unitMenu;
             mBuildingBuyingMenu = buildingMenu;
-            mMinimapOverlay = new MinimapOverlay(players, gameStateManager.Sprite, camera);
+            mMinimapOverlay = new MinimapOverlay(waveManager.Players, gameStateManager.Sprite, camera);
         }
 
         public override void Update(InputManager inputManager,

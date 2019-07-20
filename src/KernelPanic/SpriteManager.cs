@@ -285,7 +285,8 @@ namespace KernelPanic
         }
 
         internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right
-            , TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay()
+            , TextSprite RightMoney, TextSprite RightEP, TextSprite Clock, TextSprite DefeatedWavesByHuman
+            , TextSprite DefeatedWavesByComputer) CreateScoreDisplay()
         {
             const float scale = 1.8f;
             const float hudWidth = scale * 318;
@@ -326,11 +327,24 @@ namespace KernelPanic
                 TintColor = Color.DarkRed
             };
             rightText.SetOrigin(RelativePosition.TopRight);
+            
             var clockText = new TextSprite(font, "00:00:00")
             {
                 Position = new Vector2(hudWidth / 2, hudHeight / 2 + topPadding)
             };
             clockText.SetOrigin(RelativePosition.CenterTop);
+            
+            var defeatedWavesByHumanText = new TextSprite(font, "00:00:00")
+            {
+                Position = new Vector2(-50, hudHeight / 4)
+            };
+            defeatedWavesByHumanText.SetOrigin(RelativePosition.CenterTop);
+            
+            var defeatedWavesByComputerText = new TextSprite(font, "00:00:00")
+            {
+                Position = new Vector2(hudWidth+50, hudHeight / 4)
+            };
+            defeatedWavesByComputerText.SetOrigin(RelativePosition.CenterTop);
 
             var hudSprite = new ImageSprite(Lookup(Image.ScoreBackground));
             hudSprite.ScaleToWidth(hudWidth);
@@ -349,10 +363,11 @@ namespace KernelPanic
             var sprite = new CompositeSprite
             {
                 Children = { hudSprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText
-                    , clockText, bitcoinSpriteLeft, bitcoinSpriteRight },
+                    , clockText, defeatedWavesByHumanText, defeatedWavesByComputerText, bitcoinSpriteLeft, bitcoinSpriteRight },
                 Position = new Vector2(leftBoarder, 0)
             };
-            return (sprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText);
+            return (sprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText
+                , defeatedWavesByHumanText, defeatedWavesByComputerText);
         }
 
         #region Troupes

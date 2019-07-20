@@ -20,16 +20,20 @@ namespace KernelPanic.Waves
         internal PlayerIndexed<Player> Players { get; }
 
         [JsonProperty]
-        private TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(10);
+        internal TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(10);
 
         [JsonProperty]
         private int mLastIndex;
+
+        internal int mByHumanDefeatedWaves, mByComputerDefeatedWaves;
 
         /// <summary>
         /// All the waves where at least one player still has units.
         /// </summary>
         [JsonProperty]
         private readonly List<Wave> mAliveWaves = new List<Wave>();
+        private readonly List<Wave> mByHumanDefeatedWavesList = new List<Wave>();
+        private readonly List<Wave> mByComputerDefeatedWavesList = new List<Wave>();
 
         /// <summary>
         /// The latest wave, this is the one where both players still have units.
@@ -44,6 +48,8 @@ namespace KernelPanic.Waves
             mTroupes = new PlayerIndexed<List<Troupe>>(new List<Troupe>(), new List<Troupe>());
             Players = players;
             mNextWaveTimer.CooledDown += SpawnWave;
+            mByHumanDefeatedWaves = 0;
+            mByComputerDefeatedWaves = 0;
         }
 
         private void Activate()
@@ -110,6 +116,18 @@ namespace KernelPanic.Waves
             //    This awards experience points.
             foreach (var wave in mAliveWaves)
                 wave.RemoveDead(Players);
+
+            foreach (var wave in mAliveWaves.Where(wave => wave.FullyDefeatedByHuman && !mByHumanDefeatedWavesList.Contains(wave)))
+            {
+                mByHumanDefeatedWavesList.Add(wave);
+                mByHumanDefeatedWaves++;
+            }
+            
+            foreach (var wave in mAliveWaves.Where(wave => wave.FullyDefeatedByComputer && !mByComputerDefeatedWavesList.Contains(wave)))
+            {
+                mByComputerDefeatedWavesList.Add(wave);
+                mByComputerDefeatedWaves++;
+            }
 
             // 2. Remember the current wave, which might get removed from mAliveWaves in 3.
             var current = CurrentWave;

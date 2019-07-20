@@ -61,5 +61,8 @@ namespace KernelPanic.Waves
         /// Returns <c>true</c> if neither player has <see cref="Unit"/>s remaining in this <see cref="Wave"/>.
         /// </summary>
         internal bool FullyDefeated => Troupes.A.Count == 0 && Troupes.B.Count == 0;
+
+        internal bool FullyDefeatedByHuman => Troupes.B.Count == 0;
+        internal bool FullyDefeatedByComputer => Troupes.A.Count == 0;
     }
 }

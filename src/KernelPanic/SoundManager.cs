@@ -40,7 +40,7 @@ namespace KernelPanic
 
         internal SoundManager(ContentManager contentManager)
         {
-            mVolume = 1f;
+            mVolume = 0.8f;
             mPlaySounds = true;
             
             (Sound, SoundEffect) SoundEffect(Sound sound, string name) => (sound, contentManager.Load<SoundEffect>(name));
@@ -130,14 +130,17 @@ namespace KernelPanic
         {
             switch (mVolume)
             {
-                case 1.0f:
-                    mVolume = 1.5f;
+                case 0.8f:
+                    mVolume = 1.4f;
+                    MediaPlayer.Volume = mVolume;
                     break;
-                case 1.5f:
-                    mVolume = 0.5f;
+                case 1.4f:
+                    mVolume = 0.4f;
+                    MediaPlayer.Volume = mVolume;
                     break;
-                case 0.5f:
-                    mVolume = 1.0f;
+                case 0.4f:
+                    mVolume = 0.8f;
+                    MediaPlayer.Volume = mVolume;
                     break;
             }
         }
