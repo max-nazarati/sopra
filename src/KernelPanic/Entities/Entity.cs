@@ -80,11 +80,6 @@ namespace KernelPanic.Entities
 
         public abstract Rectangle Bounds { get; }
 
-        internal virtual void AttackBase(InputManager inputManager, PositionProvider positionProvider)
-        {
-            // do nothing (Troupes walk to the base anyways
-        }
-
         public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             if (!Selected)
