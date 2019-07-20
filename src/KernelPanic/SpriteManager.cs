@@ -289,7 +289,7 @@ namespace KernelPanic
             , TextSprite DefeatedWavesByComputer) CreateScoreDisplay()
         {
             const float scale = 1.8f;
-            const float hudWidth = scale * 650;
+            const float hudWidth = scale * 600;
             const float moneyWidth = scale * 60;
             const float hudHeight = scale * 44;
             const float padding = scale * 5;
@@ -300,36 +300,36 @@ namespace KernelPanic
 
             var leftMoneyText = new TextSprite(font, "00000 $")
             {
-                Position = new Vector2(padding * 20, topPadding)
+                Position = new Vector2(padding * 25, topPadding)
             };
             
             var leftEpText = new TextSprite(font, "000 EP")
             {
-                Position = new Vector2(moneyWidth * 2 + padding*7, topPadding)
+                Position = new Vector2(moneyWidth * 2 + padding*15, topPadding)
             };
             
             var leftText = new TextSprite(font, "000%")
             {
-                Position = new Vector2(3 * moneyWidth + 5*padding, topPadding),
+                Position = new Vector2(hudWidth / 2 - 10 * padding, topPadding),
                 TintColor = Color.DarkBlue
             };
             
             var rightMoneyText = new TextSprite(font, "00000$")
             {
-                Position = new Vector2(hudWidth - padding * 20, topPadding)
+                Position = new Vector2(hudWidth - padding * 25, topPadding)
             };
             rightMoneyText.SetOrigin(RelativePosition.TopRight);
             
             var rightEpText = new TextSprite(font, "000 EP")
             {
-                Position = new Vector2(hudWidth - 2 * moneyWidth - padding*7, topPadding),
+                Position = new Vector2(hudWidth - 2 * moneyWidth - padding*12, topPadding),
                 
             };
             rightEpText.SetOrigin(RelativePosition.TopRight);
             
             var rightText = new TextSprite(font, "000%")
             {
-                Position = new Vector2(hudWidth - 3 * moneyWidth - padding*5, topPadding),
+                Position = new Vector2(hudWidth / 2 + 10 * padding, topPadding),
                 TintColor = Color.DarkRed
             };
             
@@ -343,13 +343,13 @@ namespace KernelPanic
             
             var defeatedWavesByHumanText = new TextSprite(font, "00:00:00")
             {
-                Position = new Vector2(50, topPadding)
+                Position = new Vector2(75, topPadding)
             };
             defeatedWavesByHumanText.SetOrigin(RelativePosition.CenterTop);
             
             var defeatedWavesByComputerText = new TextSprite(font, "00:00:00")
             {
-                Position = new Vector2(hudWidth-125, topPadding)
+                Position = new Vector2(hudWidth-150, topPadding)
             };
             defeatedWavesByComputerText.SetOrigin(RelativePosition.CenterTop);
 
@@ -358,13 +358,13 @@ namespace KernelPanic
                 , new Point((int)hudWidth,(int)hudHeight));
             var bitcoinSpriteLeft = new ImageSprite(Lookup(Image.BitcoinLogo))
             {
-                Position = new Vector2(padding * 20 + leftMoneyText.Width/1.7f, 12)
+                Position = new Vector2(padding * 25 + leftMoneyText.Width/1.7f, 12)
             };
             bitcoinSpriteLeft.ScaleToHeight(23);
             
             var bitcoinSpriteRight = new ImageSprite(Lookup(Image.BitcoinLogo))
             {
-                Position = new Vector2(hudWidth - padding * 20 - rightMoneyText.Width/1.7f, 12)
+                Position = new Vector2(hudWidth - padding * 25 - rightMoneyText.Width/1.7f, 12)
             };
             bitcoinSpriteRight.ScaleToHeight(23);
             
