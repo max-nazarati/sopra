@@ -18,12 +18,6 @@ namespace KernelPanic.PathPlanning
         internal ObstacleMatrix BuildingMatrix { get; }
 
         /// <summary>
-        /// The <see cref="HeatMap"/> generated from <see cref="BuildingMatrix"/> used for calculating
-        /// <see cref="mVectorField"/>.
-        /// </summary>
-        private readonly HeatMap mHeatMap;
-
-        /// <summary>
         /// The <see cref="VectorField"/> for non-small troupes. <see cref="Thunderbird"/> uses
         /// <see cref="mThunderbirdVectorField"/>.
         /// </summary>
@@ -63,7 +57,7 @@ namespace KernelPanic.PathPlanning
             if (initialBuildings != null)
                 BuildingMatrix.Raster(initialBuildings);
 
-            mHeatMap = new HeatMap(BuildingMatrix);
+            var heatMap = new HeatMap(BuildingMatrix);
             var smallHeatMap = new HeatMap(BuildingMatrix);
 
             RelativePosition spawnDirection, targetDirection;
@@ -82,7 +76,8 @@ namespace KernelPanic.PathPlanning
                         (int) mGrid.LaneSide,
                         typeof(Lane.Side));
             }
-            mVectorField = new VectorField(mHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
+
+            mVectorField = new VectorField(heatMap, spawnPoints, spawnDirection, Target, targetDirection);
             mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(mGrid.LaneRectangle.Size, mGrid.LaneSide);
         }
@@ -118,16 +113,17 @@ namespace KernelPanic.PathPlanning
             }
         }
 
-        internal int? TileHeat(Point point)
+        internal int? TileHeat(Point point, Unit unit = null)
         {
-            return (int?) mHeatMap[point];
+            var vectorField = unit == null ? mVectorField : SelectVectorField(unit);
+            return (int?) vectorField.HeatMap[point];
         }
 
         internal void Update(EntityGraph entityGraph)
         {
             if (BuildingMatrix.WasUpdated)
             {
-                BreadthFirstSearch.UpdateHeatMap(mHeatMap, Target);
+                BreadthFirstSearch.UpdateHeatMap(mVectorField.HeatMap, Target);
                 mVectorField.Update();
             }
 
