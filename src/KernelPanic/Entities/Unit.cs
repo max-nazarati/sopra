@@ -222,7 +222,7 @@ namespace KernelPanic.Entities
             WantsRemoval = true;
         }
 
-        internal bool ResetMovement()
+        internal virtual bool ResetMovement()
         {
             if (Sprite.Position == mLastPosition)
                 return false;
@@ -232,7 +232,7 @@ namespace KernelPanic.Entities
             return true;
         }
 
-        internal void SetInitialPosition(Vector2 position)
+        internal virtual void SetInitialPosition(Vector2 position)
         {
             mLastPosition = position;
             Sprite.Position = position;
