@@ -376,7 +376,7 @@ namespace KernelPanic.Data
             var parentElementsCount = parentElements.Count;
             var parentElementsCopy = parentElementsCount == 0 ? null : new List<T>(parentElements);
 
-            return mChildren.SelectMany(tree =>
+            return mChildren.Where(tree => tree.Count > 0).SelectMany(tree =>
             {
                 if (parentElementsCopy != null)
                 {
