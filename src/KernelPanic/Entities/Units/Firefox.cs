@@ -120,8 +120,8 @@ namespace KernelPanic.Entities.Units
             var jumpDistance = mAbility.Pop();
             Sprite.Position += jumpDistance;
 
+            #region Achievement
             bool EntityIsBuilding(IGameObject gameObject) => gameObject is Building;
-
             // TODO we are accessing entity graph twice here... makes me kinda sad
             if (positionProvider.HasEntityAt(Sprite.Position, EntityIsBuilding))
             {
@@ -132,6 +132,7 @@ namespace KernelPanic.Entities.Units
                     mJumpedBuildings.Add(building);
                 }
             }
+            #endregion
         }
 
         protected override void FinishAbility(PositionProvider positionProvider)
