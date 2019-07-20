@@ -185,12 +185,12 @@ namespace KernelPanic.Entities.Units
 
                 case AbilityState.Active:
                     // take one action per update cycle until the ability is finished
-                    ContinueAbility(gameTime);
+                    ContinueAbility(positionProvider ,gameTime);
                     break;
 
                 case AbilityState.Finished:
                     // finally cleaning up has to be done and starting to cool down
-                    FinishAbility();
+                    FinishAbility(positionProvider);
                     break;
 
                 case AbilityState.CoolingDown:
@@ -199,9 +199,7 @@ namespace KernelPanic.Entities.Units
                     var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - currtile.Column == 2
                         && currtile.Row < Grid.LaneWidthInTiles :
                         currtile.Column == 1 && currtile.Row > Grid.LaneWidthInTiles;
-                        
-
-
+                    
                     if (inBase)
                         UpdateCooldown(gameTime, positionProvider);
                     break;
