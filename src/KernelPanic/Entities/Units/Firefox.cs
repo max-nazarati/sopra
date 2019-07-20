@@ -7,7 +7,6 @@ using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Events;
 using KernelPanic.Input;
-using KernelPanic.Players;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -70,9 +69,7 @@ namespace KernelPanic.Entities.Units
             var mouse = mJumpTarget ?? inputManager.TranslatedMousePosition;
             var direction = mouse - Sprite.Position;
             direction.Normalize();
-            
-            // private const int JumpDuration = 10;
-            // private const int JumpSegmentLength = 30;
+
             // we have _10_ Parts with a distance of _30_ each
             var jumpSegment = direction * JumpSegmentLength;
             for (var _ = 0; _ < JumpDuration; _++)
