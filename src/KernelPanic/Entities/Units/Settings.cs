@@ -132,42 +132,9 @@ namespace KernelPanic.Entities.Units
         /// </summary>
         protected override void AutonomousAttack(InputManager inputManager, PositionProvider positionProvider)
         {
-            #region get all translation for the 8 adjacent tiles
             var startPoint = positionProvider.RequireTile(Sprite.Position).ToPoint();
-            var neighboursPosition = new List<(int, int)>()
-            {
-                         (-1, -1),  (0, -1), (1, -1),
-                         (-1,  0),           (1,  0), // (0, 0) is the point itself
-                         (-1,  1),  (0, 1),  (1,  1),
-
-                // increases the radius by 1:
-                (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2),
-                (-2, -1),                             (2, -1),
-                (-2,  0),                             (2,  0),
-                (-2,  1),                             (2,  1),
-                (-2,  2), (-1,  2), (0,  2), (1,  2), (2,  2)
-            };
-            #endregion
-
-            #region add the points of the adjacent neighbours into a list (if they are on the lane)
-            var neighbours = new List<Point>();
-            foreach (var (x, y) in neighboursPosition)
-            {
-                try
-                {
-                    neighbours.Add(
-                        positionProvider.RequireTile(
-                            new Vector2(Sprite.Position.X + x * Grid.KachelSize,
-                                        Sprite.Position.Y + y * Grid.KachelSize)
-                            ).ToPoint());
-                }
-                catch (InvalidOperationException)
-                {
-                    // just dont add the point
-                }
-            }
-            #endregion
-
+            var neighbours = GetNeighbours(positionProvider);
+            
             #region calculate a heuristic for all neighbours and choose the best
             var bestPoint = startPoint;
             var bestValue = 0f;

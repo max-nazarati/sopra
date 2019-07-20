@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Input;
@@ -139,6 +141,52 @@ namespace KernelPanic.Entities.Units
             return inBase;
         }
 
+        protected override void AutonomousAttack(InputManager inputManager, PositionProvider positionProvider)
+        {
+            var currTile = positionProvider.RequireTile(this);
+
+            if (!Cooldown.Ready)
+            {
+                // wait for the ability to be ready again
+                if (InBase(currTile, positionProvider))
+                {
+                    return;
+                }
+
+                // walk to the own base to refill
+                // TODO
+
+                var basePositionX = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - 2 : 1;
+                var basePositionY = positionProvider.Grid.LaneSide == Lane.Side.Left ? Grid.LaneWidthInTiles - 1 : 1;
+                var basePosition = new[] {new Point(basePositionX, basePositionY)};
+
+                mAStar = positionProvider.MakePathFinding(this, basePosition);
+                mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
+                ShouldMove = true;
+
+            }
+            else
+            {
+                if (positionProvider.NearEntities<Tower>(this, mAbilityRange).Any())
+                {
+                    TryActivateAbility(inputManager, true);
+                    StartAbility(positionProvider, inputManager);
+                }
+                // search for a tower
+                // var neighbours = GetNeighbours(positionProvider);
+            }
+            
+            /*
+            var grid = positionProvider.Grid;
+            var basePosition = Base.TargetPoints(grid.LaneRectangle.Size, grid.LaneSide);
+            // TODO: is there a function for the calculation below?
+            //       something like Grid.WorldPositionFromTile(basePosition);
+            mAStar = positionProvider.MakePathFinding(this, basePosition);
+            mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
+            ShouldMove = true;
+            */
+        }
+        
         #region Update
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
