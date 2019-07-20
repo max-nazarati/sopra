@@ -136,7 +136,7 @@ namespace KernelPanic
                     }
                     break;
                 case Event.Id.ButtonClicked:
-                    Lookup(Sound.ButtonClick).Play(0.5f,1,0);
+                    Lookup(Sound.ButtonClick).Play(0.25f,1,0);
                     break;
                 case Event.Id.HeroAbility:
                     switch (e.Get<Hero>(Event.Key.Hero))

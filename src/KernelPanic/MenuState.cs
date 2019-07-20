@@ -596,6 +596,7 @@ namespace KernelPanic
         private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
         {
             var button = new TextButton(sprites) {Title = title};
+            button.Clicked += (button2, input) => EventCenter.Default.Send(Event.ButtonClicked());
             button.Sprite.X = sprites.ScreenSize.X / 2.0f - button.Sprite.Width / 2.0f - shiftPositionX;
             button.Sprite.Y = positionY;
             

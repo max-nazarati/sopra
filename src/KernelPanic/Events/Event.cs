@@ -254,7 +254,7 @@ namespace KernelPanic.Events
             };
         
         internal static Event ButtonClicked() =>
-            new Event(Id.GameWon)
+            new Event(Id.ButtonClicked)
             {
                 mPayload =
                 {
