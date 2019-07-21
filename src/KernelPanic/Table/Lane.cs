@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
 using KernelPanic.Input;
 using KernelPanic.PathPlanning;
@@ -122,7 +124,9 @@ namespace KernelPanic.Table
                 EntityGraph.Add(mEntitiesSerializing);
             }
 
-            mTroupeData = new TroupePathData(this, mEntitiesSerializing?.OfType<Building>());
+            var collidingBuildings =
+                mEntitiesSerializing?.SelectMaybe(entity => entity is Building b && !(b is ShockField) ? b : null);
+            mTroupeData = new TroupePathData(this, collidingBuildings);
             mTroupeData.Update(EntityGraph);
         }
 
