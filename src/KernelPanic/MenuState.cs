@@ -283,8 +283,10 @@ namespace KernelPanic
             title.Y = 100;
             title.SetOrigin(RelativePosition.TopRight);
 
-            var placeTower = CreateButton(stateManager.Sprite, inputManager.KeyPressed(Keys.A).ToString(), 400, -250);
+            var placeTower = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 400, -250);
             var placeTowerChooseKey = CreateButton(stateManager.Sprite, "Turm platzieren", 400,250);
+            
+            placeTower.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.TowerPlacement, (TextButton)button);
 
             return new MenuState(stateManager)
             {

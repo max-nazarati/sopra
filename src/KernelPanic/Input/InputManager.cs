@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using KernelPanic.Camera;
+using KernelPanic.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -21,7 +23,7 @@ namespace KernelPanic.Input
         /// </summary>
         internal const int ScreenBorderDistance = 100;
 
-        private readonly RawInputState mInputState;
+        internal readonly RawInputState mInputState;
         private readonly ICamera mCamera;
         private readonly List<ClickTarget> mClickTargets;
 
@@ -33,6 +35,11 @@ namespace KernelPanic.Input
             Left, Middle, Right
         }
 
+        internal enum MakroKeys
+        {
+            TowerPlacement
+        }
+
         internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
         {
             mCamera = camera;
@@ -40,6 +47,28 @@ namespace KernelPanic.Input
             mClickTargets = clickTargets;
 
             UpdateCamera();
+        }
+        
+        internal async void ChangeKey(MakroKeys action, TextButton button)
+        {
+            button.Title = "_";
+            var pressedKey = Keyboard.GetState().GetPressedKeys();
+            while (pressedKey.Length == 0)
+            {
+                await Task.Delay(80);
+                pressedKey = Keyboard.GetState().GetPressedKeys();
+            }
+
+            button.Title = pressedKey[0].ToString();
+
+            switch (action)
+            {
+                case MakroKeys.TowerPlacement:
+                    mInputState.mPlaceTower = pressedKey[0];
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
+            }
         }
 
         internal bool IsActive => mInputState.IsActive;
