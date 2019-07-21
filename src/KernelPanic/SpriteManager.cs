@@ -218,6 +218,178 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
 
+        internal CompositeSprite CreateTopLaneRow(int columns, int tileSize, bool bottom = false)
+        {
+            var sprite = new CompositeSprite();
+            var random = new Random();
+            // add tiles
+            var texture1 = Lookup(Image.LaneTop1);
+            var texture2 = Lookup(Image.LaneTop2);
+            var texture3 = Lookup(Image.LaneTop3);
+            
+            for (int x = 0; x < columns; x++)
+            {
+                // randomly choose image for tile
+                int number = random.Next(1, 3);
+                var texture = (number == 1) ? texture1 : ((number == 2) ? texture2 : texture3);
+                var tile = new ImageSprite(texture);
+
+                if (x == 0 || x == (columns - 1))
+                {
+                    tile = new ImageSprite(Lookup(Image.LaneTopRight));
+                    if (x == 0 && !bottom)
+                    {
+                        tile.Rotation = -(float)(Math.PI / 2);
+                    }
+                    if (x == (columns - 1) && bottom)
+                    {
+                        tile.Rotation -= (float)Math.PI / 2;
+                    }
+                }
+                // scale and position tile
+                tile.ScaleToWidth(tileSize);
+                tile.Position = new Vector2(x * tileSize + tileSize / 2, tileSize / 2);
+                tile.SetOrigin(RelativePosition.Center);
+                if (bottom)
+                {
+                    tile.Rotation += (float)Math.PI;
+                }
+                sprite.Children.Add(tile);
+            }
+            return sprite;
+        }
+
+        internal CompositeSprite CreateBorderLaneRow(Lane.Side side, int columns, int laneWidth, int tileSize, bool bottom = false)
+        {
+            var random = new Random();
+            var middle = CreateMiddleLaneRow(laneWidth, tileSize, random);
+            var border = CreateTopLaneRow(columns - laneWidth + 1, tileSize, bottom);
+            var corner = new ImageSprite(Lookup(Image.LaneTopRightCorner));
+            corner.SetOrigin(RelativePosition.Center);
+            corner.ScaleToWidth(tileSize);
+            corner.Y = tileSize / 2;
+            if (side == Lane.Side.Left)
+            {
+                border.X = (laneWidth - 1) * tileSize;
+                corner.X = (laneWidth - 1) * tileSize + tileSize / 2;
+                if (bottom)
+                {
+                    corner.Rotation += (float)(Math.PI);
+                }
+            }
+            else
+            {
+                middle.X = (laneWidth - 2) * tileSize;
+                corner.X = (columns-laneWidth) * tileSize + tileSize / 2;
+                corner.Rotation -= (float)(Math.PI / 2);
+            }
+            if (bottom)
+            {
+                corner.Rotation -= (float)(Math.PI / 2);
+            }
+            var sprite = new CompositeSprite
+            {
+                Children = { middle, border, corner }
+            };
+            return sprite;
+        }
+
+        internal CompositeSprite CreateMiddleLaneRow(int columns, int tileSize, Random random)
+        {
+            var sprite = new CompositeSprite();
+
+            var texture1 = Lookup(Image.LaneMiddle1);
+            var texture2 = Lookup(Image.LaneMiddle2);
+            var texture3 = Lookup(Image.LaneMiddle3);
+
+            for (int x = 0; x < columns; x++)
+            {
+                int number = random.Next(0, 30);
+                var texture = (number < 25) ? texture2 : ((number < 28) ? texture1 : texture3);
+                var tile = new ImageSprite(texture);
+                number = random.Next(0, 3);
+                tile.Rotation = (float)(number * Math.PI / 2);
+
+                // replace edges
+                if (x == 0 || x == (columns - 1))
+                {
+                    var edge1 = Lookup(Image.LaneTop1);
+                    var edge2 = Lookup(Image.LaneTop2);
+                    var edge3 = Lookup(Image.LaneTop3);
+                    texture = (number == 1) ? edge1 : ((number == 2) ? edge2 : edge3);
+                    tile = new ImageSprite(texture);
+                    if (x == (columns - 1))
+                    {
+                        tile.Rotation = (float)(Math.PI / 2);
+                    }
+                    else if (x == 0)
+                    {
+                        tile.Rotation = (float)(3 * Math.PI / 2);
+                    }
+                }
+
+                // scale and position tile
+                tile.ScaleToWidth(tileSize);
+                tile.Position = new Vector2(x * tileSize + tileSize / 2, tileSize / 2);
+                tile.SetOrigin(RelativePosition.Center);
+                sprite.Children.Add(tile);
+            }
+            return sprite;
+        }
+
+        internal CompositeSprite CreateLaneTop(Lane.Side side, int laneWidth, int columns, int tileSize)
+        {
+            var top = CreateTopLaneRow(columns, tileSize);
+            var border = CreateBorderLaneRow(side, columns, laneWidth, tileSize, true);
+            border.Y = (laneWidth - 1) * tileSize;
+            CompositeSprite sprite = new CompositeSprite
+            {
+                Children = { top, border }
+            };
+            var random = new Random();
+            for (int y = 1; y < laneWidth-1; y++)
+            {
+                var row = CreateMiddleLaneRow(columns, tileSize, random);
+                row.Y = y * tileSize;
+                sprite.Children.Add(row);
+            }
+            
+
+            return sprite;
+        }
+
+        internal CompositeSprite CreateLaneMiddle(int laneWidth, int rows, int tileSize)
+        {
+            CompositeSprite sprite = new CompositeSprite();
+            var random = new Random();
+            for (int y = 0; y < rows - 2 * laneWidth; y++)
+            {
+                var row = CreateMiddleLaneRow(laneWidth, tileSize, random);
+                row.Y = y * tileSize;
+                sprite.Children.Add(row);
+            }
+            return sprite;
+        }
+
+        internal CompositeSprite CreateLaneBottom(Lane.Side side, int laneWidth, int columns, int tileSize)
+        {
+            var bottom = CreateTopLaneRow(columns, tileSize, true);
+            bottom.Y = (laneWidth - 1) * tileSize;
+            var border = CreateBorderLaneRow(side, columns, laneWidth, tileSize);
+            CompositeSprite sprite = new CompositeSprite
+            {
+                Children = { bottom, border }
+            };
+            var random = new Random();
+            for (int y = 1; y < laneWidth-1; y++)
+            {
+                var row = CreateMiddleLaneRow(columns, tileSize, random);
+                row.Y = y * tileSize;
+                sprite.Children.Add(row);
+            }
+            return sprite;
+        }
+
         internal CompositeSprite CreateBoardBackground(Rectangle bounds, int tileSize)
         {
             var rows = bounds.Height / 100;

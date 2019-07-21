@@ -55,22 +55,22 @@ namespace KernelPanic.Table
             LaneRectangle = laneBounds;
             LaneSide = laneSide;
 
-            var tile = CreateTile(sprites);
-            var mainPart = new PatternSprite(tile, LaneRectangle.Height, LaneWidthInTiles);
+            var mainPart = sprites.CreateLaneMiddle(LaneWidthInTiles, LaneRectangle.Height, KachelSize);
+            mainPart.Y = LaneWidthInTiles * KachelSize;
 
-            var topPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
-            var bottomPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
-            bottomPart.Y = mainPart.Height - bottomPart.Height;
+            var topPart = sprites.CreateLaneTop(laneSide, LaneWidthInTiles, LaneRectangle.Width, KachelSize);
+            var bottomPart = sprites.CreateLaneBottom(laneSide, LaneWidthInTiles, LaneRectangle.Width, KachelSize);
+            bottomPart.Y = (LaneRectangle.Height - LaneWidthInTiles)*KachelSize;
 
             switch (laneSide)
             {
                 case Lane.Side.Left:
-                    topPart.X = mainPart.Width;
-                    bottomPart.X = mainPart.Width;
+                    topPart.X = 0;
+                    bottomPart.X = 0;
                     break;
 
                 case Lane.Side.Right:
-                    mainPart.X = topPart.Width;
+                    mainPart.X = (LaneRectangle.Width-LaneWidthInTiles)*KachelSize;
                     break;
 
                 default:
