@@ -166,6 +166,10 @@ namespace KernelPanic.Entities.Buildings
                         case TowerLevel.One:
                             tower.mLevel = TowerLevel.Two;
                             break;
+                        case TowerLevel.Third:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
 
                     tower.UpdateLevel(spriteManager);
