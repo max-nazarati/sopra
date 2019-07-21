@@ -42,11 +42,11 @@ namespace KernelPanic.ArtificialIntelligence
             mTierPriority = new[] {0.8d, 0.05, 0.05, 0.05, 0.05};
 
             // Initialize distributions for each tier
-            double[] tier1Distribution = new[] {1 / 4d, 1 / 4d, 1 / 4d, 1 / 4d};
-            double[] tier2Distribution = new[] { 1 / 4d, 1 / 4d, 1 / 4d, 1 / 4d };
-            double[] tier3Distribution = new[] { 1 / 4d, 1 / 4d, 1 / 4d, 1 / 4d };
-            double[] tier4Distribution = new[] { 1 / 4d, 1 / 4d, 1 / 4d, 1 / 4d };
-            double[] tier5Distribution = new[] { 1 / 4d, 1 / 4d, 1 / 4d, 1 / 4d };
+            double[] tier1Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            double[] tier2Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            double[] tier3Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            double[] tier4Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            double[] tier5Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
             mTierDistribution = new List<double[]>();
             mTierDistribution.Add(new double[0]);
             mTierDistribution.Add(tier1Distribution);
