@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using KernelPanic.Events;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Upgrades;
 
 namespace KernelPanic.ArtificialIntelligence
 {
-    internal sealed class UpgradePlanner : Planner
+    internal sealed class UpgradePlanner : Planner, IDisposable
     {
         private readonly Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> mUpgradeLookup;
         /// <summary>
@@ -31,6 +32,9 @@ namespace KernelPanic.ArtificialIntelligence
         /// this Upgrade.Id = mTierDictionnary[i][j]
         /// </summary>
         private List<Upgrade.Id[]> mTierDictionnary;
+
+        private readonly List<IDisposable> mSubscriptions;
+        private IDisposable mDisposableImplementation;
 
         public UpgradePlanner(Player player, Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup) : base(player)
         {
@@ -78,6 +82,60 @@ namespace KernelPanic.ArtificialIntelligence
             mTierDictionnary.Add(tier3Upgrades);
             mTierDictionnary.Add(tier4Upgrades);
             mTierDictionnary.Add(tier5Upgrades);
+
+            var eventCenter = EventCenter.Default;
+            mSubscriptions = new List<IDisposable>();
+            mSubscriptions.Add(eventCenter.Subscribe(Event.Id.UpgradeBought,
+                e =>
+                {
+                    Upgrade upgrade = e.Get<Upgrade>(Event.Key.Upgrade);
+                    RemoveAvailableUpdate(upgrade.Kind);
+                }));
+        }
+
+        /// <summary>
+        /// Given upgrade locate its position in mTierDistribution
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>(i, j) where i is the tier and j the corresponding upgrade index</returns>
+        public (int, int) LocateUpgrade(Upgrade.Id id)
+        {
+            int upgradeKey = (int)id;
+            int tier = 1;
+            int tierIndex = 0;
+            int numberUpgrades = 0;
+            for (int i = 1; i <= 5; i++)
+            {
+                numberUpgrades += mTierDistribution[i].Length;
+                if (upgradeKey <= numberUpgrades)
+                {
+                    tierIndex = upgradeKey - (numberUpgrades - mTierDistribution[i].Length) - 1;
+                    return (tier, tierIndex);
+                }
+
+                tier++;
+            }
+
+            return (tier, tierIndex);
+        }
+
+        /// <summary>
+        /// Update Distribution of upgrades after upgrade is bought, e.g.:
+        /// tier[i] = [0.25, 0.25, 0.25, 0.25]
+        /// Then buying upgrade 3 of tier i updates to
+        /// tier[i] = [1/3, 1/3, 0, 1/3]
+        /// </summary>
+        /// <param name="id"></param>
+        public void RemoveAvailableUpdate(Upgrade.Id id)
+        {
+            int tier = LocateUpgrade(id).Item1;
+            int tierIndex = LocateUpgrade(id).Item2;
+            double upgradeProbability = mTierDistribution[tier][tierIndex];
+            mTierDistribution[tier][tierIndex] = 0;
+            for (int i = 0; i < mTierDistribution[tier].Length; i++)
+            {
+                mTierDistribution[tier][i] /= 1 - upgradeProbability;
+            }
         }
 
         /// <summary>
@@ -134,6 +192,22 @@ namespace KernelPanic.ArtificialIntelligence
         {
             SinglePurchasableAction<Upgrade> upgrade = mUpgradeLookup.Invoke(id);
             upgrade.TryPurchase(mPlayer);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            int tier = ChooseTier();
+            Upgrade.Id upgrade = MakeChoice(tier);
+            BuyUpgrade(upgrade);
+        }
+
+        public void Dispose()
+        {
+            foreach (var subscription in mSubscriptions)
+            {
+                subscription.Dispose();
+            }
         }
     }
 }
