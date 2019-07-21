@@ -9,8 +9,27 @@ namespace KernelPanic.ArtificialIntelligence
     internal sealed class UpgradePlanner : Planner
     {
         private readonly Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> mUpgradeLookup;
+        /// <summary>
+        /// mTierPriority sets the probability that tier k is chosen by the Upgradeplanner
+        /// </summary>
         private double[] mTierPriority;
+        
+        /// <summary>
+        /// mTierDistribution contains the distributions of upgrade probabilities for each tier,
+        /// i.e. probability of upgrade j in tier i is stored in mTierDistribution[i][j]
+        /// tier0: []
+        /// tier1: [p11, p12, p13, p14]
+        /// tier2: [p21, p22, p23, p24]
+        /// tier3: [p31, p32, p33, p34, p35]
+        /// tier4: [p41, p42, p43, p44]
+        /// tier5: [p51, p52, p53, p54]
+        /// </summary>
         private List<double[]> mTierDistribution;
+
+        /// <summary>
+        /// mTierDictionnary identifies the upgrade id of upgrade j in tier i as (i, j), i.e.
+        /// this Upgrade.Id = mTierDictionnary[i][j]
+        /// </summary>
         private List<Upgrade.Id[]> mTierDictionnary;
 
         public UpgradePlanner(Player player, Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup) : base(player)
@@ -32,10 +51,7 @@ namespace KernelPanic.ArtificialIntelligence
             mTierDistribution.Add(tier4Distribution);
             mTierDistribution.Add(tier5Distribution);
 
-            /*
-             * initialize dictionnary for each upgrade - upgrade i of tier k can be accessed
-             * by calling mTierDictionnary[k][i]
-             */
+            // initialize dictionnary of upgrades corresponding to their tiers
             Upgrade.Id[] tier1Upgrades = new[]
                 {Upgrade.Id.IncreaseLp1, Upgrade.Id.IncreaseGs1, Upgrade.Id.IncreaseVs1, Upgrade.Id.DecreaseAi1};
             Upgrade.Id[] tier2Upgrades = new[]
