@@ -70,12 +70,12 @@ namespace KernelPanic.ArtificialIntelligence
             string[] choices = new[] { "Bug", "Virus", "Trojaner", "Nokia", "Thunderbird", "Settings", "Firefox", "Bluescreen" };
 
             Random numberGenerator = new Random();
-            double number = numberGenerator.NextDouble();
+            double probability = numberGenerator.NextDouble();
             int choiceIndex = 0;
             double upperBound = mUnitDistribution[0];
             for (int i = 1; i < 8; i++)
             {
-                if (number <= upperBound) break;
+                if (probability <= upperBound) break;
                 else
                 {
                     choiceIndex++;

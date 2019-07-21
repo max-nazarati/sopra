@@ -16,7 +16,7 @@ namespace KernelPanic.ArtificialIntelligence
         
         /// <summary>
         /// mTierDistribution contains the distributions of upgrade probabilities for each tier,
-        /// i.e. probability of upgrade j in tier i is stored in mTierDistribution[i][j]
+        /// i.e. probability pij of upgrade j in tier i is stored in mTierDistribution[i][j]
         /// tier0: []
         /// tier1: [p11, p12, p13, p14]
         /// tier2: [p21, p22, p23, p24]
@@ -80,15 +80,25 @@ namespace KernelPanic.ArtificialIntelligence
             mTierDictionnary.Add(tier5Upgrades);
         }
 
+        /// <summary>
+        /// Choose randomly a tier based on distribution - this is done
+        /// by generating a number in [0, 1] and compute the corresponding
+        /// choice, e.g.:
+        /// mTierPriority = [0.8, 0.05, 0.05, 0.05, 0.05]
+        /// is isomorph to:
+        /// [0, 0.8] x (0.8, 0.85] x (0.85, 0.9] x (0.9, 0.95] x (0.95, 1]
+        ///  Tier1        Tier2         Tier3         Tier4        Tier5
+        /// </summary>
+        /// <returns></returns>
         private int ChooseTier()
         {
             Random numberGenerator = new Random();
-            double number = numberGenerator.NextDouble();
+            double probability = numberGenerator.NextDouble();
             int tier = 1;
             double upperBound = mTierPriority[0];
             for (int i = 0; i < 4; i++)
             {
-                if (number <= upperBound) break;
+                if (probability <= upperBound) break;
                 else
                 {
                     tier++;
