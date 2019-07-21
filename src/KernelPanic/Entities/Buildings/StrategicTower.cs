@@ -150,11 +150,13 @@ namespace KernelPanic.Entities.Buildings
             private readonly PurchaseButton<TextButton, ImprovementAction> mButton;
             private readonly Func<bool> mIsFinalLevel;
             private readonly Tower mTower;
+            private readonly Player mOwner;
 
             internal ImprovementAction(StrategicTower tower, SpriteManager spriteManager, Player owner)
             {
                 var action = new PurchasableAction<ImprovementAction>(this);
                 var button = new TextButton(spriteManager) {Title = "Update"};
+                mOwner = owner;
                 mButton = new PurchaseButton<TextButton, ImprovementAction>(owner, action, button);
                 action.Purchased += (player, theAction) =>
                 {
@@ -178,7 +180,7 @@ namespace KernelPanic.Entities.Buildings
 
             void IUpdatable.Update(InputManager inputManager, GameTime gameTime)
             {
-                Button.Enabled = !mIsFinalLevel();
+                Button.Enabled = !mIsFinalLevel() && (mOwner.Bitcoins >= Price);
                 Button.Update(inputManager, gameTime);
             }
 
