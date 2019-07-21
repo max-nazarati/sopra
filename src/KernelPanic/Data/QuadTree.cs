@@ -218,6 +218,13 @@ namespace KernelPanic.Data
                 RebuildChildren(removePredicate, parentSink);
         }
 
+        /// <summary>
+        /// Filters the objects in <see cref="mObjects"/> based on the <paramref name="removePredicate"/>. Objects that
+        /// have a bound not contained in <see cref="mBounds"/> are removed from this level and added to
+        /// <paramref name="parentSink"/>.
+        /// </summary>
+        /// <param name="removePredicate">Filters the elements, may be <c>null</c>.</param>
+        /// <param name="parentSink">Container for all elements which have to move upwards.</param>
         private void RebuildObjects(Func<T, bool> removePredicate, ICollection<T> parentSink)
         {
             var bounds = mBounds;
@@ -234,6 +241,12 @@ namespace KernelPanic.Data
             Count -= removed;
         }
 
+        /// <summary>
+        /// Rebuilds all child-trees using <see cref="RebuildImpl"/>. The elements from the child-trees which didn't fit
+        /// there any more are tried to in this level.
+        /// </summary>
+        /// <param name="removePredicate">Filters the elements, may be <c>null</c>.</param>
+        /// <param name="parentSink">Container for all elements which have to move upwards.</param>
         private void RebuildChildren(Func<T, bool> removePredicate, List<T> parentSink)
         {
             var index = parentSink.Count;
