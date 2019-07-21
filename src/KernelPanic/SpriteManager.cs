@@ -218,17 +218,31 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
 
-        internal PatternSprite CreateBoardBackground(Rectangle bounds, int tileSize)
+        internal CompositeSprite CreateBoardBackground(Rectangle bounds, int tileSize)
         {
             var rows = bounds.Height / 100;
             var columns = bounds.Width / 100;
-            var tile = new ImageSprite(Lookup(Image.BackgroundTile1));
-            tile.ScaleToWidth(tileSize);
-            var sprite = new PatternSprite(tile, rows, columns)
+            var composite = new CompositeSprite();
+            var random = new Random();
+            var texture1 = Lookup(Image.BackgroundTile1);
+            var texture2 = Lookup(Image.BackgroundTile2);
+            var texture3 = Lookup(Image.BackgroundTile3);
+            for (int x = 0; x < columns; x++)
             {
-                Position = new Vector2(bounds.X, bounds.Y)
-            };
-            return sprite;
+                for (int y = 0; y < rows; y++)
+                {
+                    int number = random.Next(0, 30);
+                    var texture = (number < 15) ? texture1 : ((number < 26) ? texture2 : texture3);
+                    var tile = new ImageSprite(texture);
+                    tile.ScaleToWidth(tileSize);
+                    tile.Position = new Vector2(bounds.X + (x * 100) + 50, bounds.Y + (y * 100) + 50);
+                    tile.SetOrigin(RelativePosition.Center);
+                    number = random.Next(0, 3);
+                    tile.Rotation = (float)(number * Math.PI / 2);
+                    composite.Children.Add(tile);
+                }
+            }
+            return composite;
         }
 
         #endregion
