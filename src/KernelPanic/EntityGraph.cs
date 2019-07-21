@@ -1,24 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 using KernelPanic.Entities.Units;
 
 namespace KernelPanic
 {
-    [JsonArray]
     internal sealed class EntityGraph
     {
         #region Properties
 
-        [DataMember] internal QuadTree<IGameObject> QuadTree { get; }
+        internal QuadTree<IGameObject> QuadTree { get; }
 
         private readonly SortedDictionary<int, List<IGameObject>> mDrawObjects =
             new SortedDictionary<int, List<IGameObject>>();
