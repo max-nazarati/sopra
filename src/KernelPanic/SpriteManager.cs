@@ -427,6 +427,20 @@ namespace KernelPanic
 
         #region Buildings
 
+        internal ImageSprite CreateTowerLevelOne()
+        {
+            var sprite = new ImageSprite(CreateCircleTexture(5, Color.Gold));
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
+        }
+        
+        internal ImageSprite CreateTowerLevelTwo()
+        {
+            var sprite = new ImageSprite(CreateCircleTexture(5, Color.Orange));
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
+        }
+
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
         internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.FanPropeller));
         internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));

@@ -21,7 +21,8 @@ namespace KernelPanic.Entities.Buildings
         [JsonProperty]
         private TowerStrategy mStrategy = TowerStrategy.First;
 
-        private TowerLevel mLevel = TowerLevel.First;
+        private TowerLevel mLevel = TowerLevel.Zero;
+        private ImageSprite[] mLevelSprites;
 
         /// <summary>
         /// <c>true</c> if the tower should be rotated in the direction of the unit.
@@ -42,12 +43,22 @@ namespace KernelPanic.Entities.Buildings
             : base(price, radius, damage, speed, cooldown, sprite, spriteManager)
         {
             FireTimer.CooledDown += ShootNow;
+            mLevelSprites = new ImageSprite[3];
         }
 
         protected override void CompleteClone()
         {
             base.CompleteClone();
             FireTimer.CooledDown += ShootNow;
+            var levelSprites = new ImageSprite[3];
+            for (var i = 0; i <mLevelSprites.Length; i++)
+            {
+                if (mLevelSprites[i] is ImageSprite sprite)
+                {
+                    levelSprites[i] = (ImageSprite)sprite.Clone();
+                }
+            }
+            mLevelSprites = levelSprites;
         }
 
         #region Shooting
@@ -71,25 +82,56 @@ namespace KernelPanic.Entities.Buildings
             Radius *= 1.2f;
             Speed *= 2;
             FireTimer.Cooldown -= new TimeSpan(0, 0, 0,0,300);
-            Damage *= 2;
+            
             switch (mLevel)
             {
-                case TowerLevel.Second:
-                    Sprite.TintColor = Color.Green;
+                // Damage increases from e.g. 100 to 175 to 225
+                case TowerLevel.Zero:
                     break;
-                case TowerLevel.Third:
-                    Sprite.TintColor = Color.Red;
+                case TowerLevel.One:
+                {
+                    Damage += (int)(0.75f * Damage);
+
+                    var badge = spriteManager.CreateTowerLevelOne();
+                    badge.Position = Sprite.Position;
+                    badge.X -= 40;
+                    badge.Y -= 40;
+                    mLevelSprites[1] = badge;
+                    // mLevelSprites.TintColor = Color.Gold;
                     break;
-                case TowerLevel.First:
+                }
+                case TowerLevel.Two:
+                {
+                    Damage += (int) (0.2858f * Damage);
+
+                    var badge = spriteManager.CreateTowerLevelOne();
+                    badge.Position = Sprite.Position;
+                    badge.X -= 20;
+                    badge.Y -= 40;
+                    mLevelSprites[2] = badge;
+                    // mLevelSprites.TintColor = Color.Orange;
                     break;
+                }
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
             mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
-
         #endregion
+
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            base.Draw(spriteBatch, gameTime);
+            for (var i = 0; i < mLevelSprites.Length; i++)
+            {
+                if (mLevelSprites[i] != null)
+                {
+                    mLevelSprites[i].Draw(spriteBatch, gameTime);
+                }
+            }
+        }
 
         #region Actions
 
@@ -118,17 +160,17 @@ namespace KernelPanic.Entities.Buildings
                 {
                     switch (tower.mLevel)
                     {
-                        case TowerLevel.First:
-                            tower.mLevel = TowerLevel.Second;
+                        case TowerLevel.Zero:
+                            tower.mLevel = TowerLevel.One;
                             break;
-                        case TowerLevel.Second:
-                            tower.mLevel = TowerLevel.Third;
+                        case TowerLevel.One:
+                            tower.mLevel = TowerLevel.Two;
                             break;
                     }
 
                     tower.UpdateLevel(spriteManager);
                 };
-                mIsFinalLevel = () => tower.mLevel == TowerLevel.Third;
+                mIsFinalLevel = () => tower.mLevel == TowerLevel.Two;
                 mTower = tower;
             }
 
@@ -275,5 +317,5 @@ namespace KernelPanic.Entities.Buildings
     [JsonConverter(typeof(StringEnumConverter))]
     internal enum TowerStrategy { First, Strongest, Weakest };
 
-    internal enum TowerLevel {First,  Second, Third}
+    internal enum TowerLevel {Zero,  One, Two}
 }
