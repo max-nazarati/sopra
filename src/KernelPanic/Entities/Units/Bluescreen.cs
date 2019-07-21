@@ -117,9 +117,9 @@ namespace KernelPanic.Entities.Units
 
         private static bool InBase(TileIndex tile, PositionProvider positionProvider)
         {
-            var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - tile.Column == 2
+            var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - tile.Column <= 2
                                                                             && tile.Row < Grid.LaneWidthInTiles :
-                tile.Column == 1 && tile.Row > Grid.LaneWidthInTiles;
+                tile.Column <= 1 && tile.Row > Grid.LaneWidthInTiles;
             return inBase;
         }
 
