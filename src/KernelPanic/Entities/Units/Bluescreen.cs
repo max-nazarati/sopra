@@ -139,8 +139,12 @@ namespace KernelPanic.Entities.Units
                 // TODO
                 var basePositionX = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - 2 : 1;
                 var basePositionY = positionProvider.Grid.LaneSide == Lane.Side.Left ? Grid.LaneWidthInTiles - 1 : 1;
-                var basePosition = new[] {new Point(basePositionX, basePositionY)};
-
+                var translation = positionProvider.Grid.LaneSide == Lane.Side.Left ? -1 : 1;
+                var basePosition = new Point[Grid.LaneWidthInTiles];
+                for (var i = 0; i < Grid.LaneWidthInTiles; i++)
+                {
+                    basePosition[i] = new Point(basePositionX, basePositionY + i * translation);
+                }
                 mAStar = positionProvider.MakePathFinding(this, basePosition);
                 mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
                 ShouldMove = true;
