@@ -136,7 +136,6 @@ namespace KernelPanic.Entities.Units
                 }
 
                 // walk to the own base to refill
-                // TODO
                 var basePositionX = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - 2 : 1;
                 var basePositionY = positionProvider.Grid.LaneSide == Lane.Side.Left ? Grid.LaneWidthInTiles - 1 : 1;
                 var translation = positionProvider.Grid.LaneSide == Lane.Side.Left ? -1 : 1;
@@ -152,24 +151,18 @@ namespace KernelPanic.Entities.Units
             }
             else
             {
-                if (positionProvider.NearEntities<Tower>(this, mAbilityRange).Any())
+                if (positionProvider.NearEntities<Tower>(this, mAbilityRange - 100).Any())
                 {
                     IndicateAbility(positionProvider, inputManager);
                     StartAbility(positionProvider, inputManager);
                 }
-                // search for a tower
+                else
+                {
+                    base.AutonomousAttack(inputManager, positionProvider);
+                }
+                // Other strategy: search for a tower on adjacent tiles
                 // var neighbours = GetNeighbours(positionProvider);
             }
-            
-            /*
-            var grid = positionProvider.Grid;
-            var basePosition = Base.TargetPoints(grid.LaneRectangle.Size, grid.LaneSide);
-            // TODO: is there a function for the calculation below?
-            //       something like Grid.WorldPositionFromTile(basePosition);
-            mAStar = positionProvider.MakePathFinding(this, basePosition);
-            mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
-            ShouldMove = true;
-            */
         }
 
         
