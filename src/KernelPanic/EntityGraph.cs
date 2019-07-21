@@ -160,7 +160,7 @@ namespace KernelPanic
             do
             {
                 collisionHandled = false;
-                foreach (var (a, b) in QuadTree.Overlaps())
+                foreach (var (a, b) in QuadTree.Overlaps(entity => entity is Troupe))
                 {
                     collisionHandled |= CollisionManager.HandleMovement(a, b, positionProvider);
                 }

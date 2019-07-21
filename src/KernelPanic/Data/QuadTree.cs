@@ -401,12 +401,13 @@ namespace KernelPanic.Data
         /// </para>
         /// </summary>
         /// <returns>All pairs of overlapping elements.</returns>
-        internal IEnumerable<(T, T)> Overlaps()
+        internal IEnumerable<(T, T)> Overlaps(Func<T, bool> overlapPreSelector = null)
         {
-            return LocalOverlaps(Array.Empty<T>()).Concat(ChildOverlaps(mObjects));
+            return LocalOverlaps(Array.Empty<T>(), overlapPreSelector)
+                .Concat(ChildOverlaps(mObjects, overlapPreSelector));
         }
 
-        private IEnumerable<(T, T)> ChildOverlaps(IReadOnlyCollection<T> parentElements)
+        private IEnumerable<(T, T)> ChildOverlaps(IReadOnlyCollection<T> parentElements, Func<T, bool> overlapPreSelector)
         {
             if (mChildren == null)
                 return Enumerable.Empty<(T, T)>();
@@ -423,8 +424,8 @@ namespace KernelPanic.Data
                     parentElementsCopy.AddRange(tree.mObjects);
                 }
 
-                var locals = tree.LocalOverlaps(parentElements);
-                var children = tree.ChildOverlaps(parentElementsCopy ?? tree.mObjects);
+                var locals = tree.LocalOverlaps(parentElements, overlapPreSelector);
+                var children = tree.ChildOverlaps(parentElementsCopy ?? tree.mObjects, overlapPreSelector);
                 return locals.Concat(children);
             });
         }
@@ -434,12 +435,16 @@ namespace KernelPanic.Data
         /// elements in <see cref="mObjects"/> and <paramref name="parentElements"/>.
         /// </summary>
         /// <param name="parentElements">Elements from upper levels which might overlap with elements from this level.</param>
+        /// <param name="overlapPreSelector"></param>
         /// <returns>All overlaps.</returns>
-        private IEnumerable<(T, T)> LocalOverlaps(IReadOnlyCollection<T> parentElements)
+        private IEnumerable<(T, T)> LocalOverlaps(IReadOnlyCollection<T> parentElements, Func<T, bool> overlapPreSelector)
         {
             for (var i = 0; i < mObjects.Count; ++i)
             {
                 var x = mObjects[i];
+                if (overlapPreSelector != null && !overlapPreSelector(x))
+                    continue;
+
                 for (var j = i + 1; j < mObjects.Count; ++j)
                 {
                     var y = mObjects[j];
