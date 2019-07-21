@@ -208,6 +208,7 @@ namespace KernelPanic.Data
             var sink = new List<T>();
             RebuildImpl(removePredicate, sink);
             Add(sink);
+            Shake();
         }
 
         private void RebuildImpl(Func<T, bool> removePredicate, List<T> parentSink)
@@ -259,19 +260,43 @@ namespace KernelPanic.Data
             for (var i = index; i < count; ++i)
             {
                 var value = parentSink[i];
-                if (!mBounds.Contains(value.Bounds))
+                if (mBounds.Contains(value.Bounds))
                 {
-                    if (i != index)
-                        parentSink[index] = value;
-
-                    ++index;
+                    Add(value);
                     continue;
                 }
 
-                Add(value);
+                if (i != index)
+                    parentSink[index] = value;
+
+                ++index;
             }
             
             parentSink.RemoveRange(index, count - index);
+        }
+
+        /// <summary>
+        /// Eliminate leaves.
+        /// </summary>
+        private void Shake()
+        {
+            // No children to eliminate.
+            if (mChildren == null)
+                return;
+
+            // Recurse into the children; they have too many objects to put them all into this level.
+            if (Count >= MaxObjects)
+            {
+                foreach (var child in mChildren)
+                    child.Shake();
+                return;
+            }
+
+            // Combine all children.
+            if (mObjects.Capacity < Count)
+                mObjects.Capacity = Count;
+            mObjects.AddRange(mChildren.Flatten());
+            mChildren = null;
         }
 
         #endregion
