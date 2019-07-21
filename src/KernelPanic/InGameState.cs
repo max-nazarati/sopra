@@ -34,7 +34,7 @@ namespace KernelPanic
             SaveSlot = saveSlot;
 
             var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
-            var buildingMenu = BuildingBuyingMenu.Create(mBuildingBuyer, gameStateManager.Sprite);
+            var buildingMenu = BuildingBuyingMenu.Create(mBuildingBuyer, gameStateManager.Sprite, mBoard.PlayerA);
             mHud = new InGameOverlay(mBoard.WaveManager, unitMenu, buildingMenu, mSelectionManager
                 , gameStateManager, storage?.GameTime ?? TimeSpan.Zero, Camera);
 

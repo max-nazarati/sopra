@@ -8,6 +8,7 @@ using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Input;
+using KernelPanic.Players;
 
 namespace KernelPanic.Hud
 {
@@ -19,6 +20,7 @@ namespace KernelPanic.Hud
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
             private readonly TextSprite mInfoText;
+            private readonly Player mBuyer;
             internal Button Button { get; }
             internal Building Building { get; }
 
@@ -35,8 +37,9 @@ namespace KernelPanic.Hud
 
             Vector2 IPositioned.Size => Button.Size;
 
-            internal Element(Building building, SpriteManager spriteManager)
+            internal Element(Building building, SpriteManager spriteManager, Player buyer)
             {
+                mBuyer = buyer;
                 Building = building;
                 const int buttonSize = 70;
                 const int iconSize = 64;
@@ -61,6 +64,7 @@ namespace KernelPanic.Hud
 
             public void Update(InputManager inputManager, GameTime gameTime)
             {
+                Button.Enabled = mBuyer.Bitcoins >= Building.Price;
                 Button.Update(inputManager, gameTime);
             }
         }
@@ -69,7 +73,6 @@ namespace KernelPanic.Hud
             : base(MenuPosition(Lane.Side.Left, spriteManager), elements)
         {
             mBuildingBuyer = buildingBuyer;
-
             foreach (var element in Elements)
             {
                 element.Button.Clicked += (button, input) =>
@@ -87,7 +90,6 @@ namespace KernelPanic.Hud
         internal override void Update(InputManager inputManager, GameTime gameTime)
         {
             base.Update(inputManager, gameTime);
-
             if (mSelectedButton != null && inputManager.KeyPressed(Keys.Escape))
                 Deselect(mSelectedButton);
         }
@@ -106,10 +108,10 @@ namespace KernelPanic.Hud
         }
 
         internal static BuildingBuyingMenu Create(BuildingBuyer buildingBuyer,
-            SpriteManager spriteManager)
+            SpriteManager spriteManager, Player buyer)
         {
             Element CreateElement<TBuilding>() where TBuilding : Building =>
-                new Element(Building.Create<TBuilding>(spriteManager), spriteManager);
+                new Element(Building.Create<TBuilding>(spriteManager), spriteManager, buyer);
 
             return new BuildingBuyingMenu(buildingBuyer, spriteManager,
                 CreateElement<CursorShooter>(),
