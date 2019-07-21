@@ -35,7 +35,7 @@ namespace KernelPanic
             UpdatePosition(input);
             CheckPath();
 
-            if (!input.MousePressed(InputManager.MouseButton.Left))
+            if (!input.MousePressed(InputManager.MouseButton.Left) && !input.KeyPressed(input.mInputState.mPlaceTower))
                 return;
 
             if (!TryPurchase())

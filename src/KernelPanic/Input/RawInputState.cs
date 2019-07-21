@@ -17,6 +17,8 @@ namespace KernelPanic.Input
         internal KeyboardState PreviousKeyboard { get; private set; }
 
         private Hashtable ClaimedOperations { get; } = new Hashtable();
+        
+        internal Keys mPlaceTower;
 
         internal void Update(bool isActive, Viewport viewport)
         {
