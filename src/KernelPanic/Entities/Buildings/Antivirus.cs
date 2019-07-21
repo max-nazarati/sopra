@@ -20,8 +20,7 @@ namespace KernelPanic.Entities.Buildings
 
         protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
-            var image = SpriteManager.CreateCursorShooter();
-            image.ScaleToWidth(20);
+            var image = SpriteManager.CreateUmbrellaProjectile();
             EventCenter.Default.Send(Event.ProjectileShot(this));
             yield return new Projectile(this, direction, image)
             {

@@ -62,7 +62,8 @@ namespace KernelPanic
             LaneTop3,
             LaneTopRight,
             LaneTopRightCorner,
-            BitcoinLogo
+            BitcoinLogo,
+            Umbrella
         }
 
         private enum Font
@@ -129,6 +130,7 @@ namespace KernelPanic
                 Texture(Image.LaneTopRight, "tiles/lane_top_right"),
                 Texture(Image.LaneTopRightCorner, "tiles/lane_corner_top_right"),
                 Texture(Image.BitcoinLogo, "bitcoinLogo"),
+                Texture(Image.Umbrella, "towers/umbrella"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -477,6 +479,14 @@ namespace KernelPanic
             var sprite = new ImageSprite(Lookup(Image.Cursor));
             sprite.SetOrigin(RelativePosition.Center);
             sprite.ScaleToWidth(20);
+            return sprite;
+        }
+
+        internal ImageSprite CreateUmbrellaProjectile()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Umbrella));
+            sprite.SetOrigin(RelativePosition.Center);
+            sprite.ScaleToWidth(50);
             return sprite;
         }
 
