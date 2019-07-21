@@ -124,8 +124,9 @@ namespace KernelPanic.Table
                 EntityGraph.Add(mEntitiesSerializing);
             }
 
-            var collidingBuildings =
-                mEntitiesSerializing?.SelectMaybe(entity => entity is Building b && !(b is ShockField) ? b : null);
+            var collidingBuildings = mEntitiesSerializing?
+                    .Select(entity => entity is Building b && !(b is ShockField) ? b : null)
+                    .Where(building => building != null);
             mTroupeData = new TroupePathData(this, collidingBuildings);
             mTroupeData.Update(EntityGraph);
         }
