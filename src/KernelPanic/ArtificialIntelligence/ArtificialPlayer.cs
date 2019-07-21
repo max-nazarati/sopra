@@ -15,6 +15,7 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal enum Feature
     {
+        // Ep = 0,
         Bitcoins = 0,
         Bug = 1,
         Virus = 2,
