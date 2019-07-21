@@ -227,18 +227,24 @@ namespace KernelPanic
             var texture1 = Lookup(Image.BackgroundTile1);
             var texture2 = Lookup(Image.BackgroundTile2);
             var texture3 = Lookup(Image.BackgroundTile3);
+
+            // generate all tiles
             for (int x = 0; x < columns; x++)
             {
                 for (int y = 0; y < rows; y++)
                 {
+                    // randomly choose image for tile
                     int number = random.Next(0, 30);
                     var texture = (number < 15) ? texture1 : ((number < 26) ? texture2 : texture3);
                     var tile = new ImageSprite(texture);
                     tile.ScaleToWidth(tileSize);
+
+                    // rotate tile randomly around its center
                     tile.Position = new Vector2(bounds.X + (x * 100) + 50, bounds.Y + (y * 100) + 50);
                     tile.SetOrigin(RelativePosition.Center);
                     number = random.Next(0, 3);
                     tile.Rotation = (float)(number * Math.PI / 2);
+
                     composite.Children.Add(tile);
                 }
             }
