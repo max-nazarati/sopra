@@ -79,10 +79,6 @@ namespace KernelPanic.Entities.Buildings
 
         private void UpdateLevel(SpriteManager spriteManager)
         {
-            Radius *= 1.2f;
-            Speed *= 2;
-            FireTimer.Cooldown -= new TimeSpan(0, 0, 0,0,300);
-            
             switch (mLevel)
             {
                 // Damage increases from e.g. 100 to 175 to 225
@@ -90,7 +86,8 @@ namespace KernelPanic.Entities.Buildings
                     break;
                 case TowerLevel.One:
                 {
-                    Damage += (int)(0.75f * Damage);
+                    Damage += Damage;
+                    BitcoinWorth += BitcoinWorth;
 
                     var badge = spriteManager.CreateTowerLevelOne();
                     badge.Position = Sprite.Position;
@@ -102,9 +99,10 @@ namespace KernelPanic.Entities.Buildings
                 }
                 case TowerLevel.Two:
                 {
-                    Damage += (int) (0.2858f * Damage);
+                    Damage += (int) (0.5f * Damage);
+                    BitcoinWorth += (int) (0.5f * BitcoinWorth);
 
-                    var badge = spriteManager.CreateTowerLevelOne();
+                    var badge = spriteManager.CreateTowerLevelTwo();
                     badge.Position = Sprite.Position;
                     badge.X -= 20;
                     badge.Y -= 40;
@@ -189,8 +187,8 @@ namespace KernelPanic.Entities.Buildings
 
             public Currency Currency => Currency.Bitcoin;
 
-            // Improving costs 25% of Tower value.
-            public int Price => (int) (mTower.Price * 0.25);
+            // Improving costs 100% of Tower value.
+            public int Price => mTower.Price;
         }
 
 
