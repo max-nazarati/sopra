@@ -220,7 +220,7 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
 
-        internal CompositeSprite CreateTopLaneRow(int columns, int tileSize, bool bottom = false)
+        private CompositeSprite CreateTopLaneRow(int columns, int tileSize, bool bottom = false)
         {
             var sprite = new CompositeSprite();
             var random = new Random();
@@ -229,28 +229,28 @@ namespace KernelPanic
             var texture2 = Lookup(Image.LaneTop2);
             var texture3 = Lookup(Image.LaneTop3);
             
-            for (int x = 0; x < columns; x++)
+            for (var x = 0; x < columns; x++)
             {
                 // randomly choose image for tile
-                int number = random.Next(1, 3);
-                var texture = (number == 1) ? texture1 : ((number == 2) ? texture2 : texture3);
+                var number = random.Next(1, 3);
+                var texture = number == 1 ? texture1 : number == 2 ? texture2 : texture3;
                 var tile = new ImageSprite(texture);
 
-                if (x == 0 || x == (columns - 1))
+                if (x == 0 || x == columns - 1)
                 {
                     tile = new ImageSprite(Lookup(Image.LaneTopRight));
                     if (x == 0 && !bottom)
                     {
                         tile.Rotation = -(float)(Math.PI / 2);
                     }
-                    if (x == (columns - 1) && bottom)
+                    if (x == columns - 1 && bottom)
                     {
                         tile.Rotation -= (float)Math.PI / 2;
                     }
                 }
                 // scale and position tile
                 tile.ScaleToWidth(tileSize);
-                tile.Position = new Vector2(x * tileSize + tileSize / 2, tileSize / 2);
+                tile.Position = new Vector2(x * tileSize + tileSize / 2, (float)(tileSize * 0.5));
                 tile.SetOrigin(RelativePosition.Center);
                 if (bottom)
                 {
@@ -261,7 +261,7 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal CompositeSprite CreateBorderLaneRow(Lane.Side side, int columns, int laneWidth, int tileSize, bool bottom = false)
+        private CompositeSprite CreateBorderLaneRow(Lane.Side side, int columns, int laneWidth, int tileSize, bool bottom = false)
         {
             var random = new Random();
             var middle = CreateMiddleLaneRow(laneWidth, tileSize, random);
@@ -269,14 +269,14 @@ namespace KernelPanic
             var corner = new ImageSprite(Lookup(Image.LaneTopRightCorner));
             corner.SetOrigin(RelativePosition.Center);
             corner.ScaleToWidth(tileSize);
-            corner.Y = tileSize / 2;
+            corner.Y = (float)(tileSize * 0.5);
             if (side == Lane.Side.Left)
             {
                 border.X = (laneWidth - 1) * tileSize;
                 corner.X = (laneWidth - 1) * tileSize + tileSize / 2;
                 if (bottom)
                 {
-                    corner.Rotation += (float)(Math.PI);
+                    corner.Rotation += (float)Math.PI;
                 }
             }
             else
@@ -296,7 +296,7 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal CompositeSprite CreateMiddleLaneRow(int columns, int tileSize, Random random)
+        private CompositeSprite CreateMiddleLaneRow(int columns, int tileSize, Random random)
         {
             var sprite = new CompositeSprite();
 
@@ -304,23 +304,23 @@ namespace KernelPanic
             var texture2 = Lookup(Image.LaneMiddle2);
             var texture3 = Lookup(Image.LaneMiddle3);
 
-            for (int x = 0; x < columns; x++)
+            for (var x = 0; x < columns; x++)
             {
-                int number = random.Next(0, 30);
-                var texture = (number < 25) ? texture2 : ((number < 28) ? texture1 : texture3);
+                var number = random.Next(0, 30);
+                var texture = number < 25 ? texture2 : number < 28 ? texture1 : texture3;
                 var tile = new ImageSprite(texture);
                 number = random.Next(0, 3);
                 tile.Rotation = (float)(number * Math.PI / 2);
 
                 // replace edges
-                if (x == 0 || x == (columns - 1))
+                if (x == 0 || x == columns - 1)
                 {
                     var edge1 = Lookup(Image.LaneTop1);
                     var edge2 = Lookup(Image.LaneTop2);
                     var edge3 = Lookup(Image.LaneTop3);
-                    texture = (number == 1) ? edge1 : ((number == 2) ? edge2 : edge3);
+                    texture = number == 1 ? edge1 : number == 2 ? edge2 : edge3;
                     tile = new ImageSprite(texture);
-                    if (x == (columns - 1))
+                    if (x == columns - 1)
                     {
                         tile.Rotation = (float)(Math.PI / 2);
                     }
@@ -332,7 +332,7 @@ namespace KernelPanic
 
                 // scale and position tile
                 tile.ScaleToWidth(tileSize);
-                tile.Position = new Vector2(x * tileSize + tileSize / 2, tileSize / 2);
+                tile.Position = new Vector2(x * tileSize + tileSize / 2, (float)(tileSize * 0.5));
                 tile.SetOrigin(RelativePosition.Center);
                 sprite.Children.Add(tile);
             }
@@ -344,12 +344,12 @@ namespace KernelPanic
             var top = CreateTopLaneRow(columns, tileSize);
             var border = CreateBorderLaneRow(side, columns, laneWidth, tileSize, true);
             border.Y = (laneWidth - 1) * tileSize;
-            CompositeSprite sprite = new CompositeSprite
+            var sprite = new CompositeSprite
             {
                 Children = { top, border }
             };
             var random = new Random();
-            for (int y = 1; y < laneWidth-1; y++)
+            for (var y = 1; y < laneWidth-1; y++)
             {
                 var row = CreateMiddleLaneRow(columns, tileSize, random);
                 row.Y = y * tileSize;
@@ -362,9 +362,9 @@ namespace KernelPanic
 
         internal CompositeSprite CreateLaneMiddle(int laneWidth, int rows, int tileSize)
         {
-            CompositeSprite sprite = new CompositeSprite();
+            var sprite = new CompositeSprite();
             var random = new Random();
-            for (int y = 0; y < rows - 2 * laneWidth; y++)
+            for (var y = 0; y < rows - 2 * laneWidth; y++)
             {
                 var row = CreateMiddleLaneRow(laneWidth, tileSize, random);
                 row.Y = y * tileSize;
@@ -378,12 +378,12 @@ namespace KernelPanic
             var bottom = CreateTopLaneRow(columns, tileSize, true);
             bottom.Y = (laneWidth - 1) * tileSize;
             var border = CreateBorderLaneRow(side, columns, laneWidth, tileSize);
-            CompositeSprite sprite = new CompositeSprite
+            var sprite = new CompositeSprite
             {
                 Children = { bottom, border }
             };
             var random = new Random();
-            for (int y = 1; y < laneWidth-1; y++)
+            for (var y = 1; y < laneWidth-1; y++)
             {
                 var row = CreateMiddleLaneRow(columns, tileSize, random);
                 row.Y = y * tileSize;
@@ -403,18 +403,18 @@ namespace KernelPanic
             var texture3 = Lookup(Image.BackgroundTile3);
 
             // generate all tiles
-            for (int x = 0; x < columns; x++)
+            for (var x = 0; x < columns; x++)
             {
-                for (int y = 0; y < rows; y++)
+                for (var y = 0; y < rows; y++)
                 {
                     // randomly choose image for tile
-                    int number = random.Next(0, 30);
-                    var texture = (number < 15) ? texture1 : ((number < 26) ? texture2 : texture3);
+                    var number = random.Next(0, 30);
+                    var texture = number < 15 ? texture1 : number < 26 ? texture2 : texture3;
                     var tile = new ImageSprite(texture);
                     tile.ScaleToWidth(tileSize);
 
                     // rotate tile randomly around its center
-                    tile.Position = new Vector2(bounds.X + (x * 100) + 50, bounds.Y + (y * 100) + 50);
+                    tile.Position = new Vector2(bounds.X + x * 100 + 50, bounds.Y + y * 100 + 50);
                     tile.SetOrigin(RelativePosition.Center);
                     number = random.Next(0, 3);
                     tile.Rotation = (float)(number * Math.PI / 2);
@@ -538,8 +538,7 @@ namespace KernelPanic
             
             var rightEpText = new TextSprite(font, "000 EP")
             {
-                Position = new Vector2(hudWidth - 2 * moneyWidth - padding*12, topPadding),
-                
+                Position = new Vector2(hudWidth - 2 * moneyWidth - padding*12, topPadding)
             };
             rightEpText.SetOrigin(RelativePosition.TopRight);
             
