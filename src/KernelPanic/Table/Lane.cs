@@ -135,7 +135,7 @@ namespace KernelPanic.Table
 
         #region Update
 
-        internal void Update(GameTime gameTime, InputManager inputManager, Owner owner)
+        internal void Update(GameTime gameTime, InputManager inputManager, Owner owner, int waveIndex)
         {
             mTroupeData.BuildingMatrix.ResetUpdatedStatus();
             
@@ -157,7 +157,8 @@ namespace KernelPanic.Table
             mTroupeData.Update(EntityGraph);
 
             var positionProvider = new PositionProvider(Target, owner, Grid, EntityGraph, mTroupeData, mSpriteManager);
-            EntityGraph.Update(positionProvider, gameTime, inputManager);
+            if (waveIndex > 0)
+                EntityGraph.Update(positionProvider, gameTime, inputManager);
             UnitSpawner.Update(gameTime);
             BuildingSpawner.Update(positionProvider);
         }

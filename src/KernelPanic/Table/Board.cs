@@ -111,9 +111,8 @@ namespace KernelPanic.Table
 
         internal void Update(GameTime gameTime, InputManager inputManager)
         {
-            if (WaveManager.LastIndex > 0)
-                PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
-            PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
+            PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB), WaveManager.LastIndex);
+            PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA), WaveManager.LastIndex);
             PlayerB.Update(gameTime);
             mUpgradePool.Update(inputManager, gameTime);
             WaveManager.Update(gameTime);
