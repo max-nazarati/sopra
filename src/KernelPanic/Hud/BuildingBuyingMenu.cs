@@ -47,7 +47,7 @@ namespace KernelPanic.Hud
                 sprite.SetOrigin(RelativePosition.TopLeft);
                 sprite.ScaleToWidth(iconSize); // for some reason cable has a size of 100x100
                 Button = new ImageButton(spriteManager, (ImageSprite)sprite, buttonSize, buttonSize);
-                mInfoText = building.mInfoText;
+                mInfoText = (TextSprite)building.mInfoText.Clone();
                 mInfoText.SetOrigin(RelativePosition.TopLeft);
                 mInfoText.Position = sprite.Position;
                 mInfoText.X += buttonSize + 5;
