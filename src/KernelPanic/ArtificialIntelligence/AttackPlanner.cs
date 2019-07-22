@@ -39,7 +39,7 @@ namespace KernelPanic.ArtificialIntelligence
                 e => UpdateHeuristic(Event.Id.KilledUnit, e),
                 e => !e.IsActivePlayer(Event.Key.Attacker)));
             // TODO delete those calls after Heros are finished
-            // BuyEntity<Firefox>();
+            BuyEntity<Firefox>();
             BuyEntity<Settings>();
             BuyEntity<Bluescreen>();
             BuyEntity<Bug>();

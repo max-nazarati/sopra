@@ -274,7 +274,6 @@ namespace KernelPanic
 
         private static MenuState CreateKeyInputMenu(GameStateManager stateManager, InputManager inputManager)
         {
-            // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
             backButton.Clicked += stateManager.PopOnClick;
             var title = stateManager.Sprite.CreateText("Tastaturbelegung");
@@ -285,27 +284,27 @@ namespace KernelPanic
 
             var placeTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 200, -250);
             var placeTower = CreateButton(stateManager.Sprite, "Turm platzieren", 200,250);
-            placeTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.TowerPlacement, (TextButton)button);
-            
+            placeTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.TowerPlacement, (TextButton)button);
+
             var sellTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mSellTower.ToString(), 300, -250);
             var sellTower = CreateButton(stateManager.Sprite, "Turm verkaufen", 300,250);
-            sellTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.SellTower, (TextButton)button);
+            sellTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.SellTower, (TextButton)button);
             
             var cameraUpKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraUp.ToString(), 400, -250);
-            var CameraUp = CreateButton(stateManager.Sprite, "Kamera nach oben", 400,250);
-            cameraUpKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.CameraUp, (TextButton)button);
+            var cameraUp = CreateButton(stateManager.Sprite, "Kamera hoch", 400,250);
+            cameraUpKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraUp, (TextButton)button);
             
             var cameraLeftKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraLeft.ToString(), 500, -250);
-            var cameraLeft = CreateButton(stateManager.Sprite, "Kamera nach Links", 500,250);
-            cameraLeftKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.CameraLeft, (TextButton)button);
+            var cameraLeft = CreateButton(stateManager.Sprite, "Kamera links", 500,250);
+            cameraLeftKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraLeft, (TextButton)button);
             
             var cameraDownKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraDown.ToString(), 600, -250);
-            var cameraDown = CreateButton(stateManager.Sprite, "Kamera nach unten", 600,250);
-            cameraDownKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.CameraDown, (TextButton)button);
+            var cameraDown = CreateButton(stateManager.Sprite, "Kamera runter", 600,250);
+            cameraDownKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraDown, (TextButton)button);
             
             var cameraRightKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraRight.ToString(), 700, -250);
-            var cameraRight = CreateButton(stateManager.Sprite, "Kamera nach rechts", 700,250);
-            cameraRightKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.CameraRight, (TextButton)button);
+            var cameraRight = CreateButton(stateManager.Sprite, "Kamera rechts", 700,250);
+            cameraRightKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraRight, (TextButton) button);
 
             return new MenuState(stateManager)
             {
@@ -323,7 +322,7 @@ namespace KernelPanic
                     cameraLeftKey,
                     cameraRight,
                     cameraRightKey,
-                    CameraUp,
+                    cameraUp,
                     cameraUpKey,
                     backButton
                 }

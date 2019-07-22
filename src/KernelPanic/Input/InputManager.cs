@@ -35,7 +35,7 @@ namespace KernelPanic.Input
             Left, Middle, Right
         }
 
-        internal enum MakroKeys
+        internal enum MacroKeys
         {
             TowerPlacement,
             SellTower,
@@ -54,7 +54,7 @@ namespace KernelPanic.Input
             UpdateCamera();
         }
         
-        internal async void ChangeKey(MakroKeys action, TextButton button)
+        internal async void ChangeKey(MacroKeys action, TextButton button)
         {
             button.Title = "_";
             var pressedKey = Keyboard.GetState().GetPressedKeys();
@@ -68,22 +68,22 @@ namespace KernelPanic.Input
 
             switch (action)
             {
-                case MakroKeys.TowerPlacement:
+                case MacroKeys.TowerPlacement:
                     mInputState.mPlaceTower = pressedKey[0];
                     break;
-                case MakroKeys.CameraUp:
+                case MacroKeys.CameraUp:
                     mInputState.mCameraUp = pressedKey[0];
                     break;
-                case MakroKeys.CameraLeft:
+                case MacroKeys.CameraLeft:
                     mInputState.mCameraLeft = pressedKey[0];
                     break;
-                case MakroKeys.CameraDown:
+                case MacroKeys.CameraDown:
                     mInputState.mCameraDown = pressedKey[0];
                     break;
-                case MakroKeys.CameraRight:
+                case MacroKeys.CameraRight:
                     mInputState.mCameraRight = pressedKey[0];
                     break;
-                case MakroKeys.SellTower:
+                case MacroKeys.SellTower:
                     mInputState.mSellTower = pressedKey[0];
                     break;
                 default:
