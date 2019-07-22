@@ -381,11 +381,17 @@
 /processorParam:Quality=Best
 /build:sounds/CreditsSoundtrack.mp3
 
-#begin sounds/CursorShoot.mp3
+#begin sounds/CursorShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/CursorShoot.wav
+
+#begin sounds/BluescreenAbility.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/CursorShoot.mp3
+/build:sounds/BluescreenAbility.mp3
 
 #begin sounds/DiscShoot.mp3
 /importer:Mp3Importer

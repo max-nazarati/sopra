@@ -129,8 +129,7 @@ namespace KernelPanic.Entities
             // You get 80% of the buildings worth back when selling.
             public int Price => -1 * mBuilding.BitcoinWorth;
 
-            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) =>
-                mButton.Update(inputManager, gameTime);
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) => mButton.Update(inputManager, gameTime);
 
             void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
                 mButton.Draw(spriteBatch, gameTime);

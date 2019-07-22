@@ -38,6 +38,7 @@ namespace KernelPanic.Input
         internal enum MakroKeys
         {
             TowerPlacement,
+            SellTower,
             CameraUp,
             CameraLeft,
             CameraDown,
@@ -81,6 +82,9 @@ namespace KernelPanic.Input
                     break;
                 case MakroKeys.CameraRight:
                     mInputState.mCameraRight = pressedKey[0];
+                    break;
+                case MakroKeys.SellTower:
+                    mInputState.mSellTower = pressedKey[0];
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(action), action, null);

@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
@@ -85,11 +86,11 @@ namespace KernelPanic.Entities.Units
         {
             // debug
             base.StartAbility(positionProvider, inputManager);
-            
             if (mAbilityTargetOne is Tower first)
             {
                 var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite.Clone());
                 positionProvider.AddProjectile(empOne);
+                EventCenter.Default.Send(Event.HeroAbility(this));
             }
 
             if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
