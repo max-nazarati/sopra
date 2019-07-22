@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Events;
@@ -7,6 +9,7 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Data;
+using KernelPanic.Entities.Units;
 
 
 namespace KernelPanic.Entities
@@ -44,6 +47,7 @@ namespace KernelPanic.Entities
         [DataMember]
         internal int RemainingLife { get; set; }
 
+        [DataMember] // TODO does this fix #270
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
         [DataMember]
@@ -270,7 +274,6 @@ namespace KernelPanic.Entities
             {
                 Sprite.Position += theMove;
             }
-            
             UpdateHealthBar();
 
             if (!(Sprite is AnimatedSprite animated))
@@ -286,6 +289,151 @@ namespace KernelPanic.Entities
             else
                 animated.MovementDirection = AnimatedSprite.Direction.Standing;
         }
+
+        #region Flocking
+
+        /// <summary>
+        /// adapted version of this tutorial
+        /// https://gamedevelopment.tutsplus.com/tutorials/3-simple-rules-of-flocking-behaviors-alignment-cohesion-and-separation--gamedev-3444
+        /// </summary>
+        /// <param name="positionProvider"></param>
+        /// <returns></returns>
+        protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
+        {
+            var neighbourhoodRadius = 1;
+            var alignmentWeight = 25/100f;
+            var cohesionWeight = 30/100f;
+            var separationWeight = 45/100f;
+
+            IEnumerable<Troupe> neighbourhood = null;
+            if (this is Thunderbird)
+            {
+                neighbourhood = positionProvider.NearEntities<Thunderbird>(this, neighbourhoodRadius);
+            }
+
+            if (this is Virus || this is Bug)
+            {
+                neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
+            }
+
+            if (this is Trojan || this is Nokia)
+            {
+                neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
+            }
+            // var neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
+
+            var move = Vector2.Zero;
+            var alignment = ComputeFlockingAlignment(positionProvider, neighbourhood);
+            var cohesion = ComputeFlockingCohesion(positionProvider, neighbourhood);
+            var separation = ComputeFlockingSeparation(positionProvider, neighbourhood);
+
+            move += alignmentWeight * alignment;
+            move += cohesionWeight * cohesion;
+            move += separationWeight * separation;
+
+            move.Normalize();
+            move *= Speed;
+            // MoveVector = move;
+            // Console.WriteLine("Final Move Vector: " + move);
+            return move;
+        }
+
+        /// <summary>
+        /// Alignment is a behavior that causes a particular Troupe to line up with Troupes close by
+        /// </summary>
+        /// <returns>A normalized vector</returns>
+        private Vector2 ComputeFlockingAlignment(PositionProvider positionProvider, IEnumerable<Troupe> neighbourhood)
+        {
+            var result = Vector2.Zero;
+            var neighbourCount = 0;
+
+            foreach (var unit in neighbourhood)
+            {
+                // if (unit is Bug || unit is Virus)
+                {
+                    result += positionProvider.TroupeData.RelativeMovement(unit, unit.Sprite.Position);
+                    neighbourCount++;
+                }
+            }
+
+            if (neighbourCount != 0)
+            {
+                result.X /= neighbourCount;
+                result.Y /= neighbourCount;
+            }
+
+            // Console.WriteLine("Alignment: " + result);
+            result.Normalize();
+            // Console.WriteLine("Alignment Normalized: " + result);
+
+            // NaN after Normalize
+            return result is Vector2 number ? number : Vector2.Zero;
+        }
+
+        /// <summary>
+        /// Cohesion is a behavior that causes agents to steer towards the "center of mass" - that is,
+        /// the average position of the agents within a certain radius
+        /// </summary>
+        /// <returns>A normalized vector</returns>
+        private Vector2 ComputeFlockingCohesion(PositionProvider positionProvider, IEnumerable<Troupe> neighbourhood)
+        {
+            var center = Vector2.Zero;
+            var neighbourCount = 0;
+
+            foreach (var unit in neighbourhood)
+            {
+                center += unit.Sprite.Position;
+                neighbourCount++;
+            }
+
+            if (neighbourCount != 0)
+            {
+                center.X /= neighbourCount;
+                center.Y /= neighbourCount;
+            }
+
+            // we dont want the center of mass but our direction to it
+            var result = center - Sprite.Position;
+            // Console.WriteLine("Cohesion: " + result);
+            // result.Normalize();
+            // Console.WriteLine("Cohesion Normalized: " + result);
+
+            // NaN after Normalize
+            return result is Vector2 number ? number : Vector2.Zero;
+        }
+
+        /// <summary>
+        /// Separation is the behavior that causes an agent to steer away from all of its neighbors
+        /// </summary>
+        /// <param name="positionProvider"></param>
+        /// <param name="neighbourhoodRadius"></param>
+        /// <returns>A normalized vector</returns>
+        private Vector2 ComputeFlockingSeparation(PositionProvider positionProvider, IEnumerable<Troupe> neighbourhood)
+        {
+            var result = Vector2.Zero;
+            var neighbourCount = 0;
+
+            foreach (var unit in neighbourhood)
+            {
+                result += unit.Sprite.Position - Sprite.Position;
+                neighbourCount++;
+            }
+
+            if (neighbourCount != 0)
+            {
+                result.X /= neighbourCount;
+                result.Y /= neighbourCount;
+            }
+
+            // Console.WriteLine("Separation: " + result);
+            // result.Normalize();
+            // Console.WriteLine("Separation Normalized: " + result);
+            // NaN after Normalize
+            return result is Vector2 number ? -1 * number : Vector2.Zero;
+        }
+
+        #endregion
+
 
         private void UpdateHealthBar()
         {

@@ -38,6 +38,12 @@ namespace KernelPanic.Entities.Units
             base.Update(positionProvider, inputManager, gameTime);
         }
 
+        protected override void CalculateMovement(Vector2? projectionStart, PositionProvider positionProvider, InputManager inputManager)
+        {
+            var move = GetNextMoveVector(positionProvider);
+            Sprite.Position += move ?? Vector2.Zero;
+        }
+/*
         protected override void CalculateMovement(Vector2? projectionStart,
             PositionProvider positionProvider,
             InputManager inputManager)
@@ -60,6 +66,7 @@ namespace KernelPanic.Entities.Units
             var relativeMovement = positionProvider.TroupeData.RelativeMovement(this, mLastReferencePoint);
             MoveTarget = mLastReferencePoint + relativeMovement;
         }
+        */
 
         internal override bool ResetMovement()
         {
