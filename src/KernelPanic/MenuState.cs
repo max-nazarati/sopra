@@ -312,16 +312,18 @@ namespace KernelPanic
             title.Y = 100;
             title.SetOrigin(RelativePosition.TopRight);
 
+            //"      "
             var instr = stateManager.Sprite.CreateText("" +
-                "- Mauszeiger zum Bildschirmrand bringen / WASD:        -Kamera-Bewegung\n" +
-                "- Mittlerer Maus-Click:    erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen\n" +
-                "- Rechter Maus-Click:    Bewegungsziel für Heroes angeben / un-togglet Hero-Fähigkeit.\n" +
-                "- Linker Maus-Click:       Objekte kaufen/auswählen / GUI Buttons drücken.\n" +
-                "- Scroll-Wheel:                            Kamera-Zoom\n\n" +
-                "- Esc-Taste:    Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
-                "                             ins vorherige Menu-Screen gelangen.\n" +
-                "- Q-Taste:       alternative zu mittlerem Maus-Click\n" +
-                "- E-Taste:       un-togglet Hero-Fähigkeit\n");
+                "- Mauszeiger Bewegung / WASD:   Kamera-Bewegung\n" +
+                "- Mittlerer Maus-Click:                      Erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen\n" +
+                "- Rechter Maus-Click:                      Bewegungsziel für den ausgewählten Hero angeben / un-togglet Hero-Fähigkeit.\n" +
+                "- Linker Maus-Click:                         Objekte kaufen / Objekte (un-)auswählen / GUI Buttons drücken /\n" +
+                "                                                                  Bau-Modus mit click auf die entsprechende Gebäude-Taste verlassen.\n" +
+                "- Scroll-Wheel:                                 Kamera-Zoom\n\n" +
+                "- Esc-Taste:                      Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
+                "                                               ins vorherige Menu-Screen gelangen / aus Main-Menu das Spiel beenden.\n" +
+                "- Q-Taste:                         Alternative zu mittlerem Maus-Click\n" +
+                "- E-Taste:                         Un-togglet Hero-Fähigkeit\n");
 
 
             instr.Y = title.Y + 50;
