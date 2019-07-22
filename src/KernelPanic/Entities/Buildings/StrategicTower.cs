@@ -40,7 +40,7 @@ namespace KernelPanic.Entities.Buildings
             TimeSpan cooldown,
             Sprite sprite,
             SpriteManager spriteManager)
-            : base(price, radius, damage, speed, cooldown, sprite, spriteManager)
+            : base(price, radius, damage, (int) (1.5f * speed), cooldown, sprite, spriteManager)
         {
             FireTimer.CooledDown += ShootNow;
             mLevelSprites = new ImageSprite[3];
