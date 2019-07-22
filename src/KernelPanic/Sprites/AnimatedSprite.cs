@@ -16,13 +16,11 @@ namespace KernelPanic.Sprites
         {
             Standing,
             Left,
-            Right,
-            /*Up,
-            Down*/
+            Right
         }
 
-        internal Direction MovementDirection { get; set; }
-        internal SpriteEffects Effect { get; set; }
+        internal Direction MovementDirection { private get; set; }
+        internal SpriteEffects Effect { get; private set; }
 
         /// <summary>
         /// The duration for which each frame is displayed.
@@ -71,16 +69,6 @@ namespace KernelPanic.Sprites
                     Effect = SpriteEffects.FlipHorizontally;
                     mRow = 1;
                     break;
-                /*case Direction.Up:
-                    mFrameCount = 1;
-                    mEffect = SpriteEffects.None;
-                    mRow = 2;
-                    break;
-                case Direction.Down:
-                    mFrameCount = 1;
-                    mEffect = SpriteEffects.None;
-                    mRow = 3;
-                    break;*/
             }
             var textureIndex = gameTime.TotalGameTime.Ticks / mFrameDuration.Ticks % mFrameCount;
             var sourceRect =

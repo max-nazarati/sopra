@@ -25,10 +25,6 @@ namespace KernelPanic.Hud
 
         internal bool Pause { get; set; }
 
-        private const float Scale = 1.5f;
-        private static Point PowerIndicatorSize => new Point((int)(60*Scale), (int)(28 *Scale));
-        private static Point ClockSize => new Point((int)(80 * Scale), (int)(18 * Scale));
-
         public ScoreOverlay(WaveManager waveManager, SpriteManager spriteManager, TimeSpan time)
         {
             mPlayers = waveManager.Players;
