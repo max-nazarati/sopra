@@ -176,6 +176,9 @@ namespace KernelPanic
                     musicOnOffButton.Title = "an";
                     EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
                     break;
+                case "Zacharias":
+                    EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
+                    break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
                     break;
@@ -493,6 +496,12 @@ namespace KernelPanic
             // maxButton.Clicked
 
             var zachariasButton = CreateButton(stateManager.Sprite, "Zacharias", 350);
+            // TODO: button clicked should call the event....
+            // zachariasButton.Clicked += EventCenter.Default.Send(Event.PlayMusic(zachariasButton));
+            // EventCenter.Default.Send(Event.PlayMusic(zachariasButton));
+            zachariasButton.Clicked += (button, input) => TurnMusicOnOff(zachariasButton);
+
+
             // zachariasButton.Clicked
 
             var melissaButton = CreateButton(stateManager.Sprite, "Melissa", 450);
@@ -506,6 +515,7 @@ namespace KernelPanic
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 750);
             backButton.Clicked += stateManager.PopOnClick;
+            // TODO stop secret song
             
             return new MenuState(stateManager)
             {

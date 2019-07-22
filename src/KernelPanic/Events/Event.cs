@@ -244,7 +244,7 @@ namespace KernelPanic.Events
                     [Key.Button] = button,
                 }
             };
-        
+
         internal static Event PlaySounds(TextButton button) =>
             new Event(Id.PlaySounds)
             {

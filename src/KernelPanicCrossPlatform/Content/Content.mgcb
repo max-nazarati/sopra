@@ -429,6 +429,12 @@
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/Soundtrack2.mp3;sounds/Soundtrack2.mp3
 
+#begin ../../KernelPanic/Content/sounds/CreditsSoundtrack.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/CreditsSoundtrack.mp3;sounds/CreditsSoundtrack.mp3
+
 #begin ../../KernelPanic/Content/sounds/SwooshFirefox.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor

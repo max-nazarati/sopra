@@ -31,7 +31,8 @@ namespace KernelPanic
         private enum Music
         {
             Soundtrack1,
-            Soundtrack2
+            Soundtrack2,
+            SecretSong
         }
         
         private readonly (Sound sound, SoundEffect soundEffect)[] mSounds;
@@ -68,7 +69,8 @@ namespace KernelPanic
             mSongs = new[]
             {
                 Song(Music.Soundtrack1, "sounds/Soundtrack1"),
-                Song(Music.Soundtrack2, "sounds/Soundtrack2")
+                Song(Music.Soundtrack2, "sounds/Soundtrack2"),
+                Song(Music.SecretSong, "sounds/CreditsSoundtrack")
             };
             Array.Sort(mSongs);
             
@@ -113,6 +115,12 @@ namespace KernelPanic
                     break;
                 case "aus":
                     MediaPlayer.Stop();
+                    break;
+                case "Zacharias":
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(Lookup(Music.SecretSong));
+                    break;
+                case "":
                     break;
             }
         }
