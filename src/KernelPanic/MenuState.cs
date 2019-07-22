@@ -283,10 +283,25 @@ namespace KernelPanic
             title.Y = 100;
             title.SetOrigin(RelativePosition.TopRight);
 
-            var placeTower = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 400, -250);
-            var placeTowerChooseKey = CreateButton(stateManager.Sprite, "Turm platzieren", 400,250);
+            var placeTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 200, -250);
+            var placeTower = CreateButton(stateManager.Sprite, "Turm platzieren", 200,250);
+            placeTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.TowerPlacement, (TextButton)button);
             
-            placeTower.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.TowerPlacement, (TextButton)button);
+            var cameraUpKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraUp.ToString(), 300, -250);
+            var CameraUp = CreateButton(stateManager.Sprite, "Kamera nach oben", 300,250);
+            cameraUpKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.CameraUp, (TextButton)button);
+            
+            var cameraLeftKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraLeft.ToString(), 400, -250);
+            var cameraLeft = CreateButton(stateManager.Sprite, "Kamera nach Links", 400,250);
+            cameraLeftKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.CameraLeft, (TextButton)button);
+            
+            var cameraDownKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraDown.ToString(), 500, -250);
+            var cameraDown = CreateButton(stateManager.Sprite, "Kamera nach unten", 500,250);
+            cameraDownKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.CameraDown, (TextButton)button);
+            
+            var cameraRightKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraRight.ToString(), 600, -250);
+            var cameraRight = CreateButton(stateManager.Sprite, "Kamera nach rechts", 600,250);
+            cameraRightKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.CameraRight, (TextButton)button);
 
             return new MenuState(stateManager)
             {
@@ -295,7 +310,15 @@ namespace KernelPanic
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     new StaticComponent(title),
                     placeTower,
-                    placeTowerChooseKey,
+                    placeTowerKey,
+                    cameraDown,
+                    cameraDownKey,
+                    cameraLeft,
+                    cameraLeftKey,
+                    cameraRight,
+                    cameraRightKey,
+                    CameraUp,
+                    cameraUpKey,
                     backButton
                 }
             };

@@ -37,7 +37,11 @@ namespace KernelPanic.Input
 
         internal enum MakroKeys
         {
-            TowerPlacement
+            TowerPlacement,
+            CameraUp,
+            CameraLeft,
+            CameraDown,
+            CameraRight
         }
 
         internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
@@ -65,6 +69,18 @@ namespace KernelPanic.Input
             {
                 case MakroKeys.TowerPlacement:
                     mInputState.mPlaceTower = pressedKey[0];
+                    break;
+                case MakroKeys.CameraUp:
+                    mInputState.mCameraUp = pressedKey[0];
+                    break;
+                case MakroKeys.CameraLeft:
+                    mInputState.mCameraLeft = pressedKey[0];
+                    break;
+                case MakroKeys.CameraDown:
+                    mInputState.mCameraDown = pressedKey[0];
+                    break;
+                case MakroKeys.CameraRight:
+                    mInputState.mCameraRight = pressedKey[0];
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(action), action, null);
@@ -354,10 +370,10 @@ namespace KernelPanic.Input
         /// </summary>
         private void UpdateCamera()
         {
-            var xLeft = KeyDown(Keys.A);
-            var xRight = KeyDown(Keys.D);
-            var yUp = KeyDown(Keys.W);
-            var yDown = KeyDown(Keys.S);
+            var xLeft = KeyDown(mInputState.mCameraLeft);
+            var xRight = KeyDown(mInputState.mCameraRight);
+            var yUp = KeyDown(mInputState.mCameraUp);
+            var yDown = KeyDown(mInputState.mCameraDown);
 
             bool mouseXLeft = false, mouseXRight = false, mouseYUp = false, mouseYDown = false;
 
