@@ -39,7 +39,7 @@ namespace KernelPanic.ArtificialIntelligence
         public UpgradePlanner(Player player, Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup) : base(player)
         {
             mUpgradeLookup = upgradeLookup;
-            mTierPriority = new[] {0.8d, 0.05, 0.05, 0.05, 0.05};
+            mTierPriority = new[] {0, 0.8d, 0.05, 0.05, 0.05, 0.05};
 
             // Initialize distributions for each tier
             double[] tier1Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
@@ -136,6 +136,14 @@ namespace KernelPanic.ArtificialIntelligence
             {
                 mTierDistribution[tier][i] /= 1 - upgradeProbability;
             }
+
+            // update tier priority
+            int numberTierUpgrades = mTierDistribution[tier].Length;
+            mTierPriority[tier] -= 1 / (double)numberTierUpgrades;
+            for (int i = 1; i <= 5; i++)
+            {
+                mTierPriority[i] /= 1 - (1 / (double) numberTierUpgrades);
+            }
         }
 
         /// <summary>
@@ -153,8 +161,8 @@ namespace KernelPanic.ArtificialIntelligence
             Random numberGenerator = new Random();
             double probability = numberGenerator.NextDouble();
             int tier = 1;
-            double upperBound = mTierPriority[0];
-            for (int i = 0; i < 4; i++)
+            double upperBound = mTierPriority[1];
+            for (int i = 1; i < 5; i++)
             {
                 if (probability <= upperBound) break;
                 else
