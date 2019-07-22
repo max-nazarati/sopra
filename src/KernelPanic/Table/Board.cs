@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using Accord;
 using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Data;
 using KernelPanic.Input;
@@ -110,7 +111,8 @@ namespace KernelPanic.Table
 
         internal void Update(GameTime gameTime, InputManager inputManager)
         {
-            PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
+            if (WaveManager.LastIndex > 0)
+                PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB));
             PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA));
             PlayerB.Update(gameTime);
             mUpgradePool.Update(inputManager, gameTime);

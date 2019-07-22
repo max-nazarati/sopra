@@ -23,7 +23,7 @@ namespace KernelPanic.Waves
         internal TimeSpan mTimeTillFirstWave = TimeSpan.FromSeconds(10);
 
         [JsonProperty]
-        private int mLastIndex;
+        internal int LastIndex { get; private set; }
 
         internal int mByHumanDefeatedWaves, mByComputerDefeatedWaves;
 
@@ -57,7 +57,7 @@ namespace KernelPanic.Waves
             if (mTroupes.A.Count == 0 && mTroupes.B.Count == 0)
                 return;
 
-            mAliveWaves.Add(new Wave(++mLastIndex, mTroupes));
+            mAliveWaves.Add(new Wave(++LastIndex, mTroupes));
             mTroupes = mTroupes.Map(troupes => new List<Troupe>(troupes.Select(t => t.Clone())));
             mNextWaveTimer.Enabled = true;
         }
