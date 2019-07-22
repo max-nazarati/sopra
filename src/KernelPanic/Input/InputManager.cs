@@ -35,9 +35,14 @@ namespace KernelPanic.Input
             Left, Middle, Right
         }
 
-        internal enum MakroKeys
+        internal enum MacroKeys
         {
-            TowerPlacement
+            TowerPlacement,
+            SellTower,
+            CameraUp,
+            CameraLeft,
+            CameraDown,
+            CameraRight
         }
 
         internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
@@ -49,7 +54,7 @@ namespace KernelPanic.Input
             UpdateCamera();
         }
         
-        internal async void ChangeKey(MakroKeys action, TextButton button)
+        internal async void ChangeKey(MacroKeys action, TextButton button)
         {
             button.Title = "_";
             var pressedKey = Keyboard.GetState().GetPressedKeys();
@@ -63,8 +68,23 @@ namespace KernelPanic.Input
 
             switch (action)
             {
-                case MakroKeys.TowerPlacement:
+                case MacroKeys.TowerPlacement:
                     mInputState.mPlaceTower = pressedKey[0];
+                    break;
+                case MacroKeys.CameraUp:
+                    mInputState.mCameraUp = pressedKey[0];
+                    break;
+                case MacroKeys.CameraLeft:
+                    mInputState.mCameraLeft = pressedKey[0];
+                    break;
+                case MacroKeys.CameraDown:
+                    mInputState.mCameraDown = pressedKey[0];
+                    break;
+                case MacroKeys.CameraRight:
+                    mInputState.mCameraRight = pressedKey[0];
+                    break;
+                case MacroKeys.SellTower:
+                    mInputState.mSellTower = pressedKey[0];
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(action), action, null);
@@ -354,10 +374,10 @@ namespace KernelPanic.Input
         /// </summary>
         private void UpdateCamera()
         {
-            var xLeft = KeyDown(Keys.A);
-            var xRight = KeyDown(Keys.D);
-            var yUp = KeyDown(Keys.W);
-            var yDown = KeyDown(Keys.S);
+            var xLeft = KeyDown(mInputState.mCameraLeft);
+            var xRight = KeyDown(mInputState.mCameraRight);
+            var yUp = KeyDown(mInputState.mCameraUp);
+            var yDown = KeyDown(mInputState.mCameraDown);
 
             bool mouseXLeft = false, mouseXRight = false, mouseYUp = false, mouseYDown = false;
 

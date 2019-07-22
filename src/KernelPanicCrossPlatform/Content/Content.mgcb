@@ -375,11 +375,23 @@
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/ButtonClick.mp3;sounds/ButtonClick.mp3
 
-#begin ../../KernelPanic/Content/sounds/CursorShoot.mp3
+#begin ../../KernelPanic/Content/sounds/BluescreenAbility.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/CursorShoot.mp3;sounds/CursorShoot.mp3
+/build:../../KernelPanic/Content/sounds/BluescreenAbility.mp3;sounds/BluescreenAbility.mp3
+
+#begin ../../KernelPanic/Content/sounds/CursorShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/CursorShoot.wav;sounds/CursorShoot.wav
+
+#begin ../../KernelPanic/Content/sounds/SettingsAbility.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/SettingsAbility.ogg;sounds/SettingsAbility.ogg
 
 #begin ../../KernelPanic/Content/sounds/DiscShoot.mp3
 /importer:Mp3Importer
@@ -416,6 +428,12 @@
 /processor:SongProcessor
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/Soundtrack2.mp3;sounds/Soundtrack2.mp3
+
+#begin ../../KernelPanic/Content/sounds/CreditsSoundtrack.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/CreditsSoundtrack.mp3;sounds/CreditsSoundtrack.mp3
 
 #begin ../../KernelPanic/Content/sounds/SwooshFirefox.mp3
 /importer:Mp3Importer

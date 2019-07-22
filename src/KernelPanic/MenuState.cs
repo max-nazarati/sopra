@@ -176,6 +176,9 @@ namespace KernelPanic
                     musicOnOffButton.Title = "an";
                     EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
                     break;
+                case "Zacharias":
+                    EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
+                    break;
                 default:
                     Console.WriteLine("No valid button title for musicOnOffButton.");
                     break;
@@ -274,7 +277,6 @@ namespace KernelPanic
 
         private static MenuState CreateKeyInputMenu(GameStateManager stateManager, InputManager inputManager)
         {
-            // TODO: Write Game Instructions.
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
             backButton.Clicked += stateManager.PopOnClick;
             var title = stateManager.Sprite.CreateText("Tastaturbelegung");
@@ -283,10 +285,29 @@ namespace KernelPanic
             title.Y = 100;
             title.SetOrigin(RelativePosition.TopRight);
 
-            var placeTower = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 400, -250);
-            var placeTowerChooseKey = CreateButton(stateManager.Sprite, "Turm platzieren", 400,250);
+            var placeTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 200, -250);
+            var placeTower = CreateButton(stateManager.Sprite, "Turm platzieren", 200,250);
+            placeTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.TowerPlacement, (TextButton)button);
+
+            var sellTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mSellTower.ToString(), 300, -250);
+            var sellTower = CreateButton(stateManager.Sprite, "Turm verkaufen", 300,250);
+            sellTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.SellTower, (TextButton)button);
             
-            placeTower.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MakroKeys.TowerPlacement, (TextButton)button);
+            var cameraUpKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraUp.ToString(), 400, -250);
+            var cameraUp = CreateButton(stateManager.Sprite, "Kamera hoch", 400,250);
+            cameraUpKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraUp, (TextButton)button);
+            
+            var cameraLeftKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraLeft.ToString(), 500, -250);
+            var cameraLeft = CreateButton(stateManager.Sprite, "Kamera links", 500,250);
+            cameraLeftKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraLeft, (TextButton)button);
+            
+            var cameraDownKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraDown.ToString(), 600, -250);
+            var cameraDown = CreateButton(stateManager.Sprite, "Kamera runter", 600,250);
+            cameraDownKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraDown, (TextButton)button);
+            
+            var cameraRightKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraRight.ToString(), 700, -250);
+            var cameraRight = CreateButton(stateManager.Sprite, "Kamera rechts", 700,250);
+            cameraRightKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraRight, (TextButton) button);
 
             return new MenuState(stateManager)
             {
@@ -295,7 +316,17 @@ namespace KernelPanic
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     new StaticComponent(title),
                     placeTower,
-                    placeTowerChooseKey,
+                    placeTowerKey,
+                    sellTower,
+                    sellTowerKey,
+                    cameraDown,
+                    cameraDownKey,
+                    cameraLeft,
+                    cameraLeftKey,
+                    cameraRight,
+                    cameraRightKey,
+                    cameraUp,
+                    cameraUpKey,
                     backButton
                 }
             };
@@ -312,16 +343,18 @@ namespace KernelPanic
             title.Y = 100;
             title.SetOrigin(RelativePosition.TopRight);
 
+            //"      "
             var instr = stateManager.Sprite.CreateText("" +
-                "- Mauszeiger zum Bildschirmrand bringen / WASD:        -Kamera-Bewegung\n" +
-                "- Mittlerer Maus-Click:    erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen\n" +
-                "- Rechter Maus-Click:    Bewegungsziel für Heroes angeben / un-togglet Hero-Fähigkeit.\n" +
-                "- Linker Maus-Click:       Objekte kaufen/auswählen / GUI Buttons drücken.\n" +
-                "- Scroll-Wheel:                            Kamera-Zoom\n\n" +
-                "- Esc-Taste:    Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
-                "                             ins vorherige Menu-Screen gelangen.\n" +
-                "- Q-Taste:       alternative zu mittlerem Maus-Click\n" +
-                "- E-Taste:       un-togglet Hero-Fähigkeit\n");
+                "- Mauszeiger Bewegung / WASD:   Kamera-Bewegung\n" +
+                "- Mittlerer Maus-Click:                      Erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen\n" +
+                "- Rechter Maus-Click:                      Bewegungsziel für den ausgewählten Hero angeben / un-togglet Hero-Fähigkeit.\n" +
+                "- Linker Maus-Click:                         Objekte kaufen / Objekte (un-)auswählen / GUI Buttons drücken /\n" +
+                "                                                                  Bau-Modus mit click auf die entsprechende Gebäude-Taste verlassen.\n" +
+                "- Scroll-Wheel:                                 Kamera-Zoom\n\n" +
+                "- Esc-Taste:                      Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
+                "                                               ins vorherige Menu-Screen gelangen / aus Main-Menu das Spiel beenden.\n" +
+                "- Q-Taste:                         Alternative zu mittlerem Maus-Click\n" +
+                "- E-Taste:                         Un-togglet Hero-Fähigkeit\n");
 
 
             instr.Y = title.Y + 50;
@@ -463,6 +496,12 @@ namespace KernelPanic
             // maxButton.Clicked
 
             var zachariasButton = CreateButton(stateManager.Sprite, "Zacharias", 350);
+            // TODO: button clicked should call the event....
+            // zachariasButton.Clicked += EventCenter.Default.Send(Event.PlayMusic(zachariasButton));
+            // EventCenter.Default.Send(Event.PlayMusic(zachariasButton));
+            zachariasButton.Clicked += (button, input) => TurnMusicOnOff(zachariasButton);
+
+
             // zachariasButton.Clicked
 
             var melissaButton = CreateButton(stateManager.Sprite, "Melissa", 450);
@@ -476,6 +515,7 @@ namespace KernelPanic
             
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 750);
             backButton.Clicked += stateManager.PopOnClick;
+            // TODO stop secret song
             
             return new MenuState(stateManager)
             {

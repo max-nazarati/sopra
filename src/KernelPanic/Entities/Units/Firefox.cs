@@ -176,7 +176,8 @@ namespace KernelPanic.Entities.Units
             var cSharpHasNoElseAfterAForLoopLikeWtfIsThisAnApesLanguage = false;
             // look for a good jump (aka a small distance but high number in the path)
             // -> lets just jump to the furthest target with small enough distance for a jump
-            for (int i = distance.Length - 1; i >= 5; i--)
+            // for (int i = 6; i < distance.Length - 1; i++)
+            for (int i = distance.Length - 1; i >= 6; i--)
             {
                 // TODO find a good check if we should wait before jumping
                 //      so we dont waste it.

@@ -34,6 +34,8 @@ namespace KernelPanic
 
             UpdatePosition(input);
             CheckPath();
+            if (mPlayer.Bitcoins < Building.Price)
+                Building.State = BuildingState.Invalid;
 
             if (!input.MousePressed(InputManager.MouseButton.Left) && !input.KeyPressed(input.mInputState.mPlaceTower))
                 return;

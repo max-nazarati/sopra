@@ -20,7 +20,6 @@ namespace KernelPanic.Hud
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
             private readonly TextSprite mInfoText;
-            private readonly Player mBuyer;
             internal Button Button { get; }
             internal Building Building { get; }
 
@@ -37,9 +36,8 @@ namespace KernelPanic.Hud
 
             Vector2 IPositioned.Size => Button.Size;
 
-            internal Element(Building building, SpriteManager spriteManager, Player buyer)
+            internal Element(Building building, SpriteManager spriteManager)
             {
-                mBuyer = buyer;
                 Building = building;
                 const int buttonSize = 70;
                 const int iconSize = 64;
@@ -47,7 +45,9 @@ namespace KernelPanic.Hud
                 sprite.SetOrigin(RelativePosition.TopLeft);
                 sprite.ScaleToWidth(iconSize); // for some reason cable has a size of 100x100
                 Button = new ImageButton(spriteManager, (ImageSprite)sprite, buttonSize, buttonSize);
-                mInfoText = building.mInfoText;
+
+                mInfoText = spriteManager.CreateText($"Preis: {building.Price}");
+                mInfoText.TextColor = Color.White;
                 mInfoText.SetOrigin(RelativePosition.TopLeft);
                 mInfoText.Position = sprite.Position;
                 mInfoText.X += buttonSize + 5;
@@ -64,7 +64,6 @@ namespace KernelPanic.Hud
 
             public void Update(InputManager inputManager, GameTime gameTime)
             {
-                Button.Enabled = mBuyer.Bitcoins >= Building.Price;
                 Button.Update(inputManager, gameTime);
             }
         }
@@ -111,7 +110,7 @@ namespace KernelPanic.Hud
             SpriteManager spriteManager, Player buyer)
         {
             Element CreateElement<TBuilding>() where TBuilding : Building =>
-                new Element(Building.Create<TBuilding>(spriteManager), spriteManager, buyer);
+                new Element(Building.Create<TBuilding>(spriteManager), spriteManager);
 
             return new BuildingBuyingMenu(buildingBuyer, spriteManager,
                 CreateElement<CursorShooter>(),

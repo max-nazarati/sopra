@@ -39,7 +39,6 @@ namespace KernelPanic.Events
             PlaySounds,
             ChangeSoundVolume,
             ButtonClicked,
-            
 
             DamagedBase,
             GameWon,
@@ -227,7 +226,7 @@ namespace KernelPanic.Events
                     [Key.Loser] = loser
                 }
             };
-        
+
         internal static Event ProjectileShot(Tower tower) =>
             new Event(Id.ProjectileShot)
             {
@@ -245,7 +244,7 @@ namespace KernelPanic.Events
                     [Key.Button] = button,
                 }
             };
-        
+
         internal static Event PlaySounds(TextButton button) =>
             new Event(Id.PlaySounds)
             {

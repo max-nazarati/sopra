@@ -21,6 +21,8 @@ namespace KernelPanic
             WifiShoot,
             AntivirusShoot,
             ElectroShock,
+            BluescreenAbility,
+            SettingsAbility,
             MoneyEarned,
             ButtonClick,
             SwooshFirefox
@@ -29,7 +31,8 @@ namespace KernelPanic
         private enum Music
         {
             Soundtrack1,
-            Soundtrack2
+            Soundtrack2,
+            SecretSong
         }
         
         private readonly (Sound sound, SoundEffect soundEffect)[] mSounds;
@@ -52,6 +55,8 @@ namespace KernelPanic
                 SoundEffect(Sound.TowerPlacement, "sounds/TowerPlacement"),
                 SoundEffect(Sound.DiscShoot, "sounds/DiscShoot"),
                 SoundEffect(Sound.CursorShoot, "sounds/CursorShoot"),
+                SoundEffect(Sound.BluescreenAbility, "sounds/BluescreenAbility"),
+                SoundEffect(Sound.SettingsAbility, "sounds/SettingsAbility"),
                 SoundEffect(Sound.WifiShoot, "sounds/WifiShoot"),
                 SoundEffect(Sound.ElectroShock, "sounds/ElectroShock"),
                 SoundEffect(Sound.AntivirusShoot, "sounds/AntivirusShoot"),
@@ -64,7 +69,8 @@ namespace KernelPanic
             mSongs = new[]
             {
                 Song(Music.Soundtrack1, "sounds/Soundtrack1"),
-                Song(Music.Soundtrack2, "sounds/Soundtrack2")
+                Song(Music.Soundtrack2, "sounds/Soundtrack2"),
+                Song(Music.SecretSong, "sounds/CreditsSoundtrack")
             };
             Array.Sort(mSongs);
             
@@ -110,6 +116,12 @@ namespace KernelPanic
                 case "aus":
                     MediaPlayer.Stop();
                     break;
+                case "Zacharias":
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(Lookup(Music.SecretSong));
+                    break;
+                case "":
+                    break;
             }
         }
 
@@ -151,7 +163,7 @@ namespace KernelPanic
             switch (e.Kind)
             {
                 case Event.Id.BuildingPlaced:
-                    Lookup(Sound.TowerPlacement).Play(0.3f * mVolume,1,0);
+                    Lookup(Sound.TowerPlacement).Play(0.1f * mVolume,1,0);
                     break;
                 case Event.Id.BuildingSold:
                     Lookup(Sound.MoneyEarned).Play(0.5f * mVolume,1,0);
@@ -166,7 +178,7 @@ namespace KernelPanic
                             Lookup(Sound.ElectroShock).Play(0.2f * mVolume,0,0);
                             break;
                         case CursorShooter _:
-                            Lookup(Sound.CursorShoot).Play(0.03f * mVolume,0.3f,0);
+                            Lookup(Sound.CursorShoot).Play(0.1f * mVolume,0.3f,0);
                             break;
                         case Antivirus _:
                             Lookup(Sound.AntivirusShoot).Play(0.3f * mVolume,0,0);
@@ -185,8 +197,13 @@ namespace KernelPanic
                         case Firefox _:
                             Lookup(Sound.SwooshFirefox).Play(0.3f * mVolume, 0, 0);
                             break;
+                        case Bluescreen _:
+                            Lookup(Sound.BluescreenAbility).Play(0.03f * mVolume, 0, 0);
+                            break;
+                        case Settings _:
+                            Lookup(Sound.SettingsAbility).Play(0.1f * mVolume, 0, 0);
+                            break;
                     }
-
                     break;
             }
         }

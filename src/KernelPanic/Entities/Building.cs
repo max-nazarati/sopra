@@ -26,7 +26,7 @@ namespace KernelPanic.Entities
         protected Building(int price, Sprite sprite, SpriteManager spriteManager)
             : base(price, new Point(Table.Grid.KachelSize), sprite, spriteManager)
         {
-            BitcoinWorth = price;
+            BitcoinWorth = (int) (price * 0.8f);
             sprite.ScaleToWidth(Table.Grid.KachelSize);
         }
 
@@ -59,7 +59,7 @@ namespace KernelPanic.Entities
 
         public override int? DrawLevel => 0;    // Buildings have the lowest level.
 
-        private int BitcoinWorth { get; } //set; }
+        internal int BitcoinWorth { get; set; }
 
         private BuildingState mBuildingState;
 
@@ -92,6 +92,11 @@ namespace KernelPanic.Entities
             }
         }
 
+        internal override void UpdateInformation()
+        {
+            mInfoText.Text = $"Wert: {BitcoinWorth}";
+        }
+
         #region Actions
 
         protected override IEnumerable<IAction> Actions(Player owner) =>
@@ -122,10 +127,9 @@ namespace KernelPanic.Entities
             public Currency Currency => Currency.Bitcoin;
 
             // You get 80% of the buildings worth back when selling.
-            public int Price => (int) (mBuilding.BitcoinWorth * -0.8);
+            public int Price => -1 * mBuilding.BitcoinWorth;
 
-            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) =>
-                mButton.Update(inputManager, gameTime);
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) => mButton.Update(inputManager, gameTime);
 
             void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
                 mButton.Draw(spriteBatch, gameTime);

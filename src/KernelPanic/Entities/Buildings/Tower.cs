@@ -37,7 +37,6 @@ namespace KernelPanic.Entities.Buildings
             Speed = speed;
             sprite.ScaleToHeight(64);
             sprite.SetOrigin(RelativePosition.Center);
-
             mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
