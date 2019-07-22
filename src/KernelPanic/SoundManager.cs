@@ -22,6 +22,7 @@ namespace KernelPanic
             AntivirusShoot,
             ElectroShock,
             BluescreenAbility,
+            SettingsAbility,
             MoneyEarned,
             ButtonClick,
             SwooshFirefox
@@ -54,6 +55,7 @@ namespace KernelPanic
                 SoundEffect(Sound.DiscShoot, "sounds/DiscShoot"),
                 SoundEffect(Sound.CursorShoot, "sounds/CursorShoot"),
                 SoundEffect(Sound.BluescreenAbility, "sounds/BluescreenAbility"),
+                SoundEffect(Sound.SettingsAbility, "sounds/SettingsAbility"),
                 SoundEffect(Sound.WifiShoot, "sounds/WifiShoot"),
                 SoundEffect(Sound.ElectroShock, "sounds/ElectroShock"),
                 SoundEffect(Sound.AntivirusShoot, "sounds/AntivirusShoot"),
@@ -189,6 +191,9 @@ namespace KernelPanic
                             break;
                         case Bluescreen _:
                             Lookup(Sound.BluescreenAbility).Play(0.03f * mVolume, 0, 0);
+                            break;
+                        case Settings _:
+                            Lookup(Sound.SettingsAbility).Play(0.1f * mVolume, 0, 0);
                             break;
                     }
                     break;

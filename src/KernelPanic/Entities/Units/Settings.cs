@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -95,9 +96,11 @@ namespace KernelPanic.Entities.Units
             {
                 // if the CoolDown should only be used when there is a troupe in Range, remove this if
             }
-            else foreach (var troupe in mTroupesInRange)
+            else 
             {
-                troupe.DealDamage(HealValue, positionProvider);
+                EventCenter.Default.Send(Event.HeroAbility(this));
+                foreach (var troupe in mTroupesInRange)
+                    troupe.DealDamage(HealValue, positionProvider);
             }
 
             // Ability was successfully cast;
