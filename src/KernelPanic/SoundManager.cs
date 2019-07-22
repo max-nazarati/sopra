@@ -191,7 +191,6 @@ namespace KernelPanic
                             Lookup(Sound.BluescreenAbility).Play(0.03f * mVolume, 0, 0);
                             break;
                     }
-
                     break;
             }
         }
