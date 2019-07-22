@@ -188,7 +188,16 @@ namespace KernelPanic.Upgrades
             {
                 foreach (var upgrade in upgrades)
                 {
-                    upgrade.Button.Draw(spriteBatch, gameTime);
+                    // tint button
+                    // gray: if player hasn't got enough ressources
+                    // blue: player already bought the upgrade
+                    // red: the other player bought the upgrade
+                    var tintColor = Color.Gray;
+                    if (upgrade.Button.Action.IsPurchased)
+                    {
+                        tintColor = (upgrade.Button.Action.Buyer == mPlayer) ? Color.SteelBlue : Color.IndianRed;
+                    }
+                    upgrade.Button.DrawTint(spriteBatch, gameTime, tintColor);
                 }
             }
         }

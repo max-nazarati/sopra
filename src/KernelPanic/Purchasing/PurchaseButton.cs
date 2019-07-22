@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Interface;
@@ -93,6 +93,14 @@ namespace KernelPanic.Purchasing
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             Button?.Draw(spriteBatch, gameTime);
+        }
+
+        public void DrawTint(SpriteBatch spriteBatch, GameTime gameTime, Color tintColor)
+        {
+            /*var tintColor = Color.Gray;
+            if (!Action.Available(Player) && !PossiblyEnabled) { tintColor = Color.DarkBlue; }*/
+            //else if (!PossiblyEnabled) { tintColor = Color.DarkRed; }
+            Button?.DrawTint(spriteBatch, gameTime, tintColor);
         }
 
         private void Purchase(Button sender, InputManager inputManager)

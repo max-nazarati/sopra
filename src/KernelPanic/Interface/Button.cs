@@ -37,6 +37,12 @@ namespace KernelPanic.Interface
             base.Draw(spriteBatch, gameTime);
         }
 
+        public void DrawTint(SpriteBatch spriteBatch, GameTime gameTime, Color tintColor)
+        {
+            mBackground.TintColor = ViewEnabled ? Color.White : tintColor;
+            base.Draw(spriteBatch, gameTime);
+        }
+
         Button IButtonLike.Button => this;
 
         public bool MouseOver { get; private set; }
