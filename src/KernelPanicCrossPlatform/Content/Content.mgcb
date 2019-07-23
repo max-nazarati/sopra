@@ -387,11 +387,11 @@
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/CursorShoot.wav;sounds/CursorShoot.wav
 
-#begin ../../KernelPanic/Content/sounds/SettingsAbility.ogg
-/importer:OggImporter
+#begin ../../KernelPanic/Content/sounds/SettingsAbility.wav
+/importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/SettingsAbility.ogg;sounds/SettingsAbility.ogg
+/build:../../KernelPanic/Content/sounds/SettingsAbility.wav;sounds/SettingsAbility.wav
 
 #begin ../../KernelPanic/Content/sounds/DiscShoot.mp3
 /importer:Mp3Importer

@@ -393,11 +393,11 @@
 /processorParam:Quality=Best
 /build:sounds/BluescreenAbility.mp3
 
-#begin sounds/SettingsAbility.ogg
-/importer:OggImporter
+#begin sounds/SettingsAbility.wav
+/importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/SettingsAbility.ogg
+/build:sounds/SettingsAbility.wav
 
 #begin sounds/DiscShoot.mp3
 /importer:Mp3Importer

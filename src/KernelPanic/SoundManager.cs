@@ -201,7 +201,7 @@ namespace KernelPanic
                             Lookup(Sound.BluescreenAbility).Play(0.03f * mVolume, 0, 0);
                             break;
                         case Settings _:
-                            Lookup(Sound.SettingsAbility).Play(0.1f * mVolume, 0, 0);
+                            Lookup(Sound.SettingsAbility).Play(0.2f * mVolume, 0, 0);
                             break;
                     }
                     break;
