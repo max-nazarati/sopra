@@ -63,10 +63,11 @@ namespace KernelPanic
         {
             base.Dispose(disposing);
 
-            if (disposing)
-            {
-                EventCenter.Default.Send(Event.CloseAchievementPool(mAchievementPool));
-            }
+            if (!disposing)
+                return;
+
+            EventCenter.Default.Send(Event.CloseAchievementPool(mAchievementPool));
+            mBoard.Dispose();
         }
 
         private void InitializeTechDemo()

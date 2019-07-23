@@ -1,5 +1,7 @@
+using System;
 using System.Runtime.Serialization;
-using Accord;
+using System.Threading;
+using Autofac.Util;
 using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Data;
 using KernelPanic.Input;
@@ -13,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace KernelPanic.Table
 {
-    internal sealed class Board
+    internal sealed class Board : Disposable
     {
         internal Lane LeftLane => PlayerA.DefendingLane;
         internal Lane RightLane => PlayerA.AttackingLane;
@@ -36,6 +38,14 @@ namespace KernelPanic.Table
         private readonly Sprite mBase;
 
         private readonly Sprite mBackground;
+
+
+        private readonly Thread mLeftLaneThread = new Thread(UpdateQueue);
+        private readonly Thread mRightLaneThread = new Thread(UpdateQueue);
+
+        private readonly SingleQueue<Lane.UpdateData> mLeftLaneUpdateData = new SingleQueue<Lane.UpdateData>("Board.LeftLane");
+        private readonly SingleQueue<Lane.UpdateData> mRightLaneUpdateData = new SingleQueue<Lane.UpdateData>("Board.RightLane");
+        private readonly Semaphore mUpdateDoneSemaphore = new Semaphore(0, 2, "Board.UpdateDone");
 
         internal enum GameState
         {
@@ -84,20 +94,33 @@ namespace KernelPanic.Table
 
             WaveManager = new WaveManager(Players);
             mBitcoinManager = new BitcoinManager(Players);
+
+            StartThreads();
         }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
             LayOutUpgradePool();
+            StartThreads();
         }
-
+        
         private void LayOutUpgradePool()
         {
             var centerLeft = Lane.LeftBounds.At(RelativePosition.CenterRight);
             var centerRight = Lane.RightBounds.At(RelativePosition.CenterLeft);
             var middle = centerLeft + (centerRight - centerLeft) / 2;
             mUpgradePool.Position = middle - mUpgradePool.Size / 2;
+        }
+
+        private void StartThreads()
+        {
+            mLeftLaneThread.Priority = ThreadPriority.AboveNormal;
+            mLeftLaneThread.Name = "Board.LeftLane.Update";
+            mRightLaneThread.Priority = ThreadPriority.AboveNormal;
+            mRightLaneThread.Name = "Board.RightLane.Update";
+            mLeftLaneThread.Start(Tuple.Create(PlayerA.DefendingLane, mLeftLaneUpdateData, mUpdateDoneSemaphore));
+            mRightLaneThread.Start(Tuple.Create(PlayerA.AttackingLane, mRightLaneUpdateData, mUpdateDoneSemaphore));
         }
 
         private static Sprite CreateBase(SpriteManager spriteManager)
@@ -109,10 +132,27 @@ namespace KernelPanic.Table
 
         #endregion
 
+        private static void UpdateQueue(object arg)
+        {
+            var (lane, dataAtomic, doneSemaphore) = (Tuple<Lane, SingleQueue<Lane.UpdateData>, Semaphore>)arg;
+
+            while (dataAtomic.Take() is Lane.UpdateData updateData)
+            {
+                updateData.Update(lane);
+                doneSemaphore.Release();
+            }
+        }
+
         internal void Update(GameTime gameTime, InputManager inputManager)
         {
-            PlayerA.AttackingLane.Update(gameTime, inputManager, new Owner(PlayerA, PlayerB), WaveManager.LastIndex);
-            PlayerA.DefendingLane.Update(gameTime, inputManager, new Owner(PlayerB, PlayerA), WaveManager.LastIndex);
+            // Start lane updates.
+            mLeftLaneUpdateData.Put(new Lane.UpdateData(gameTime, inputManager, new Owner(PlayerB, PlayerA), WaveManager.LastIndex));
+            mRightLaneUpdateData.Put(new Lane.UpdateData(gameTime, inputManager, new Owner(PlayerA, PlayerB), WaveManager.LastIndex));
+
+            // Wait until both lanes are updated.
+            mUpdateDoneSemaphore.WaitOne();
+            mUpdateDoneSemaphore.WaitOne();
+
             PlayerB.Update(gameTime);
             mUpgradePool.Update(inputManager, gameTime);
             WaveManager.Update(gameTime);
@@ -136,9 +176,19 @@ namespace KernelPanic.Table
         {
             mBackground.Draw(spriteBatch, gameTime);
             LeftLane.Draw(spriteBatch, gameTime);
+            mBase.Draw(spriteBatch, gameTime);
             RightLane.Draw(spriteBatch, gameTime);
             mUpgradePool.Draw(spriteBatch, gameTime);
-            mBase.Draw(spriteBatch, gameTime);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            mLeftLaneUpdateData.Put(null);
+            mRightLaneUpdateData.Put(null);
+            mLeftLaneThread.Join();
+            mRightLaneThread.Join();
         }
     }
 }

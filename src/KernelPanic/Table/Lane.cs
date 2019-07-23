@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
@@ -135,7 +134,28 @@ namespace KernelPanic.Table
 
         #region Update
 
-        internal void Update(GameTime gameTime, InputManager inputManager, Owner owner, int waveIndex)
+        internal sealed class UpdateData
+        {
+            public UpdateData(GameTime gameTime, InputManager inputManager, Owner owner, int waveIndex)
+            {
+                GameTime = gameTime;
+                InputManager = inputManager;
+                Owner = owner;
+                WaveIndex = waveIndex;
+            }
+
+            private GameTime GameTime { get; }
+            private InputManager InputManager { get; }
+            private Owner Owner { get; }
+            private int WaveIndex { get; }
+
+            internal void Update(Lane lane)
+            {
+                lane.Update(GameTime, InputManager, Owner, WaveIndex);
+            }
+        }
+
+        private void Update(GameTime gameTime, InputManager inputManager, Owner owner, int waveIndex)
         {
             mTroupeData.BuildingMatrix.ResetUpdatedStatus();
             
