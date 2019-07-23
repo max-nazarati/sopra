@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using KernelPanic.PathPlanning;
@@ -11,6 +12,10 @@ namespace KernelPanic.Data
         internal HeatMap HeatMap { get; }
 
         private readonly RelativePosition[,] mRelativeField;
+        private Rectangle mCutout;
+
+        private int Width => mRelativeField.GetLength(1);
+        private int Height => mRelativeField.GetLength(0);
 
         /// <summary>
         /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
@@ -33,14 +38,16 @@ namespace KernelPanic.Data
         /// with each square additionally normalized.
         /// </example>
         /// <param name="heatMap">The heat map.</param>
+        /// <param name="cutout"></param>
         /// <param name="spawn"></param>
         /// <param name="spawnDirection"></param>
         /// <param name="target"></param>
         /// <param name="targetDirection"></param>
-        internal VectorField(HeatMap heatMap, IEnumerable<Point> spawn, RelativePosition spawnDirection, IEnumerable<Point> target, RelativePosition targetDirection)
+        internal VectorField(HeatMap heatMap, Rectangle cutout, IEnumerable<Point> spawn, RelativePosition spawnDirection, IEnumerable<Point> target, RelativePosition targetDirection)
         {
             HeatMap = heatMap;
             mRelativeField = new RelativePosition[heatMap.Height, heatMap.Width];
+            mCutout = cutout;
 
             foreach (var (column, row) in spawn)
                 mRelativeField[row, column] = spawnDirection;
@@ -201,8 +208,34 @@ namespace KernelPanic.Data
 
         #endregion
 
-        public RelativePosition this[Point point] => mRelativeField[point.Y, point.X];
+        public RelativePosition this[Point point]
+        {
+            get
+            {
+                if (point.X < 0)
+                    return RelativePosition.CenterRight;
+                if (point.X >= Width)
+                    return RelativePosition.CenterLeft;
+                if (point.Y < 0)
+                    return RelativePosition.CenterBottom;
+                if (point.Y >= Height)
+                    return RelativePosition.CenterTop;
 
+                if (!mCutout.Contains(point))
+                    return mRelativeField[point.Y, point.X];
+
+                if (point.X == mCutout.Left)
+                    return RelativePosition.CenterLeft;
+                if (point.X == mCutout.Right)
+                    return RelativePosition.CenterRight;
+                if (point.Y == mCutout.Top)
+                    return RelativePosition.CenterTop;
+                if (point.Y == mCutout.Bottom)
+                    return RelativePosition.CenterBottom;
+
+                throw new ArgumentOutOfRangeException(nameof(point), point, "Too far into the cutout.");
+            }
+        }
         internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
         {
             var visualizer = new ArrowVisualizer(HeatMap?.ObstacleMatrix.SubTileCount ?? 1, grid, spriteManager);

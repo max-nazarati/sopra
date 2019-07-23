@@ -15,7 +15,7 @@ namespace KernelPanic.Table
         internal Lane.Side LaneSide { get; }
         internal Rectangle LaneRectangle { get; }
 
-        private Rectangle TileCutout => new Rectangle(
+        internal Rectangle TileCutout => new Rectangle(
             LaneSide == Lane.Side.Left ? LaneWidthInTiles : 0,
             LaneWidthInTiles,
             LaneRectangle.Width - LaneWidthInTiles,

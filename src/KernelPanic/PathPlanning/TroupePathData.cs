@@ -77,8 +77,8 @@ namespace KernelPanic.PathPlanning
                         typeof(Lane.Side));
             }
 
-            mVectorField = new VectorField(heatMap, spawnPoints, spawnDirection, Target, targetDirection);
-            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
+            mVectorField = new VectorField(heatMap, mGrid.TileCutout, spawnPoints, spawnDirection, Target, targetDirection);
+            mSmallVectorField = new VectorField(smallHeatMap, mGrid.TileCutout, spawnPoints, spawnDirection, Target, targetDirection);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(mGrid.LaneRectangle.Size, mGrid.LaneSide);
         }
 
