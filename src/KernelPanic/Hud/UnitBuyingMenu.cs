@@ -19,10 +19,10 @@ namespace KernelPanic.Hud
     {
         internal sealed class Element : IPositioned, IUpdatable, IDrawable
         {
+            private int mCounter;
             internal Type UnitType { get; }
             private readonly PurchaseButton<ImageButton, Unit> mButton;
             private readonly TextSprite mCounterSprite;
-            private int mCounter;
             private readonly TextSprite mInfoText;
 
             Vector2 IPositioned.Position
@@ -32,8 +32,12 @@ namespace KernelPanic.Hud
                 {
                     var buttonSprite = mButton.Button.Sprite;
                     buttonSprite.Position = value;
-                    mCounterSprite.X = value.X - buttonSprite.Width - 8 /* padding between text and button */;
-                    mCounterSprite.Y = value.Y + buttonSprite.Height / 2;
+
+                    if (mCounterSprite != null)
+                    {
+                        mCounterSprite.X = value.X - buttonSprite.Width - 8 /* padding between text and button */;
+                        mCounterSprite.Y = value.Y + buttonSprite.Height / 2;
+                    }
 
                     mInfoText.Position = value;
                     mInfoText.X -= 80;
@@ -46,16 +50,13 @@ namespace KernelPanic.Hud
             {
                 UnitType = unitType;
                 mCounter = 0;
+
                 if (!unitType.IsSubclassOf(typeof(Hero)))
                 {
-                    mCounterSprite = spriteManager.CreateText("0");
-                }
-                else
-                {
                     mCounterSprite = spriteManager.CreateText();
+                    mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterRight);
+                    mCounterSprite.Text = "0";
                 }
-                mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterRight);
-
 
                 // When a unit is purchased, increase its counter.
                 mButton = button;
@@ -68,20 +69,22 @@ namespace KernelPanic.Hud
                 mInfoText.X -= 175;
             }
 
-            private void PurchasedUnit(IPlayerDistinction buyer, Unit resource)
+            private void PurchasedUnit(Player buyer, Unit resource)
             {
+                buyer.UpdateHeroCount(resource.GetType(), +1);
+
                 // Only increment the counter if the buyer is the active player.
-                if (buyer.Select(mCounterSprite, null) is TextSprite sprite && !(resource is Hero))
+                if (buyer.Select(mCounterSprite, null) is TextSprite sprite)
                 {
                     sprite.Text = (++mCounter).ToString();
                 }
-                
             }
 
             public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
             {
                 mButton.Draw(spriteBatch, gameTime);
-                mCounterSprite.Draw(spriteBatch, gameTime);
+                mCounterSprite?.Draw(spriteBatch, gameTime);
+
                 if (mButton.Button.MouseOver)
                 {
                     mInfoText.Draw(spriteBatch, gameTime);
@@ -90,6 +93,7 @@ namespace KernelPanic.Hud
 
             public void Update(InputManager inputManager, GameTime gameTime)
             {
+                mButton.PossiblyEnabled = mButton.Player.ValidHeroPurchase(UnitType);
                 mButton.Update(inputManager, gameTime);
             }
 
@@ -111,7 +115,7 @@ namespace KernelPanic.Hud
                 var action = new PurchasableAction<Unit>(unit);
                 action.Purchased += waveManager.Add;
                 var button = new ImageButton(spriteManager, image, 70, 70);
-                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, unit, action, button);
+                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, action, button);
             }
 
             Element CreateElement<TUnit>() where TUnit : Unit

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using KernelPanic.Table;
 using KernelPanic.Entities.Units;
@@ -44,6 +45,8 @@ namespace KernelPanic.Players
 
         internal Base Base => DefendingLane.Target;
 
+        #region Validating hero counts
+
         [DataMember]
         internal int FirefoxMaximum { get; private set; } = 1;
         [DataMember]
@@ -57,52 +60,39 @@ namespace KernelPanic.Players
         [DataMember]
         internal int BlueScreenCurrent { get; set; }
 
-        internal bool ValidHeroPurchase(Unit unit)
+        private (int current, int maximum) SelectHeroCounters(Type heroType, int currentChange = 0)
         {
-            switch (unit)
+            if (heroType == typeof(Firefox))
             {
-                case Firefox _:
-                    return FirefoxMaximum > FirefoxCurrent;
-                case Settings _:
-                    return SettingsMaximum > SettingsCurrent;
-                case Bluescreen _:
-                    return BlueScreenMaximum > BlueScreenCurrent;
-                default:
-                    return false;
+                FirefoxCurrent += currentChange;
+                return (FirefoxCurrent, FirefoxMaximum);
             }
+            if (heroType == typeof(Settings))
+            {
+                SettingsCurrent += currentChange;
+                return (SettingsCurrent, SettingsMaximum);
+            }
+            if (heroType == typeof(Bluescreen))
+            {
+                BlueScreenCurrent += currentChange;
+                return (BlueScreenCurrent, BlueScreenMaximum);
+            }
+
+            return (0, int.MaxValue);
         }
 
-        internal void IncrementHeroCount(Unit unit)
+        internal bool ValidHeroPurchase(Type heroType)
         {
-            if (unit is Firefox)
-            {
-                ++FirefoxCurrent;
-            }
-            else if (unit is Settings)
-            {
-                ++SettingsCurrent;
-            }
-            else if (unit is Bluescreen)
-            {
-                ++BlueScreenCurrent;
-            }
+            var (cur, max) = SelectHeroCounters(heroType);
+            return cur < max;
         }
 
-        internal void HeroDied(Hero unit)
+        internal void UpdateHeroCount(Type unitType, int change)
         {
-            if (unit is Firefox)
-            {
-                FirefoxCurrent--;
-            }
-            else if (unit is Settings)
-            {
-                SettingsCurrent--;
-            }
-            else if (unit is Bluescreen)
-            {
-                BlueScreenCurrent--;
-            }
+            SelectHeroCounters(unitType, change);
         }
+
+        #endregion
 
         [JsonConstructor]
         internal Player(Lane defendingLane, Lane attackingLane, int bitcoins)

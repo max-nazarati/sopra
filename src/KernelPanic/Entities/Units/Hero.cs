@@ -66,6 +66,12 @@ namespace KernelPanic.Entities.Units
 
         #endregion
 
+        protected override void DidDie(PositionProvider positionProvider)
+        {
+            base.DidDie(positionProvider);
+            positionProvider.Owner[this].UpdateHeroCount(GetType(), -1);
+        }
+
         #region Movement
 
         protected override void CalculateMovement(Vector2? projectionStart,

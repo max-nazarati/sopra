@@ -46,6 +46,9 @@ namespace KernelPanic.ArtificialIntelligence
         {
             for (var i = 0; i < amount; i++)
             {
+                if (!mPlayer.ValidHeroPurchase(typeof(T)))
+                    return;
+
                 mActions[typeof(T)].TryPurchase(mPlayer);
             }
         }

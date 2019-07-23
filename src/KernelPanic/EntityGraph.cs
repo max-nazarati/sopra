@@ -148,9 +148,6 @@ namespace KernelPanic
             {
                 if (!entity.WantsRemoval)
                     entity.Update(positionProvider, inputManager, gameTime);
-                
-                if (entity is Hero hero && hero.WantsRemoval)
-                    positionProvider.Owner[hero].HeroDied(hero);
             }
         }
 
