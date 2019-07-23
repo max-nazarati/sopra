@@ -226,6 +226,7 @@ namespace KernelPanic.Entities
         {
             EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
             positionProvider.Target.Power = Math.Max(0, positionProvider.Target.Power - AttackStrength);
+            positionProvider.Owner[this].UpdateHeroCount(GetType(), -1);
             WantsRemoval = true;
         }
 
