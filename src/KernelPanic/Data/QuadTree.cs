@@ -156,34 +156,7 @@ namespace KernelPanic.Data
             }
 
             mObjects.Add(entity);
-
-            if (mLevel >= MaximumDepth || mObjects.Count <= MaxObjects || mChildren != null)
-            {
-                // Don't split this level up if either
-                //    * the maximum depth is reached
-                //    * the maximum number of objects per level aren't reached
-                //    * this level is already split.
-                return;
-            }
-                
-            Split();
-            
-            // Try to move all objects one level down.
-            var indicesToRemove = new List<int>(mObjects.Count);
-            for (var i = 0; i < mObjects.Count; i++)
-            {
-                var value = mObjects[i];
-                if (!(CalculatePosition(value) is SquareIndex square))
-                    continue;
-
-                mChildren[(int) square].Add(value);
-                indicesToRemove.Add(i);
-            }
-
-            for (var i = indicesToRemove.Count - 1; i >= 0; i--)
-            {
-                mObjects.RemoveAt(indicesToRemove[i]);
-            }
+            SplitIfApplicable();
         }
 
         /*internal*/ private void Add(IEnumerable<T> elements)
@@ -214,9 +187,11 @@ namespace KernelPanic.Data
         private void RebuildImpl(Func<T, bool> removePredicate, List<T> parentSink)
         {
             RebuildObjects(removePredicate, parentSink);
-            
+
             if (mChildren != null)
                 RebuildChildren(removePredicate, parentSink);
+
+            Count = mObjects.Count + (mChildren?.Sum(child => child.Count) ?? 0);
         }
 
         /// <summary>
@@ -282,11 +257,17 @@ namespace KernelPanic.Data
         {
             // No children to eliminate.
             if (mChildren == null)
+            {
+                SplitIfApplicable();
                 return;
+            }
 
             // Recurse into the children; they have too many objects to put them all into this level.
             if (Count >= MaxObjects)
             {
+                // Try to move objects from this level
+                PushObjectsDown();
+            
                 foreach (var child in mChildren)
                     child.Shake();
                 return;
@@ -297,6 +278,39 @@ namespace KernelPanic.Data
                 mObjects.Capacity = Count;
             mObjects.AddRange(mChildren.Flatten());
             mChildren = null;
+        }
+
+        /// <summary>
+        /// Splits this level up into sub-levels if the parameters are met.
+        /// </summary>
+        private void SplitIfApplicable()
+        {
+            if (mLevel >= MaximumDepth || mObjects.Count <= MaxObjects || mChildren != null)
+            {
+                // Don't split this level up if either
+                //    * the maximum depth is reached
+                //    * the maximum number of objects per level aren't reached
+                //    * this level is already split.
+                return;
+            }
+
+            Split();
+            PushObjectsDown();
+        }
+
+        /// <summary>
+        /// Tries to move all objects one level down.
+        /// </summary>
+        private void PushObjectsDown()
+        {
+            mObjects.RemoveAll(value =>
+            {
+                if (!(CalculatePosition(value) is SquareIndex square))
+                    return false;
+
+                mChildren[(int) square].Add(value);
+                return true;
+            });
         }
 
         #endregion
