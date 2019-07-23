@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace KernelPanic.Events
 {
@@ -128,13 +129,25 @@ namespace KernelPanic.Events
 
         #region Sending
 
+        private static SpinLock sEventBufferLock = new SpinLock();
+
         /// <summary>
         /// Queues <paramref name="event"/> for delivering during the next call to <see cref="Run"/>.
         /// </summary>
         /// <param name="event">The <see cref="Event"/> to queue.</param>
         internal void Send(Event @event)
         {
-            mEventBuffers[mBufferIndex].Add(@event);
+            var locked = false;
+            try
+            {
+                sEventBufferLock.Enter(ref locked);
+                mEventBuffers[mBufferIndex].Add(@event);
+            }
+            finally
+            {
+                if (locked)
+                    sEventBufferLock.Exit();
+            }
         }
 
         /// <summary>
