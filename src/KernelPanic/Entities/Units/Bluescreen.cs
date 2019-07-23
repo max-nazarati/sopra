@@ -146,6 +146,10 @@ namespace KernelPanic.Entities.Units
                     basePosition[i] = new Point(basePositionX, basePositionY + i * translation);
                 }
                 mAStar = positionProvider.MakePathFinding(this, basePosition);
+                if (mAStar.Path == null)
+                {
+                    return;
+                }
                 mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
                 ShouldMove = true;
 
