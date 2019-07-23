@@ -97,12 +97,9 @@ namespace KernelPanic.Selection
             if (leftOnlyBuildings && mLeftLane.Contains(mouse))
                 return;
 
-            if (mSelection == null || !(mLeftLane.Contains(mouse) || mRightLane.Contains(mouse)))
-                return;
-
-            if (inputManager.MousePressed(InputManager.MouseButton.Left))
+            if (mSelection != null && inputManager.MousePressed(InputManager.MouseButton.Left))
             {
-                // The click was inside a lane but not on an entity => deselect any selected entities.
+                // We had a selection but clicked somewhere where no entity is.
                 Selection = null;
             }
         }
