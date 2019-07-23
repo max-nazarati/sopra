@@ -150,6 +150,10 @@ namespace KernelPanic
                     unit.DamageBase(positionProvider);
                     return true;
 
+                case Unit unit when object2 is LaneBorder border:
+                    unit.DodgeLaneBorder(border);
+                    return true;
+
                 case Emp emp when object2 is Tower tower:
                     emp.Hit(tower);
                     return true;

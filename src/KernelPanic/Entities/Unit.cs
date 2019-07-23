@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
 using KernelPanic.Events;
 using KernelPanic.Input;
@@ -329,7 +330,17 @@ namespace KernelPanic.Entities
             
             // var move = Vector2.Zero;
             var vector = positionProvider.TroupeData.RelativeMovement(this, Sprite.Position);
-            vector.Normalize();
+            if (float.IsNaN(vector.X))
+            {
+                Console.WriteLine("----------------------------------------------");
+                Console.WriteLine("vector before normalizing: " + vector);
+                Console.WriteLine("unit position is: " + Sprite.Position);
+                vector = Vector2.Zero;
+            }
+            else
+            {
+                vector.Normalize();
+            }
             var alignment = ComputeFlockingAlignment(positionProvider, neighbourhood);
             var cohesion = ComputeFlockingCohesion(neighbourhood);
             var separation = ComputeFlockingSeparation(positionProvider, neighbourhood);
@@ -343,7 +354,31 @@ namespace KernelPanic.Entities
             move += separationWeight * separation;
             move += obstacleWeight * obstacle;
 
+            if (float.IsNaN(move.X) || float.IsNaN(move.Y))
+            {
+                Console.WriteLine("----------------------------------------------");
+                Console.WriteLine("move Vector before normalizing");
+                Console.WriteLine("vector: " + vector);
+                Console.WriteLine("alignment: " + alignment);
+                Console.WriteLine("cohesion: " + cohesion);
+                Console.WriteLine("separation: " + separation);
+                Console.WriteLine("obstacle: " + obstacle);
+                Console.WriteLine("move: " + move);
+            }
             move.Normalize(); // we need to normalize since 2 of the 3 here could be a Vector.Zero
+            
+            if (float.IsNaN(move.X) || float.IsNaN(move.Y))
+            {
+                Console.WriteLine("----------------------------------------------");
+                Console.WriteLine("move Vector after normalizing");
+                Console.WriteLine("vector: " + vector);
+                Console.WriteLine("alignment: " + alignment);
+                Console.WriteLine("cohesion: " + cohesion);
+                Console.WriteLine("separation: " + separation);
+                Console.WriteLine("obstacle: " + obstacle);
+                Console.WriteLine("move: " + move);
+                Console.WriteLine("----------------------------------------------");
+            }
             move *= Speed;
             // MoveVector = move;
             // Console.WriteLine("Final Move Vector: " + move);
@@ -439,15 +474,16 @@ namespace KernelPanic.Entities
             // NaN after Normalize
             return float.IsNaN(result.X) ? Vector2.Zero : -1 * result;
         }
-        
+
         private Vector2 ComputeFlockingObstacle(PositionProvider positionProvider)
         {
-            // TODO check for laneBorder
+            // LaneBorder is handled somewhere else
+            var result = Vector2.Zero;
             if (this is Thunderbird)
             {
-                return Vector2.Zero;
+                return result;
             }
-            var result = Vector2.Zero;
+
             Building closestBuilding = null;
             var minDistanceSq = float.NaN;
             foreach (var building in positionProvider.NearEntities<Building>(this, 200))
@@ -467,7 +503,15 @@ namespace KernelPanic.Entities
             }
             result = Sprite.Position - closestBuilding.Sprite.Position;
             result.Normalize();
-            return result; // dont need to return negative, we directly calculated reversed
+            // return result; // dont need to return negative, we directly calculated reversed
+            return float.IsNaN(result.X) ? Vector2.Zero : result;
+        }
+
+        internal void DodgeLaneBorder(LaneBorder border)
+        {
+            var dist = Sprite.Position - border.Bounds.Center.ToVector2();
+            dist.Normalize();
+            Sprite.Position += 7 * dist;
         }
 
         #endregion
