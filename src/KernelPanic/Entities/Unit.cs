@@ -302,37 +302,101 @@ namespace KernelPanic.Entities
         /// <returns></returns>
         protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
         {
-            const int neighbourhoodRadius = 40;
+            const int neighbourhoodRadius = 100;
 
-            const float vectorWeight = 100 / 100f; // VectorField (Heatmap)
-            const float alignmentWeight = 15 / 100f;
+            const float vectorWeight = 30 / 100f; // VectorField (Heatmap)
+            const float alignmentWeight = 10 / 100f;
             const float cohesionWeight = 10 / 100f;
-            const float separationWeight = 100 / 100f;
+            const float separationWeight = 40 / 100f;
             const float obstacleWeight = 30 / 100f;
+            const float borderWeight = 1000 / 100f;
 
-            Rectangle rect = new Rectangle(Sprite.Position.ToPoint(), new Point(neighbourhoodRadius));
-            IEnumerable<IGameObject> completeNeighbourhood = positionProvider.EntitiesAt(rect);
+            #region Get Enumerators
 
-            // we are forcing the enumeration with ToList() at this point so we dont have to enumerate more than once
-            // IEnumerable<Troupe> neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
+            // Iterate over the Entity Graph only one time and get EVERYTHING
+            var rect = new Rectangle(Sprite.Position.ToPoint(), new Point(neighbourhoodRadius));
+            var completeNeighbourhood = positionProvider.EntitiesAt(rect);
 
-            IEnumerable<IGameObject> neighbourhood = null;
+            // Create explicitly forced Lists to iterate over, depending on which unit we are
+            var neighbourTroupes = new List<Troupe>();
+            var neighbourBuilding = new List<Building>();
+            var neighbourBorder = new List<LaneBorder>();
 
-            // check for this type and change neighbourhood before we calculate the 3 cases
-            // also force .ToList(), so we dont have to iterate 3 times... possible do it manually for faster
             if (this is Bug || this is Virus)
             {
-                // neighbourhood = neighbourhood.Where(x => x is Bug || x is Virus).ToList();
+                foreach (var thing in completeNeighbourhood)
+                {
+                    switch (thing)
+                    {
+                        case Bug bug:
+                            neighbourTroupes.Add(bug);
+                            continue;
+                        case Virus virus:
+                            neighbourTroupes.Add(virus);
+                            continue;
+                        case Building building:
+                            neighbourBuilding.Add(building);
+                            continue;
+                        case LaneBorder laneBorder:
+                            if (!laneBorder.IsTargetBorder)
+                            {
+                                neighbourBorder.Add(laneBorder);
+                            }
+                            continue;
+                        default:
+                            continue;
+                    }
+                }
             }
-            if (this is Nokia || this is Trojan)
+            else if (this is Nokia || this is Trojan)
             {
-                neighbourhood = neighbourhood.Where(x => x is Trojan || x is Nokia).ToList();
+                foreach (var thing in completeNeighbourhood)
+                {
+                    switch (thing)
+                    {
+                        case Trojan trojan:
+                            neighbourTroupes.Add(trojan);
+                            continue;
+                        case Nokia nokia:
+                            neighbourTroupes.Add(nokia);
+                            continue;
+                        case Building building:
+                            neighbourBuilding.Add(building);
+                            continue;
+                        case LaneBorder laneBorder:
+                            if (!laneBorder.IsTargetBorder)
+                            {
+                                neighbourBorder.Add(laneBorder);
+                            }
+                            continue;
+                        default:
+                            continue;
+                    }
+                }
             }
-            else // (this is Thunderbird)
+            else if (this is Thunderbird)
             {
-                neighbourhood = neighbourhood.Where(x => x is Thunderbird).ToList();
+                foreach (var thing in completeNeighbourhood)
+                {
+                    switch (thing)
+                    {
+                        case Thunderbird thunderbird:
+                            neighbourTroupes.Add(thunderbird);
+                            continue;
+                        case LaneBorder laneBorder:
+                            if (!laneBorder.IsTargetBorder)
+                            {
+                                neighbourBorder.Add(laneBorder);
+                            }
+                            continue;
+                        default:
+                            continue;
+                    }
+                }
             }
 
+            #endregion
+            
             // var move = Vector2.Zero;
             var vector = positionProvider.TroupeData.RelativeMovement(this, Sprite.Position);
             if (float.IsNaN(vector.X) || vector == Vector2.Zero)
@@ -346,11 +410,15 @@ namespace KernelPanic.Entities
             {
                 vector.Normalize();
             }
-            var alignment = ComputeFlockingAlignment(positionProvider, neighbourhood);
-            var cohesion = ComputeFlockingCohesion(neighbourhood);
-            var separation = ComputeFlockingSeparation(positionProvider, neighbourhood);
-            var obstacle = ComputeFlockingObstacle(positionProvider);
+            
+            // using the 3 different lists to iterate over
+            var alignment = ComputeFlockingAlignment(positionProvider, neighbourTroupes);
+            var cohesion = ComputeFlockingCohesion(neighbourTroupes);
+            var separation = ComputeFlockingSeparation(neighbourTroupes);
+            var obstacle = ComputeFlockingBuilding(neighbourBuilding);
+            var border = ComputeFlockingBorder(neighbourBorder);
 
+            // putting all pieces together with their individual weight
             var move = Vector2.Zero;
 
             move += vectorWeight * vector;
@@ -358,6 +426,7 @@ namespace KernelPanic.Entities
             move += cohesionWeight * cohesion;
             move += separationWeight * separation;
             move += obstacleWeight * obstacle;
+            move += borderWeight * border;
 
             if (float.IsNaN(move.X) || float.IsNaN(move.Y))
             {
@@ -370,7 +439,7 @@ namespace KernelPanic.Entities
                 Console.WriteLine("obstacle: " + obstacle);
                 Console.WriteLine("move: " + move);
             }
-            move.Normalize(); // we need to normalize since 2 of the 3 here could be a Vector.Zero
+            move.Normalize(); // we need to normalize since some could be a Vector.Zero
             
             if (float.IsNaN(move.X) || float.IsNaN(move.Y))
             {
@@ -458,7 +527,7 @@ namespace KernelPanic.Entities
         /// Should return a negative value, so we move away from the other units
         /// </summary>
         /// <returns>A normalized negative vector, or zero</returns>
-        private Vector2 ComputeFlockingSeparation(PositionProvider positionProvider, IEnumerable<Troupe> neighbourhood)
+        private Vector2 ComputeFlockingSeparation(IEnumerable<Troupe> neighbourhood)
         {
             var result = Vector2.Zero;
             var neighbourCount = 0;
@@ -481,9 +550,8 @@ namespace KernelPanic.Entities
             return float.IsNaN(result.X) ? Vector2.Zero : -1 * result;
         }
 
-        private Vector2 ComputeFlockingObstacle(PositionProvider positionProvider)
+        private Vector2 ComputeFlockingBuilding(IEnumerable<Building> neighbourhood)
         {
-            // LaneBorder is handled somewhere else
             var result = Vector2.Zero;
             if (this is Thunderbird)
             {
@@ -492,7 +560,7 @@ namespace KernelPanic.Entities
 
             Building closestBuilding = null;
             var minDistanceSq = float.NaN;
-            foreach (var building in positionProvider.NearEntities<Building>(this, 200))
+            foreach (var building in neighbourhood)
             {
                 var distanceSq = Vector2.DistanceSquared(Sprite.Position, building.Sprite.Position);
                 if (distanceSq < minDistanceSq || float.IsNaN(minDistanceSq))
@@ -513,14 +581,36 @@ namespace KernelPanic.Entities
             return float.IsNaN(result.X) ? Vector2.Zero : result;
         }
 
-        /*
-        internal void DodgeLaneBorder(LaneBorder border)
+        /// <summary>
+        /// This function does not check for IsTargetBorder
+        /// </summary>
+        /// <param name="neighbourhood"></param>
+        /// <returns></returns>
+        private Vector2 ComputeFlockingBorder(IEnumerable<LaneBorder> neighbourhood)
         {
-            var dist = Sprite.Position - border.Bounds.Center.ToVector2();
-            dist.Normalize();
-            Sprite.Position += 7 * dist;
+            var closestBorderPosition = new Vector2(float.NaN);
+            var minDistanceSq = float.NaN;
+            foreach (var border in neighbourhood)
+            {
+                var borderPosition = border.Bounds.Center.ToVector2();
+                var distanceSq = Vector2.DistanceSquared(Sprite.Position, borderPosition);
+                if (distanceSq < minDistanceSq || float.IsNaN(minDistanceSq))
+                {
+                    closestBorderPosition = borderPosition;
+                    minDistanceSq = distanceSq;
+                }
+            }
+            
+            // probably could not find a border close by
+            if (float.IsNaN(closestBorderPosition.X) || float.IsNaN(closestBorderPosition.Y))
+            {
+                return Vector2.Zero;
+            }
+
+            // now that we found the closest, calculate the distance from there to this
+            var result = closestBorderPosition - Sprite.Position; 
+            return -1 * result;
         }
-        */
 
         #endregion
 
