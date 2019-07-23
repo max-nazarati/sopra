@@ -120,6 +120,9 @@
     <Compile Include="..\KernelPanic\Data\RelativePosition.cs">
       <Link>Data\RelativePosition.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Data\SingleQueue.cs">
+      <Link>Data\SingleQueue.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Data\VectorField.cs">
       <Link>Data\VectorField.cs</Link>
     </Compile>
