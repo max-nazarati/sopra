@@ -38,7 +38,7 @@ namespace KernelPanic.Players
         internal bool IncreasedBitcoins { get; private set; }
 
         [DataMember]
-        protected readonly List<Upgrade> mUpgrades = new List<Upgrade>();
+        internal readonly List<Upgrade> Upgrades = new List<Upgrade>();
 
         [DataMember(Name = "Exp")]
         public int ExperiencePoints { get; set; } = 5;
@@ -120,7 +120,7 @@ namespace KernelPanic.Players
                     return;
             }
 
-            mUpgrades.Add(upgrade);
+            Upgrades.Add(upgrade);
 
             // Apply the new upgrade to all existing entities.
             foreach (var unit in AttackingLane.EntityGraph.Entities<Unit>())
@@ -133,7 +133,7 @@ namespace KernelPanic.Players
 
         internal virtual void ApplyUpgrades(Entity entity)
         {
-            foreach (var upgrade in mUpgrades)
+            foreach (var upgrade in Upgrades)
             {
                 upgrade.Apply(entity);
             }

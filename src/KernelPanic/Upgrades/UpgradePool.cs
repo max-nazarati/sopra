@@ -184,6 +184,11 @@ namespace KernelPanic.Upgrades
 
         internal void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            var playerUpgradeRefs = new List<UpgradeReference>();
+            foreach (var upgrade in mPlayer.Upgrades)
+            {
+                playerUpgradeRefs.Add(new UpgradeReference(upgrade, mPlayer, mSpriteManager));
+            }
             foreach (var upgrades in mUpgrades)
             {
                 foreach (var upgrade in upgrades)
@@ -195,7 +200,19 @@ namespace KernelPanic.Upgrades
                     var tintColor = Color.Gray;
                     if (upgrade.Button.Action.IsPurchased)
                     {
-                        tintColor = (upgrade.Button.Action.Buyer == mPlayer) ? Color.SteelBlue : Color.IndianRed;
+                        tintColor = Color.IndianRed;
+                        foreach (var element in playerUpgradeRefs)
+                        {
+                            if (element.Id == upgrade.Id)
+                            {
+                                tintColor = Color.SteelBlue;
+                                break;
+                            }
+                            else
+                            {
+                                tintColor = Color.IndianRed;
+                            }
+                        }
                     }
                     upgrade.Button.DrawTint(spriteBatch, gameTime, tintColor);
                 }
