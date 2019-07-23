@@ -20,9 +20,6 @@ namespace KernelPanic.Entities
     [DataContract]
     internal abstract class Building : Entity
     {
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification =
-            "Ensures that all buildings take a SoundManager in their constructor, which is required for Building.Create to work."
-        )]
         protected Building(int price, Sprite sprite, SpriteManager spriteManager)
             : base(price, new Point(Table.Grid.KachelSize), sprite, spriteManager)
         {
