@@ -134,7 +134,7 @@ namespace KernelPanic
                 objects.RemoveAll(@object => @object.WantsRemoval);
             }
 
-            FixMovementCollisions(positionProvider);
+            // FixMovementCollisions(positionProvider);
             HandleCollisions(positionProvider);
 
             mMidUpdate = false;

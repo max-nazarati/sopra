@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Events;
@@ -300,38 +301,49 @@ namespace KernelPanic.Entities
         /// <returns></returns>
         protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
         {
-            var neighbourhoodRadius = 1;
-            var alignmentWeight = 25/100f;
-            var cohesionWeight = 30/100f;
-            var separationWeight = 45/100f;
+            const float neighbourhoodRadius = 40;
 
-            IEnumerable<Troupe> neighbourhood = null;
-            if (this is Thunderbird)
-            {
-                neighbourhood = positionProvider.NearEntities<Thunderbird>(this, neighbourhoodRadius);
-            }
+            const float vectorWeight = 40 / 100f; // VectorField (Heatmap)
+            const float alignmentWeight = 15 / 100f;
+            const float cohesionWeight = 10 / 100f;
+            const float separationWeight = 30 / 100f;
+            const float obstacleWeight = 30 / 100f;
 
-            if (this is Virus || this is Bug)
-            {
-                neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
-            }
+            // we are forcing the enumeration with ToList() at this point so we dont have to enumerate more than once
+            IEnumerable<Troupe> neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
 
-            if (this is Trojan || this is Nokia)
+            // check for this type and change neighbourhood before we calculate the 3 cases
+            // also force .ToList(), so we dont have to iterate 3 times... possible do it manually for faster
+            if (this is Bug || this is Virus)
             {
-                neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
+                neighbourhood = neighbourhood.Where(x => x is Bug || x is Virus).ToList();
             }
-            // var neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
+            if (this is Nokia || this is Trojan)
+            {
+                neighbourhood = neighbourhood.Where(x => x is Trojan || x is Nokia).ToList();
+            }
+            else // (this is Thunderbird)
+            {
+                neighbourhood = neighbourhood.Where(x => x is Thunderbird).ToList();
+            }
+            
+            // var move = Vector2.Zero;
+            var vector = positionProvider.TroupeData.RelativeMovement(this, Sprite.Position);
+            vector.Normalize();
+            var alignment = ComputeFlockingAlignment(positionProvider, neighbourhood);
+            var cohesion = ComputeFlockingCohesion(neighbourhood);
+            var separation = ComputeFlockingSeparation(positionProvider, neighbourhood);
+            var obstacle = ComputeFlockingObstacle(positionProvider);
 
             var move = Vector2.Zero;
-            var alignment = ComputeFlockingAlignment(positionProvider, neighbourhood);
-            var cohesion = ComputeFlockingCohesion(positionProvider, neighbourhood);
-            var separation = ComputeFlockingSeparation(positionProvider, neighbourhood);
 
+            move += vectorWeight * vector;
             move += alignmentWeight * alignment;
             move += cohesionWeight * cohesion;
             move += separationWeight * separation;
+            move += obstacleWeight * obstacle;
 
-            move.Normalize();
+            move.Normalize(); // we need to normalize since 2 of the 3 here could be a Vector.Zero
             move *= Speed;
             // MoveVector = move;
             // Console.WriteLine("Final Move Vector: " + move);
@@ -341,7 +353,7 @@ namespace KernelPanic.Entities
         /// <summary>
         /// Alignment is a behavior that causes a particular Troupe to line up with Troupes close by
         /// </summary>
-        /// <returns>A normalized vector</returns>
+        /// <returns>A normalized vector or zero</returns>
         private Vector2 ComputeFlockingAlignment(PositionProvider positionProvider, IEnumerable<Troupe> neighbourhood)
         {
             var result = Vector2.Zero;
@@ -349,33 +361,29 @@ namespace KernelPanic.Entities
 
             foreach (var unit in neighbourhood)
             {
-                // if (unit is Bug || unit is Virus)
-                {
-                    result += positionProvider.TroupeData.RelativeMovement(unit, unit.Sprite.Position);
-                    neighbourCount++;
-                }
+                result += positionProvider.TroupeData.RelativeMovement(unit, unit.Sprite.Position);
+                neighbourCount++;
             }
 
-            if (neighbourCount != 0)
+            if (neighbourCount == 0)
             {
-                result.X /= neighbourCount;
-                result.Y /= neighbourCount;
+                return result;
             }
 
             // Console.WriteLine("Alignment: " + result);
             result.Normalize();
             // Console.WriteLine("Alignment Normalized: " + result);
 
-            // NaN after Normalize
-            return result is Vector2 number ? number : Vector2.Zero;
+            // NaN after Normalize?
+            return float.IsNaN(result.X) ? Vector2.Zero : result;
         }
 
         /// <summary>
         /// Cohesion is a behavior that causes agents to steer towards the "center of mass" - that is,
         /// the average position of the agents within a certain radius
         /// </summary>
-        /// <returns>A normalized vector</returns>
-        private Vector2 ComputeFlockingCohesion(PositionProvider positionProvider, IEnumerable<Troupe> neighbourhood)
+        /// <returns>A normalized vector or zero</returns>
+        private Vector2 ComputeFlockingCohesion(IEnumerable<Troupe> neighbourhood)
         {
             var center = Vector2.Zero;
             var neighbourCount = 0;
@@ -386,28 +394,29 @@ namespace KernelPanic.Entities
                 neighbourCount++;
             }
 
-            if (neighbourCount != 0)
+            if (neighbourCount == 0)
             {
-                center.X /= neighbourCount;
-                center.Y /= neighbourCount;
+                return Vector2.Zero;
             }
+
+            center.X /= neighbourCount;
+            center.Y /= neighbourCount;
 
             // we dont want the center of mass but our direction to it
             var result = center - Sprite.Position;
             // Console.WriteLine("Cohesion: " + result);
-            // result.Normalize();
+            result.Normalize();
             // Console.WriteLine("Cohesion Normalized: " + result);
 
             // NaN after Normalize
-            return result is Vector2 number ? number : Vector2.Zero;
+            return float.IsNaN(result.X) ? Vector2.Zero : result;
         }
 
         /// <summary>
         /// Separation is the behavior that causes an agent to steer away from all of its neighbors
+        /// Should return a negative value, so we move away from the other units
         /// </summary>
-        /// <param name="positionProvider"></param>
-        /// <param name="neighbourhoodRadius"></param>
-        /// <returns>A normalized vector</returns>
+        /// <returns>A normalized negative vector, or zero</returns>
         private Vector2 ComputeFlockingSeparation(PositionProvider positionProvider, IEnumerable<Troupe> neighbourhood)
         {
             var result = Vector2.Zero;
@@ -419,17 +428,46 @@ namespace KernelPanic.Entities
                 neighbourCount++;
             }
 
-            if (neighbourCount != 0)
+            if (neighbourCount == 0)
             {
-                result.X /= neighbourCount;
-                result.Y /= neighbourCount;
+                return result;
             }
 
             // Console.WriteLine("Separation: " + result);
-            // result.Normalize();
+            result.Normalize();
             // Console.WriteLine("Separation Normalized: " + result);
             // NaN after Normalize
-            return result is Vector2 number ? -1 * number : Vector2.Zero;
+            return float.IsNaN(result.X) ? Vector2.Zero : -1 * result;
+        }
+        
+        private Vector2 ComputeFlockingObstacle(PositionProvider positionProvider)
+        {
+            // TODO check for laneBorder
+            if (this is Thunderbird)
+            {
+                return Vector2.Zero;
+            }
+            var result = Vector2.Zero;
+            Building closestBuilding = null;
+            var minDistanceSq = float.NaN;
+            foreach (var building in positionProvider.NearEntities<Building>(this, 200))
+            {
+                var distanceSq = Vector2.DistanceSquared(Sprite.Position, building.Sprite.Position);
+                if (distanceSq < minDistanceSq || float.IsNaN(minDistanceSq))
+                {
+                    closestBuilding = building;
+                    minDistanceSq = distanceSq;
+                }
+            }
+
+            // can only be NaN if we never found a building
+            if (float.IsNaN(minDistanceSq))
+            {
+                return result;
+            }
+            result = Sprite.Position - closestBuilding.Sprite.Position;
+            result.Normalize();
+            return result; // dont need to return negative, we directly calculated reversed
         }
 
         #endregion
