@@ -302,22 +302,27 @@ namespace KernelPanic.Entities
         /// <returns></returns>
         protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
         {
-            const float neighbourhoodRadius = 40;
+            const int neighbourhoodRadius = 40;
 
-            const float vectorWeight = 40 / 100f; // VectorField (Heatmap)
+            const float vectorWeight = 100 / 100f; // VectorField (Heatmap)
             const float alignmentWeight = 15 / 100f;
             const float cohesionWeight = 10 / 100f;
-            const float separationWeight = 30 / 100f;
+            const float separationWeight = 100 / 100f;
             const float obstacleWeight = 30 / 100f;
 
+            Rectangle rect = new Rectangle(Sprite.Position.ToPoint(), new Point(neighbourhoodRadius));
+            IEnumerable<IGameObject> completeNeighbourhood = positionProvider.EntitiesAt(rect);
+
             // we are forcing the enumeration with ToList() at this point so we dont have to enumerate more than once
-            IEnumerable<Troupe> neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
+            // IEnumerable<Troupe> neighbourhood = positionProvider.NearEntities<Troupe>(this, neighbourhoodRadius);
+
+            IEnumerable<IGameObject> neighbourhood = null;
 
             // check for this type and change neighbourhood before we calculate the 3 cases
             // also force .ToList(), so we dont have to iterate 3 times... possible do it manually for faster
             if (this is Bug || this is Virus)
             {
-                neighbourhood = neighbourhood.Where(x => x is Bug || x is Virus).ToList();
+                // neighbourhood = neighbourhood.Where(x => x is Bug || x is Virus).ToList();
             }
             if (this is Nokia || this is Trojan)
             {
@@ -327,7 +332,7 @@ namespace KernelPanic.Entities
             {
                 neighbourhood = neighbourhood.Where(x => x is Thunderbird).ToList();
             }
-            
+
             // var move = Vector2.Zero;
             var vector = positionProvider.TroupeData.RelativeMovement(this, Sprite.Position);
             if (float.IsNaN(vector.X) || vector == Vector2.Zero)

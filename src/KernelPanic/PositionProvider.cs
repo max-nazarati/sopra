@@ -88,6 +88,11 @@ namespace KernelPanic
             return mEntities.QuadTree.EntitiesAt(entity.Bounds).OfType<T>();
         }
 
+        internal IEnumerable<IGameObject> EntitiesAt(Rectangle rectangle)
+        {
+            return mEntities.QuadTree.EntitiesAt(rectangle);
+        }
+
         internal bool HasEntityAt(Vector2 point, Func<IGameObject, bool> predicate = null)
         {
             return mEntities.HasEntityAt(point, predicate);
