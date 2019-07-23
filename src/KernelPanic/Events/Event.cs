@@ -47,6 +47,8 @@ namespace KernelPanic.Events
             BitcoinChanged,
 
             SetupEnded,
+            TechDemoStarted,
+            TechDemoClosed,
 
             FirefoxJump,
             HeroAbility
@@ -424,6 +426,10 @@ namespace KernelPanic.Events
                     [Key.AchievementPool] = achievementPool
                 }
             };
+
+        internal static Event TechDemoStarted() => new Event(Id.TechDemoStarted);
+
+        internal static Event TechDemoClosed() => new Event(Id.TechDemoClosed);
 
         internal static Event SetupEnded() =>
             new Event(Id.SetupEnded);

@@ -21,6 +21,7 @@ namespace KernelPanic
         private readonly BuildingBuyer mBuildingBuyer;
         private readonly InGameOverlay mHud;
         private readonly AchievementPool mAchievementPool;
+        private bool mIsTechDemo;
 
         internal int SaveSlot { get; }
 
@@ -66,12 +67,19 @@ namespace KernelPanic
             if (!disposing)
                 return;
 
-            EventCenter.Default.Send(Event.CloseAchievementPool(mAchievementPool));
             mBoard.Dispose();
+
+            if (mAchievementPool != null)
+                EventCenter.Default.Send(Event.CloseAchievementPool(mAchievementPool));
+            if (mIsTechDemo)
+                EventCenter.Default.Send(Event.TechDemoClosed());
         }
 
         private void InitializeTechDemo()
         {
+            mIsTechDemo = true;
+            EventCenter.Default.Send(Event.TechDemoStarted());
+
             foreach (var kv in mHud.UnitBuyingMenu.BuyingActions)
             {
                 if (typeof(Hero).IsAssignableFrom(kv.Key))
@@ -130,7 +138,7 @@ namespace KernelPanic
         {
             Board = mBoard,
             GameTime = mHud.ScoreOverlay.Time,
-            AchievementData = mAchievementPool.AchievementData
+            AchievementData = mAchievementPool?.AchievementData
         };
 
         #endregion

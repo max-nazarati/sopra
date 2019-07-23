@@ -1,5 +1,6 @@
 using System;
 using Autofac.Util;
+using KernelPanic.Data;
 using KernelPanic.Events;
 using Newtonsoft.Json;
 
@@ -17,19 +18,22 @@ namespace KernelPanic.Tracking
         [JsonProperty] internal Event.Id EventId { get; }
         [JsonProperty] internal bool Positive { get; }
 
-        private IDisposable mDisposable;
+        private CompositeDisposable mDisposable;
+        internal bool Enabled { get; set; } = true;
 
         protected ProgressComponent(Event.Id eventId, bool positive)
         {
             EventId = eventId;
             Positive = positive;
+
+            var eventCenter = EventCenter.Default;
+            mDisposable += eventCenter.Subscribe(Event.Id.TechDemoStarted, e => Enabled = false);
+            mDisposable += eventCenter.Subscribe(Event.Id.TechDemoClosed, e => Enabled = true);
         }
 
         protected override void Dispose(bool disposing)
         {
-            mDisposable?.Dispose();
-            mDisposable = null;
-
+            mDisposable.Dispose();
             base.Dispose(disposing);
         }
 
@@ -47,11 +51,14 @@ namespace KernelPanic.Tracking
         /// <exception cref="InvalidOperationException">If this <see cref="ProgressComponent"/> is already connected.</exception>
         internal void Connect(IProgress<ProgressComponent> progress, Func<Event, bool> condition = null)
         {
-            if (mDisposable != null || IsDisposed)
-                throw new InvalidOperationException("Component is/was already connected.");
-
             Progress = progress;
-            mDisposable = EventCenter.Default.Subscribe(EventId, Handle, condition);
+            mDisposable += EventCenter.Default.Subscribe(EventId, MaybeHandle, condition);
+        }
+
+        private void MaybeHandle(Event @event)
+        {
+            if (Enabled)
+                Handle(@event);
         }
 
         protected abstract void Handle(Event @event);

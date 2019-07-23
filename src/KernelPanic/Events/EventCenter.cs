@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using KernelPanic.Data;
 
 namespace KernelPanic.Events
 {
@@ -96,13 +98,10 @@ namespace KernelPanic.Events
             return Subscribe(id, GuardHandler(condition, handler));
         }
 
-        internal void Subscribe(IEnumerable<Event.Id> ids, Action<Event> handler, Func<Event, bool> condition = null)
+        internal IDisposable Subscribe(IEnumerable<Event.Id> ids, Action<Event> handler, Func<Event, bool> condition = null)
         {
             var realHandler = GuardHandler(condition, handler);
-            foreach (var id in ids)
-            {
-                Subscribe(id, realHandler);
-            }
+            return ids.Aggregate(new CompositeDisposable(), (current, id) => current + Subscribe(id, realHandler));
         }
 
         /// <summary>
