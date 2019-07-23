@@ -18,6 +18,7 @@ namespace KernelPanic
         private GameStateManager mGameStateManager;
         private readonly RawInputState mInputState;
         private SoundManager mSoundManager;
+        private bool mBecameInactive;
 
         public Game1()
         {
@@ -97,6 +98,10 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (mBecameInactive && !IsActive)
+                return;
+
+            mBecameInactive = !IsActive;
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
             mGameStateManager.Update(mInputState, gameTime);
             EventCenter.Default.Run();
