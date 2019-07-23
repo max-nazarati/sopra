@@ -405,11 +405,11 @@
 /processorParam:Quality=Best
 /build:sounds/DiscShoot.mp3
 
-#begin sounds/ElectroShock.mp3
-/importer:Mp3Importer
+#begin sounds/ElectroShock.wav
+/importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/ElectroShock.mp3
+/build:sounds/ElectroShock.wav
 
 #begin sounds/MoneyEarned.mp3
 /importer:Mp3Importer

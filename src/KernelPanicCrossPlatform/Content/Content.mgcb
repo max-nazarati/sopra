@@ -399,11 +399,11 @@
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/DiscShoot.mp3;sounds/DiscShoot.mp3
 
-#begin ../../KernelPanic/Content/sounds/ElectroShock.mp3
-/importer:Mp3Importer
+#begin ../../KernelPanic/Content/sounds/ElectroShock.wav
+/importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/ElectroShock.mp3;sounds/ElectroShock.mp3
+/build:../../KernelPanic/Content/sounds/ElectroShock.wav;sounds/ElectroShock.wav
 
 #begin ../../KernelPanic/Content/sounds/MoneyEarned.mp3
 /importer:Mp3Importer

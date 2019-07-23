@@ -175,7 +175,7 @@ namespace KernelPanic
                             Lookup(Sound.DiscShoot).Play(0.3f * mVolume,0,0);
                             break;
                         case ShockField _:
-                            Lookup(Sound.ElectroShock).Play(0.2f * mVolume,0,0);
+                            Lookup(Sound.ElectroShock).Play(0.1f * mVolume,0,0);
                             break;
                         case CursorShooter _:
                             Lookup(Sound.CursorShoot).Play(0.1f * mVolume,0.3f,0);
