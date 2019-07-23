@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using KernelPanic.Interface;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -52,7 +53,10 @@ namespace KernelPanic.Entities
 
         internal Building Clone() => Clone<Building>();
 
-        public override Rectangle Bounds => Sprite.Bounds;
+        public override Rectangle Bounds =>
+            new Rectangle(
+                (Sprite.Position - 0.5f * new Vector2(Grid.KachelSize)).ToPoint(),
+                new Point(Grid.KachelSize));
 
         public override int? DrawLevel => 0;    // Buildings have the lowest level.
 

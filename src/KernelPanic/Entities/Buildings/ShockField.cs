@@ -12,7 +12,7 @@ namespace KernelPanic.Entities.Buildings
     internal sealed class ShockField : Tower
     {
         internal ShockField(SpriteManager spriteManager)
-            : base(100, 1, 2, 0,TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager)
+            : base(100, 0, 2, 0,TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager)
         {
             FireTimer.Enabled = true;
         }
@@ -26,15 +26,15 @@ namespace KernelPanic.Entities.Buildings
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             base.Update(positionProvider, inputManager, gameTime);
-            if (FireTimer.RemainingCooldown.Milliseconds != 0) return;
-            foreach(var unit in positionProvider.NearEntities<Unit>(this, Radius))
-            {
-                if (!Bounds.Intersects(unit.Bounds))
-                    continue;
+            if (FireTimer.RemainingCooldown > TimeSpan.Zero)
+                return;
 
+            FireTimer.Reset();
+            EventCenter.Default.Send(Event.ProjectileShot(this));
+
+            foreach(var unit in positionProvider.EntitiesAt<Unit>(this))
+            {
                 unit.DealDamage(Damage, positionProvider);
-                EventCenter.Default.Send(Event.ProjectileShot(this));
-                FireTimer.Reset();
             }
         }
     }

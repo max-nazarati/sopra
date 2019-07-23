@@ -114,7 +114,6 @@ namespace KernelPanic.Entities.Buildings
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
         }
 
         #endregion
