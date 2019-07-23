@@ -330,7 +330,7 @@ namespace KernelPanic.Entities
             
             // var move = Vector2.Zero;
             var vector = positionProvider.TroupeData.RelativeMovement(this, Sprite.Position);
-            if (float.IsNaN(vector.X))
+            if (float.IsNaN(vector.X) || vector == Vector2.Zero)
             {
                 Console.WriteLine("----------------------------------------------");
                 Console.WriteLine("vector before normalizing: " + vector);
@@ -382,7 +382,8 @@ namespace KernelPanic.Entities
             move *= Speed;
             // MoveVector = move;
             // Console.WriteLine("Final Move Vector: " + move);
-            return move;
+            return float.IsNaN(move.X) ? Vector2.Zero : move;
+
         }
 
         /// <summary>
@@ -507,12 +508,14 @@ namespace KernelPanic.Entities
             return float.IsNaN(result.X) ? Vector2.Zero : result;
         }
 
+        /*
         internal void DodgeLaneBorder(LaneBorder border)
         {
             var dist = Sprite.Position - border.Bounds.Center.ToVector2();
             dist.Normalize();
             Sprite.Position += 7 * dist;
         }
+        */
 
         #endregion
 
