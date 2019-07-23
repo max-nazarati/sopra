@@ -7,11 +7,11 @@ namespace KernelPanic.Waves
     internal struct WaveReference
     {
         private int Index { get; }
-        internal Action<Troupe, TileIndex> SpawnChild { get; }
+        internal Action<Lazy<Troupe>, TileIndex> SpawnChild { get; }
 
         internal bool IsValid => Index > 0;
 
-        internal WaveReference(int index, Action<Troupe, TileIndex> spawnChild)
+        internal WaveReference(int index, Action<Lazy<Troupe>, TileIndex> spawnChild)
         {
             Index = index;
             SpawnChild = spawnChild;

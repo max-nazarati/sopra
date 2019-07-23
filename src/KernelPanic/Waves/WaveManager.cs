@@ -35,6 +35,11 @@ namespace KernelPanic.Waves
         private readonly List<Wave> mByHumanDefeatedWavesList = new List<Wave>();
         private readonly List<Wave> mByComputerDefeatedWavesList = new List<Wave>();
 
+        private readonly PlayerIndexed<List<(Wave, Lazy<Troupe>, TileIndex)>> mDelayedSpawns =
+            new PlayerIndexed<List<(Wave, Lazy<Troupe>, TileIndex)>>(
+                new List<(Wave, Lazy<Troupe>, TileIndex)>(),
+                new List<(Wave, Lazy<Troupe>, TileIndex)>());
+
         /// <summary>
         /// The latest wave, this is the one where both players still have units.
         /// </summary>
@@ -65,31 +70,53 @@ namespace KernelPanic.Waves
         private void SpawnWave(CooldownComponent component)
         {
             var wave = CurrentWave;
-
-            void Spawn(StaticDistinction distinction)
+            void DistributeSpawns(StaticDistinction distinction)
             {
-                var troupes = wave.Troupes.Select(distinction);
-                var player = Players.Select(distinction);
-                var spawner = player.AttackingLane.UnitSpawner;
-                
-                void SpawnChild(Troupe troupe, TileIndex tile)
+                foreach (var troupe in wave.Troupes.Select(distinction))
                 {
-                    player.ApplyUpgrades(troupe);
-                    troupe.Wave = new WaveReference(wave.Index, SpawnChild);
-                    troupes.Add(troupe);
-                    spawner.Register(troupe, tile);
-                }
-                
-                foreach (var troupe in troupes)
-                {
-                    player.ApplyUpgrades(troupe);
-                    troupe.Wave = new WaveReference(wave.Index, SpawnChild);
-                    spawner.Register(troupe);
+                    Spawn(troupe, distinction, wave, null);
                 }
             }
 
-            Spawn(new StaticDistinction(true));
-            Spawn(new StaticDistinction(false));
+            DistributeSpawns(new StaticDistinction(true));
+            DistributeSpawns(new StaticDistinction(false));
+        }
+
+        private void CompleteDelayedSpawns()
+        {
+            void DistributeSpawns(StaticDistinction distinction)
+            {
+                var delayed = mDelayedSpawns.Select(distinction);
+                foreach (var (wave, lazyTroupe, tileIndex) in delayed)
+                {
+                    Spawn(lazyTroupe.Value, distinction, wave, tileIndex);
+                }
+
+                delayed.Clear();
+            }
+            
+            DistributeSpawns(new StaticDistinction(true));
+            DistributeSpawns(new StaticDistinction(false));
+        }
+
+        private void Spawn(Troupe troupe, IPlayerDistinction playerDistinction, Wave wave, TileIndex? tile)
+        {
+            var player = Players.Select(playerDistinction);
+            player.ApplyUpgrades(troupe);
+
+            var delayedQueue = mDelayedSpawns.Select(playerDistinction);
+            troupe.Wave = new WaveReference(wave.Index,
+                (lazyTroupe, lazyTile) => delayedQueue.Add((wave, lazyTroupe, lazyTile)));
+
+            if (tile is TileIndex spawnTile)
+            {
+                wave.Troupes.Select(playerDistinction).Add(troupe);
+                player.AttackingLane.UnitSpawner.Register(troupe, spawnTile);
+            }
+            else
+            {
+                player.AttackingLane.UnitSpawner.Register(troupe);
+            }
         }
 
         internal void Add(IPlayerDistinction player, Unit unit)
@@ -110,6 +137,8 @@ namespace KernelPanic.Waves
 
         internal void Update(GameTime gameTime)
         {
+            CompleteDelayedSpawns();
+
             mNextWaveTimer.Update(gameTime);
 
             // 1. Remove all units from the waves that are either dead or have reached the base.
