@@ -30,7 +30,7 @@ namespace KernelPanic.ArtificialIntelligence
         {
             mActions = actions;
             // Bug  Virus   Trojaner   Nokia   Thunderbird    Settings    Firefox    Bluescreen
-            mUnitDistribution = new[] {0.25, 0.2, 0.2, 0.1, 0.1, 0.05, 0.05, 0.05};
+            mUnitDistribution = new[] {0.25, 0.2, 0.2, 0.1, 0.1, 0, 0.1, 0.05};
             var eventCenter = EventCenter.Default;
             mSubscriptions = new List<IDisposable>();
             mSubscriptions.Add(eventCenter.Subscribe(Event.Id.DamagedBase,

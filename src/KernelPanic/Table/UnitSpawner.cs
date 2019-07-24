@@ -148,15 +148,13 @@ namespace KernelPanic.Table
         /// <param name="spawnTile">An alternative position compared to the base.</param>
         internal void Register(Troupe troupe, TileIndex spawnTile)
         {
-            if (mAdditionalSpawns.TryGetValue(spawnTile, out var queue))
+            if (!mAdditionalSpawns.TryGetValue(spawnTile, out var queue))
             {
-                queue.Add(troupe);
-                return;
+                queue = new SpawnQueue<Troupe>(mGrid.GetTile(spawnTile).Position);
+                mAdditionalSpawns[spawnTile] = queue;
             }
-            
-            queue = new SpawnQueue<Troupe>(mGrid.GetTile(spawnTile).Position);
+
             queue.Add(troupe);
-            mAdditionalSpawns[spawnTile] = queue;
             mSpawnCooldown.Enabled = true;
         }
 
