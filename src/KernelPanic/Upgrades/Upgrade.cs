@@ -157,15 +157,23 @@ namespace KernelPanic.Upgrades
             {
                 case Id.IncreaseLp1:
                 {
-                    if (entity is Unit unit)
-                        unit.MaximumLife = (int) (unit.MaximumLife * 1.05);
+                        if (entity is Unit unit)
+                        {
+                            if (unit.RemainingLife == unit.MaximumLife)
+                                unit.RemainingLife = (int)(unit.MaximumLife * 1.05);
+                            unit.MaximumLife = (int)(unit.MaximumLife * 1.05);
+                        }
                     break;
                 }
 
                 case Id.IncreaseLp2:
                 {
                     if (entity is Unit unit)
-                        unit.MaximumLife = (int) (unit.MaximumLife * 1.10);
+                        {
+                            if (unit.RemainingLife == unit.MaximumLife)
+                                unit.RemainingLife = (int)(unit.MaximumLife * 1.10);
+                            unit.MaximumLife = (int)(unit.MaximumLife * 1.10);
+                        }
                     break;
                 }
 
