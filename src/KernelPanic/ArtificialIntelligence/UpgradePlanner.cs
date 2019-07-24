@@ -44,7 +44,7 @@ namespace KernelPanic.ArtificialIntelligence
             // Initialize distributions for each tier
             var tier1Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
             var tier2Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
-            var tier3Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            var tier3Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
             var tier4Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
             var tier5Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
             mTierDistribution = new List<double[]>();
@@ -62,8 +62,8 @@ namespace KernelPanic.ArtificialIntelligence
                 {Upgrade.Id.IncreaseLp2, Upgrade.Id.IncreaseGs2, Upgrade.Id.IncreaseVs2, Upgrade.Id.IncreaseBitcoins};
             Upgrade.Id[] tier3Upgrades = new[]
             {
-                Upgrade.Id.CdBoomerang, Upgrade.Id.IncreaseGsNokia, Upgrade.Id.IncreaseGsFirefox,
-                Upgrade.Id.MoreTrojanChildren1
+                Upgrade.Id.IncreaseSettingsHeal2, Upgrade.Id.IncreaseGsNokia, Upgrade.Id.IncreaseGsFirefox,
+                Upgrade.Id.MoreTrojanChildren1, Upgrade.Id.IncreaseSettingsArea2
             };
             Upgrade.Id[] tier4Upgrades = new[]
             {
@@ -72,9 +72,8 @@ namespace KernelPanic.ArtificialIntelligence
             };
             Upgrade.Id[] tier5Upgrades = new[]
             {
-                Upgrade.Id.EmpTwoTargets, Upgrade.Id.AdditionalFirefox2,
-                Upgrade.Id.IncreaseSettingsArea2, Upgrade.Id.IncreaseSettingsHeal2,
-                Upgrade.Id.IncreaseWifi
+                Upgrade.Id.CdBoomerang, Upgrade.Id.EmpTwoTargets, Upgrade.Id.AdditionalFirefox2,
+                Upgrade.Id.DoubleClick, Upgrade.Id.IncreaseWifi
             };
             mTierDictionnary = new List<Upgrade.Id[]>();
             mTierDictionnary.Add(new [] {Upgrade.Id.Invalid});
@@ -159,6 +158,10 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 3;
                     tierIndex = 3;
                     break;
+                case Upgrade.Id.IncreaseSettingsArea2:
+                    tier = 3;
+                    tierIndex = 4;
+                    break;
 
                 // Tier 4 Upgrades
                 case Upgrade.Id.EmpDuration:
@@ -189,15 +192,15 @@ namespace KernelPanic.ArtificialIntelligence
                     break;
                 case Upgrade.Id.EmpTwoTargets:
                     tier = 5;
-                    tierIndex = 0;
+                    tierIndex = 1;
                     break;
                 case Upgrade.Id.AdditionalFirefox2:
                     tier = 5;
-                    tierIndex = 1;
-                    break;
-                case Upgrade.Id.IncreaseSettingsArea2:
-                    tier = 5;
                     tierIndex = 2;
+                    break;
+                case Upgrade.Id.DoubleClick:
+                    tier = 5;
+                    tierIndex = 3;
                     break;
                 case Upgrade.Id.IncreaseWifi:
                     tier = 5;

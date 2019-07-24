@@ -7,6 +7,7 @@ using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
 using KernelPanic.Purchasing;
+using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Upgrades
@@ -40,6 +41,7 @@ namespace KernelPanic.Upgrades
             IncreaseGsNokia,
             IncreaseGsFirefox,
             MoreTrojanChildren1,
+            IncreaseSettingsArea2, // TODO: was 5.3
 
             // Tier 4
             BeginningTier4,
@@ -54,7 +56,7 @@ namespace KernelPanic.Upgrades
             CdBoomerang = BeginningTier5,
             EmpTwoTargets,
             AdditionalFirefox2,
-            IncreaseSettingsArea2,
+            DoubleClick, 
             IncreaseWifi,
 
             EndOfUpgrades
@@ -118,6 +120,8 @@ namespace KernelPanic.Upgrades
                     return "+10% GS bei Firefox";
                 case Id.MoreTrojanChildren1:
                     return "+5 Einheiten bei Trojaner";
+                case Id.IncreaseSettingsArea2:
+                    return "+10% Bereich von Settings"; // TODO
 
                 case Id.EmpDuration:
                     return "+40% Dauer EMP";
@@ -136,8 +140,8 @@ namespace KernelPanic.Upgrades
                     return "Bluescreen trifft 2 Türme";
                 case Id.AdditionalFirefox2:
                     return "+1 Firefox verfügbar";
-                case Id.IncreaseSettingsArea2:
-                    return "+10% Bereich von Settings";
+                case Id.DoubleClick:
+                    return "Doppel-Klick Mäuse";
                 case Id.IncreaseWifi:
                     return "Eduroam 2.0";
 
@@ -287,7 +291,12 @@ namespace KernelPanic.Upgrades
                         settings.DecreaseHealCooldown(0.90f);
                     break;
                 }
-
+                case Id.DoubleClick:
+                {
+                    if (entity is CursorShooter cursor)
+                        cursor.ActivateDoubleClick();
+                    break;
+                }
                 case Id.IncreaseWifi:
                 {
                     if (entity is WifiRouter router)
