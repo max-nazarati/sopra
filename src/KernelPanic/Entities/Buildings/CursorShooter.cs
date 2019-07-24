@@ -24,10 +24,15 @@ namespace KernelPanic.Entities.Buildings
             EventCenter.Default.Send(Event.ProjectileShot(this));
             if (mDoubleClick)
             {
-                for (var i = -1; i < 2; i+=2)
+                for (var i = -0.1; i < 0.2; i += 0.2)
                 {
-                    var x = (float) (Math.Cos(i/3f * direction.X) - Math.Sin(i/3f * direction.Y));
-                    var y = (float) (Math.Sin(i/3f * direction.X) - Math.Cos(i/3f * direction.Y));
+                    // var x = (float) (Math.Cos((Math.PI + i) * direction.X) - Math.Sin((Math.PI + i) * direction.Y));
+                    // var y = (float) (Math.Sin((Math.PI + i) * direction.X) + Math.Cos((Math.PI + i) * direction.Y));
+                    
+                    var x = (float) (Math.Cos(i) * direction.X - Math.Sin(i) * direction.Y);
+                    var y = (float) (Math.Sin(i) * direction.X + Math.Cos(i) * direction.Y);
+
+
                     var newDirection = new Vector2(x, y);
                     yield return new Projectile(this, newDirection, SpriteManager.CreateCursorProjectile(), 30)
                     {
