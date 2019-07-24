@@ -36,7 +36,7 @@ namespace KernelPanic.Upgrades
 
             // Tier 3 Upgrades.
             BeginningTier3,
-            CdBoomerang = BeginningTier3,
+            IncreaseSettingsHeal2 = BeginningTier3,
             IncreaseGsNokia,
             IncreaseGsFirefox,
             MoreTrojanChildren1,
@@ -51,10 +51,10 @@ namespace KernelPanic.Upgrades
 
             // Tier 5
             BeginningTier5,
-            EmpTwoTargets = BeginningTier5,
+            CdBoomerang = BeginningTier5,
+            EmpTwoTargets,
             AdditionalFirefox2,
             IncreaseSettingsArea2,
-            IncreaseSettingsHeal2,
             IncreaseWifi,
 
             EndOfUpgrades
@@ -110,8 +110,8 @@ namespace KernelPanic.Upgrades
                 case Id.IncreaseBitcoins:
                     return "+10% mehr Bitcoin";
 
-                case Id.CdBoomerang:
-                    return "CD als Boomerang";
+                case Id.IncreaseSettingsHeal2:
+                    return "+10% Heilrate von Settings";
                 case Id.IncreaseGsNokia:
                     return "+40% GS bei Nokia";
                 case Id.IncreaseGsFirefox:
@@ -130,14 +130,14 @@ namespace KernelPanic.Upgrades
                 case Id.MoreTrojanChildren2:
                     return "+10 Einheiten bei Trojaner";
 
+                case Id.CdBoomerang:
+                    return "CD als Boomerang";
                 case Id.EmpTwoTargets:
                     return "Bluescreen trifft 2 Türme";
                 case Id.AdditionalFirefox2:
                     return "+1 Firefox verfügbar";
                 case Id.IncreaseSettingsArea2:
                     return "+10% Bereich von Settings";
-                case Id.IncreaseSettingsHeal2:
-                    return "+10% Heilrate von Settings";
                 case Id.IncreaseWifi:
                     return "Eduroam 2.0";
 
@@ -157,23 +157,23 @@ namespace KernelPanic.Upgrades
             {
                 case Id.IncreaseLp1:
                 {
-                        if (entity is Unit unit)
-                        {
-                            if (unit.RemainingLife == unit.MaximumLife)
-                                unit.RemainingLife = (int)(unit.MaximumLife * 1.05);
-                            unit.MaximumLife = (int)(unit.MaximumLife * 1.05);
-                        }
+                    if (entity is Unit unit)
+                    {
+                        if (unit.RemainingLife == unit.MaximumLife)
+                            unit.RemainingLife = (int)(unit.MaximumLife * 1.05);
+                        unit.MaximumLife = (int)(unit.MaximumLife * 1.05);
+                    }
                     break;
                 }
 
                 case Id.IncreaseLp2:
                 {
                     if (entity is Unit unit)
-                        {
-                            if (unit.RemainingLife == unit.MaximumLife)
-                                unit.RemainingLife = (int)(unit.MaximumLife * 1.10);
-                            unit.MaximumLife = (int)(unit.MaximumLife * 1.10);
-                        }
+                    {
+                        if (unit.RemainingLife == unit.MaximumLife)
+                            unit.RemainingLife = (int)(unit.MaximumLife * 1.10);
+                        unit.MaximumLife = (int)(unit.MaximumLife * 1.10);
+                    }
                     break;
                 }
 
@@ -216,11 +216,6 @@ namespace KernelPanic.Upgrades
                     }
                     break;
                 }
-
-                case Id.CdBoomerang:
-                    if (entity is CdThrower cdThrower)
-                        cdThrower.ShootsBoomerang = true;
-                    break;
 
                 case Id.IncreaseGsNokia:
                     if (entity is Nokia nokia)
@@ -266,6 +261,11 @@ namespace KernelPanic.Upgrades
                         trojan.ChildCount += 10;
                     break;
                 }
+
+                case Id.CdBoomerang:
+                    if (entity is CdThrower cdThrower)
+                        cdThrower.ShootsBoomerang = true;
+                    break;
 
                 case Id.EmpTwoTargets:
                 {

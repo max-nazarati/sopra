@@ -123,6 +123,7 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 1;
                     tierIndex = 3;
                     break;
+
                 // Tier 2 Upgrades
                 case Upgrade.Id.IncreaseLp2:
                     tier = 2;
@@ -140,8 +141,9 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 2;
                     tierIndex = 3;
                     break;
+
                 // Tier 3 Upgrades
-                case Upgrade.Id.CdBoomerang:
+                case Upgrade.Id.IncreaseSettingsHeal2:
                     tier = 3;
                     tierIndex = 0;
                     break;
@@ -157,6 +159,7 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 3;
                     tierIndex = 3;
                     break;
+
                 // Tier 4 Upgrades
                 case Upgrade.Id.EmpDuration:
                     tier = 4;
@@ -178,7 +181,12 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 4;
                     tierIndex = 4;
                     break;
+
                 // Tier 5 Upgrades
+                case Upgrade.Id.CdBoomerang:
+                    tier = 5;
+                    tierIndex = 0;
+                    break;
                 case Upgrade.Id.EmpTwoTargets:
                     tier = 5;
                     tierIndex = 0;
@@ -190,10 +198,6 @@ namespace KernelPanic.ArtificialIntelligence
                 case Upgrade.Id.IncreaseSettingsArea2:
                     tier = 5;
                     tierIndex = 2;
-                    break;
-                case Upgrade.Id.IncreaseSettingsHeal2:
-                    tier = 5;
-                    tierIndex = 3;
                     break;
                 case Upgrade.Id.IncreaseWifi:
                     tier = 5;
