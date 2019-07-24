@@ -58,6 +58,7 @@ namespace KernelPanic.ArtificialIntelligence
             var numberGenerator = new Random();
             var number = numberGenerator.Next(0, 6);
             var choice = choices[number];
+            if (choice == "Kabel") return;
             BuySingleTower(choice);
         }
 
