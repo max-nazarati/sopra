@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using KernelPanic.Camera;
 using KernelPanic.Interface;
@@ -38,11 +39,17 @@ namespace KernelPanic.Input
         internal enum MacroKeys
         {
             TowerPlacement,
-            SellTower,
             CameraUp,
             CameraLeft,
             CameraDown,
-            CameraRight
+            CameraRight,
+            Tower1,
+            Tower2,
+            Tower3,
+            Tower4,
+            Tower5,
+            Tower6,
+            Tower7
         }
 
         internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
@@ -56,16 +63,21 @@ namespace KernelPanic.Input
         
         internal async void ChangeKey(MacroKeys action, TextButton button)
         {
+            var originalTitle = button.Title;
             button.Title = "_";
             var pressedKey = Keyboard.GetState().GetPressedKeys();
             while (pressedKey.Length == 0)
             {
-                await Task.Delay(80);
+                await Task.Delay(50);
                 pressedKey = Keyboard.GetState().GetPressedKeys();
             }
-
+            
+            if (mInputState.KeyUsed(pressedKey[0]))
+            {
+                button.Title = originalTitle;
+                return;
+            }
             button.Title = pressedKey[0].ToString();
-
             switch (action)
             {
                 case MacroKeys.TowerPlacement:
@@ -83,8 +95,26 @@ namespace KernelPanic.Input
                 case MacroKeys.CameraRight:
                     mInputState.mCameraRight = pressedKey[0];
                     break;
-                case MacroKeys.SellTower:
-                    mInputState.mSellTower = pressedKey[0];
+                case MacroKeys.Tower1:
+                    mInputState.mTowerOne = pressedKey[0];
+                    break;
+                case MacroKeys.Tower2:
+                    mInputState.mTowerTwo = pressedKey[0];
+                    break;
+                case MacroKeys.Tower3:
+                    mInputState.mTowerThree = pressedKey[0];
+                    break;
+                case MacroKeys.Tower4:
+                    mInputState.mTowerFour = pressedKey[0];
+                    break;
+                case MacroKeys.Tower5:
+                    mInputState.mTowerFive = pressedKey[0];
+                    break;
+                case MacroKeys.Tower6:
+                    mInputState.mTowerSix = pressedKey[0];
+                    break;
+                case MacroKeys.Tower7:
+                    mInputState.mTowerSeven = pressedKey[0];
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(action), action, null);

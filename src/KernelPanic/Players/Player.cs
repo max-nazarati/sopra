@@ -112,11 +112,13 @@ namespace KernelPanic.Players
             {
                 case Upgrade.Id.IncreaseBitcoins:
                     IncreasedBitcoins = true;
+                    Upgrades.Add(upgrade);
                     return;
 
                 case Upgrade.Id.AdditionalFirefox1:
                 case Upgrade.Id.AdditionalFirefox2:
                     FirefoxMaximum++;
+                    Upgrades.Add(upgrade);
                     return;
             }
 

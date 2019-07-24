@@ -80,24 +80,21 @@ namespace KernelPanic.Entities
 
         public abstract Rectangle Bounds { get; }
 
-        public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
-        {
-            if (!Selected)
-                return;
+        public abstract void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime);
 
-            var owner = positionProvider.Owner[this];
+        internal void UpdateOverlay(Player owner, InputManager inputManager, GameTime gameTime)
+        {
             if (mStoredActions == null)
             {
                 mStoredActions = Actions(owner).ToArray();
                 mDrawActions = owner.Select(true, false);
             }
 
-            if (mDrawActions)
-            {
-                PositionActions(action => action.Update(inputManager, gameTime));
-                UpdateInformation();
-            }
+            if (!mDrawActions)
+                return;
 
+            PositionActions(action => action.Update(inputManager, gameTime));
+            UpdateInformation();
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
