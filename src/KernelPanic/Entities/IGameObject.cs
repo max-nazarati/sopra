@@ -12,8 +12,8 @@ namespace KernelPanic.Entities
         /// </summary>
         int? DrawLevel { get; }
 
-        bool WantsRemoval { get; }
-    
+        bool WantsRemoval { get; set; }
+
         void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime);
     }
 }

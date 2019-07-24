@@ -51,7 +51,11 @@ namespace KernelPanic.Entities
         }
 
         int? IGameObject.DrawLevel => null;
-        bool IGameObject.WantsRemoval => false;
+        bool IGameObject.WantsRemoval
+        {
+            get => false;
+            set { }
+        }
 
         void IGameObject.Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {

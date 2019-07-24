@@ -51,7 +51,7 @@ namespace KernelPanic.Entities.Projectiles
 
         public int? DrawLevel => 2;    // Above all units and buildings.
         
-        public bool WantsRemoval { get; protected set; }
+        public bool WantsRemoval { get; set; }
 
         public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {

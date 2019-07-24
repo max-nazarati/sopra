@@ -74,7 +74,7 @@ namespace KernelPanic.Entities
         /// <summary>
         /// If this flag is <c>true</c> this entity should be removed from the <see cref="EntityGraph"/>.
         /// </summary>
-        public bool WantsRemoval { get; protected set; }
+        public bool WantsRemoval { get; set; }
 
         public bool Selected { get; set; }
 
