@@ -25,6 +25,8 @@ namespace KernelPanic.Entities
 
         [DataMember] protected internal Vector2? MoveTarget { get; protected set; }
 
+        protected Vector2? MoveVector { get; set; }
+
         /// <summary>
         /// The speed (GS) of this unit.
         /// </summary>
@@ -232,7 +234,7 @@ namespace KernelPanic.Entities
         internal void DamageBase(PositionProvider positionProvider)
         {
             EventCenter.Default.Send(Event.DamagedBase(positionProvider.Owner, this));
-            positionProvider.Target.Power = Math.Max(0, positionProvider.Target.Power - AttackStrength);
+            // positionProvider.Target.Power = Math.Max(0, positionProvider.Target.Power - AttackStrength);
             positionProvider.Owner[this].UpdateHeroCount(GetType(), -1);
             WantsRemoval = true;
         }
@@ -267,22 +269,16 @@ namespace KernelPanic.Entities
         {
             CalculateMovement(null, positionProvider, inputManager);
 
-            mLastPosition = Sprite.Position;
-            mLastMoveTarget = MoveTarget;
-            var move = ShouldMove && MoveTarget is Vector2 target
-                ? PerformMove(target, positionProvider, inputManager)
-                : null;
-
-            if (move is Vector2 theMove)
+            if (MoveVector is Vector2 theMove)
             {
-                Sprite.Position += theMove;
+                Sprite.Position += theMove * gameTime.ElapsedGameTime.Milliseconds * 0.06f;
             }
             UpdateHealthBar();
 
             if (!(Sprite is AnimatedSprite animated))
                 return;
 
-            if (move?.X is float x)
+            if (MoveVector?.X is float x)
             {
                 // choose correct movement direction based on x value or direction of idle animation
                 animated.MovementDirection = (animated.Effect == SpriteEffects.None && (int)x == 0) || x < 0
@@ -303,10 +299,10 @@ namespace KernelPanic.Entities
         /// <returns></returns>
         protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
         {
-            const int neighbourhoodRadius = 200;
+            const int neighbourhoodRadius = 100;
 
             const float vectorWeight = 90 / 100f; // VectorField (Heatmap)
-            const float alignmentWeight = 10 / 100f;
+            const float alignmentWeight = 100 / 100f;
             const float cohesionWeight = 20 / 100f;
             const float separationWeight = 60 / 100f;
             const float obstacleWeight = 10 / 100f;
@@ -444,7 +440,7 @@ namespace KernelPanic.Entities
 
             foreach (var unit in neighbourhood)
             {
-                result += positionProvider.TroupeData.RelativeMovement(unit, unit.Sprite.Position);
+                result += unit.MoveVector ?? positionProvider.TroupeData.RelativeMovement(unit, unit.Sprite.Position);
                 neighbourCount++;
             }
 

@@ -41,7 +41,7 @@ namespace KernelPanic.Entities.Units
         protected override void CalculateMovement(Vector2? projectionStart, PositionProvider positionProvider, InputManager inputManager)
         {
             var move = GetNextMoveVector(positionProvider);
-            Sprite.Position += move ?? Vector2.Zero;
+            MoveVector = move;
         }
 /*
         protected override void CalculateMovement(Vector2? projectionStart,
