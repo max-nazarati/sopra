@@ -306,31 +306,31 @@ namespace KernelPanic
             cameraRightKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraRight, (TextButton) button);
             
             var selectTower1Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerOne.ToString(), 700, 250);
-            var selectTower1 = CreateButton(stateManager.Sprite, "Kabel auswählen", 700,600);
+            var selectTower1 = CreateButton(stateManager.Sprite, "Kabel", 700,600);
             selectTower1Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower1, (TextButton)button);
             
             var selectTower2Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerTwo.ToString(), 200, -600);
-            var selectTower2 = CreateButton(stateManager.Sprite, "Mausturm auswählen", 200,-250);
+            var selectTower2 = CreateButton(stateManager.Sprite, "Mausschütze", 200,-250);
             selectTower2Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower2, (TextButton)button);
             
             var selectTower3Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerThree.ToString(), 300, -600);
-            var selectTower3 = CreateButton(stateManager.Sprite, "Kabel auswählen", 300,-250);
+            var selectTower3 = CreateButton(stateManager.Sprite, "Ventilator", 300,-250);
             selectTower3Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower3, (TextButton)button);
             
             var selectTower4Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerFour.ToString(), 400, -600);
-            var selectTower4 = CreateButton(stateManager.Sprite, "Kabel auswählen", 400,-250);
+            var selectTower4 = CreateButton(stateManager.Sprite, "Antivirus", 400,-250);
             selectTower4Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower4, (TextButton)button);
             
             var selectTower5Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerFive.ToString(), 500, -600);
-            var selectTower5 = CreateButton(stateManager.Sprite, "Kabel auswählen", 500,-250);
+            var selectTower5 = CreateButton(stateManager.Sprite, "Wifi-Router", 500,-250);
             selectTower5Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower5, (TextButton)button);
             
             var selectTower6Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerSix.ToString(), 600, -600);
-            var selectTower6 = CreateButton(stateManager.Sprite, "Kabel auswählen", 600,-250);
+            var selectTower6 = CreateButton(stateManager.Sprite, "Schockfeld", 600,-250);
             selectTower6Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower6, (TextButton)button);
             
             var selectTower7Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerSeven.ToString(), 700, -600);
-            var selectTower7 = CreateButton(stateManager.Sprite, "Kabel auswählen", 700,-250);
+            var selectTower7 = CreateButton(stateManager.Sprite, "CD-Thrower", 700,-250);
             selectTower7Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower7, (TextButton)button);
             
             return new MenuState(stateManager)

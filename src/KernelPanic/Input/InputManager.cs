@@ -63,6 +63,7 @@ namespace KernelPanic.Input
         
         internal async void ChangeKey(MacroKeys action, TextButton button)
         {
+            var originalTitle = button.Title;
             button.Title = "_";
             var pressedKey = Keyboard.GetState().GetPressedKeys();
             while (pressedKey.Length == 0)
@@ -70,13 +71,13 @@ namespace KernelPanic.Input
                 await Task.Delay(50);
                 pressedKey = Keyboard.GetState().GetPressedKeys();
             }
-
-            button.Title = pressedKey[0].ToString();
+            
             if (mInputState.KeyUsed(pressedKey[0]))
             {
-                button.Title = "can't use "+pressedKey[0];
+                button.Title = originalTitle;
                 return;
             }
+            button.Title = pressedKey[0].ToString();
             switch (action)
             {
                 case MacroKeys.TowerPlacement:
