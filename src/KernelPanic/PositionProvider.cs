@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
@@ -20,6 +21,7 @@ namespace KernelPanic
         internal Owner Owner { get; }
         internal Base Target { get; }
         internal TroupePathData TroupeData { get; }
+        private readonly Hashtable mCache = new Hashtable(); 
 
         internal PositionProvider(Base target,
             Owner owner,
@@ -90,7 +92,13 @@ namespace KernelPanic
 
         internal IEnumerable<IGameObject> EntitiesAt(Rectangle rectangle)
         {
-            return mEntities.QuadTree.EntitiesAt(rectangle);
+            if (mCache[(rectangle.X / 25, rectangle.Y / 25)] is IEnumerable<IGameObject> enumerable)
+            {
+                return enumerable;
+            }
+            var result = mEntities.QuadTree.EntitiesAt(rectangle);
+            mCache[(rectangle.X / 25, rectangle.Y / 25)] = result;
+            return result;
         }
 
         internal bool HasEntityAt(Vector2 point, Func<IGameObject, bool> predicate = null)
