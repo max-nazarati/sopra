@@ -86,6 +86,8 @@ namespace KernelPanic
 
             foreach (var kv in mHud.UnitBuyingMenu.BuyingActions)
             {
+                mBoard.PlayerA.Base.Power = 999999;
+                mBoard.PlayerB.Base.Power = 999999;
                 if (typeof(Hero).IsAssignableFrom(kv.Key))
                 {
                     // Skip heroes.
