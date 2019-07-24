@@ -39,7 +39,7 @@ namespace KernelPanic.Input
             return key == mPlaceTower || key == mCameraUp || key == mCameraLeft
                      || key == mCameraDown || key == mCameraRight || key == mTowerOne
                      || key == mTowerTwo || key == mTowerThree || key == mTowerFour || key == mTowerFive
-                     || key == mTowerSix || key == mTowerSeven;
+                     || key == mTowerSix || key == mTowerSeven || key == Keys.Escape;
         }
 
         internal bool MouseInWindow =>
