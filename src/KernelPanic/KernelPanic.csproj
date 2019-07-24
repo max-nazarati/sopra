@@ -116,6 +116,7 @@
     <Compile Include="Interface\TextButton.cs" />
     <Compile Include="IPositioned.cs" />
     <Compile Include="Options\KeyMap.cs" />
+    <Compile Include="Options\OptionsData.cs" />
     <Compile Include="PathPlanning\AStar.cs" />
     <Compile Include="PathPlanning\BreadthFirstSearch.cs" />
     <Compile Include="PathPlanning\ObstacleMatrix.cs" />
