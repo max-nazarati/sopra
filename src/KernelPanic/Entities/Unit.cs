@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
+using Accord.Math;
 using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -302,19 +303,20 @@ namespace KernelPanic.Entities
         /// <returns></returns>
         protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
         {
-            const int neighbourhoodRadius = 100;
+            const int neighbourhoodRadius = 200;
 
-            const float vectorWeight = 30 / 100f; // VectorField (Heatmap)
-            const float alignmentWeight = 10 / 100f;
-            const float cohesionWeight = 10 / 100f;
-            const float separationWeight = 40 / 100f;
-            const float obstacleWeight = 30 / 100f;
-            const float borderWeight = 1000 / 100f;
+            const float vectorWeight = 100 / 100f; // VectorField (Heatmap)
+            const float alignmentWeight = 20 / 100f;
+            const float cohesionWeight = 20 / 100f;
+            const float separationWeight = 60 / 100f;
+            const float obstacleWeight = 10 / 100f;
+            const float borderWeight = 30 / 100f;
 
             #region Get Enumerators
 
             // Iterate over the Entity Graph only one time and get EVERYTHING
             var rect = new Rectangle(Sprite.Position.ToPoint(), new Point(neighbourhoodRadius));
+            // TODO is this rectangle centered?=)
             var completeNeighbourhood = positionProvider.EntitiesAt(rect);
 
             // Create explicitly forced Lists to iterate over, depending on which unit we are
@@ -401,9 +403,6 @@ namespace KernelPanic.Entities
             var vector = positionProvider.TroupeData.RelativeMovement(this, Sprite.Position);
             if (float.IsNaN(vector.X) || vector == Vector2.Zero)
             {
-                Console.WriteLine("----------------------------------------------");
-                Console.WriteLine("vector before normalizing: " + vector);
-                Console.WriteLine("unit position is: " + Sprite.Position);
                 vector = Vector2.Zero;
             }
             else
@@ -413,49 +412,23 @@ namespace KernelPanic.Entities
             
             // using the 3 different lists to iterate over
             var alignment = ComputeFlockingAlignment(positionProvider, neighbourTroupes);
-            var cohesion = ComputeFlockingCohesion(neighbourTroupes);
+            // var cohesion = ComputeFlockingCohesion(neighbourTroupes);
             var separation = ComputeFlockingSeparation(neighbourTroupes);
             var obstacle = ComputeFlockingBuilding(neighbourBuilding);
-            var border = ComputeFlockingBorder(neighbourBorder);
+            // var border = ComputeFlockingBorder(neighbourBorder);
 
             // putting all pieces together with their individual weight
             var move = Vector2.Zero;
 
             move += vectorWeight * vector;
             move += alignmentWeight * alignment;
-            move += cohesionWeight * cohesion;
+            // move += cohesionWeight * cohesion;
             move += separationWeight * separation;
             move += obstacleWeight * obstacle;
-            move += borderWeight * border;
+            // move = borderWeight * border;
 
-            if (float.IsNaN(move.X) || float.IsNaN(move.Y))
-            {
-                Console.WriteLine("----------------------------------------------");
-                Console.WriteLine("move Vector before normalizing");
-                Console.WriteLine("vector: " + vector);
-                Console.WriteLine("alignment: " + alignment);
-                Console.WriteLine("cohesion: " + cohesion);
-                Console.WriteLine("separation: " + separation);
-                Console.WriteLine("obstacle: " + obstacle);
-                Console.WriteLine("move: " + move);
-            }
-            move.Normalize(); // we need to normalize since some could be a Vector.Zero
-            
-            if (float.IsNaN(move.X) || float.IsNaN(move.Y))
-            {
-                Console.WriteLine("----------------------------------------------");
-                Console.WriteLine("move Vector after normalizing");
-                Console.WriteLine("vector: " + vector);
-                Console.WriteLine("alignment: " + alignment);
-                Console.WriteLine("cohesion: " + cohesion);
-                Console.WriteLine("separation: " + separation);
-                Console.WriteLine("obstacle: " + obstacle);
-                Console.WriteLine("move: " + move);
-                Console.WriteLine("----------------------------------------------");
-            }
+            move.Normalize();
             move *= Speed;
-            // MoveVector = move;
-            // Console.WriteLine("Final Move Vector: " + move);
             return float.IsNaN(move.X) ? Vector2.Zero : move;
 
         }
@@ -589,18 +562,45 @@ namespace KernelPanic.Entities
         private Vector2 ComputeFlockingBorder(IEnumerable<LaneBorder> neighbourhood)
         {
             var closestBorderPosition = new Vector2(float.NaN);
-            var minDistanceSq = float.NaN;
+            var minDistance = float.NaN;
             foreach (var border in neighbourhood)
             {
-                var borderPosition = border.Bounds.Center.ToVector2();
-                var distanceSq = Vector2.DistanceSquared(Sprite.Position, borderPosition);
-                if (distanceSq < minDistanceSq || float.IsNaN(minDistanceSq))
+                // corner point of the rectangle
+                var point1 = new Vector2(border.Bounds.X, border.Bounds.Y);
+                var point2 = new Vector2(border.Bounds.X + border.Bounds.Width, border.Bounds.Y + border.Bounds.Height);
+                var distance = 0f;
+                var horizontal = false;
+
+                var x = Sprite.Position.X;
+                var y = Sprite.Position.Y;
+                if (x > point1.X && x < point2.X)
                 {
-                    closestBorderPosition = borderPosition;
-                    minDistanceSq = distanceSq;
+                    distance = Math.Min(y - point1.Y, y - point2.Y);
                 }
+                if (y > point1.Y && y < point2.Y)
+                {
+                    distance = Math.Min(x - point1.X, x - point2.X);
+                    horizontal = true;
+                }
+
+                if (distance < minDistance || float.IsNaN(minDistance))
+                {
+                    minDistance = distance;
+                    if (horizontal)
+                    {
+                        closestBorderPosition.X = distance;
+                        closestBorderPosition.Y = 0;
+                    }
+                    else
+                    {
+                        closestBorderPosition.X = 0;
+                        closestBorderPosition.Y = distance;
+                    }
+                }
+
+                return closestBorderPosition;
             }
-            
+
             // probably could not find a border close by
             if (float.IsNaN(closestBorderPosition.X) || float.IsNaN(closestBorderPosition.Y))
             {
@@ -608,8 +608,8 @@ namespace KernelPanic.Entities
             }
 
             // now that we found the closest, calculate the distance from there to this
-            var result = closestBorderPosition - Sprite.Position; 
-            return -1 * result;
+            var result = Sprite.Position - closestBorderPosition; 
+            return result;
         }
 
         #endregion
