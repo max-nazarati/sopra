@@ -2,8 +2,6 @@
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
-using KernelPanic.Table;
-using Microsoft.Xna.Framework;
 
 namespace KernelPanic
 {
@@ -32,98 +30,6 @@ namespace KernelPanic
 
             // Otherwise we have to small troupes which will collide if they have the same type.
             return troupe.GetType() == other.GetType();
-        }
-    
-        internal static bool HandleMovement(IGameObject object1, IGameObject object2, PositionProvider positionProvider)
-        {
-            if (!(object1 is Troupe a) || !(object2 is Troupe b) || !a.CollidesWith(b))
-                return false;
-
-            var toReset = TroupeToReset(a, b, positionProvider);
-            return toReset != null && toReset.ResetMovement();
-        }
-
-        private static Troupe TroupeToReset(Troupe a, Troupe b, PositionProvider positionProvider)
-        {
-            // If one unit was already reset, we reset the other.
-            if (a.MovementResettable && !b.MovementResettable)
-                return a;
-            if (b.MovementResettable && !a.MovementResettable)
-                return b;
-
-            if (!a.MovementResettable && !b.MovementResettable)
-            {
-                // Shouldn't they already have collided in the last frame?
-                return null;
-            }
-
-            if (!(a.MoveTarget is Vector2 aMoveTarget) || !(b.MoveTarget is Vector2 bMoveTarget))
-                return null;
-
-            var subTiles = a.IsSmall ? 2 : 1;
-
-            if (!(positionProvider.Grid.TileFromWorldPoint(aMoveTarget, subTiles) is TileIndex tileA))
-                return null;
-        
-            if (!(positionProvider.Grid.TileFromWorldPoint(bMoveTarget, subTiles) is TileIndex tileB))
-                return null;
-
-            if (tileA == tileB)
-            {
-                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget);
-                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget);
-                
-                return aDistance < bDistance ? b : a;
-            }
-
-            if (a is Thunderbird)
-            {
-                return ResetByTiles(a, b, tileA, tileB, positionProvider);
-            }
-
-            var heatA = positionProvider.TroupeData.TileHeat(tileA.BaseTile.ToPoint(), a);
-            var heatB = positionProvider.TroupeData.TileHeat(tileB.BaseTile.ToPoint(), b);
-
-            if (heatA == heatB)
-            {
-                return ResetByTiles(a, b, tileA, tileB, positionProvider);
-            }
-
-            if (heatA < heatB)
-            {
-                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget);
-                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget) + Vector2.DistanceSquared(bMoveTarget, aMoveTarget);
-
-                return aDistance < bDistance ? b : a;
-            }
-            else
-            {
-                var aDistance = Vector2.DistanceSquared(a.Sprite.Position, aMoveTarget) + Vector2.DistanceSquared(aMoveTarget, bMoveTarget);
-                var bDistance = Vector2.DistanceSquared(b.Sprite.Position, bMoveTarget);
-
-                return aDistance < bDistance ? b : a;
-            }
-        }
-
-        private static Troupe ResetByTiles(Troupe a, Troupe b, TileIndex targetA, TileIndex targetB, PositionProvider positionProvider)
-        {
-            var subTiles = a.IsSmall ? 2 : 1;
-            var currentA = positionProvider.RequireTile(a.Sprite.Position, subTiles);
-            var currentB = positionProvider.RequireTile(b.Sprite.Position, subTiles);
-
-            if (currentA == targetB)
-            {
-                // ›B‹ has to go where ›A‹ is. Reset ›B‹.
-                return b;
-            }
-
-            if (currentB == targetA)
-            {
-                // ›A‹ has to go where ›B‹ is. Reset ›A‹.
-                return a;
-            }
-
-            return null;
         }
 
         #endregion

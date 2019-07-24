@@ -8,7 +8,6 @@ using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using KernelPanic.Entities.Units;
 
 namespace KernelPanic
 {
@@ -144,7 +143,6 @@ namespace KernelPanic
                 objects.RemoveAll(@object => @object.WantsRemoval);
             }
 
-            // FixMovementCollisions(positionProvider);
             HandleCollisions(positionProvider);
 
             mMidUpdate = false;
@@ -159,20 +157,6 @@ namespace KernelPanic
                 if (!entity.WantsRemoval)
                     entity.Update(positionProvider, inputManager, gameTime);
             }
-        }
-
-        private void FixMovementCollisions(PositionProvider positionProvider)
-        {
-            bool collisionHandled;
-            do
-            {
-                collisionHandled = false;
-                foreach (var (a, b) in QuadTree.Overlaps(entity => entity is Troupe))
-                {
-                    collisionHandled |= CollisionManager.HandleMovement(a, b, positionProvider);
-                }
-                QuadTree.Rebuild();
-            } while (collisionHandled);
         }
 
         private void HandleCollisions(PositionProvider positionProvider)
