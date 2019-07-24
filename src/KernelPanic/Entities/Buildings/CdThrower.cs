@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Events;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities.Buildings
 {
@@ -13,6 +14,7 @@ namespace KernelPanic.Entities.Buildings
     {
         protected override bool WantsRotation => true;
 
+        [JsonProperty]
         internal bool ShootsBoomerang { get; set; }
         
         internal CdThrower(SpriteManager spriteManager)
