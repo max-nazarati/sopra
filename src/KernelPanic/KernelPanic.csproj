@@ -86,6 +86,7 @@
     <Compile Include="Entities\Projectiles\Disc.cs" />
     <Compile Include="Entities\Projectiles\Emp.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
+    <Compile Include="Entities\Projectiles\Wifi.cs" />
     <Compile Include="Entities\Unit.cs" />
     <Compile Include="Entities\Units\Bluescreen.cs" />
     <Compile Include="Entities\Units\Bug.cs" />

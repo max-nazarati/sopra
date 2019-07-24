@@ -14,7 +14,7 @@ namespace KernelPanic.Entities.Buildings
         protected override bool WantsRotation => false;
 
         internal Antivirus(SpriteManager spriteManager)
-            : base(60, 5, 8, 15,TimeSpan.FromSeconds(3), spriteManager.CreateAntivirus(), spriteManager)
+            : base(50, 5.5f, 9, 15,TimeSpan.FromSeconds(2), spriteManager.CreateAntivirus(), spriteManager)
         {
         }
 

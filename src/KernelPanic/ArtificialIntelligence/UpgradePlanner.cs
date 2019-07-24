@@ -46,7 +46,7 @@ namespace KernelPanic.ArtificialIntelligence
             double[] tier2Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
             double[] tier3Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
             double[] tier4Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
-            double[] tier5Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            double[] tier5Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
             mTierDistribution = new List<double[]>();
             mTierDistribution.Add(new double[0]);
             mTierDistribution.Add(tier1Distribution);
@@ -73,7 +73,8 @@ namespace KernelPanic.ArtificialIntelligence
             Upgrade.Id[] tier5Upgrades = new[]
             {
                 Upgrade.Id.EmpTwoTargets, Upgrade.Id.AdditionalFirefox2,
-                Upgrade.Id.IncreaseSettingsArea2, Upgrade.Id.IncreaseSettingsHeal2
+                Upgrade.Id.IncreaseSettingsArea2, Upgrade.Id.IncreaseSettingsHeal2,
+                Upgrade.Id.IncreaseWifi
             };
             mTierDictionnary = new List<Upgrade.Id[]>();
             mTierDictionnary.Add(new [] {Upgrade.Id.Invalid});
@@ -193,6 +194,10 @@ namespace KernelPanic.ArtificialIntelligence
                 case Upgrade.Id.IncreaseSettingsHeal2:
                     tier = 5;
                     tierIndex = 3;
+                    break;
+                case Upgrade.Id.IncreaseWifi:
+                    tier = 5;
+                    tierIndex = 4;
                     break;
                 default:
                     tier = 0;

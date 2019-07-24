@@ -469,7 +469,7 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(0, 0, 40, 3)
             };
-            sprite.SetOrigin(RelativePosition.Center);
+            sprite.SetOrigin(RelativePosition.TopRight);
             //sprite.ScaleToWidth(40);
             return sprite;
         }

@@ -55,6 +55,7 @@ namespace KernelPanic.Upgrades
             AdditionalFirefox2,
             IncreaseSettingsArea2,
             IncreaseSettingsHeal2,
+            IncreaseWifi,
 
             EndOfUpgrades
         }
@@ -137,6 +138,9 @@ namespace KernelPanic.Upgrades
                     return "+10% Bereich von Settings";
                 case Id.IncreaseSettingsHeal2:
                     return "+10% Heilrate von Settings";
+                case Id.IncreaseWifi:
+                    return "Eduroam 2.0";
+
 
                 case Id.Invalid:
                     goto default;
@@ -281,6 +285,13 @@ namespace KernelPanic.Upgrades
                 {
                     if (entity is Settings settings)
                         settings.DecreaseHealCooldown(0.90f);
+                    break;
+                }
+
+                case Id.IncreaseWifi:
+                {
+                    if (entity is WifiRouter router)
+                        router.IncreaseWaveCount(2);
                     break;
                 }
 

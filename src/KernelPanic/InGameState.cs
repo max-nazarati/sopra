@@ -88,6 +88,7 @@ namespace KernelPanic
             {
                 mBoard.PlayerA.Base.Power = 9999;
                 mBoard.PlayerB.Base.Power = 9999;
+                mBoard.PlayerA.ExperiencePoints = 9999;
                 if (typeof(Hero).IsAssignableFrom(kv.Key))
                 {
                     // Skip heroes.
