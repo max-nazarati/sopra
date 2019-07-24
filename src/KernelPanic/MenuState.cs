@@ -380,7 +380,7 @@ namespace KernelPanic
             title.SetOrigin(RelativePosition.TopRight);
 
             //"      "
-            var instr = stateManager.Sprite.CreateText("" +
+            var instructions = stateManager.Sprite.CreateText("" +
                 "- Mauszeiger Bewegung / WASD:   Kamera-Bewegung\n" +
                 "- Mittlerer Maus-Click:                      Erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen\n" +
                 "- Rechter Maus-Click:                      Bewegungsziel für den ausgewählten Hero angeben / un-togglet Hero-Fähigkeit.\n" +
@@ -390,10 +390,11 @@ namespace KernelPanic
                 "- Esc-Taste:                      Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
                 "                                               ins vorherige Menu-Screen gelangen / aus Main-Menu das Spiel beenden.\n" +
                 "- Q-Taste:                         Alternative zu mittlerem Maus-Click\n" +
-                "- E-Taste:                         Un-togglet Hero-Fähigkeit\n");
+                "- E-Taste:                         Un-togglet Hero-Fähigkeit\n" + 
+                "- Zahlen 1-7:                     Gebäude-Auswahl zum bauen\n");
 
 
-            instr.Y = title.Y + 50;
+            instructions.Y = title.Y + 50;
 
             return new MenuState(stateManager)
             {
@@ -401,7 +402,7 @@ namespace KernelPanic
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     new StaticComponent(title),
-                    new StaticComponent(instr),
+                    new StaticComponent(instructions),
                     backButton
                 }
             };
