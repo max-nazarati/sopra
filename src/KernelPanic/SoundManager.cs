@@ -129,6 +129,7 @@ namespace KernelPanic
 
         internal void Update(OptionsData settings)
         {
+            mVolume = settings.MusicVolume;
             MediaPlayer.Volume = settings.MusicVolume;
             if (settings.PlayBackgroundMusic)
             {

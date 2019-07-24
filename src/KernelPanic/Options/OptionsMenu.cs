@@ -16,35 +16,43 @@ namespace KernelPanic.Options
         {
             var settings = stateManager.Settings;
 
-            var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
-            var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
+            var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 100, 150);
+            var musicOnOffButton = CreateButton(stateManager.Sprite, YesNoTitle(settings.PlayBackgroundMusic), 100, -150);
             musicOnOffButton.Clicked += (button, input) =>
             {
                 settings.PlayBackgroundMusic = !settings.PlayBackgroundMusic;
-                musicOnOffButton.Title = settings.PlayBackgroundMusic ? "an" : "aus";
+                musicOnOffButton.Title = YesNoTitle(settings.PlayBackgroundMusic);
             };
 
-            var effectsButton = CreateButton(stateManager.Sprite, "Soundeffekte", 325, 150);
-            var effectsOnOffButton = CreateButton(stateManager.Sprite, "aus", 325, -150);
+            var effectsButton = CreateButton(stateManager.Sprite, "Soundeffekte", 210, 150);
+            var effectsOnOffButton = CreateButton(stateManager.Sprite, YesNoTitle(settings.PlaySoundEffects), 210, -150);
             effectsOnOffButton.Clicked += (button, input) =>
             {
                 settings.PlaySoundEffects = !settings.PlaySoundEffects;
-                effectsOnOffButton.Title = settings.PlaySoundEffects ? "an" : "aus";
+                effectsOnOffButton.Title = YesNoTitle(settings.PlaySoundEffects);
             };
 
-            var volumeButton = CreateButton(stateManager.Sprite, "Lautstärke", 450, 150);
-            var volumeRegulatorButton = CreateButton(stateManager.Sprite, "Mittel", 450, -150);
+            var volumeButton = CreateButton(stateManager.Sprite, "Lautstärke", 320, 150);
+            var volumeRegulatorButton = CreateButton(stateManager.Sprite, InitialSoundVolumeTitle(settings.MusicVolume), 320, -150);
             volumeRegulatorButton.Clicked += (button, input) => ChangeSoundVolume(volumeRegulatorButton, settings);
 
-            var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 700, 150);
-            var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus", 700, -150);
+            var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 430,150);
+            var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus", 430, -150);
             fullScreenWindowButton.Clicked += (button, input) =>
             {
                 settings.IsFullscreen = !settings.IsFullscreen;
-                fullScreenWindowButton.Title = settings.IsFullscreen ? "an" : "aus";
+                fullScreenWindowButton.Title = YesNoTitle(settings.ScrollInverted);
             };
 
-            var keyInputsButton = CreateButton(stateManager.Sprite, "Steuerung", 575, 150);
+            var invertScroll = CreateButton(stateManager.Sprite, "Scroll invertieren", 540, 150);
+            var invertScrollButton = CreateButton(stateManager.Sprite, YesNoTitle(settings.ScrollInverted), 540, -150);
+            invertScrollButton.Clicked += (button, input) =>
+            {
+                settings.ScrollInverted = !settings.ScrollInverted;
+                invertScrollButton.Title = YesNoTitle(settings.ScrollInverted);
+            };
+
+            var keyInputsButton = CreateButton(stateManager.Sprite, "Tastaturbelegung", 650);
             keyInputsButton.Clicked += (button, input) => stateManager.Push(new ControlsMenu(stateManager));
 
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
@@ -62,8 +70,17 @@ namespace KernelPanic.Options
                 keyInputsButton,
                 backButton,
                 fullscreen,
-                fullScreenWindowButton
+                fullScreenWindowButton,
+                invertScroll,
+                invertScrollButton
             };
+        }
+
+        private static string YesNoTitle(bool value) => value ? "an" : "aus";
+
+        private static string InitialSoundVolumeTitle(float volume)
+        {
+            return volume < 0.4f ? "Leise" : volume > 0.6f ? "Laut" : "Mittel";
         }
 
         private static void ChangeSoundVolume(TextButton volumeButton, OptionsData settings)
@@ -71,16 +88,16 @@ namespace KernelPanic.Options
             switch (volumeButton.Title)
             {
                 case "Mittel":
-                    volumeButton.Title = "Hoch";
+                    volumeButton.Title = "Laut";
                     settings.MusicVolume = 1.0f;
                     break;
-                case "Hoch":
-                    volumeButton.Title = "Niedrig";
-                    settings.MusicVolume = 0.2f;
+                case "Laut":
+                    volumeButton.Title = "Leise";
+                    settings.MusicVolume = 0.1f;
                     break;
-                case "Niedrig":
+                case "Leise":
                     volumeButton.Title = "Mittel";
-                    settings.MusicVolume = 0.6f;
+                    settings.MusicVolume = 0.5f;
                     break;
                 default:
                     Console.WriteLine("No valid button title for VolumeButton.");
