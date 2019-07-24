@@ -53,6 +53,66 @@ namespace KernelPanic.Data
             mRelativeField = vectorField;
         }
 
+        private void HandleDiagonalLocalMinima()
+        {
+            RelativePosition gradient;
+            RelativePosition gradientNeighbourTopLeft;
+            RelativePosition gradientNeighbourTopRight;
+            RelativePosition gradientNeighbourBottomLeft;
+            RelativePosition gradientNeighbourBottomRight;
+
+            for (int row = 0; row < HeatMap.Height; ++row)
+            {
+                for (int col = 0; col < HeatMap.Width; ++col)
+                {
+                    gradient = mRelativeField[row, col];
+                    if (row > 0 && col > 0)
+                    {
+                        gradientNeighbourTopLeft = mRelativeField[row - 1, col - 1];
+                        if (gradient == RelativePosition.TopLeft &&
+                            gradientNeighbourTopLeft == RelativePosition.BottomRight)
+                        {
+                            mRelativeField[row, col] = RelativePosition.CenterLeft;
+                            mRelativeField[row - 1, col - 1] = RelativePosition.CenterRight;
+                        }
+                    }
+
+                    if (row > 0 && col < HeatMap.Width - 1)
+                    {
+                        gradientNeighbourTopRight = mRelativeField[row - 1, col + 1];
+                        if (gradient == RelativePosition.TopRight &&
+                            gradientNeighbourTopRight == RelativePosition.BottomLeft)
+                        {
+                            mRelativeField[row, col] = RelativePosition.CenterRight;
+                            mRelativeField[row - 1, col + 1] = RelativePosition.CenterLeft;
+                        }
+                    }
+
+                    if (row < HeatMap.Height - 1 && col > 0)
+                    {
+                        gradientNeighbourBottomLeft = mRelativeField[row + 1, col - 1];
+                        if (gradient == RelativePosition.BottomLeft &&
+                            gradientNeighbourBottomLeft == RelativePosition.TopRight)
+                        {
+                            mRelativeField[row, col] = RelativePosition.CenterLeft;
+                            mRelativeField[row + 1, col - 1] = RelativePosition.CenterRight;
+                        }
+                    }
+
+                    if (row < HeatMap.Height - 1 && col < HeatMap.Width - 1)
+                    {
+                        gradientNeighbourBottomRight = mRelativeField[row + 1, col + 1];
+                        if (gradient == RelativePosition.BottomRight &&
+                            gradientNeighbourBottomRight == RelativePosition.TopLeft)
+                        {
+                            mRelativeField[row, col] = RelativePosition.CenterRight;
+                            mRelativeField[row + 1, col + 1] = RelativePosition.CenterLeft;
+                        }
+                    }
+                }
+            }
+        }
+
         internal void Update()
         {
             for (var row = 0; row < HeatMap.Height; ++row)
@@ -64,6 +124,7 @@ namespace KernelPanic.Data
                         mRelativeField[row, col] = relative;
                 }
             }
+            HandleDiagonalLocalMinima();
         }
 
         #region Thunderbird's vector field
