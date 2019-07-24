@@ -429,22 +429,36 @@ namespace KernelPanic.Entities.Units
 
         protected override IEnumerable<IAction> Actions(Player owner) =>
             base.Actions(owner).Extend(new AbilityAction(this, SpriteManager));
-        
+
         private sealed class AbilityAction : IAction
         {
+            private Hero Hero { get; }
             public Button Button { get; }
+            private readonly ImageSprite mOverlay;
 
             internal AbilityAction(Hero hero, SpriteManager sprites)
             {
-                Button = new AnimatedButton(sprites, hero) {Title = "Fähigkeit"};
+                Hero = hero;
+                Button = new TextButton(sprites) {Title = "Fähigkeit"};
                 Button.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager, true);
+                mOverlay = sprites.CreateColoredRectangle(1, 1, new[] {new Color(0.8f, 0.8f, 0.8f, 0.5f)});
             }
 
-            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) => 
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime)
+            {
+                var cooldown = Hero.Cooldown;
+                var width = (int) ((float) cooldown.RemainingCooldown.Ticks / cooldown.Cooldown.Ticks * Button.Size.X);
+                var size = new Point(width, (int) Button.Sprite.Height);
                 Button.Update(inputManager, gameTime);
+                Button.Enabled = cooldown.Ready;
+                mOverlay.DestinationRectangle = new Rectangle(Button.Position.ToPoint(), size);
+            }
 
-            void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
+            void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime)
+            {
                 Button.Draw(spriteBatch, gameTime);
+                mOverlay.Draw(spriteBatch, gameTime);
+            }
         }
 
         #endregion
