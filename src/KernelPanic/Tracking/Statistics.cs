@@ -28,7 +28,6 @@ namespace KernelPanic.Tracking
         }
 
         private Data mData;
-        private bool mEnabled;
         private CompositeDisposable mDisposable;
 
         internal Statistics()
@@ -42,7 +41,7 @@ namespace KernelPanic.Tracking
             CreateSubscriptions();
         }
 
-        internal void CreateSubscriptions()
+        private void CreateSubscriptions()
         {
             var eventCenter = EventCenter.Default;
             var isDefender = IsActive(Event.Key.Defender);
