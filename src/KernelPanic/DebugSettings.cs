@@ -7,13 +7,13 @@ namespace KernelPanic
     {
         private static bool sVisualizeAStar;
         private static TroupeDataVisualization sVectorFieldVisualization;
-        private static TroupeDataVisualization sHeatMapVisualization;
+        private static bool sVisualizeHeatMap;
         private static bool sGamePaused;
         private static bool sShowHitBoxes;
 
         internal static bool VisualizeAStar => sVisualizeAStar;
         internal static TroupeDataVisualization VectorFieldVisualization => sVectorFieldVisualization;
-        internal static TroupeDataVisualization HeatMapVisualization => sHeatMapVisualization;
+        public static bool VisualizeHeatMap => sVisualizeHeatMap;
         internal static bool GamePaused => sGamePaused;
         internal static bool ShowHitBoxes => sShowHitBoxes;
 
@@ -32,7 +32,7 @@ namespace KernelPanic
             }
 
             Toggles(Keys.G, ref sVisualizeAStar);
-            Advances(Keys.H, ref sHeatMapVisualization, TroupeDataVisualization.Small);
+            Toggles(Keys.H, ref sVisualizeHeatMap);
             Advances(Keys.V, ref sVectorFieldVisualization, TroupeDataVisualization.Thunderbird);
             Toggles(Keys.P, ref sGamePaused);
             Toggles(Keys.B, ref sShowHitBoxes);
@@ -40,7 +40,7 @@ namespace KernelPanic
 
         internal enum TroupeDataVisualization
         {
-            None, Normal, Small, Thunderbird
+            None, Normal, Thunderbird
         }
     }
 }

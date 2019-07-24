@@ -127,7 +127,7 @@ namespace KernelPanic.Table
                     .Select(entity => entity is Building b && !(b is ShockField) ? b : null)
                     .Where(building => building != null);
             mTroupeData = new TroupePathData(this, collidingBuildings);
-            mTroupeData.Update(EntityGraph);
+            mTroupeData.Update();
         }
 
         #endregion
@@ -174,7 +174,7 @@ namespace KernelPanic.Table
                 mTroupeData.BuildingMatrix[tileIndex.ToPoint()] = false;
             }
 
-            mTroupeData.Update(EntityGraph);
+            mTroupeData.Update();
 
             var positionProvider = new PositionProvider(Target, owner, Grid, EntityGraph, mTroupeData, mSpriteManager);
             if (waveIndex > 0)
