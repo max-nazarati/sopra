@@ -368,30 +368,63 @@ namespace KernelPanic
             };
         }
 
-        private static MenuState CreateInstructionsMenu(GameStateManager stateManager)
+        private static MenuState CreateBuildingIntroPage(GameStateManager stateManager)
         {
-            // TODO: Write Game Instructions.
-            var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
+            var backButton = CreateButton(stateManager.Sprite, "Zurück", 900);
             backButton.Clicked += stateManager.PopOnClick;
-            var title = stateManager.Sprite.CreateText("Spielanleitung");
+            var title = stateManager.Sprite.CreateText("Gebäudebeschreibung");
             var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
-            title.X = screenMid + title.Width/2;
-            title.Y = 100;
+            title.X = screenMid + title.Width / 2;
+            title.Y = 50;
+            title.SetOrigin(RelativePosition.TopRight);
+
+            var description = stateManager.Sprite.CreateText("" +
+                "Verteidige deine Basis mit:\n\n" +
+                "    -Kabel: effektiv eine Mauer.\n" +
+                "    -Mauszeigerschütze: der schwächste Turm der dir zur Verfügung steht.\n" +
+                "    -Lüftung: macht gegnerische Einheiten in ihrer Umgebung langsamer.\n" +
+                "    -Antivirusprogramm: ein stärkerer Turm.\n" +
+                "    -Wifi-Router: schießt in Wellen statt mit Projektilien.\n" +
+                "    -Schockfeld: verursacht Schaden an die Einheiten die darüber laufen.\n" +
+                "    -CD-Werfer: ein Turm der CDs schießt, nach einem Upgrade können diese auch zurückkehrend Schaden verursachen.\n\n");
+
+            description.X = 20;
+            description.Y = 100;
+            return new MenuState(stateManager)
+            {
+                mComponents = new InterfaceComponent[]
+                {
+                    CreateBackgroundWithoutText(stateManager.Sprite),
+                    new StaticComponent(title),
+                    new StaticComponent(description),
+                    backButton
+                }
+            };
+        }
+
+        private static MenuState CreateControlsPage(GameStateManager stateManager)
+        {
+            var backButton = CreateButton(stateManager.Sprite, "Zurück", 900);
+            backButton.Clicked += stateManager.PopOnClick;
+            var title = stateManager.Sprite.CreateText("Steuerung");
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            title.X = screenMid + title.Width / 2;
+            title.Y = 50;
             title.SetOrigin(RelativePosition.TopRight);
 
             //"      "
             var instructions = stateManager.Sprite.CreateText("" +
-                "- Mauszeiger Bewegung / WASD:   Kamera-Bewegung\n" +
-                "- Mittlerer Maus-Click:                      Erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen\n" +
+                "- Mauszeiger Bewegung / WASD:   Kamera-Bewegung.\n" +
+                "- Mittlerer Maus-Click:                      Erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen.\n" +
                 "- Rechter Maus-Click:                      Bewegungsziel für den ausgewählten Hero angeben / un-togglet Hero-Fähigkeit.\n" +
                 "- Linker Maus-Click:                         Objekte kaufen / Objekte (un-)auswählen / GUI Buttons drücken /\n" +
                 "                                                                  Bau-Modus mit click auf die entsprechende Gebäude-Taste verlassen.\n" +
-                "- Scroll-Wheel:                                 Kamera-Zoom\n\n" +
+                "- Scroll-Wheel:                                 Kamera-Zoom.\n\n" +
                 "- Esc-Taste:                      Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
                 "                                               ins vorherige Menu-Screen gelangen / aus Main-Menu das Spiel beenden.\n" +
-                "- Q-Taste:                         Alternative zu mittlerem Maus-Click\n" +
-                "- E-Taste:                         Un-togglet Hero-Fähigkeit\n" + 
-                "- Zahlen 1-7:                     Gebäude-Auswahl zum bauen\n");
+                "- Q-Taste:                         Alternative zu mittlerem Maus-Click.\n" +
+                "- E-Taste:                         Un-togglet Hero-Fähigkeit.\n" +
+                "- Zahlen 1-7:                     Gebäude-Auswahl zum bauen.\n");
 
 
             instructions.Y = title.Y + 50;
@@ -404,6 +437,89 @@ namespace KernelPanic
                     new StaticComponent(title),
                     new StaticComponent(instructions),
                     backButton
+                }
+            };
+        }
+
+        private static MenuState CreateUnitIntroPage(GameStateManager stateManager)
+        {
+            var backButton = CreateButton(stateManager.Sprite, "Zurück", 900);
+            backButton.Clicked += stateManager.PopOnClick;
+            var title = stateManager.Sprite.CreateText("Spielobjekt Beschreibung");
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            title.X = screenMid + title.Width / 2;
+            title.Y = 50;
+            title.SetOrigin(RelativePosition.TopRight);
+
+            var description = stateManager.Sprite.CreateText("" +
+                "Greife gegnerische Basis an mit:\n\n" +
+                "    -Bug: schwach, aber schnell und billig.\n" +
+                "    -Virus: stärker als der Bug aber immer noch nicht zu teuer.\n" +
+                "    -Trojan: kann mehr Schaden ertragen, beim Tod spawnt er Bugs an seiner Position.\n" +
+                "    -Thunderbird: fliegende Einheit die sich über Türme und Kabeln bewegen kann.\n" +
+                "    -Nokia: sehr robuste Einheit die viel Schaden verursachen kann, wenn sie genug Zeite hatte um das Ziel zu erreichen.\n\n" +
+                "Die obige Einheiten spawnen am Anfang der nächsten Welle, es gibt jedoch noch Helden,\n" +
+                "die man selbst auf dem Spielfeld unabhängig von dem Wellen-Zycklus kaufen und bewegen kann:\n\n" +
+                "    -Firefox: ein Held der über gewisse Abstände springen kann um einen kürzeren Weg zum Ziel zu finden.\n" +
+                "    -Settings: ein Held der Einheiten in seiner Nähe heilen kann.\n" +
+                "    -Bluescreen: ein Held der gegnerische Türme temporär ausschalten kann.\n\n");
+
+            description.X = 20;
+            description.Y = 100;
+            return new MenuState(stateManager)
+            {
+                mComponents = new InterfaceComponent[]
+                {
+                    CreateBackgroundWithoutText(stateManager.Sprite),
+                    new StaticComponent(title),
+                    new StaticComponent(description),
+                    backButton
+                }
+            };
+        }
+
+        private static MenuState CreateInstructionsMenu(GameStateManager stateManager)
+        {
+            var unitsButton = CreateButton(stateManager.Sprite, "Einheitenbeschreibung", 800, -350, 350);
+            unitsButton.Clicked += (button, input) => stateManager.Push(CreateUnitIntroPage(stateManager));
+
+            var buildingsButton = CreateButton(stateManager.Sprite, "Gebäudebeschreibung", 800, 350, 350);
+            buildingsButton.Clicked += (button, input) => stateManager.Push(CreateBuildingIntroPage(stateManager));
+
+            var controlsButton = CreateButton(stateManager.Sprite, "Steuerung", 800);
+            controlsButton.Clicked += (button, input) => stateManager.Push(CreateControlsPage(stateManager));
+
+            var backButton = CreateButton(stateManager.Sprite, "Zurück", 900);
+            backButton.Clicked += stateManager.PopOnClick;
+            var title = stateManager.Sprite.CreateText("Spielanleitung");
+            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
+            title.X = screenMid + title.Width / 2;
+            title.Y = 50;
+            title.SetOrigin(RelativePosition.TopRight);
+
+            var description = stateManager.Sprite.CreateText("" +
+                "Ziel: zerstöre die gegnerische Basis.\n\n" +
+                "Um das zu machen bekommst du regelmäßig Bitcoins, womit du sowohl neue Einheiten und Türme kaufen\n" +
+                "als auch Türme verbessern kannst.\n\n" +
+                "Sachen kauft man aus den 2 Menus die man im Spiel sieht, Türme verbessert man einzeln indem man auf ein Turm\n" +
+                "klickt und ein Update kauft. Bei den Türmen kann man so auch eine Strategie angeben.\n\n" +
+                "Außerdem bekommt man Erfahrungspunkte (EP) am Ende jeder gegnerischen Welle. Damit kann man die Upgrades,\n" +
+                "die in der Mitte des Spielfeldes sind, bekommen. Man muss aber schnell sein, denn sie mit dem Gegner geteilt sind\n" +
+                "und nur einer von euch jedes von ihnen bekommen kann.\n");
+
+            description.X = 20;
+            description.Y = 100;
+            return new MenuState(stateManager)
+            {
+                mComponents = new InterfaceComponent[]
+                {
+                    CreateBackgroundWithoutText(stateManager.Sprite),
+                    new StaticComponent(title),
+                    new StaticComponent(description),
+                    backButton,
+                    unitsButton,
+                    buildingsButton,
+                    controlsButton
                 }
             };
         }
@@ -712,9 +828,9 @@ namespace KernelPanic
             return new MenuState(stateManager) {mComponents = components};
         }
 
-        private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
+        private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0, int width = 250)
         {
-            var button = new TextButton(sprites) {Title = title};
+            var button = new TextButton(sprites, width) {Title = title};
             button.Clicked += (button2, input) => EventCenter.Default.Send(Event.ButtonClicked());
             button.Sprite.X = sprites.ScreenSize.X / 2.0f - button.Sprite.Width / 2.0f - shiftPositionX;
             button.Sprite.Y = positionY;
