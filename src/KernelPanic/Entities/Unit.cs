@@ -424,7 +424,8 @@ namespace KernelPanic.Entities
             // move = borderWeight * border;
 
             move.Normalize();
-            move *= Speed;
+            move *= mSlowedDown ? Speed / 2 : Speed;
+            mSlowedDown = false;
             return float.IsNaN(move.X) ? Vector2.Zero : move;
 
         }
