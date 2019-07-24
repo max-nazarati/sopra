@@ -111,7 +111,7 @@ namespace KernelPanic
             mSelectionManager.Update(inputManager, mBuildingBuyer.Building != null);
             mBuildingBuyer.Update(inputManager);
 
-            mBoard.Update(gameTime, inputManager);
+            mBoard.Update(mSelectionManager, gameTime, inputManager);
             var gameState = mBoard.CheckGameState();
             if (gameState == Board.GameState.Playing)
                 return;

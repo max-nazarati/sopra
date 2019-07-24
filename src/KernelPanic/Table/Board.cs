@@ -4,8 +4,10 @@ using System.Threading;
 using Autofac.Util;
 using KernelPanic.ArtificialIntelligence;
 using KernelPanic.Data;
+using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Players;
+using KernelPanic.Selection;
 using KernelPanic.Sprites;
 using KernelPanic.Upgrades;
 using KernelPanic.Waves;
@@ -143,15 +145,25 @@ namespace KernelPanic.Table
             }
         }
 
-        internal void Update(GameTime gameTime, InputManager inputManager)
+        internal void Update(SelectionManager selectionManager, GameTime gameTime, InputManager inputManager)
         {
+            var leftOwner = new Owner(PlayerB, PlayerA);
+            var rightOwner = new Owner(PlayerA, PlayerB);
+
             // Start lane updates.
-            mLeftLaneUpdateData.Put(new Lane.UpdateData(gameTime, inputManager, new Owner(PlayerB, PlayerA), WaveManager.LastIndex));
-            mRightLaneUpdateData.Put(new Lane.UpdateData(gameTime, inputManager, new Owner(PlayerA, PlayerB), WaveManager.LastIndex));
+            mLeftLaneUpdateData.Put(new Lane.UpdateData(gameTime, inputManager, leftOwner, WaveManager.LastIndex));
+            mRightLaneUpdateData.Put(new Lane.UpdateData(gameTime, inputManager, rightOwner, WaveManager.LastIndex));
 
             // Wait until both lanes are updated.
             mUpdateDoneSemaphore.WaitOne();
             mUpdateDoneSemaphore.WaitOne();
+            
+            // Do the action update here, because it might require the SpriteManager.
+            if (selectionManager.Selection is Entity selection)
+            {
+                var owner = selectionManager.SelectionSide == Lane.Side.Left ? leftOwner : rightOwner;
+                selection.UpdateOverlay(owner[selection], inputManager, gameTime);
+            }
 
             PlayerB.Update(gameTime);
             mUpgradePool.Update(inputManager, gameTime);

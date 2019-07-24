@@ -32,6 +32,9 @@ namespace KernelPanic.Selection
         [DataMember]
         private Entity mSelection;
 
+        [DataMember]
+        internal Lane.Side SelectionSide { get; private set; }
+
         internal SelectionManager(Lane leftLane, Lane rightLane, SpriteManager spriteManager)
         {
             mLeftLane = leftLane;
@@ -88,6 +91,9 @@ namespace KernelPanic.Selection
                     return false;
 
                 Selection = Selection == entity ? null : entity;
+                if (Selection != null)
+                    SelectionSide = lane.Grid.LaneSide;
+
                 return true;
             }
 
