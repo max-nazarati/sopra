@@ -66,12 +66,27 @@ namespace KernelPanic.Entities.Units
             var relativeMovement = positionProvider.TroupeData.RelativeMovement(this, mLastReferencePoint);
             MoveTarget = mLastReferencePoint + relativeMovement;
         }
-        */
 
         internal override bool ResetMovement()
         {
             mLastReferencePoint = mSavedReferencePoint;
             return base.ResetMovement();
+        }
+        */
+
+        protected override void DoMove(PositionProvider positionProvider,
+            InputManager inputManager,
+            GameTime gameTime)
+        {
+            CalculateMovement(null, positionProvider, inputManager);
+            if (MoveVector is Vector2 theMove)
+            {
+                theMove.Normalize();
+                var modifiedSpeed = mSlowedDown ? Speed / 2f : Speed;
+                mSlowedDown = false;
+                var distance = modifiedSpeed * gameTime.ElapsedGameTime.Milliseconds * 0.06f;
+                Sprite.Position += theMove * distance;
+            }
         }
 
         internal new Troupe Clone() => Clone<Troupe>();

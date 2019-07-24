@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
-using Accord.Math;
 using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
@@ -156,7 +152,7 @@ namespace KernelPanic.Entities
 
         #region Movement
 
-        private bool mSlowedDown;
+        protected bool mSlowedDown;
         private Vector2 mLastPosition;
         private Vector2? mLastMoveTarget;
 
@@ -183,9 +179,14 @@ namespace KernelPanic.Entities
             PositionProvider positionProvider,
             InputManager inputManager);
 
-        private Vector2? PerformMove(Vector2 target,
+        protected virtual void DoMove(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        {
+        }
+
+        protected virtual Vector2? PerformMove(Vector2 target,
             PositionProvider positionProvider,
-            InputManager inputManager)
+            InputManager inputManager,
+            GameTime gameTime)
         {
             var initialTarget = target;
             var targetMove = target - Sprite.Position;
@@ -269,11 +270,7 @@ namespace KernelPanic.Entities
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             CalculateMovement(null, positionProvider, inputManager);
-
-            if (MoveVector is Vector2 theMove)
-            {
-                Sprite.Position += theMove * gameTime.ElapsedGameTime.Milliseconds * 0.06f;
-            }
+            DoMove(positionProvider, inputManager, gameTime);
             UpdateHealthBar();
 
             if (!(Sprite is AnimatedSprite animated))
@@ -306,7 +303,7 @@ namespace KernelPanic.Entities
             const float alignmentWeight = 40 / 100f;
             const float cohesionWeight = 20 / 100f;
             const float separationWeight = 70 / 100f;
-            const float obstacleWeight = 250 / 100f;
+            const float obstacleWeight = 125 / 100f;
             const float borderWeight = 250 / 100f;
 
             #region Get Enumerators
@@ -431,8 +428,7 @@ namespace KernelPanic.Entities
             move += borderWeight * border;
 
             move.Normalize();
-            move *= mSlowedDown ? Speed / 2 : Speed;
-            mSlowedDown = false;
+            move *= Speed;
             return float.IsNaN(move.X) ? Vector2.Zero : move;
 
         }
