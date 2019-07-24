@@ -50,10 +50,11 @@ namespace KernelPanic
             gameStateManager.Restart(game);
             gameStateManager.Push(game.mHud);
         }
-        internal static void PushGameStack(GameStateManager gameStateManager, InputManager input)
+
+        internal static void PushGameStack(GameStateManager gameStateManager)
         {
             // for pushing main-menu first
-            gameStateManager.Restart(MenuState.CreateMainMenu(gameStateManager, input));
+            gameStateManager.Restart(MenuState.CreateMainMenu(gameStateManager));
         }
 
         internal static void PushTechDemo(GameStateManager gameStateManager)
@@ -107,7 +108,7 @@ namespace KernelPanic
         {
             if (inputManager.KeyPressed(Keys.Escape) || !inputManager.IsActive || mHud.ScoreOverlay.Pause)
             {
-                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this, inputManager));
+                GameStateManager.Push(MenuState.CreatePauseMenu(GameStateManager, this));
                 mHud.ScoreOverlay.Pause = false;
                 return;
             }
@@ -127,8 +128,8 @@ namespace KernelPanic
                 ? Event.GameWon(mBoard.PlayerA, mBoard.PlayerB)
                 : Event.GameLost(mBoard.PlayerB, mBoard.PlayerA));
 
-            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager, inputManager));
-            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState, inputManager));
+            GameStateManager.Restart(MenuState.CreateMainMenu(GameStateManager));
+            GameStateManager.Push(MenuState.CreateGameOverScreen(GameStateManager, gameState));
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

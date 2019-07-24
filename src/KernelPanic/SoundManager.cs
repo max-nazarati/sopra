@@ -3,7 +3,7 @@ using System.Diagnostics;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
 using KernelPanic.Events;
-using KernelPanic.Interface;
+using KernelPanic.Options;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
@@ -39,7 +39,23 @@ namespace KernelPanic
         private readonly (Music music, Song song)[] mSongs;
 
         private float mVolume;
+        private bool mPlayMusic;
         private bool mPlaySounds;
+        private Music mActiveSoundtrack = Music.Soundtrack2;
+
+        private SoundEffect Lookup(Sound sound)
+        {
+            var (realSound, soundEffect) = mSounds[(int) sound];
+            Trace.Assert(realSound == sound, $"{nameof(mSounds)} not ordered correctly");
+            return soundEffect;
+        }
+
+        private Song Lookup(Music music)
+        {
+            var (realSong, song) = mSongs[(int) music];
+            Trace.Assert(realSong == music, $"{nameof(mSongs)} not ordered correctly");
+            return song;
+        }
 
         internal SoundManager(ContentManager contentManager)
         {
@@ -80,81 +96,55 @@ namespace KernelPanic
             eventCenter.Subscribe(Event.Id.ProjectileShot, PlaySound);
             eventCenter.Subscribe(Event.Id.ButtonClicked, PlaySound);
             eventCenter.Subscribe(Event.Id.FirefoxJump, PlaySound);
-            eventCenter.Subscribe(Event.Id.PlayMusic, PlayMusic);
-            eventCenter.Subscribe(Event.Id.PlaySounds, PlaySounds);
-            eventCenter.Subscribe(Event.Id.ChangeSoundVolume, ChangeSoundVolume);
             eventCenter.Subscribe(Event.Id.HeroAbility, PlaySound);
-        }
-        
-        private SoundEffect Lookup(Sound sound)
-        {
-            var (realSound, soundEffect) = mSounds[(int) sound];
-            Trace.Assert(realSound == sound, $"{nameof(mSounds)} not ordered correctly");
-            return soundEffect;
-        }
 
-        private Song Lookup(Music music)
-        {
-            var (realSong, song) = mSongs[(int) music];
-            Trace.Assert(realSong == music, $"{nameof(mSongs)} not ordered correctly");
-            return song;
-        }
-
-        /// <summary>
-        /// Plays background music when called
-        /// </summary>
-        private void PlayMusic(Event e)
-        {
-            switch (e.Get<TextButton>(Event.Key.Button).Title)
+            MediaPlayer.ActiveSongChanged += delegate
             {
-                case "an":
-                    var values = Enum.GetValues(typeof(Music));
-                    var random = new Random();
-                    var randomBar = (Music)values.GetValue(random.Next(values.Length));
-                    MediaPlayer.Play(Lookup(randomBar));
-                    break;
-                case "aus":
-                    MediaPlayer.Stop();
-                    break;
-                case "Zacharias":
-                    MediaPlayer.Stop();
-                    MediaPlayer.Play(Lookup(Music.SecretSong));
-                    break;
-                case "":
-                    break;
+                if (MediaPlayer.State == MediaState.Stopped)
+                    ChangeSong();
+            };
+        }
+
+        internal void PlaySecretSong(bool play = true)
+        {
+            if (play)
+            {
+                MediaPlayer.Play(Lookup(Music.SecretSong));
+            }
+            else if (mPlayMusic)
+            {
+                ChangeSong();
+            }
+            else
+            {
+                MediaPlayer.Stop();
             }
         }
 
-        internal void PlaySounds(Event e)
+        private void ChangeSong()
         {
-            switch (e.Get<TextButton>(Event.Key.Button).Title)
-            {
-                case "an":
-                    mPlaySounds = true;
-                    break;
-                case "aus":
-                    mPlaySounds = false;
-                    break;
-            }
+            mActiveSoundtrack = mActiveSoundtrack == Music.Soundtrack1 ? Music.Soundtrack2 : Music.Soundtrack1;
+            MediaPlayer.Play(Lookup(mActiveSoundtrack));
         }
 
-        private void ChangeSoundVolume(Event e)
+        internal void Update(OptionsData settings)
         {
-            switch (mVolume)
+            MediaPlayer.Volume = settings.MusicVolume;
+            if (settings.PlayBackgroundMusic)
             {
-                case 0.8f:
-                    mVolume = 1.4f;
-                    MediaPlayer.Volume = mVolume;
-                    break;
-                case 1.4f:
-                    mVolume = 0.4f;
-                    MediaPlayer.Volume = mVolume;
-                    break;
-                case 0.4f:
-                    mVolume = 0.8f;
-                    MediaPlayer.Volume = mVolume;
-                    break;
+                mPlayMusic = true;
+                if (MediaPlayer.State == MediaState.Stopped)
+                    ChangeSong();
+                else
+                    MediaPlayer.Resume();
             }
+            else
+            {
+                mPlayMusic = false;
+                MediaPlayer.Pause();
+            }
+
+            mPlaySounds = settings.PlaySoundEffects;
         }
 
         private void PlaySound(Event e)

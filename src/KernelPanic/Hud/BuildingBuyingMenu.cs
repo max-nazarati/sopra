@@ -6,6 +6,7 @@ using KernelPanic.Sprites;
 using KernelPanic.Input;
 using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Options;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Input;
 using KernelPanic.Players;
@@ -79,9 +80,7 @@ namespace KernelPanic.Hud
                     if (Deselect(button))
                         return;
 
-                    button.ViewPressed = true;
-                    mSelectedButton = button;
-                    mBuildingBuyer.Building = element.Building;
+                    Select(element);
                 };
             }
         }
@@ -91,20 +90,24 @@ namespace KernelPanic.Hud
             base.Update(inputManager, gameTime);
             if (mSelectedButton != null && inputManager.KeyPressed(Keys.Escape))
                 Deselect(mSelectedButton);
-            Element nextSelectedElement = null;
-            if (inputManager.KeyPressed(inputManager.mInputState.mTowerOne)) nextSelectedElement = Elements[0];
-            if (inputManager.KeyPressed(inputManager.mInputState.mTowerTwo)) nextSelectedElement = Elements[1];
-            if (inputManager.KeyPressed(inputManager.mInputState.mTowerThree)) nextSelectedElement = Elements[2];
-            if (inputManager.KeyPressed(inputManager.mInputState.mTowerFour)) nextSelectedElement = Elements[3];
-            if (inputManager.KeyPressed(inputManager.mInputState.mTowerFive)) nextSelectedElement = Elements[4];
-            if (inputManager.KeyPressed(inputManager.mInputState.mTowerSix)) nextSelectedElement = Elements[5];
-            if (inputManager.KeyPressed(inputManager.mInputState.mTowerSeven)) nextSelectedElement = Elements[6];
-            if (nextSelectedElement == null) return;
-            if (Deselect(nextSelectedElement.Button))
-                return;
-            nextSelectedElement.Button.ViewPressed = true;
-            mSelectedButton = nextSelectedElement.Button;
-            mBuildingBuyer.Building = nextSelectedElement.Building;
+            
+            foreach (var (element, key) in Elements.Zip(ControlsMenu.DefaultTowerKeys))
+            {
+                if (!inputManager.KeyPressed(key))
+                    continue;
+
+                if (!Deselect(element.Button))
+                    Select(element);
+
+                break;
+            }
+        }
+
+        private void Select(Element element)
+        {
+            element.Button.ViewPressed = true;
+            mSelectedButton = element.Button;
+            mBuildingBuyer.Building = element.Building;
         }
 
         private bool Deselect(IDrawable button)

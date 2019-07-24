@@ -115,14 +115,14 @@ namespace KernelPanic.Tracking
                 case Achievement.Win10:
                     return "Du hast das Spiel das zehnte Mal gewonnen.";
                 case Achievement.Win100:
-                    return "Du hast das Spiel das hunderste Mal gewonnen.";
+                    return "Du hast das Spiel das hundertste Mal gewonnen.";
 
                 case Achievement.Lose1:
                     return "Du hast das Spiel das erste Mal verloren.";
                 case Achievement.Lose10:
                     return "Du hast das Spiel das zehnte Mal verloren.";
                 case Achievement.Lose100:
-                    return "Du hast das Spiel das hunderste Mal verloren.";
+                    return "Du hast das Spiel das hundertste Mal verloren.";
 
                 case Achievement.IronFortress:
                     return "Gewinne ein Spiel mit 100% verbleibender Ladung.";

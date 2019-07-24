@@ -7,6 +7,7 @@ using Autofac;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
+using KernelPanic.Options;
 using KernelPanic.Table;
 using KernelPanic.Tracking;
 using KernelPanic.Upgrades;
@@ -56,6 +57,17 @@ namespace KernelPanic.Serialization
 
             using (var file = File.OpenText(InfoPath(slot)))
                 return (Storage.Info) CreateSerializer(gameStateManager).Deserialize(file, typeof(Storage.Info));
+        }
+
+        internal static OptionsData LoadSettings() =>
+            Load<OptionsData>(SettingsPath, out var data) ? data : null;
+
+        internal static void SaveSettings(OptionsData data)
+        {
+            Directory.CreateDirectory(sFolder);
+
+            using (var file = File.CreateText(SettingsPath))
+                CreateSerializer().Serialize(file, data);
         }
 
         internal static Statistics.Data? LoadStatistics() =>
@@ -187,6 +199,8 @@ namespace KernelPanic.Serialization
         private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
         private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
         private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
+
+        private static string SettingsPath => Path.Combine(sFolder, "settings.json");
 
         private static string StatisticsPath => Path.Combine(sFolder, "statistics.json");
 

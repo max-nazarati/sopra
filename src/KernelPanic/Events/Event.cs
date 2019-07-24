@@ -3,7 +3,6 @@ using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
-using KernelPanic.Interface;
 using KernelPanic.Players;
 using KernelPanic.Table;
 using KernelPanic.Tracking;
@@ -35,9 +34,6 @@ namespace KernelPanic.Events
             DamagedUnit,
             KilledUnit,
             ProjectileShot,
-            PlayMusic,
-            PlaySounds,
-            ChangeSoundVolume,
             ButtonClicked,
 
             DamagedBase,
@@ -198,16 +194,7 @@ namespace KernelPanic.Events
             /// <item><description><see cref="Id.CloseAchievementPool"/></description></item>
             /// </list>
             /// </summary>
-            AchievementPool,
-            
-            /// <summary>
-            /// Of type <see cref="TextButton"/>, applies to
-            /// <list type="bullet">
-            /// <item><description><see cref="Id.PlayMusic"/></description></item>
-            /// <item><description><see cref="Id.PlaySounds"/></description></item>
-            /// </list>
-            /// </summary>
-            Button,
+            AchievementPool
         }
 
         #region Creating events
@@ -237,32 +224,6 @@ namespace KernelPanic.Events
                     [Key.Tower] = tower,
                 }
             };
-        
-        internal static Event PlayMusic(TextButton button) =>
-            new Event(Id.PlayMusic)
-            {
-                mPayload =
-                {
-                    [Key.Button] = button,
-                }
-            };
-
-        internal static Event PlaySounds(TextButton button) =>
-            new Event(Id.PlaySounds)
-            {
-                mPayload =
-                {
-                    [Key.Button] = button,
-                }
-            };
-        
-        internal static Event ChangeSoundVolume() =>
-            new Event(Id.ChangeSoundVolume)
-            {
-                mPayload =
-                {
-                }
-            };
 
         internal static Event GameLost(Player winner, Player loser) =>
             new Event(Id.GameLost)
@@ -283,15 +244,9 @@ namespace KernelPanic.Events
                     [Key.Price] = player.Bitcoins
                 }
             };
-        
-        internal static Event ButtonClicked() =>
-            new Event(Id.ButtonClicked)
-            {
-                mPayload =
-                {
-                }
-            };
-        
+
+        internal static Event ButtonClicked() => new Event(Id.ButtonClicked);
+
         internal static Event HeroAbility(Hero hero) =>
             new Event(Id.HeroAbility)
             {
