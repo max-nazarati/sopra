@@ -181,6 +181,16 @@ namespace KernelPanic.Entities
 
         protected virtual void DoMove(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
+            mLastPosition = Sprite.Position;
+            mLastMoveTarget = MoveTarget;
+            var move = ShouldMove && MoveTarget is Vector2 target
+                ? PerformMove(target, positionProvider, inputManager, gameTime)
+                : null;
+
+            if (move is Vector2 theMove)
+            {
+                Sprite.Position += theMove;
+            }
         }
 
         protected virtual Vector2? PerformMove(Vector2 target,
@@ -298,7 +308,7 @@ namespace KernelPanic.Entities
         protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
         {
             // the holy overFit parameter
-            const int neighbourhoodRadius = 75;
+            const int neighbourhoodRadius = 85;
             const float vectorWeight = 90 / 100f; // VectorField (Heatmap)
             const float alignmentWeight = 40 / 100f;
             const float cohesionWeight = 20 / 100f;
@@ -564,7 +574,7 @@ namespace KernelPanic.Entities
             var result = Vector2.Zero;
             foreach (var border in neighbourhood)
             {
-                switch (border.mSide)
+                switch (border.mDirectionToLane)
                 {
                     case RelativePosition.CenterBottom:
                         result += new Vector2(0, 1);

@@ -9,15 +9,15 @@ namespace KernelPanic.Entities
 {
     internal struct LaneBorder : IGameObject
     {
-        internal readonly RelativePosition mSide;
+        internal readonly RelativePosition mDirectionToLane;
         public Rectangle Bounds { get; }
         internal bool IsTargetBorder { get; }
 
-        private LaneBorder(Rectangle bounds, bool targetBorder, RelativePosition side)
+        private LaneBorder(Rectangle bounds, bool targetBorder, RelativePosition directionToLane)
         {
             Bounds = bounds;
             IsTargetBorder = targetBorder;
-            mSide = side;
+            mDirectionToLane = directionToLane;
         }
 
         internal static IEnumerable<LaneBorder> Borders(Rectangle rectangle, int width, bool outside, Lane.Side? targetSide = null)
@@ -34,9 +34,9 @@ namespace KernelPanic.Entities
 
             var left = new Rectangle(
                 rectangle.X - ifOutside * width,
-                rectangle.Y + ifInside * width,
+                rectangle.Y, // + ifInside * width,
                 width,
-                rectangle.Height - 2 * ifInside * width);
+                rectangle.Height); // - 2 * ifInside * width);
 
             var bottom = top;
             bottom.Offset(0, rectangle.Height + plusMinusMul * width);
