@@ -51,12 +51,6 @@ namespace KernelPanic
             gameStateManager.Push(game.mHud);
         }
 
-        internal static void PushGameStack(GameStateManager gameStateManager)
-        {
-            // for pushing main-menu first
-            gameStateManager.Restart(MenuState.CreateMainMenu(gameStateManager));
-        }
-
         internal static void PushTechDemo(GameStateManager gameStateManager)
         {
             var game = new InGameState(null, 5, gameStateManager);

@@ -79,9 +79,7 @@ namespace KernelPanic
                 new SoundManager(Content),
                 new SpriteManager(Content, GraphicsDevice),
                 mGraphics);
-            InGameState.PushGameStack(mGameStateManager);
-            InGameState.PushGameStack(0, mGameStateManager);
-            // SoundManager.Instance.PlayBackgroundMusic();
+            mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager));
         }
 
         /// <summary>
