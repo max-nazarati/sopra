@@ -25,8 +25,8 @@ namespace KernelPanic.PathPlanning
             }
         }
 
-        private const int UnwantedCost = 3;
-        private const int UnwantedEstimation = 10;
+        private const int UnwantedCost = 2;
+        private const int UnwantedEstimation = 1;
 
         protected override bool IsWalkable(Point point) => !mObstacleMatrix[point];
         protected override double EstimateCost(Point point) =>

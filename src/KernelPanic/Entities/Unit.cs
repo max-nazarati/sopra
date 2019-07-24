@@ -303,9 +303,9 @@ namespace KernelPanic.Entities
             // the holy overFit parameter
             const int neighbourhoodRadius = 75;
             const float vectorWeight = 90 / 100f; // VectorField (Heatmap)
-            const float alignmentWeight = 70 / 100f;
+            const float alignmentWeight = 40 / 100f;
             const float cohesionWeight = 20 / 100f;
-            const float separationWeight = 60 / 100f;
+            const float separationWeight = 70 / 100f;
             const float obstacleWeight = 250 / 100f;
             const float borderWeight = 250 / 100f;
 
