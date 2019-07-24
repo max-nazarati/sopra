@@ -249,7 +249,7 @@ namespace KernelPanic.Upgrades
                 case Id.IncreaseSettingsArea1:
                 {
                     if (entity is Settings settings)
-                        settings.AmplifyAbilityRange(0.5f);
+                        settings.AmplifyAbilityRange(1.5f);
                     break;
                 }
                     

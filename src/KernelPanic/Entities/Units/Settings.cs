@@ -8,6 +8,7 @@ using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities.Units
 {
@@ -17,6 +18,7 @@ namespace KernelPanic.Entities.Units
     {
         private readonly ImageSprite mIndicator;
         private const int AbilityRange = Grid.KachelSize * 3;
+        [JsonProperty]
         private float mAbilityRangeAmplifier = 1;
         private readonly List<Troupe> mTroupesInRange;
         private const int HealValue = -5;

@@ -10,6 +10,7 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Table;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities.Units
 {
@@ -17,6 +18,7 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Bluescreen : Hero
     {
+        [JsonProperty]
         private readonly int mAbilityRange;
         private readonly ImageSprite mIndicatorRange;
         private readonly ImageSprite mIndicatorTarget;
@@ -27,8 +29,10 @@ namespace KernelPanic.Entities.Units
         private static Point HitBoxSize => new Point(64, 64);
 
         #region Upgrades
+        [JsonProperty]
         internal bool TargetsTwoTower { private get; set; }
         private const double EmpDuration = 5;
+        [JsonProperty]
         internal float mEmpDurationAmplifier = 1;
         
         #endregion
