@@ -114,6 +114,7 @@ namespace KernelPanic.Entities.Units
 
             var nextTarget = new TileIndex(path.Count > 2 ? path[1] : target, 1);
             MoveTarget = positionProvider.Grid.GetTile(nextTarget).Position;
+            MoveVector = MoveTarget - Sprite.Position;
         }
         
         private void MoveTargetReached(PositionProvider positionProvider, TileIndex tileTarget)
@@ -124,6 +125,7 @@ namespace KernelPanic.Entities.Units
 
             mAStar = null;
             mTarget = null;
+            MoveVector = null;
             mPathVisualizer = null;
         }
 
