@@ -142,12 +142,14 @@ namespace KernelPanic
                     projectile.Hit(unit, positionProvider);
                     return true;
 
-                case Projectile projectile when object2 is LaneBorder:
-                    projectile.RadiusReached();
+                case Projectile projectile when object2 is LaneBorder border:
+                    if (border.IsOutside)
+                        projectile.RadiusReached();
                     return true;
 
-                case Unit unit when object2 is LaneBorder border && border.IsTargetBorder:
-                    unit.DamageBase(positionProvider);
+                case Unit unit when object2 is LaneBorder border:
+                    if (border.IsTargetBorder)
+                        unit.DamageBase(positionProvider);
                     return true;
 
                 case Emp emp when object2 is Tower tower:

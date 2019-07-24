@@ -11,19 +11,18 @@ namespace KernelPanic.Entities
     {
         internal readonly RelativePosition mDirectionToLane;
         public Rectangle Bounds { get; }
-        internal bool IsTargetBorder { get; }
+        internal bool IsTargetBorder { get; private set; }
+        internal bool IsOutside { get; private set; }
 
-        private LaneBorder(Rectangle bounds, bool targetBorder, RelativePosition directionToLane)
+        private LaneBorder(Rectangle bounds, RelativePosition directionToLane) : this()
         {
             Bounds = bounds;
-            IsTargetBorder = targetBorder;
             mDirectionToLane = directionToLane;
         }
 
         internal static IEnumerable<LaneBorder> Borders(Rectangle rectangle, int width, bool outside, Lane.Side? targetSide = null)
         {
             var ifOutside = outside ? 1 : 0;
-            var ifInside = outside ? 0 : 1;
             var plusMinusMul = outside ? 1 : -1;
 
             var top = new Rectangle(
@@ -34,9 +33,9 @@ namespace KernelPanic.Entities
 
             var left = new Rectangle(
                 rectangle.X - ifOutside * width,
-                rectangle.Y, // + ifInside * width,
+                rectangle.Y,
                 width,
-                rectangle.Height); // - 2 * ifInside * width);
+                rectangle.Height);
 
             var bottom = top;
             bottom.Offset(0, rectangle.Height + plusMinusMul * width);
@@ -46,10 +45,24 @@ namespace KernelPanic.Entities
 
             return new[]
             {
-                new LaneBorder(top, false, outside ? RelativePosition.CenterBottom : RelativePosition.CenterTop),
-                new LaneBorder(left, targetSide == Lane.Side.Left, outside ? RelativePosition.CenterRight : RelativePosition.CenterLeft),
-                new LaneBorder(bottom, false, outside ? RelativePosition.CenterTop : RelativePosition.CenterBottom),
-                new LaneBorder(right, targetSide == Lane.Side.Right, outside ? RelativePosition.CenterLeft : RelativePosition.CenterRight)
+                new LaneBorder(top, outside ? RelativePosition.CenterBottom : RelativePosition.CenterTop)
+                {
+                    IsOutside = outside
+                },
+                new LaneBorder(left, outside ? RelativePosition.CenterRight : RelativePosition.CenterLeft)
+                {
+                    IsOutside = outside,
+                    IsTargetBorder = targetSide == Lane.Side.Left
+                },
+                new LaneBorder(bottom, outside ? RelativePosition.CenterTop : RelativePosition.CenterBottom)
+                {
+                    IsOutside = outside
+                },
+                new LaneBorder(right, outside ? RelativePosition.CenterLeft : RelativePosition.CenterRight)
+                {
+                    IsOutside = outside,
+                    IsTargetBorder = targetSide == Lane.Side.Right
+                }
             };
         }
 
