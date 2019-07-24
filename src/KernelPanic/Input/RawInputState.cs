@@ -19,7 +19,8 @@ namespace KernelPanic.Input
         private Hashtable ClaimedOperations { get; } = new Hashtable();
         
         internal Keys mPlaceTower, mCameraUp = Keys.W, mCameraDown = Keys.S, mCameraLeft = Keys.A
-            , mCameraRight = Keys.D, mSellTower = Keys.X;
+            , mCameraRight = Keys.D, mSellTower = Keys.X, mTowerOne = Keys.D1, mTowerTwo = Keys.D2,
+            mTowerThree = Keys.D3, mTowerFour = Keys.D4, mTowerFive = Keys.D5, mTowerSix = Keys.D6, mTowerSeven = Keys.D7;
 
         internal void Update(bool isActive, Viewport viewport)
         {

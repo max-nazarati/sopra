@@ -91,6 +91,20 @@ namespace KernelPanic.Hud
             base.Update(inputManager, gameTime);
             if (mSelectedButton != null && inputManager.KeyPressed(Keys.Escape))
                 Deselect(mSelectedButton);
+            Element nextSelectedElement = null;
+            if (inputManager.KeyPressed(inputManager.mInputState.mTowerOne)) nextSelectedElement = Elements[0];
+            if (inputManager.KeyPressed(inputManager.mInputState.mTowerTwo)) nextSelectedElement = Elements[1];
+            if (inputManager.KeyPressed(inputManager.mInputState.mTowerThree)) nextSelectedElement = Elements[2];
+            if (inputManager.KeyPressed(inputManager.mInputState.mTowerFour)) nextSelectedElement = Elements[3];
+            if (inputManager.KeyPressed(inputManager.mInputState.mTowerFive)) nextSelectedElement = Elements[4];
+            if (inputManager.KeyPressed(inputManager.mInputState.mTowerSix)) nextSelectedElement = Elements[5];
+            if (inputManager.KeyPressed(inputManager.mInputState.mTowerSeven)) nextSelectedElement = Elements[6];
+            if (nextSelectedElement == null) return;
+            if (Deselect(nextSelectedElement.Button))
+                return;
+            nextSelectedElement.Button.ViewPressed = true;
+            mSelectedButton = nextSelectedElement.Button;
+            mBuildingBuyer.Building = nextSelectedElement.Building;
         }
 
         private bool Deselect(IDrawable button)
