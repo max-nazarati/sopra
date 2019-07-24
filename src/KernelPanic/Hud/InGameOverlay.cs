@@ -2,7 +2,6 @@
 using KernelPanic.Entities;
 using KernelPanic.Input;
 using KernelPanic.Players;
-using KernelPanic.Selection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,7 +15,6 @@ namespace KernelPanic.Hud
         internal UnitBuyingMenu UnitBuyingMenu { get; }
         private readonly BuildingBuyingMenu mBuildingBuyingMenu;
 
-        private Entity mSelection;
         private readonly MinimapOverlay mMinimapOverlay;
 
         internal override bool IsOverlay => true;
@@ -24,14 +22,9 @@ namespace KernelPanic.Hud
         internal InGameOverlay(WaveManager waveManager,
             UnitBuyingMenu unitMenu,
             BuildingBuyingMenu buildingMenu,
-            SelectionManager selectionManager,
             GameStateManager gameStateManager, TimeSpan time, ICamera camera)
             : base(new StaticCamera(), gameStateManager)
         {
-            // TODO: Add Button parameters
-            mSelection = selectionManager.Selection;
-            selectionManager.SelectionChanged += (oldSelection, newSelection) => mSelection = newSelection;
-
             ScoreOverlay = new ScoreOverlay(waveManager, gameStateManager.Sprite, time);
             UnitBuyingMenu = unitMenu;
             mBuildingBuyingMenu = buildingMenu;
