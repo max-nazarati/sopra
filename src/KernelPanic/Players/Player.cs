@@ -41,7 +41,7 @@ namespace KernelPanic.Players
         internal readonly List<Upgrade> mUpgrades = new List<Upgrade>();
 
         [DataMember(Name = "Exp")]
-        public int ExperiencePoints { get; set; } = 5;
+        public int ExperiencePoints { get; set; } = 0;
 
         internal Base Base => DefendingLane.Target;
 
