@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -8,13 +9,15 @@ namespace KernelPanic.Entities
 {
     internal struct LaneBorder : IGameObject
     {
+        internal readonly RelativePosition mSide;
         public Rectangle Bounds { get; }
         internal bool IsTargetBorder { get; }
 
-        private LaneBorder(Rectangle bounds, bool targetBorder)
+        private LaneBorder(Rectangle bounds, bool targetBorder, RelativePosition side)
         {
             Bounds = bounds;
             IsTargetBorder = targetBorder;
+            mSide = side;
         }
 
         internal static IEnumerable<LaneBorder> Borders(Rectangle rectangle, int width, bool outside, Lane.Side? targetSide = null)
@@ -43,10 +46,10 @@ namespace KernelPanic.Entities
 
             return new[]
             {
-                new LaneBorder(top, false),
-                new LaneBorder(left, targetSide == Lane.Side.Left),
-                new LaneBorder(bottom, false),
-                new LaneBorder(right, targetSide == Lane.Side.Right)
+                new LaneBorder(top, false, outside ? RelativePosition.CenterBottom : RelativePosition.CenterTop),
+                new LaneBorder(left, targetSide == Lane.Side.Left, outside ? RelativePosition.CenterRight : RelativePosition.CenterLeft),
+                new LaneBorder(bottom, false, outside ? RelativePosition.CenterTop : RelativePosition.CenterBottom),
+                new LaneBorder(right, targetSide == Lane.Side.Right, outside ? RelativePosition.CenterLeft : RelativePosition.CenterRight)
             };
         }
 

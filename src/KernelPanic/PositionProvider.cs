@@ -17,14 +17,16 @@ namespace KernelPanic
         private readonly SpriteManager mSpriteManager;
         private readonly EntityGraph mEntities;
 
+        /*
         ~PositionProvider()
         {
             Console.WriteLine("---------------------------------------------");
             Console.WriteLine("cached: " + CacheUsed);
             Console.WriteLine("notCached: " + CacheNotUsed);
             Console.WriteLine("---------------------------------------------\n");
-
         }
+        */
+
         internal Grid Grid { get; }
         internal Owner Owner { get; }
         internal Base Target { get; }
