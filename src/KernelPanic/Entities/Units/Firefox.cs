@@ -105,6 +105,21 @@ namespace KernelPanic.Entities.Units
                 }
                 goal -= mAbility.Pop();
             }
+
+            // yet another error fixed :)
+            var cancelJump = false;
+            try
+            {
+                var _ = (positionProvider.RequireTile(goal).ToPoint());
+            }
+            catch (InvalidOperationException)
+            {
+                cancelJump = true;
+            }
+            if (cancelJump)
+            {
+                mAbility = new Stack<Vector2>();
+            }
         }
 
         protected override void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
