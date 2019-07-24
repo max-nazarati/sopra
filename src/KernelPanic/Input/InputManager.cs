@@ -14,10 +14,6 @@ namespace KernelPanic.Input
     /// </summary>
     internal sealed class InputManager
     {
-        // private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
-        // private double mTimeLastClick = MaximumDoubleClickDelay; // Left MouseButton (init is for 'reset')
-        // private int mDoubleClickFrameCount; 
-        
         /// <summary>
         /// The width/height of the stripe around the screen border in which the camera is moved.
         /// </summary>
@@ -108,14 +104,6 @@ namespace KernelPanic.Input
         internal Vector2 TranslatedMousePosition =>
             Vector2.Transform(MousePosition.ToVector2(), mCamera.InverseTransformation);
 
-        /*
-        /// <summary>
-        /// calculates the X and Y difference since the last update
-        /// </summary>
-        /// <returns>Tuple with X and Y distance</returns>
-        internal Point MouseMovement =>
-            new Point(mInputState.CurrentMouse.X - mInputState.PreviousMouse.X, mInputState.CurrentMouse.Y - mInputState.PreviousMouse.Y);
-        */
         internal void RegisterClickTarget(Rectangle position, Action<InputManager> action) =>
             mClickTargets.Add(new ClickTarget(position, action));
 
@@ -209,33 +197,6 @@ namespace KernelPanic.Input
             return down;
         }
 
-#if false // Uncomment when used.
-        public Point LatestMouseLeftClickPosition { get; private set; }
-        public Point LatestMouseMiddleClickPosition { get; private set; }
-        public Point LatestMouseRightClickPosition { get; private set; }
-
-        /// <summary>
-        /// Checking for and updating the newest mouse Click positions
-        /// </summary>
-        private void UpdateMouseClickPosition()
-        {
-            if (MousePressed(MouseButton.Left))
-            {
-                LatestMouseLeftClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-            
-            if (MousePressed(MouseButton.Middle))
-            {
-                LatestMouseMiddleClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-            
-            if (MousePressed(MouseButton.Right))
-            {
-                LatestMouseRightClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-        }
-#endif
-
         #endregion
 
         #region Scroll Wheel
@@ -268,21 +229,6 @@ namespace KernelPanic.Input
         }
 
         #endregion
-
-        /* TODO uncomment this
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
-        public Tuple<bool, Tuple<int, int>, Tuple<int, int>> MouseDragged(MouseButton mouseButton) // TODO implement this iff we need a rectangular selection
-        {
-            var startPointXy = new Tuple<int, int> (mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            var endPointXy = new Tuple<int, int>(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-
-            var result = new Tuple<bool, Tuple<int, int>, Tuple<int, int>>(false, startPointXy, endPointXy);
-            return result;
-        }
-        */
 
         #region Camera
 
