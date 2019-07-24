@@ -85,7 +85,7 @@ namespace KernelPanic.PathPlanning
         internal Vector2 RelativeMovement(Unit unit, Vector2? position = null)
         {
             var subTiles = unit is Troupe troupe && troupe.IsSmall ? 2 : 1;
-            var maybeTile = mGrid.TileFromWorldPoint(position ?? unit.Sprite.Position, subTiles);
+            var maybeTile = mGrid.TileFromWorldPoint(position ?? unit.Sprite.Position, subTiles, true);
             if (!(maybeTile is TileIndex tile))
                 return Vector2.Zero;
 
