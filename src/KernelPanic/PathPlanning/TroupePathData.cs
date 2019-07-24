@@ -94,10 +94,10 @@ namespace KernelPanic.PathPlanning
             return vector * size;
         }
 
-        private static Vector2 RelativeMovement(TileIndex tile, VectorField vectorField)
+        private Vector2 RelativeMovement(TileIndex tile, VectorField vectorField)
         {
             var rectangle = new Rectangle(new Point(-1), new Point(2));
-            return rectangle.At(vectorField[tile.ToPoint()]);
+            return rectangle.At(vectorField[tile.ToPoint(), mGrid.LaneSide]);
         }
 
         private VectorField SelectVectorField(Unit unit)

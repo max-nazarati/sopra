@@ -208,7 +208,7 @@ namespace KernelPanic.Data
 
         #endregion
 
-        public RelativePosition this[Point point]
+        public RelativePosition this[Point point, Lane.Side side]
         {
             get
             {
@@ -224,14 +224,30 @@ namespace KernelPanic.Data
                 if (!mCutout.Contains(point))
                     return mRelativeField[point.Y, point.X];
 
-                if (point.X == mCutout.Left)
-                    return RelativePosition.CenterLeft;
-                if (point.X == mCutout.Right - 1)
-                    return RelativePosition.CenterRight;
-                if (point.Y == mCutout.Top)
-                    return RelativePosition.CenterTop;
-                if (point.Y == mCutout.Bottom - 1)
-                    return RelativePosition.CenterBottom;
+                if (side == Lane.Side.Left)
+                {
+                    if (point.Y == mCutout.Bottom - 1)
+                        return RelativePosition.CenterBottom;
+                    if (point.X == mCutout.Left)
+                        return RelativePosition.CenterLeft;
+                    if (point.X == mCutout.Right - 1)
+                        return RelativePosition.CenterRight;
+                    if (point.Y == mCutout.Top)
+                        return RelativePosition.CenterTop;
+                }
+                else
+                {
+                    if (point.X == mCutout.Left)
+                        return RelativePosition.CenterLeft;
+                    if (point.X == mCutout.Right - 1)
+                        return RelativePosition.CenterRight;
+                    if (point.Y == mCutout.Top)
+                        return RelativePosition.CenterTop;
+                    if (point.Y == mCutout.Bottom - 1)
+                        return RelativePosition.CenterBottom;
+                }
+
+
 
                 throw new ArgumentOutOfRangeException(nameof(point), point, "Too far into the cutout.");
             }
