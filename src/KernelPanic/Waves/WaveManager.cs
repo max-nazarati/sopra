@@ -57,6 +57,11 @@ namespace KernelPanic.Waves
             mByComputerDefeatedWaves = 0;
         }
 
+        internal int CurrentUnitCount<T>(IPlayerDistinction playerDistinction)
+        {
+            return mTroupes.Select(playerDistinction).Count(t => t.GetType() == typeof(T));
+        }
+
         private void Activate()
         {
             if (mTroupes.A.Count == 0 && mTroupes.B.Count == 0)

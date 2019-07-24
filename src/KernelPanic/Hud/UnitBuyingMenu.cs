@@ -46,16 +46,16 @@ namespace KernelPanic.Hud
 
             Vector2 IPositioned.Size => mButton.Button.Size;
 
-            internal Element(Type unitType, PurchaseButton<ImageButton, Unit> button, SpriteManager spriteManager)
+            internal Element(int count, Type unitType, PurchaseButton<ImageButton, Unit> button, SpriteManager spriteManager)
             {
                 UnitType = unitType;
-                mCounter = 0;
+                mCounter = count;
 
                 if (!unitType.IsSubclassOf(typeof(Hero)))
                 {
                     mCounterSprite = spriteManager.CreateText();
                     mCounterSprite.SizeChanged += sprite => sprite.SetOrigin(RelativePosition.CenterRight);
-                    mCounterSprite.Text = "0";
+                    mCounterSprite.Text = count.ToString();
                 }
 
                 // When a unit is purchased, increase its counter.
@@ -107,6 +107,7 @@ namespace KernelPanic.Hud
 
         internal static UnitBuyingMenu Create(WaveManager waveManager, SpriteManager spriteManager)
         {
+            var player = waveManager.Players.A;
             PurchaseButton<ImageButton, Unit> CreateButton<TUnit>() where TUnit : Unit
             {
                 var unit = Unit.Create<TUnit>(spriteManager);
@@ -115,13 +116,13 @@ namespace KernelPanic.Hud
                 var action = new PurchasableAction<Unit>(unit);
                 action.Purchased += waveManager.Add;
                 var button = new ImageButton(spriteManager, image, 70, 70);
-                return new PurchaseButton<ImageButton, Unit>(waveManager.Players.A, action, button);
+                return new PurchaseButton<ImageButton, Unit>(player, action, button);
             }
 
             Element CreateElement<TUnit>() where TUnit : Unit
             {
                 var button = CreateButton<TUnit>();
-                return new Element(typeof(TUnit), button, spriteManager);
+                return new Element(waveManager.CurrentUnitCount<TUnit>(player), typeof(TUnit), button, spriteManager);
             }
 
             return new UnitBuyingMenu(spriteManager, 
