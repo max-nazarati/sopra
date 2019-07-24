@@ -25,7 +25,7 @@ namespace KernelPanic.ArtificialIntelligence
         /// tier4: [p41, p42, p43, p44]
         /// tier5: [p51, p52, p53, p54]
         /// </summary>
-        private List<double[]> mTierDistribution;
+        private readonly List<double[]> mTierDistribution;
 
         /// <summary>
         /// mTierDictionnary identifies the upgrade id of upgrade j in tier i as (i, j), i.e.
@@ -42,11 +42,11 @@ namespace KernelPanic.ArtificialIntelligence
             mTierPriority = new[] {0, 0.8d, 0.05, 0.05, 0.05, 0.05};
 
             // Initialize distributions for each tier
-            double[] tier1Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
-            double[] tier2Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
-            double[] tier3Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
-            double[] tier4Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
-            double[] tier5Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            var tier1Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            var tier2Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            var tier3Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            var tier4Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
+            var tier5Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
             mTierDistribution = new List<double[]>();
             mTierDistribution.Add(new double[0]);
             mTierDistribution.Add(tier1Distribution);
@@ -73,7 +73,8 @@ namespace KernelPanic.ArtificialIntelligence
             Upgrade.Id[] tier5Upgrades = new[]
             {
                 Upgrade.Id.EmpTwoTargets, Upgrade.Id.AdditionalFirefox2,
-                Upgrade.Id.IncreaseSettingsArea2, Upgrade.Id.IncreaseSettingsHeal2
+                Upgrade.Id.IncreaseSettingsArea2, Upgrade.Id.IncreaseSettingsHeal2,
+                Upgrade.Id.IncreaseWifi
             };
             mTierDictionnary = new List<Upgrade.Id[]>();
             mTierDictionnary.Add(new [] {Upgrade.Id.Invalid});
@@ -98,7 +99,7 @@ namespace KernelPanic.ArtificialIntelligence
         /// </summary>
         /// <param name="id"></param>
         /// <returns>(i, j) where i is the tier and j the corresponding upgrade index</returns>
-        public (int, int) LocateUpgrade(Upgrade.Id id)
+        private (int, int) LocateUpgrade(Upgrade.Id id)
         {
             int tier;
             int tierIndex;
@@ -122,6 +123,7 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 1;
                     tierIndex = 3;
                     break;
+
                 // Tier 2 Upgrades
                 case Upgrade.Id.IncreaseLp2:
                     tier = 2;
@@ -139,8 +141,9 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 2;
                     tierIndex = 3;
                     break;
+
                 // Tier 3 Upgrades
-                case Upgrade.Id.CdBoomerang:
+                case Upgrade.Id.IncreaseSettingsHeal2:
                     tier = 3;
                     tierIndex = 0;
                     break;
@@ -156,6 +159,7 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 3;
                     tierIndex = 3;
                     break;
+
                 // Tier 4 Upgrades
                 case Upgrade.Id.EmpDuration:
                     tier = 4;
@@ -177,7 +181,12 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 4;
                     tierIndex = 4;
                     break;
+
                 // Tier 5 Upgrades
+                case Upgrade.Id.CdBoomerang:
+                    tier = 5;
+                    tierIndex = 0;
+                    break;
                 case Upgrade.Id.EmpTwoTargets:
                     tier = 5;
                     tierIndex = 0;
@@ -190,9 +199,9 @@ namespace KernelPanic.ArtificialIntelligence
                     tier = 5;
                     tierIndex = 2;
                     break;
-                case Upgrade.Id.IncreaseSettingsHeal2:
+                case Upgrade.Id.IncreaseWifi:
                     tier = 5;
-                    tierIndex = 3;
+                    tierIndex = 4;
                     break;
                 default:
                     tier = 0;
@@ -210,21 +219,21 @@ namespace KernelPanic.ArtificialIntelligence
         /// tier[i] = [1/3, 1/3, 0, 1/3]
         /// </summary>
         /// <param name="id"></param>
-        public void RemoveAvailableUpdate(Upgrade.Id id)
+        private void RemoveAvailableUpdate(Upgrade.Id id)
         {
-            int tier = LocateUpgrade(id).Item1;
-            int tierIndex = LocateUpgrade(id).Item2;
-            double upgradeProbability = mTierDistribution[tier][tierIndex];
+            var tier = LocateUpgrade(id).Item1;
+            var tierIndex = LocateUpgrade(id).Item2;
+            var upgradeProbability = mTierDistribution[tier][tierIndex];
             mTierDistribution[tier][tierIndex] = 0;
-            for (int i = 0; i < mTierDistribution[tier].Length; i++)
+            for (var i = 0; i < mTierDistribution[tier].Length; i++)
             {
                 mTierDistribution[tier][i] /= 1 - upgradeProbability;
             }
 
             // update tier priority
-            int numberTierUpgrades = mTierDistribution[tier].Length;
+            var numberTierUpgrades = mTierDistribution[tier].Length;
             mTierPriority[tier] -= 1 / (double)numberTierUpgrades;
-            for (int i = 1; i <= 5; i++)
+            for (var i = 1; i <= 5; i++)
             {
                 mTierPriority[i] /= 1 - (1 / (double) numberTierUpgrades);
             }
@@ -249,7 +258,6 @@ namespace KernelPanic.ArtificialIntelligence
             for (int i = 1; i < 5; i++)
             {
                 if (probability <= upperBound) break;
-                else
                 {
                     tier++;
                     upperBound += mTierPriority[i];
@@ -270,7 +278,6 @@ namespace KernelPanic.ArtificialIntelligence
             for (int i = 1; i < mTierDistribution[tier].Length; i++)
             {
                 if (probability <= upperBound) break;
-                else
                 {
                     upgradeIndex++;
                     upperBound += mTierDistribution[tier][i];

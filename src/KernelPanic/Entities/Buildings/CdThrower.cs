@@ -18,7 +18,7 @@ namespace KernelPanic.Entities.Buildings
         internal bool ShootsBoomerang { get; set; }
         
         internal CdThrower(SpriteManager spriteManager)
-            : base(50, 4, 5, 7,TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager)
+            : base(50, 4, 3, 7,TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager)
         {
         }
 

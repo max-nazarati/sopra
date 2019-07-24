@@ -47,7 +47,11 @@ namespace KernelPanic.Entities.Projectiles
             Sprite.Rotation = direction.Angle(0.5);
         }
 
-        public Rectangle Bounds => Sprite.Bounds;
+        public Rectangle Bounds
+        {
+            get => Sprite.Bounds;
+            set => Bounds = value;
+        }
 
         public int? DrawLevel => 2;    // Above all units and buildings.
         
