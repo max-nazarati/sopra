@@ -611,7 +611,6 @@ namespace KernelPanic.Entities
 
         #endregion
 
-
         private void UpdateHealthBar()
         {
             const int length = 50;
