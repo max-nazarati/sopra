@@ -299,10 +299,10 @@ namespace KernelPanic.Entities
         /// <returns></returns>
         protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
         {
-            const int neighbourhoodRadius = 100;
+            const int neighbourhoodRadius = 50;
 
             const float vectorWeight = 90 / 100f; // VectorField (Heatmap)
-            const float alignmentWeight = 100 / 100f;
+            const float alignmentWeight = 70 / 100f;
             const float cohesionWeight = 20 / 100f;
             const float separationWeight = 60 / 100f;
             const float obstacleWeight = 10 / 100f;
