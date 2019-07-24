@@ -133,12 +133,13 @@ namespace KernelPanic.Entities.Buildings
         #region Actions
 
         protected override IEnumerable<IAction> Actions(Player owner) =>
-            base.Actions(owner).Extend(
+            new IAction[]
+            {
+                new ImprovementAction(this, SpriteManager, owner),
                 new StrategyAction(this, TowerStrategy.First, SpriteManager),
                 new StrategyAction(this, TowerStrategy.Strongest, SpriteManager),
                 new StrategyAction(this, TowerStrategy.Weakest, SpriteManager),
-                new ImprovementAction(this, SpriteManager, owner)
-                );
+            }.Concat(base.Actions(owner));
         
         private sealed class ImprovementAction : IAction, IPriced
         {
@@ -152,7 +153,7 @@ namespace KernelPanic.Entities.Buildings
             internal ImprovementAction(StrategicTower tower, SpriteManager spriteManager, Player owner)
             {
                 var action = new PurchasableAction<ImprovementAction>(this);
-                var button = new TextButton(spriteManager) {Title = "Update"};
+                var button = new TextButton(spriteManager) {Title = "Verbessern"};
                 mOwner = owner;
                 mButton = new PurchaseButton<TextButton, ImprovementAction>(owner, action, button);
                 action.Purchased += (player, theAction) =>
