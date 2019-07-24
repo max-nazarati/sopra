@@ -285,30 +285,54 @@ namespace KernelPanic
             title.Y = 100;
             title.SetOrigin(RelativePosition.TopRight);
 
-            var placeTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 200, -250);
-            var placeTower = CreateButton(stateManager.Sprite, "Turm platzieren", 200,250);
+            var placeTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 200, 250);
+            var placeTower = CreateButton(stateManager.Sprite, "Turm platzieren", 200,600);
             placeTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.TowerPlacement, (TextButton)button);
 
-            var sellTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mSellTower.ToString(), 300, -250);
-            var sellTower = CreateButton(stateManager.Sprite, "Turm verkaufen", 300,250);
-            sellTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.SellTower, (TextButton)button);
-            
-            var cameraUpKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraUp.ToString(), 400, -250);
-            var cameraUp = CreateButton(stateManager.Sprite, "Kamera hoch", 400,250);
+            var cameraUpKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraUp.ToString(), 300, 250);
+            var cameraUp = CreateButton(stateManager.Sprite, "Kamera hoch", 300,600);
             cameraUpKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraUp, (TextButton)button);
             
-            var cameraLeftKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraLeft.ToString(), 500, -250);
-            var cameraLeft = CreateButton(stateManager.Sprite, "Kamera links", 500,250);
+            var cameraLeftKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraLeft.ToString(), 400, 250);
+            var cameraLeft = CreateButton(stateManager.Sprite, "Kamera links", 400,600);
             cameraLeftKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraLeft, (TextButton)button);
             
-            var cameraDownKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraDown.ToString(), 600, -250);
-            var cameraDown = CreateButton(stateManager.Sprite, "Kamera runter", 600,250);
+            var cameraDownKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraDown.ToString(), 500, 250);
+            var cameraDown = CreateButton(stateManager.Sprite, "Kamera runter", 500,600);
             cameraDownKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraDown, (TextButton)button);
             
-            var cameraRightKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraRight.ToString(), 700, -250);
-            var cameraRight = CreateButton(stateManager.Sprite, "Kamera rechts", 700,250);
+            var cameraRightKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraRight.ToString(), 600, 250);
+            var cameraRight = CreateButton(stateManager.Sprite, "Kamera rechts", 600,600);
             cameraRightKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraRight, (TextButton) button);
-
+            
+            var selectTower1Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerOne.ToString(), 700, 250);
+            var selectTower1 = CreateButton(stateManager.Sprite, "Kabel auswählen", 700,600);
+            selectTower1Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower1, (TextButton)button);
+            
+            var selectTower2Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerTwo.ToString(), 200, -600);
+            var selectTower2 = CreateButton(stateManager.Sprite, "Mausturm auswählen", 200,-250);
+            selectTower2Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower2, (TextButton)button);
+            
+            var selectTower3Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerThree.ToString(), 300, -600);
+            var selectTower3 = CreateButton(stateManager.Sprite, "Kabel auswählen", 300,-250);
+            selectTower3Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower3, (TextButton)button);
+            
+            var selectTower4Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerFour.ToString(), 400, -600);
+            var selectTower4 = CreateButton(stateManager.Sprite, "Kabel auswählen", 400,-250);
+            selectTower4Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower4, (TextButton)button);
+            
+            var selectTower5Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerFive.ToString(), 500, -600);
+            var selectTower5 = CreateButton(stateManager.Sprite, "Kabel auswählen", 500,-250);
+            selectTower5Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower5, (TextButton)button);
+            
+            var selectTower6Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerSix.ToString(), 600, -600);
+            var selectTower6 = CreateButton(stateManager.Sprite, "Kabel auswählen", 600,-250);
+            selectTower6Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower6, (TextButton)button);
+            
+            var selectTower7Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerSeven.ToString(), 700, -600);
+            var selectTower7 = CreateButton(stateManager.Sprite, "Kabel auswählen", 700,-250);
+            selectTower7Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower7, (TextButton)button);
+            
             return new MenuState(stateManager)
             {
                 mComponents = new InterfaceComponent[]
@@ -317,8 +341,6 @@ namespace KernelPanic
                     new StaticComponent(title),
                     placeTower,
                     placeTowerKey,
-                    sellTower,
-                    sellTowerKey,
                     cameraDown,
                     cameraDownKey,
                     cameraLeft,
@@ -327,7 +349,21 @@ namespace KernelPanic
                     cameraRightKey,
                     cameraUp,
                     cameraUpKey,
-                    backButton
+                    backButton,
+                    selectTower1,
+                    selectTower1Key,
+                    selectTower2,
+                    selectTower2Key,
+                    selectTower3,
+                    selectTower3Key,
+                    selectTower4,
+                    selectTower4Key,
+                    selectTower5,
+                    selectTower5Key,
+                    selectTower6,
+                    selectTower6Key,
+                    selectTower7,
+                    selectTower7Key
                 }
             };
         }

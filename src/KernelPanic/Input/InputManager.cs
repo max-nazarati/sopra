@@ -39,7 +39,6 @@ namespace KernelPanic.Input
         internal enum MacroKeys
         {
             TowerPlacement,
-            SellTower,
             CameraUp,
             CameraLeft,
             CameraDown,
@@ -94,9 +93,6 @@ namespace KernelPanic.Input
                     break;
                 case MacroKeys.CameraRight:
                     mInputState.mCameraRight = pressedKey[0];
-                    break;
-                case MacroKeys.SellTower:
-                    mInputState.mSellTower = pressedKey[0];
                     break;
                 case MacroKeys.Tower1:
                     mInputState.mTowerOne = pressedKey[0];
