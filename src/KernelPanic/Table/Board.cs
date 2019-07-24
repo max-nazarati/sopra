@@ -201,6 +201,8 @@ namespace KernelPanic.Table
             mRightLaneUpdateData.Put(null);
             mLeftLaneThread.Join();
             mRightLaneThread.Join();
+            mBitcoinManager.Dispose();
+            PlayerB.Dispose();
         }
     }
 }
