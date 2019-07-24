@@ -2,6 +2,7 @@ using System;
 using KernelPanic.Camera;
 using KernelPanic.Data;
 using KernelPanic.Entities;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Players;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
@@ -24,11 +25,12 @@ namespace KernelPanic.Hud
         #region Colors
         
         private readonly Color mColorBackground = Color.DimGray;
-        private readonly Color mColorPlayerA = Color.Lime;
-        private readonly Color mColorPlayerB = Color.Red;
+        private readonly Color mColorBuilding = Color.Red;
+        private readonly Color mColorUnit = Color.Lime;
+        private readonly Color mColorShockfield = Color.Goldenrod;
         private readonly Color mColorLaneA = Color.SlateGray;
         private readonly Color mColorLaneB = Color.SlateGray;
-        private readonly Color mColorSelected = Color.Coral;
+        private readonly Color mColorSelected = Color.BlueViolet;
         private readonly Color mScreenBorder = Color.White;
         
         #endregion
@@ -231,10 +233,10 @@ namespace KernelPanic.Hud
                     switch (entity)
                     {
                         case Unit _:
-                            color = mColorPlayerA;
+                            color = mColorUnit;
                             break;
-                        case Building _:
-                            color = mColorPlayerB;
+                        case Building building:
+                            color = building is ShockField ? mColorShockfield : mColorBuilding;
                             break;
                     }
 
