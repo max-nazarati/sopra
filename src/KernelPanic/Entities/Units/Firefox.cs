@@ -5,6 +5,7 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using KernelPanic.Data;
+using KernelPanic.Entities.Buildings;
 using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Table;
@@ -82,7 +83,7 @@ namespace KernelPanic.Entities.Units
 
         private void CorrectJump(Vector2 direction, int duration, PositionProvider positionProvider)
         {
-            bool EntityIsBuilding(IGameObject gameObject) => gameObject is Building;
+            bool EntityIsBuilding(IGameObject gameObject) => gameObject is Building && !(gameObject is ShockField);
 
             var jumpFrame = direction * JumpSegmentLength;
             var goal = Sprite.Position + jumpFrame * duration;
