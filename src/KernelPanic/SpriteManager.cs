@@ -445,7 +445,7 @@ namespace KernelPanic
 
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
         internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.FanPropeller));
-        internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
+        internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus)) {Scale = 1.5f};
         internal ImageSprite CreateCable() => new ImageSprite(Lookup(Image.Cable));
         internal ImageSprite CreateShockField() => new ImageSprite(Lookup(Image.ShockField));
         internal ImageSprite CreateCdThrower() => new ImageSprite(Lookup(Image.CdThrower));
