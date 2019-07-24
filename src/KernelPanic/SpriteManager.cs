@@ -532,7 +532,7 @@ namespace KernelPanic
             
             var rightMoneyText = new TextSprite(font, "00000$")
             {
-                Position = new Vector2(hudWidth - padding * 25, topPadding)
+                Position = new Vector2(hudWidth - padding * 26, topPadding)
             };
             rightMoneyText.SetOrigin(RelativePosition.TopRight);
             
@@ -573,13 +573,13 @@ namespace KernelPanic
                 , new Point((int)hudWidth,(int)hudHeight));
             var bitcoinSpriteLeft = new ImageSprite(Lookup(Image.BitcoinLogo))
             {
-                Position = new Vector2(padding * 25 + leftMoneyText.Width/1.7f, 12)
+                Position = new Vector2(padding * 25 + leftMoneyText.Width/1.7f + 4, 12)
             };
             bitcoinSpriteLeft.ScaleToHeight(23);
             
             var bitcoinSpriteRight = new ImageSprite(Lookup(Image.BitcoinLogo))
             {
-                Position = new Vector2(hudWidth - padding * 25 - rightMoneyText.Width/1.7f, 12)
+                Position = new Vector2(hudWidth - padding * 24 - rightMoneyText.Width/1.7f, 12)
             };
             bitcoinSpriteRight.ScaleToHeight(23);
             
