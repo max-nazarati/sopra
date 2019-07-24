@@ -78,7 +78,7 @@ namespace KernelPanic
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
             mGameStateManager =
                 new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mGraphics);
-            InGameState.PushGameStack(mGameStateManager, new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
+            InGameState.PushGameStack(mGameStateManager, new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState, new GameTime()));
             // SoundManager.Instance.PlayBackgroundMusic();
         }
 
