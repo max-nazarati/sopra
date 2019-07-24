@@ -7,7 +7,6 @@ using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
 using KernelPanic.Purchasing;
-using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Upgrades
@@ -300,7 +299,7 @@ namespace KernelPanic.Upgrades
                 case Id.IncreaseWifi:
                 {
                     if (entity is WifiRouter router)
-                        router.IncreaseWaveCount(2);
+                        router.IncreaseWaveCount();
                     break;
                 }
 

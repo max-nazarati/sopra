@@ -12,7 +12,7 @@ namespace KernelPanic.Entities.Buildings
     internal sealed class CursorShooter : StrategicTower
     {
         protected override bool WantsRotation => true;
-        private bool mDoubleClick = false;
+        private bool mDoubleClick;
 
         internal CursorShooter(SpriteManager spriteManager)
             : base(30, 4, 2, 10,TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager)
@@ -26,9 +26,6 @@ namespace KernelPanic.Entities.Buildings
             {
                 for (var i = -0.1; i < 0.2; i += 0.2)
                 {
-                    // var x = (float) (Math.Cos((Math.PI + i) * direction.X) - Math.Sin((Math.PI + i) * direction.Y));
-                    // var y = (float) (Math.Sin((Math.PI + i) * direction.X) + Math.Cos((Math.PI + i) * direction.Y));
-                    
                     var x = (float) (Math.Cos(i) * direction.X - Math.Sin(i) * direction.Y);
                     var y = (float) (Math.Sin(i) * direction.X + Math.Cos(i) * direction.Y);
 

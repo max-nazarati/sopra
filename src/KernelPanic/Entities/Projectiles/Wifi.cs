@@ -7,7 +7,7 @@ namespace KernelPanic.Entities.Projectiles
 {
     internal sealed class Wifi : Projectile
     {
-        WifiRouter mTower;
+        readonly WifiRouter mTower;
         internal Wifi(Tower origin, Vector2 direction, Sprite sprite, WifiRouter tower, float offset = 0) : base(origin, direction, sprite, offset)
         {
             mTower = tower;
