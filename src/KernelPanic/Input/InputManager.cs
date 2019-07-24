@@ -19,14 +19,11 @@ namespace KernelPanic.Input
         /// </summary>
         internal const int ScreenBorderDistance = 100;
 
-        internal readonly RawInputState mInputState;
+        private readonly RawInputState mInputState;
         private readonly ICamera mCamera;
         private readonly List<ClickTarget> mClickTargets;
 
-        /// <summary>
-        /// Maps default-keys to the key chosen by the user.
-        /// </summary>
-        private readonly KeyMap mKeyMap;
+        private readonly OptionsData mSettings;
 
         /// <summary>
         /// Left, Middle and Right MouseButton
@@ -36,10 +33,10 @@ namespace KernelPanic.Input
             Left, Middle, Right
         }
 
-        internal InputManager(KeyMap keyMap, List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
+        internal InputManager(OptionsData settings, List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
         {
-            mKeyMap = keyMap;
             mCamera = camera;
+            mSettings = settings;
             mInputState = inputState;
             mClickTargets = clickTargets;
 
@@ -75,7 +72,7 @@ namespace KernelPanic.Input
         /// <returns><c>true</c> if the key became pressed.</returns>
         internal bool KeyPressed(Keys key)
         {
-            key = mKeyMap[key];
+            key = mSettings.KeyMap[key];
             if (mInputState.IsClaimed(key) || mInputState.PreviousKeyboard.IsKeyDown(key) || !mInputState.CurrentKeyboard.IsKeyDown(key))
             {
                 return false;
@@ -92,7 +89,7 @@ namespace KernelPanic.Input
         /// <returns><c>true</c> if the key is down.</returns>
         private bool KeyDown(Keys key)
         {
-            return mInputState.CurrentKeyboard.IsKeyDown(mKeyMap[key]);
+            return mInputState.CurrentKeyboard.IsKeyDown(mSettings.KeyMap[key]);
         }
 
         #endregion
@@ -216,7 +213,7 @@ namespace KernelPanic.Input
         /// <returns></returns>
         private bool ScrolledDown()
         {
-            return ScrollWheelMovement() < 0;
+            return mSettings.ScrollInverted ? ScrollWheelMovement() < 0 : ScrollWheelMovement() > 0;
         }
 
         /// <summary>
@@ -225,7 +222,7 @@ namespace KernelPanic.Input
         /// <returns></returns>
         private bool ScrolledUp()
         {
-            return ScrollWheelMovement() > 0;
+            return mSettings.ScrollInverted ? ScrollWheelMovement() > 0 : ScrollWheelMovement() < 0;
         }
 
         #endregion

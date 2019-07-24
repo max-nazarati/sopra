@@ -291,6 +291,9 @@
     <Compile Include="..\KernelPanic\Options\OptionsData.cs">
       <Link>Options\OptionsData.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Options\OptionsMenu.cs">
+      <Link>Options\OptionsMenu.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\AStar.cs">
       <Link>PathPlanning\AStar.cs</Link>
     </Compile>

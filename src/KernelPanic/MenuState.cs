@@ -39,8 +39,7 @@ namespace KernelPanic
             techDemo.Clicked += (button, input) => InGameState.PushTechDemo(stateManager);
 
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 300);
-            optionsButton.Clicked += (button, input) =>
-                stateManager.Push(CreateOptionsMenu(stateManager, inputManager));
+            optionsButton.Clicked += (button, input) => stateManager.Push(new OptionsMenu(stateManager));
             
             var instructionsButton = CreateButton(stateManager.Sprite, "Anleitung", 400);
             instructionsButton.Clicked += (button, input) => stateManager
@@ -161,116 +160,6 @@ namespace KernelPanic
                     Console.WriteLine("Couldn't load slot {0}", slotAccessor());
                     Console.WriteLine(e);
                     gameStateManager.Switch(CreatePlayMenu(gameStateManager, true));
-                }
-            };
-        }
-
-        private static void TurnMusicOnOff(TextButton musicOnOffButton)
-        {
-            switch (musicOnOffButton.Title)
-            {
-                case "an":
-                    musicOnOffButton.Title = "aus";
-                    EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
-                    break;
-                case "aus":
-                    musicOnOffButton.Title = "an";
-                    EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
-                    break;
-                case "Zacharias":
-                    EventCenter.Default.Send(Event.PlayMusic(musicOnOffButton));
-                    break;
-                default:
-                    Console.WriteLine("No valid button title for musicOnOffButton.");
-                    break;
-            }
-        }
-
-        private static void TurnSoundsOnOff(TextButton soundOnOffButton)
-        {
-            switch (soundOnOffButton.Title)
-            {
-                case "an":
-                    soundOnOffButton.Title = "aus";
-                    EventCenter.Default.Send(Event.PlaySounds(soundOnOffButton));
-                    break;
-                case "aus":
-                    soundOnOffButton.Title = "an";
-                    EventCenter.Default.Send(Event.PlaySounds(soundOnOffButton));
-                    break;
-                default:
-                    Console.WriteLine("No valid button title for musicOnOffButton.");
-                    break;
-            }
-        }
-
-        private static void ChangeSoundVolume(TextButton volumeButton)
-        {
-            switch (volumeButton.Title)
-            {
-                case "Mittel":
-                    volumeButton.Title = "Hoch";
-                    EventCenter.Default.Send(Event.ChangeSoundVolume());
-                    break;
-                case "Hoch":
-                    volumeButton.Title = "Niedrig";
-                    EventCenter.Default.Send(Event.ChangeSoundVolume());
-                    break;
-                case "Niedrig":
-                    volumeButton.Title = "Mittel";
-                    EventCenter.Default.Send(Event.ChangeSoundVolume());
-                    break;
-                default:
-                    Console.WriteLine("No valid button title for VolumeButton.");
-                    break;
-            }
-        }
-        
-        private static void ChangeScreenSize(TextButton button, GraphicsDeviceManager graphics)
-        {
-            graphics.ToggleFullScreen();
-            button.Title = graphics.IsFullScreen ? "an" : "aus";
-        }
-
-        private static MenuState CreateOptionsMenu(GameStateManager stateManager, InputManager inputManager)
-        {
-            var musicButton = CreateButton(stateManager.Sprite, "Hintergrundmusik", 200, 150);
-            var musicOnOffButton = CreateButton(stateManager.Sprite, "aus", 200, -150);
-            musicOnOffButton.Clicked += (button, input) => TurnMusicOnOff(musicOnOffButton);
-
-            var effectsButton = CreateButton(stateManager.Sprite, "Soundeffekte", 325, 150);
-            var effectsOnOffButton = CreateButton(stateManager.Sprite, "aus", 325, -150);
-            effectsOnOffButton.Clicked += (button, input) => TurnSoundsOnOff(effectsOnOffButton);
-
-            var volumeButton = CreateButton(stateManager.Sprite, "Lautstärke", 450, 150);
-            var volumeRegulatorButton = CreateButton(stateManager.Sprite, "Mittel",450, -150);
-            volumeRegulatorButton.Clicked += (button, input) => ChangeSoundVolume(volumeRegulatorButton);
-            
-            var keyInputsButton = CreateButton(stateManager.Sprite, "Steuerung", 575, 150);
-            keyInputsButton.Clicked += (button, input) => stateManager.Push(new ControlsMenu(stateManager));
-
-            var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 700, 150);
-            var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus",700, -150);
-            fullScreenWindowButton.Clicked += (button, input) => ChangeScreenSize(fullScreenWindowButton, stateManager.GraphicsDeviceManager);
-            
-            var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
-            backButton.Clicked += stateManager.PopOnClick;
-
-            return new MenuState(stateManager)
-            {
-                Components = new InterfaceComponent[]
-                {
-                    CreateBackgroundWithoutText(stateManager.Sprite),
-                    musicButton,
-                    musicOnOffButton,
-                    effectsButton,
-                    effectsOnOffButton,
-                    volumeButton,
-                    volumeRegulatorButton,
-                    keyInputsButton,
-                    backButton,
-                    fullscreen,
-                    fullScreenWindowButton
                 }
             };
         }
@@ -423,12 +312,10 @@ namespace KernelPanic
             };
         }
 
-        /*
-         * Connect current results of not yet integrated tasks for presentation
-         * at sprint meeting with your Button.
-         */
         private static MenuState CreateCreditsMenu(GameStateManager stateManager)
         {
+            stateManager.SoundManager.PlaySecretSong();
+
             var janekButton = CreateButton(stateManager.Sprite, "Janek", 50);
             // janekButton.Clicked
 
@@ -439,12 +326,6 @@ namespace KernelPanic
             // maxButton.Clicked
 
             var zachariasButton = CreateButton(stateManager.Sprite, "Zacharias", 350);
-            // TODO: button clicked should call the event....
-            // zachariasButton.Clicked += EventCenter.Default.Send(Event.PlayMusic(zachariasButton));
-            // EventCenter.Default.Send(Event.PlayMusic(zachariasButton));
-            zachariasButton.Clicked += (button, input) => TurnMusicOnOff(zachariasButton);
-
-
             // zachariasButton.Clicked
 
             var melissaButton = CreateButton(stateManager.Sprite, "Melissa", 450);
@@ -455,11 +336,14 @@ namespace KernelPanic
 
             var zoeButton = CreateButton( stateManager.Sprite, "Zoe", 650);
             // zoeButton.Clicked
-            
+
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 750);
-            backButton.Clicked += stateManager.PopOnClick;
-            // TODO stop secret song
-            
+            backButton.Clicked += delegate
+            {
+                stateManager.Pop();
+                stateManager.SoundManager.PlaySecretSong(false);
+            };
+
             return new MenuState(stateManager)
             {
                 Components = new InterfaceComponent[]
@@ -508,8 +392,7 @@ namespace KernelPanic
             backButton.Clicked += stateManager.PopOnClick;
 
             var optionsButton = CreateButton(stateManager.Sprite, "Optionen", 325);
-            optionsButton.Clicked += (button, input) =>
-                stateManager.Push(CreateOptionsMenu(stateManager, inputManager));
+            optionsButton.Clicked += (button, input) => stateManager.Push(new OptionsMenu(stateManager));
 
             var saveButton = CreateButton(stateManager.Sprite, "Speichern", 450);
             saveButton.Clicked += (button, input) => StorageManager.SaveGame(inGameState);

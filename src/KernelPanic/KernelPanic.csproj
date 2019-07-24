@@ -118,6 +118,7 @@
     <Compile Include="Options\ControlsMenu.cs" />
     <Compile Include="Options\KeyMap.cs" />
     <Compile Include="Options\OptionsData.cs" />
+    <Compile Include="Options\OptionsMenu.cs" />
     <Compile Include="PathPlanning\AStar.cs" />
     <Compile Include="PathPlanning\BreadthFirstSearch.cs" />
     <Compile Include="PathPlanning\ObstacleMatrix.cs" />

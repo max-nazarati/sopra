@@ -18,7 +18,6 @@ namespace KernelPanic
         private SpriteBatch mSpriteBatch;
         private GameStateManager mGameStateManager;
         private readonly RawInputState mInputState;
-        private SoundManager mSoundManager;
         private bool mBecameInactive;
 
         public Game1()
@@ -58,7 +57,6 @@ namespace KernelPanic
         {
             // IsFixedTimeStep = false; // this can experimented with, we need to make everything time based or tick based then tho
             IsMouseVisible = true;
-            mSoundManager = new SoundManager(Content);
             EventCenter.Default.Subscribe(Event.Id.AchievementUnlocked, @event =>
             {
                 var achievement = @event.Get<Achievement>(Event.Key.Achievement);
@@ -77,8 +75,10 @@ namespace KernelPanic
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
-            mGameStateManager =
-                new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mGraphics);
+            mGameStateManager = new GameStateManager(Exit,
+                new SoundManager(Content),
+                new SpriteManager(Content, GraphicsDevice),
+                mGraphics);
             InGameState.PushGameStack(0, mGameStateManager);
             // SoundManager.Instance.PlayBackgroundMusic();
         }
@@ -106,7 +106,7 @@ namespace KernelPanic
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
             mGameStateManager.Update(mInputState, gameTime);
             EventCenter.Default.Run();
-            DebugSettings.Update(new InputManager(new KeyMap(), new List<ClickTarget>(), new StaticCamera(), mInputState));
+            DebugSettings.Update(new InputManager(new OptionsData(), new List<ClickTarget>(), new StaticCamera(), mInputState));
             base.Update(gameTime);
         }
 
