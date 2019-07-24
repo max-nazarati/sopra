@@ -92,7 +92,7 @@ namespace KernelPanic
                     continue;
                 }
 
-                for (var i = 0; i < 100; i++)
+                for (var i = 0; i < 200; i++)
                 {
                     mBoard.PlayerA.Bitcoins = mBoard.PlayerB.Bitcoins = 9999;
                     kv.Value.TryPurchase(mBoard.PlayerA);
