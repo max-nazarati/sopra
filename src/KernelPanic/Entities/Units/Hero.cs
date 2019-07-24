@@ -325,6 +325,10 @@ namespace KernelPanic.Entities.Units
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
             mAStar = positionProvider.MakePathFinding(this, basePosition);
+            if (mAStar.Path == null)
+            {
+                return;
+            }
             mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
             ShouldMove = true;
         }
