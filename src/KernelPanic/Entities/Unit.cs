@@ -299,8 +299,8 @@ namespace KernelPanic.Entities
         /// <returns></returns>
         protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
         {
+            // the holy overFit parameter
             const int neighbourhoodRadius = 50;
-
             const float vectorWeight = 90 / 100f; // VectorField (Heatmap)
             const float alignmentWeight = 70 / 100f;
             const float cohesionWeight = 20 / 100f;
@@ -408,7 +408,7 @@ namespace KernelPanic.Entities
             
             // using the 3 different lists to iterate over
             var alignment = ComputeFlockingAlignment(positionProvider, neighbourTroupes);
-            // var cohesion = ComputeFlockingCohesion(neighbourTroupes);
+            var cohesion = ComputeFlockingCohesion(neighbourTroupes);
             var separation = ComputeFlockingSeparation(neighbourTroupes);
             var obstacle = ComputeFlockingBuilding(neighbourBuilding);
             // var border = ComputeFlockingBorder(neighbourBorder);
@@ -418,7 +418,7 @@ namespace KernelPanic.Entities
 
             move += vectorWeight * vector;
             move += alignmentWeight * alignment;
-            // move += cohesionWeight * cohesion;
+            move += cohesionWeight * cohesion;
             move += separationWeight * separation;
             move += obstacleWeight * obstacle;
             // move = borderWeight * border;
