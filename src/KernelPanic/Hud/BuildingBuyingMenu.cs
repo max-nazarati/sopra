@@ -113,13 +113,13 @@ namespace KernelPanic.Hud
                 new Element(Building.Create<TBuilding>(spriteManager), spriteManager);
 
             return new BuildingBuyingMenu(buildingBuyer, spriteManager,
+                CreateElement<Cable>(),
                 CreateElement<CursorShooter>(),
-                CreateElement<WifiRouter>(),
-                CreateElement<CdThrower>(),
-                CreateElement<Antivirus>(),
                 CreateElement<Ventilator>(),
+                CreateElement<Antivirus>(),
+                CreateElement<WifiRouter>(),
                 CreateElement<ShockField>(),
-                CreateElement<Cable>());
+                CreateElement<CdThrower>());
         }
     }
 }
