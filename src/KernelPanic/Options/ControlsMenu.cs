@@ -54,7 +54,7 @@ namespace KernelPanic.Options
             var enumerable = left ? LeftColumn : RightColumn;
             var xAlign = sprites.ScreenSize.X / 4 * (left ? 1 : 3);
 
-            var y = 200;
+            var y = 100;
             foreach (var (description, key) in enumerable)
             {
                 var realKey = keyMap[key];
@@ -93,11 +93,12 @@ namespace KernelPanic.Options
             new[]
             {
                 ("Kabel auswählen", Keys.D1),
-                ("Lüfter auswählen", Keys.D2),
-                ("Mauszeiger auswählen", Keys.D3),
-                ("Schockfeld auswählen", Keys.D4),
+                ("Mauszeiger auswählen", Keys.D2),
+                ("Lüfter auswählen", Keys.D3),
+                ("Antivirus auswählen", Keys.D4),
                 ("Wifi-Router auswählen", Keys.D5),
-                ("Antivirus auswählen", Keys.D6)
+                ("Schockfeld auswählen", Keys.D6),
+                ("CD-Werfer auswählen", Keys.D7)
             };
 
         private void Deselect()
