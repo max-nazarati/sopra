@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
@@ -16,16 +15,6 @@ namespace KernelPanic
     {
         private readonly SpriteManager mSpriteManager;
         private readonly EntityGraph mEntities;
-
-        /*
-        ~PositionProvider()
-        {
-            Console.WriteLine("---------------------------------------------");
-            Console.WriteLine("cached: " + CacheUsed);
-            Console.WriteLine("notCached: " + CacheNotUsed);
-            Console.WriteLine("---------------------------------------------\n");
-        }
-        */
 
         internal Grid Grid { get; }
         internal Owner Owner { get; }
@@ -49,12 +38,6 @@ namespace KernelPanic
         }
 
         #region Position Calculations
-
-        internal Rectangle TileBounds(Point tile)
-        {
-            var (position, size) = Grid.GetTile(new TileIndex(tile, 1));
-            return Bounds.ContainingRectangle(position, new Vector2(size));
-        }
 
         internal TileIndex RequireTile(Entity entity)
         {
