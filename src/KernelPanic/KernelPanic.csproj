@@ -109,7 +109,6 @@
     <Compile Include="Input\ClickTarget.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\RawInputState.cs" />
-    <Compile Include="Interface\AnimatedButton.cs" />
     <Compile Include="Interface\Button.cs" />
     <Compile Include="Interface\ImageButton.cs" />
     <Compile Include="Interface\InterfaceComponent.cs" />

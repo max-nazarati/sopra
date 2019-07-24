@@ -123,7 +123,7 @@ namespace KernelPanic.Upgrades
                 case Id.AdditionalFirefox1:
                     return "+1 Firefox verfügbar";
                 case Id.IncreaseSettingsArea1:
-                    return "+5% Einzugsbereich von Settings";
+                    return "+5% Bereich von Settings";
                 case Id.IncreaseSettingsHeal1:
                     return "+5% Heilrate von Settings";
                 case Id.MoreTrojanChildren2:
@@ -134,7 +134,7 @@ namespace KernelPanic.Upgrades
                 case Id.AdditionalFirefox2:
                     return "+1 Firefox verfügbar";
                 case Id.IncreaseSettingsArea2:
-                    return "+10% Einzugsbereich von Settings";
+                    return "+10% Bereich von Settings";
                 case Id.IncreaseSettingsHeal2:
                     return "+10% Heilrate von Settings";
 
@@ -149,10 +149,6 @@ namespace KernelPanic.Upgrades
 
         internal void Apply(Entity entity)
         {
-            var kind = Kind;
-            void NotImplemented() =>
-                Console.WriteLine("Applying Upgrade " + kind + " to " + entity + " – not implemented");
-
             switch (Kind)
             {
                 case Id.IncreaseLp1:
@@ -242,7 +238,7 @@ namespace KernelPanic.Upgrades
                 case Id.EmpDuration:
                 {
                     if (entity is Bluescreen bluescreen)
-                        bluescreen.mEmpDurationAmplifier += 0.4f;
+                        bluescreen.EmpDurationAmplifier += 0.4f;
                     break;
                 }
                 
@@ -254,8 +250,11 @@ namespace KernelPanic.Upgrades
                 }
                     
                 case Id.IncreaseSettingsHeal1:
-                    NotImplemented();
+                {
+                    if (entity is Settings settings)
+                        settings.DecreaseHealCooldown(0.95f);
                     break;
+                }
 
                 case Id.MoreTrojanChildren2:
                 {
@@ -279,8 +278,11 @@ namespace KernelPanic.Upgrades
                 }
 
                 case Id.IncreaseSettingsHeal2:
-                    NotImplemented();
+                {
+                    if (entity is Settings settings)
+                        settings.DecreaseHealCooldown(0.90f);
                     break;
+                }
 
                 case Id.IncreaseBitcoins:
                 case Id.AdditionalFirefox1:

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using KernelPanic.Entities.Buildings;
@@ -28,13 +27,13 @@ namespace KernelPanic.Entities.Units
 
         private static Point HitBoxSize => new Point(64, 64);
 
-        #region Upgrades
-        [JsonProperty]
-        internal bool TargetsTwoTower { private get; set; }
         private const double EmpDuration = 5;
-        [JsonProperty]
-        internal float mEmpDurationAmplifier = 1;
-        
+
+        #region Upgrades
+
+        [JsonProperty] internal bool TargetsTwoTower { private get; set; }
+        [JsonProperty] internal float EmpDurationAmplifier { get; set; } = 1;
+
         #endregion
         
         internal Bluescreen(SpriteManager spriteManager)
@@ -92,14 +91,14 @@ namespace KernelPanic.Entities.Units
             base.StartAbility(positionProvider, inputManager);
             if (mAbilityTargetOne is Tower first)
             {
-                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite.Clone());
+                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * EmpDurationAmplifier), mEmpSprite.Clone());
                 positionProvider.AddProjectile(empOne);
                 EventCenter.Default.Send(Event.HeroAbility(this));
             }
 
             if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
             {
-                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite.Clone());
+                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * EmpDurationAmplifier), mEmpSprite.Clone());
                 positionProvider.AddProjectile(empTwo);
             }
         }
