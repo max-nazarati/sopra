@@ -33,6 +33,12 @@ namespace KernelPanic.Input
             ClaimedOperations.Clear();
         }
 
+        internal bool KeyUsed(Keys key)
+        {
+            return key == mPlaceTower || key == mCameraUp || key == mCameraLeft
+                     || key == mCameraDown || key == mCameraRight;
+        }
+
         internal bool MouseInWindow =>
             Viewport.Bounds.Contains(CurrentMouse.Position);
 

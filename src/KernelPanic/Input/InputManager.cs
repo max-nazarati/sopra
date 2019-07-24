@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using KernelPanic.Camera;
 using KernelPanic.Interface;
@@ -60,12 +61,16 @@ namespace KernelPanic.Input
             var pressedKey = Keyboard.GetState().GetPressedKeys();
             while (pressedKey.Length == 0)
             {
-                await Task.Delay(80);
+                await Task.Delay(50);
                 pressedKey = Keyboard.GetState().GetPressedKeys();
             }
 
             button.Title = pressedKey[0].ToString();
-
+            if (mInputState.KeyUsed(pressedKey[0]))
+            {
+                button.Title = "can't use "+pressedKey[0];
+                return;
+            }
             switch (action)
             {
                 case MacroKeys.TowerPlacement:
