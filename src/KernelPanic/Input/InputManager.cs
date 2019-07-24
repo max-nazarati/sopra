@@ -52,13 +52,13 @@ namespace KernelPanic.Input
             Tower7
         }
 
-        internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
+        internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState, GameTime gameTime)
         {
             mCamera = camera;
             mInputState = inputState;
             mClickTargets = clickTargets;
 
-            UpdateCamera();
+            UpdateCamera(gameTime);
         }
         
         internal async void ChangeKey(MacroKeys action, TextButton button)
@@ -402,7 +402,8 @@ namespace KernelPanic.Input
         /// <summary>
         /// Updates the camera's translation based on the current mouse/keyboard state. 
         /// </summary>
-        private void UpdateCamera()
+        /// <param name="gameTime"></param>
+        private void UpdateCamera(GameTime gameTime)
         {
             var xLeft = KeyDown(mInputState.mCameraLeft);
             var xRight = KeyDown(mInputState.mCameraRight);
@@ -438,7 +439,8 @@ namespace KernelPanic.Input
             mCamera.Update(mInputState.Viewport.Bounds.Size,
                 ChooseDirection(true, xLeft, xRight, mouseXLeft, mouseXRight),
                 ChooseDirection(true, yUp, yDown, mouseYUp, mouseYDown),
-                ChooseDirection(false, ScrolledUp(), ScrolledDown())
+                ChooseDirection(false, ScrolledUp(), ScrolledDown()),
+                gameTime
             );
         }
 

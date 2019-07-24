@@ -105,7 +105,7 @@ namespace KernelPanic
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
             mGameStateManager.Update(mInputState, gameTime);
             EventCenter.Default.Run();
-            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
+            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState, gameTime));
             base.Update(gameTime);
         }
 

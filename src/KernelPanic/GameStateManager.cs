@@ -105,7 +105,7 @@ namespace KernelPanic
             {
                 var state = info.State;
                 var newClickTargets = new List<ClickTarget>();
-                var input = new InputManager(newClickTargets, state.Camera, rawInput);
+                var input = new InputManager(newClickTargets, state.Camera, rawInput, gameTime);
 
                 if (InvokeClickTargets(input, info.ClickTargets) is object requiredClaim)
                     rawInput.Claim(requiredClaim);
