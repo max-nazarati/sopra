@@ -115,6 +115,7 @@
     <Compile Include="Interface\StaticComponent.cs" />
     <Compile Include="Interface\TextButton.cs" />
     <Compile Include="IPositioned.cs" />
+    <Compile Include="Options\ControlsMenu.cs" />
     <Compile Include="Options\KeyMap.cs" />
     <Compile Include="Options\OptionsData.cs" />
     <Compile Include="PathPlanning\AStar.cs" />

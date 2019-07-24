@@ -2,6 +2,7 @@
 using KernelPanic.Camera;
 using KernelPanic.Events;
 using KernelPanic.Input;
+using KernelPanic.Options;
 using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -105,7 +106,7 @@ namespace KernelPanic
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
             mGameStateManager.Update(mInputState, gameTime);
             EventCenter.Default.Run();
-            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
+            DebugSettings.Update(new InputManager(new KeyMap(), new List<ClickTarget>(), new StaticCamera(), mInputState));
             base.Update(gameTime);
         }
 

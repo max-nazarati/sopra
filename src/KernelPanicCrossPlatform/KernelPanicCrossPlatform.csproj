@@ -282,6 +282,9 @@
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Options\ControlsMenu.cs">
+      <Link>Options\ControlsMenu.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Options\KeyMap.cs">
       <Link>Options\KeyMap.cs</Link>
     </Compile>

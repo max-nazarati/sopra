@@ -37,7 +37,7 @@ namespace KernelPanic
             if (mPlayer.Bitcoins < Building.Price)
                 Building.State = BuildingState.Invalid;
 
-            if (!input.MousePressed(InputManager.MouseButton.Left) && !input.KeyPressed(input.mInputState.mPlaceTower))
+            if (!input.MousePressed(InputManager.MouseButton.Left))
                 return;
 
             if (!TryPurchase())

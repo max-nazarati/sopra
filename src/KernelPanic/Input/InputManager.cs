@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.Remoting.Messaging;
-using System.Threading.Tasks;
+using System.Linq;
 using KernelPanic.Camera;
-using KernelPanic.Interface;
+using KernelPanic.Options;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,7 +12,7 @@ namespace KernelPanic.Input
     /// <summary>
     /// Handles all input coming from the mouse and the keyboard including de-bouncing.
     /// </summary>
-    public sealed class InputManager
+    internal sealed class InputManager
     {
         // private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
         // private double mTimeLastClick = MaximumDoubleClickDelay; // Left MouseButton (init is for 'reset')
@@ -29,6 +28,11 @@ namespace KernelPanic.Input
         private readonly List<ClickTarget> mClickTargets;
 
         /// <summary>
+        /// Maps default-keys to the key chosen by the user.
+        /// </summary>
+        private readonly KeyMap mKeyMap;
+
+        /// <summary>
         /// Left, Middle and Right MouseButton
         /// </summary>
         internal enum MouseButton : byte
@@ -36,89 +40,14 @@ namespace KernelPanic.Input
             Left, Middle, Right
         }
 
-        internal enum MacroKeys
+        internal InputManager(KeyMap keyMap, List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
         {
-            TowerPlacement,
-            CameraUp,
-            CameraLeft,
-            CameraDown,
-            CameraRight,
-            Tower1,
-            Tower2,
-            Tower3,
-            Tower4,
-            Tower5,
-            Tower6,
-            Tower7
-        }
-
-        internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
-        {
+            mKeyMap = keyMap;
             mCamera = camera;
             mInputState = inputState;
             mClickTargets = clickTargets;
 
             UpdateCamera();
-        }
-        
-        internal async void ChangeKey(MacroKeys action, TextButton button)
-        {
-            var originalTitle = button.Title;
-            button.Title = "_";
-            var pressedKey = Keyboard.GetState().GetPressedKeys();
-            while (pressedKey.Length == 0)
-            {
-                await Task.Delay(50);
-                pressedKey = Keyboard.GetState().GetPressedKeys();
-            }
-            
-            if (mInputState.KeyUsed(pressedKey[0]))
-            {
-                button.Title = originalTitle;
-                return;
-            }
-            button.Title = pressedKey[0].ToString();
-            switch (action)
-            {
-                case MacroKeys.TowerPlacement:
-                    mInputState.mPlaceTower = pressedKey[0];
-                    break;
-                case MacroKeys.CameraUp:
-                    mInputState.mCameraUp = pressedKey[0];
-                    break;
-                case MacroKeys.CameraLeft:
-                    mInputState.mCameraLeft = pressedKey[0];
-                    break;
-                case MacroKeys.CameraDown:
-                    mInputState.mCameraDown = pressedKey[0];
-                    break;
-                case MacroKeys.CameraRight:
-                    mInputState.mCameraRight = pressedKey[0];
-                    break;
-                case MacroKeys.Tower1:
-                    mInputState.mTowerOne = pressedKey[0];
-                    break;
-                case MacroKeys.Tower2:
-                    mInputState.mTowerTwo = pressedKey[0];
-                    break;
-                case MacroKeys.Tower3:
-                    mInputState.mTowerThree = pressedKey[0];
-                    break;
-                case MacroKeys.Tower4:
-                    mInputState.mTowerFour = pressedKey[0];
-                    break;
-                case MacroKeys.Tower5:
-                    mInputState.mTowerFive = pressedKey[0];
-                    break;
-                case MacroKeys.Tower6:
-                    mInputState.mTowerSix = pressedKey[0];
-                    break;
-                case MacroKeys.Tower7:
-                    mInputState.mTowerSeven = pressedKey[0];
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
-            }
         }
 
         internal bool IsActive => mInputState.IsActive;
@@ -133,84 +62,42 @@ namespace KernelPanic.Input
 
         #region Keys
 
-        /// <summary>
-        /// checks if any of the Keyboard Buttons has been pressed (at this exact moment)
-        /// </summary>
-        /// <param name="keys">Keys that should be checked</param>
-        /// <returns>True if any of the keys was pressed</returns>
-        internal bool KeyPressed(params Keys[] keys)
-        {
-            return KeyChanged(keys, true);
-        }
+        internal bool AnyKeyPressed => mInputState.CurrentKeyboard.GetPressedKeys().Any();
 
-        /* TODO uncomment this
-        /// <summary>
-        /// checks if any of the Keyboard Buttons has been released (at this exact moment)
-        /// </summary>
-        /// <param name="keys">Keys that should be checked</param>
-        /// <returns>True if any of the keys was released</returns>
-        internal bool KeyReleased(params Keys[] keys)
+        internal Keys PressedKey(Func<Keys, bool> predicate)
         {
-            return KeyChanged(keys, true);
-        }
-        */
-
-        private bool KeyChanged(IEnumerable<Keys> keys, bool currentDown)
-        {
-            foreach (var key in keys)
-            {
-                if (mInputState.IsClaimed(key) ||
-                    mInputState.PreviousKeyboard.IsKeyDown(key) == currentDown ||
-                    mInputState.CurrentKeyboard.IsKeyDown(key) != currentDown)
-                {
-                    continue;
-                }
-
+            var key = mInputState.CurrentKeyboard.GetPressedKeys().FirstOrDefault(predicate);
+            if (key != Keys.None)
                 mInputState.Claim(key);
-                return true;
-            }
-
-            return false;
+            return key;
         }
 
         /// <summary>
-        /// checks if any of the Keyboard Buttons is currently being pressed
+        /// Checks if the given key was pressed in this frame (de-bounced).
         /// </summary>
-        /// <param name="keys">Keys that should be checked</param>
-        /// <returns>True if any of the keys was down</returns>
-        private bool KeyDown(params Keys[] keys)
+        /// <param name="key">Key that should be checked.</param>
+        /// <returns><c>true</c> if the key became pressed.</returns>
+        internal bool KeyPressed(Keys key)
         {
-            foreach (var key in keys)
+            key = mKeyMap[key];
+            if (mInputState.IsClaimed(key) || mInputState.PreviousKeyboard.IsKeyDown(key) || !mInputState.CurrentKeyboard.IsKeyDown(key))
             {
-                if (mInputState.CurrentKeyboard.IsKeyDown(key))
-                {
-                    return true;
-                }
+                return false;
             }
 
-            return false;
+            mInputState.Claim(key);
+            return true;
         }
 
-        /* TODO uncomment this
         /// <summary>
-        /// checks if any of the Keyboard Buttons is currently not being pressed
-        /// (this is not equal to '!KeyDown(keys)'
+        /// Checks if the given key is in a pressed state.
         /// </summary>
-        /// <param name="keys">Keys that should be checked</param>
-        /// <returns>True if any of the keys was up</returns>
-        public bool KeyUp(params Keys[] keys)
+        /// <param name="key">Key that should be checked.</param>
+        /// <returns><c>true</c> if the key is down.</returns>
+        private bool KeyDown(Keys key)
         {
-            foreach (Keys key in keys)
-            {
-                if (mInputState.CurrentKeyboard.IsKeyUp(key))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return mInputState.CurrentKeyboard.IsKeyDown(mKeyMap[key]);
         }
-        */
 
         #endregion
 
@@ -404,10 +291,10 @@ namespace KernelPanic.Input
         /// </summary>
         private void UpdateCamera()
         {
-            var xLeft = KeyDown(mInputState.mCameraLeft);
-            var xRight = KeyDown(mInputState.mCameraRight);
-            var yUp = KeyDown(mInputState.mCameraUp);
-            var yDown = KeyDown(mInputState.mCameraDown);
+            var xLeft = KeyDown(Keys.A);
+            var xRight = KeyDown(Keys.D);
+            var yUp = KeyDown(Keys.W);
+            var yDown = KeyDown(Keys.S);
 
             bool mouseXLeft = false, mouseXRight = false, mouseYUp = false, mouseYDown = false;
 

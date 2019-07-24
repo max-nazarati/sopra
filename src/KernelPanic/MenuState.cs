@@ -7,6 +7,7 @@ using KernelPanic.Data;
 using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Options;
 using KernelPanic.Serialization;
 using KernelPanic.Sprites;
 using KernelPanic.Tracking;
@@ -18,12 +19,12 @@ using Microsoft.Xna.Framework.Input;
 namespace KernelPanic
 {
     [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "The Strings are in German")]
-    internal sealed class MenuState : AGameState
+    internal class MenuState : AGameState
     {
-        private IReadOnlyCollection<InterfaceComponent> mComponents;
+        protected IReadOnlyCollection<InterfaceComponent> Components { get; set; }
         private readonly Action mEscapeAction;
 
-        private MenuState(GameStateManager gameStateManager, Action escapeAction = null)
+        protected MenuState(GameStateManager gameStateManager, Action escapeAction = null)
             : base(new StaticCamera(), gameStateManager)
         {
             mEscapeAction = escapeAction;
@@ -62,7 +63,7 @@ namespace KernelPanic
 
             return new MenuState(stateManager, stateManager.ExitAction)
             {
-                mComponents = new InterfaceComponent[]
+                Components = new InterfaceComponent[]
                 {
                     CreateBackground(stateManager.Sprite),
                     playButton,
@@ -136,7 +137,7 @@ namespace KernelPanic
             loadGameButton.Clicked += LoadGameCallback(() => selectedSlot, stateManager);
             backButton.Clicked += stateManager.PopOnClick;
 
-            return new MenuState(stateManager) { mComponents = components.ToArray() };
+            return new MenuState(stateManager) { Components = components.ToArray() };
         }
 
         private static Button.Delegate LoadGameCallback(Func<int> slotAccessor, GameStateManager gameStateManager)
@@ -246,8 +247,7 @@ namespace KernelPanic
             volumeRegulatorButton.Clicked += (button, input) => ChangeSoundVolume(volumeRegulatorButton);
             
             var keyInputsButton = CreateButton(stateManager.Sprite, "Steuerung", 575, 150);
-            keyInputsButton.Clicked += (button, input) => stateManager
-                .Push(CreateKeyInputMenu(stateManager, inputManager));
+            keyInputsButton.Clicked += (button, input) => stateManager.Push(new ControlsMenu(stateManager));
 
             var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 700, 150);
             var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus",700, -150);
@@ -258,7 +258,7 @@ namespace KernelPanic
 
             return new MenuState(stateManager)
             {
-                mComponents = new InterfaceComponent[]
+                Components = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     musicButton,
@@ -271,99 +271,6 @@ namespace KernelPanic
                     backButton,
                     fullscreen,
                     fullScreenWindowButton
-                }
-            };
-        }
-
-        private static MenuState CreateKeyInputMenu(GameStateManager stateManager, InputManager inputManager)
-        {
-            var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
-            backButton.Clicked += stateManager.PopOnClick;
-            var title = stateManager.Sprite.CreateText("Tastaturbelegung");
-            var screenMid = stateManager.Sprite.ScreenSize.X / 2f;
-            title.X = screenMid + title.Width/2;
-            title.Y = 100;
-            title.SetOrigin(RelativePosition.TopRight);
-
-            var placeTowerKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mPlaceTower.ToString(), 200, 250);
-            var placeTower = CreateButton(stateManager.Sprite, "Turm platzieren", 200,600);
-            placeTowerKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.TowerPlacement, (TextButton)button);
-
-            var cameraUpKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraUp.ToString(), 300, 250);
-            var cameraUp = CreateButton(stateManager.Sprite, "Kamera hoch", 300,600);
-            cameraUpKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraUp, (TextButton)button);
-            
-            var cameraLeftKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraLeft.ToString(), 400, 250);
-            var cameraLeft = CreateButton(stateManager.Sprite, "Kamera links", 400,600);
-            cameraLeftKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraLeft, (TextButton)button);
-            
-            var cameraDownKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraDown.ToString(), 500, 250);
-            var cameraDown = CreateButton(stateManager.Sprite, "Kamera runter", 500,600);
-            cameraDownKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraDown, (TextButton)button);
-            
-            var cameraRightKey = CreateButton(stateManager.Sprite, inputManager.mInputState.mCameraRight.ToString(), 600, 250);
-            var cameraRight = CreateButton(stateManager.Sprite, "Kamera rechts", 600,600);
-            cameraRightKey.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.CameraRight, (TextButton) button);
-            
-            var selectTower1Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerOne.ToString(), 700, 250);
-            var selectTower1 = CreateButton(stateManager.Sprite, "Kabel", 700,600);
-            selectTower1Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower1, (TextButton)button);
-            
-            var selectTower2Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerTwo.ToString(), 200, -600);
-            var selectTower2 = CreateButton(stateManager.Sprite, "Mausschütze", 200,-250);
-            selectTower2Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower2, (TextButton)button);
-            
-            var selectTower3Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerThree.ToString(), 300, -600);
-            var selectTower3 = CreateButton(stateManager.Sprite, "Ventilator", 300,-250);
-            selectTower3Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower3, (TextButton)button);
-            
-            var selectTower4Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerFour.ToString(), 400, -600);
-            var selectTower4 = CreateButton(stateManager.Sprite, "Antivirus", 400,-250);
-            selectTower4Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower4, (TextButton)button);
-            
-            var selectTower5Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerFive.ToString(), 500, -600);
-            var selectTower5 = CreateButton(stateManager.Sprite, "Wifi-Router", 500,-250);
-            selectTower5Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower5, (TextButton)button);
-            
-            var selectTower6Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerSix.ToString(), 600, -600);
-            var selectTower6 = CreateButton(stateManager.Sprite, "Schockfeld", 600,-250);
-            selectTower6Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower6, (TextButton)button);
-            
-            var selectTower7Key = CreateButton(stateManager.Sprite, inputManager.mInputState.mTowerSeven.ToString(), 700, -600);
-            var selectTower7 = CreateButton(stateManager.Sprite, "CD-Thrower", 700,-250);
-            selectTower7Key.Clicked += (button, input) => inputManager.ChangeKey(InputManager.MacroKeys.Tower7, (TextButton)button);
-            
-            return new MenuState(stateManager)
-            {
-                mComponents = new InterfaceComponent[]
-                {
-                    CreateBackgroundWithoutText(stateManager.Sprite),
-                    new StaticComponent(title),
-                    placeTower,
-                    placeTowerKey,
-                    cameraDown,
-                    cameraDownKey,
-                    cameraLeft,
-                    cameraLeftKey,
-                    cameraRight,
-                    cameraRightKey,
-                    cameraUp,
-                    cameraUpKey,
-                    backButton,
-                    selectTower1,
-                    selectTower1Key,
-                    selectTower2,
-                    selectTower2Key,
-                    selectTower3,
-                    selectTower3Key,
-                    selectTower4,
-                    selectTower4Key,
-                    selectTower5,
-                    selectTower5Key,
-                    selectTower6,
-                    selectTower6Key,
-                    selectTower7,
-                    selectTower7Key
                 }
             };
         }
@@ -397,7 +304,7 @@ namespace KernelPanic
 
             return new MenuState(stateManager)
             {
-                mComponents = new InterfaceComponent[]
+                Components = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     new StaticComponent(title),
@@ -447,7 +354,7 @@ namespace KernelPanic
                 components.Add(new StaticComponent(valueText));
             }
 
-            return new MenuState(stateManager) {mComponents = components};
+            return new MenuState(stateManager) {Components = components};
         }
 
         private static MenuState CreateAchievementsMenu(GameStateManager stateManager)
@@ -506,7 +413,7 @@ namespace KernelPanic
 
             return new MenuState(stateManager)
             {
-                mComponents = new InterfaceComponent[]
+                Components = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     new StaticComponent(titleSprite),
@@ -555,7 +462,7 @@ namespace KernelPanic
             
             return new MenuState(stateManager)
             {
-                mComponents = new InterfaceComponent[]
+                Components = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     janekButton,
@@ -585,7 +492,7 @@ namespace KernelPanic
 
             return new MenuState(stateManager)
             {
-                mComponents = new InterfaceComponent[]
+                Components = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     mainMenuButton,
@@ -613,7 +520,7 @@ namespace KernelPanic
 
             return new MenuState(stateManager)
             {
-                mComponents = new InterfaceComponent[]
+                Components = new InterfaceComponent[]
                 {
                     CreateBackgroundWithoutText(stateManager.Sprite),
                     optionsButton,
@@ -629,7 +536,7 @@ namespace KernelPanic
             return new StaticComponent(sprites.CreateMenuBackground());
         }
 
-        private static StaticComponent CreateBackgroundWithoutText(SpriteManager sprites)
+        protected static StaticComponent CreateBackgroundWithoutText(SpriteManager sprites)
         {
             return new StaticComponent(sprites.CreateMenuBackgroundWithoutText());
         }
@@ -708,10 +615,10 @@ namespace KernelPanic
                 return component;
             }));
 
-            return new MenuState(stateManager) {mComponents = components};
+            return new MenuState(stateManager) {Components = components};
         }
 
-        private static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
+        protected static TextButton CreateButton(SpriteManager sprites, string title, int positionY, int shiftPositionX = 0)
         {
             var button = new TextButton(sprites) {Title = title};
             button.Clicked += (button2, input) => EventCenter.Default.Send(Event.ButtonClicked());
@@ -723,7 +630,7 @@ namespace KernelPanic
 
         public override void Update(InputManager inputManager, GameTime gameTime)
         {
-            foreach(var component in mComponents)
+            foreach(var component in Components)
             {
                 component.Update(inputManager, gameTime);
             }
@@ -739,7 +646,7 @@ namespace KernelPanic
         
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var component in mComponents)
+            foreach (var component in Components)
             {
                 component.Draw(spriteBatch, gameTime);
             }
