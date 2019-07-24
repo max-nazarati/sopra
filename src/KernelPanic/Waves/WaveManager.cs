@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
 using KernelPanic.Events;
@@ -57,6 +58,24 @@ namespace KernelPanic.Waves
             mByComputerDefeatedWaves = 0;
         }
 
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            foreach (var wave in mAliveWaves)
+            {
+                void RestoreWaveReferences(IPlayerDistinction playerDistinction)
+                {
+                    foreach (var troupe in wave.Troupes.Select(playerDistinction))
+                    {
+                        AssignWaveReference(troupe, wave, playerDistinction);
+                    }
+                }
+        
+                RestoreWaveReferences(new StaticDistinction(true));
+                RestoreWaveReferences(new StaticDistinction(false));
+            }
+        }
+
         internal int CurrentUnitCount<T>(IPlayerDistinction playerDistinction)
         {
             return mTroupes.Select(playerDistinction).Count(t => t.GetType() == typeof(T));
@@ -108,10 +127,7 @@ namespace KernelPanic.Waves
         {
             var player = Players.Select(playerDistinction);
             player.ApplyUpgrades(troupe);
-
-            var delayedQueue = mDelayedSpawns.Select(playerDistinction);
-            troupe.Wave = new WaveReference(wave.Index,
-                (lazyTroupe, lazyTile) => delayedQueue.Add((wave, lazyTroupe, lazyTile)));
+            AssignWaveReference(troupe, wave, playerDistinction);
 
             if (tile is TileIndex spawnTile)
             {
@@ -122,6 +138,13 @@ namespace KernelPanic.Waves
             {
                 player.AttackingLane.UnitSpawner.Register(troupe);
             }
+        }
+
+        private void AssignWaveReference(Troupe troupe, Wave wave, IPlayerDistinction playerDistinction)
+        {
+            var delayedQueue = mDelayedSpawns.Select(playerDistinction);
+            troupe.Wave = new WaveReference(wave.Index,
+                (lazyTroupe, lazyTile) => delayedQueue.Add((wave, lazyTroupe, lazyTile)));
         }
 
         internal void Add(IPlayerDistinction player, Unit unit)
