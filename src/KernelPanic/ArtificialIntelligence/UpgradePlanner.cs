@@ -45,7 +45,7 @@ namespace KernelPanic.ArtificialIntelligence
             double[] tier1Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
             double[] tier2Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
             double[] tier3Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
-            double[] tier4Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
+            double[] tier4Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
             double[] tier5Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
             mTierDistribution = new List<double[]>();
             mTierDistribution.Add(new double[0]);
@@ -72,11 +72,11 @@ namespace KernelPanic.ArtificialIntelligence
             };
             Upgrade.Id[] tier5Upgrades = new[]
             {
-                Upgrade.Id.EmpTwoTargets, Upgrade.Id.BeginningTier5, Upgrade.Id.AdditionalFirefox2,
+                Upgrade.Id.EmpTwoTargets, Upgrade.Id.AdditionalFirefox2,
                 Upgrade.Id.IncreaseSettingsArea2, Upgrade.Id.IncreaseSettingsHeal2
             };
             mTierDictionnary = new List<Upgrade.Id[]>();
-            mTierDictionnary.Add(new Upgrade.Id[0]);
+            mTierDictionnary.Add(new [] {Upgrade.Id.Invalid});
             mTierDictionnary.Add(tier1Upgrades);
             mTierDictionnary.Add(tier2Upgrades);
             mTierDictionnary.Add(tier3Upgrades);
@@ -100,20 +100,104 @@ namespace KernelPanic.ArtificialIntelligence
         /// <returns>(i, j) where i is the tier and j the corresponding upgrade index</returns>
         public (int, int) LocateUpgrade(Upgrade.Id id)
         {
-            int upgradeKey = (int)id;
-            int tier = 1;
-            int tierIndex = 0;
-            int numberUpgrades = 0;
-            for (int i = 1; i <= 5; i++)
-            {
-                numberUpgrades += mTierDistribution[i].Length;
-                if (upgradeKey <= numberUpgrades)
-                {
-                    tierIndex = upgradeKey - (numberUpgrades - mTierDistribution[i].Length) - 1;
-                    return (tier, tierIndex);
-                }
+            int tier;
+            int tierIndex;
 
-                tier++;
+            switch (id)
+            {
+                // Tier 1 Upgrades
+                case Upgrade.Id.IncreaseLp1:
+                    tier = 1;
+                    tierIndex = 0;
+                    break;
+                case Upgrade.Id.IncreaseGs1:
+                    tier = 1;
+                    tierIndex = 1;
+                    break;
+                case Upgrade.Id.IncreaseVs1:
+                    tier = 1;
+                    tierIndex = 2;
+                    break;
+                case Upgrade.Id.DecreaseAi1:
+                    tier = 1;
+                    tierIndex = 3;
+                    break;
+                // Tier 2 Upgrades
+                case Upgrade.Id.IncreaseLp2:
+                    tier = 2;
+                    tierIndex = 0;
+                    break;
+                case Upgrade.Id.IncreaseGs2:
+                    tier = 2;
+                    tierIndex = 1;
+                    break;
+                case Upgrade.Id.IncreaseVs2:
+                    tier = 2;
+                    tierIndex = 2;
+                    break;
+                case Upgrade.Id.IncreaseBitcoins:
+                    tier = 2;
+                    tierIndex = 3;
+                    break;
+                // Tier 3 Upgrades
+                case Upgrade.Id.CdBoomerang:
+                    tier = 3;
+                    tierIndex = 0;
+                    break;
+                case Upgrade.Id.IncreaseGsNokia:
+                    tier = 3;
+                    tierIndex = 1;
+                    break;
+                case Upgrade.Id.IncreaseGsFirefox:
+                    tier = 3;
+                    tierIndex = 2;
+                    break;
+                case Upgrade.Id.MoreTrojanChildren1:
+                    tier = 3;
+                    tierIndex = 3;
+                    break;
+                // Tier 4 Upgrades
+                case Upgrade.Id.EmpDuration:
+                    tier = 4;
+                    tierIndex = 0;
+                    break;
+                case Upgrade.Id.AdditionalFirefox1:
+                    tier = 4;
+                    tierIndex = 1;
+                    break;
+                case Upgrade.Id.IncreaseSettingsArea1:
+                    tier = 4;
+                    tierIndex = 2;
+                    break;
+                case Upgrade.Id.IncreaseSettingsHeal1:
+                    tier = 4;
+                    tierIndex = 3;
+                    break;
+                case Upgrade.Id.MoreTrojanChildren2:
+                    tier = 4;
+                    tierIndex = 4;
+                    break;
+                // Tier 5 Upgrades
+                case Upgrade.Id.EmpTwoTargets:
+                    tier = 5;
+                    tierIndex = 0;
+                    break;
+                case Upgrade.Id.AdditionalFirefox2:
+                    tier = 5;
+                    tierIndex = 1;
+                    break;
+                case Upgrade.Id.IncreaseSettingsArea2:
+                    tier = 5;
+                    tierIndex = 2;
+                    break;
+                case Upgrade.Id.IncreaseSettingsHeal2:
+                    tier = 5;
+                    tierIndex = 3;
+                    break;
+                default:
+                    tier = 0;
+                    tierIndex = 0;
+                    break;
             }
 
             return (tier, tierIndex);
