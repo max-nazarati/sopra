@@ -305,8 +305,8 @@ namespace KernelPanic.Entities
         {
             const int neighbourhoodRadius = 200;
 
-            const float vectorWeight = 100 / 100f; // VectorField (Heatmap)
-            const float alignmentWeight = 20 / 100f;
+            const float vectorWeight = 90 / 100f; // VectorField (Heatmap)
+            const float alignmentWeight = 10 / 100f;
             const float cohesionWeight = 20 / 100f;
             const float separationWeight = 60 / 100f;
             const float obstacleWeight = 10 / 100f;
@@ -316,7 +316,7 @@ namespace KernelPanic.Entities
 
             // Iterate over the Entity Graph only one time and get EVERYTHING
             var rect = new Rectangle(Sprite.Position.ToPoint(), new Point(neighbourhoodRadius));
-            // TODO is this rectangle centered?=)
+            // TODO is this rectangle centered?
             var completeNeighbourhood = positionProvider.EntitiesAt(rect);
 
             // Create explicitly forced Lists to iterate over, depending on which unit we are

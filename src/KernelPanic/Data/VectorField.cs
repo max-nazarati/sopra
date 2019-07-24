@@ -226,11 +226,11 @@ namespace KernelPanic.Data
 
                 if (point.X == mCutout.Left)
                     return RelativePosition.CenterLeft;
-                if (point.X == mCutout.Right)
+                if (point.X == mCutout.Right - 1)
                     return RelativePosition.CenterRight;
                 if (point.Y == mCutout.Top)
                     return RelativePosition.CenterTop;
-                if (point.Y == mCutout.Bottom)
+                if (point.Y == mCutout.Bottom - 1)
                     return RelativePosition.CenterBottom;
 
                 throw new ArgumentOutOfRangeException(nameof(point), point, "Too far into the cutout.");
