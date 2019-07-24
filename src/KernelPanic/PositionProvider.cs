@@ -17,6 +17,14 @@ namespace KernelPanic
         private readonly SpriteManager mSpriteManager;
         private readonly EntityGraph mEntities;
 
+        ~PositionProvider()
+        {
+            Console.WriteLine("---------------------------------------------");
+            Console.WriteLine("cached: " + CacheUsed);
+            Console.WriteLine("notCached: " + CacheNotUsed);
+            Console.WriteLine("---------------------------------------------\n");
+
+        }
         internal Grid Grid { get; }
         internal Owner Owner { get; }
         internal Base Target { get; }
@@ -90,16 +98,22 @@ namespace KernelPanic
             return mEntities.QuadTree.EntitiesAt(entity.Bounds).OfType<T>();
         }
 
-        internal IEnumerable<IGameObject> EntitiesAt(Rectangle rectangle)
+        internal List<IGameObject> EntitiesAt(Rectangle rectangle)
         {
-            if (mCache[(rectangle.X / 25, rectangle.Y / 25)] is IEnumerable<IGameObject> enumerable)
+            if (mCache[(rectangle.X / 25, rectangle.Y / 25)] is List<IGameObject> enumerable)
             {
+                CacheUsed++;
                 return enumerable;
             }
-            var result = mEntities.QuadTree.EntitiesAt(rectangle);
+            var result = mEntities.QuadTree.EntitiesAt(rectangle).ToList();
+            CacheNotUsed++;
             mCache[(rectangle.X / 25, rectangle.Y / 25)] = result;
             return result;
         }
+
+        private int CacheNotUsed { get; set; }
+
+        private int CacheUsed { get; set; }
 
         internal bool HasEntityAt(Vector2 point, Func<IGameObject, bool> predicate = null)
         {
