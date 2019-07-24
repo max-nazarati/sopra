@@ -149,16 +149,6 @@ namespace KernelPanic.Entities.Units
             }
             #endregion
 
-            // set the correct animation
-            if (!(Sprite is AnimatedSprite animated))
-                return;
-            if (jumpDistance.X is float x)
-            {
-                // choose correct movement direction based on x value or direction of idle animation
-                animated.MovementDirection = (animated.Effect == SpriteEffects.None && (int)x == 0) || x < 0
-                    ? AnimatedSprite.Direction.Left
-                    : AnimatedSprite.Direction.Right;
-            }
         }
 
         protected override void FinishAbility(PositionProvider positionProvider)
@@ -223,7 +213,19 @@ namespace KernelPanic.Entities.Units
         }
 
         #endregion
-        
+
+        protected override void AdaptSpriteDirection(Vector2? direction)
+        {
+            if (mAbility.Count != 0)
+            {
+                base.AdaptSpriteDirection(mAbility.Peek());
+            }
+            else
+            {
+                base.AdaptSpriteDirection(direction);
+            }
+        }
+
         #region Draw
 
         protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)

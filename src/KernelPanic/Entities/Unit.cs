@@ -277,16 +277,12 @@ namespace KernelPanic.Entities
             mInfoText.Text += $"\nLeben: {RemainingLife}";
         }
 
-        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        protected virtual void AdaptSpriteDirection(Vector2? direction)
         {
-            CalculateMovement(null, positionProvider, inputManager);
-            DoMove(positionProvider, inputManager, gameTime);
-            UpdateHealthBar();
-
             if (!(Sprite is AnimatedSprite animated))
                 return;
 
-            if (MoveVector?.X is float x)
+            if (direction?.X is float x)
             {
                 // choose correct movement direction based on x value or direction of idle animation
                 animated.MovementDirection = (animated.Effect == SpriteEffects.None && (int)x == 0) || x < 0
@@ -295,6 +291,13 @@ namespace KernelPanic.Entities
             }
             else
                 animated.MovementDirection = AnimatedSprite.Direction.Standing;
+        }
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        {
+            CalculateMovement(null, positionProvider, inputManager);
+            DoMove(positionProvider, inputManager, gameTime);
+            UpdateHealthBar();
+            AdaptSpriteDirection(MoveVector);
         }
 
         #region Flocking
