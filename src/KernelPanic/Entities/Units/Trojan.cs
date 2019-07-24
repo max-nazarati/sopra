@@ -13,7 +13,7 @@ namespace KernelPanic.Entities.Units
         private static Point HitBoxSize => new Point(34, 45);
 
         internal Trojan(SpriteManager spriteManager)
-            : base(30, 2, 30, 6, HitBoxSize, spriteManager.CreateTrojan(), spriteManager)
+            : base(30, 2, 20, 15, HitBoxSize, spriteManager.CreateTrojan(), spriteManager)
         {
         }
 

@@ -39,7 +39,7 @@ namespace KernelPanic.Entities.Units
         internal Bluescreen(SpriteManager spriteManager)
             : base(50, 6, 15, 0, TimeSpan.FromSeconds(1), HitBoxSize, spriteManager.CreateBluescreen(), spriteManager)
         {
-            mAbilityRange = 1000;
+            mAbilityRange = 500;
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
             mIndicatorTarget = spriteManager.CreateEmpIndicatorTarget();
             mEmpSprite = spriteManager.CreateEmp();

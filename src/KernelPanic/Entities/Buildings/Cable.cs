@@ -9,7 +9,7 @@ namespace KernelPanic.Entities.Buildings
     internal sealed class Cable : Building
     {
         internal Cable(SpriteManager spriteManager)
-            : base(20, spriteManager.CreateCable(), spriteManager)
+            : base(10, spriteManager.CreateCable(), spriteManager)
         {
         }
 

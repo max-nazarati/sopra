@@ -15,7 +15,7 @@ namespace KernelPanic.Entities.Buildings
         private bool mDoubleClick;
 
         internal CursorShooter(SpriteManager spriteManager)
-            : base(30, 4, 2, 10,TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager)
+            : base(20, 4, 2, 10,TimeSpan.FromSeconds(1), spriteManager.CreateCursorShooter(), spriteManager)
         {
         }
 

@@ -12,7 +12,7 @@ namespace KernelPanic.Entities.Buildings
     internal sealed class ShockField : Tower
     {
         internal ShockField(SpriteManager spriteManager)
-            : base(100, 0, 2, 0,TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager)
+            : base(50, 0, 2, 0,TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager)
         {
             FireTimer.Enabled = true;
         }
