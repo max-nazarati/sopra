@@ -29,7 +29,8 @@ namespace KernelPanic.ArtificialIntelligence
         public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions) : base(player)
         {
             mActions = actions;
-            mUnitDistribution = new[] {1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d};
+            // Bug  Virus   Trojaner   Nokia   Thunderbird    Settings    Firefox    Bluescreen
+            mUnitDistribution = new[] {0.25, 0.2, 0.2, 0.1, 0.1, 0.05, 0.05, 0.05};
             var eventCenter = EventCenter.Default;
             mSubscriptions = new List<IDisposable>();
             mSubscriptions.Add(eventCenter.Subscribe(Event.Id.DamagedBase,
