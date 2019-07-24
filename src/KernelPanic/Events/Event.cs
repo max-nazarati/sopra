@@ -244,15 +244,9 @@ namespace KernelPanic.Events
                     [Key.Price] = player.Bitcoins
                 }
             };
-        
-        internal static Event ButtonClicked() =>
-            new Event(Id.ButtonClicked)
-            {
-                mPayload =
-                {
-                }
-            };
-        
+
+        internal static Event ButtonClicked() => new Event(Id.ButtonClicked);
+
         internal static Event HeroAbility(Hero hero) =>
             new Event(Id.HeroAbility)
             {
