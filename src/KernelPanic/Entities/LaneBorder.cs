@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using KernelPanic.Data;
 using KernelPanic.Input;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
@@ -8,13 +9,15 @@ namespace KernelPanic.Entities
 {
     internal struct LaneBorder : IGameObject
     {
+        internal readonly RelativePosition mDirectionToLane;
         public Rectangle Bounds { get; }
         internal bool IsTargetBorder { get; }
 
-        private LaneBorder(Rectangle bounds, bool targetBorder)
+        private LaneBorder(Rectangle bounds, bool targetBorder, RelativePosition directionToLane)
         {
             Bounds = bounds;
             IsTargetBorder = targetBorder;
+            mDirectionToLane = directionToLane;
         }
 
         internal static IEnumerable<LaneBorder> Borders(Rectangle rectangle, int width, bool outside, Lane.Side? targetSide = null)
@@ -31,9 +34,9 @@ namespace KernelPanic.Entities
 
             var left = new Rectangle(
                 rectangle.X - ifOutside * width,
-                rectangle.Y + ifInside * width,
+                rectangle.Y, // + ifInside * width,
                 width,
-                rectangle.Height - 2 * ifInside * width);
+                rectangle.Height); // - 2 * ifInside * width);
 
             var bottom = top;
             bottom.Offset(0, rectangle.Height + plusMinusMul * width);
@@ -43,15 +46,19 @@ namespace KernelPanic.Entities
 
             return new[]
             {
-                new LaneBorder(top, false),
-                new LaneBorder(left, targetSide == Lane.Side.Left),
-                new LaneBorder(bottom, false),
-                new LaneBorder(right, targetSide == Lane.Side.Right)
+                new LaneBorder(top, false, outside ? RelativePosition.CenterBottom : RelativePosition.CenterTop),
+                new LaneBorder(left, targetSide == Lane.Side.Left, outside ? RelativePosition.CenterRight : RelativePosition.CenterLeft),
+                new LaneBorder(bottom, false, outside ? RelativePosition.CenterTop : RelativePosition.CenterBottom),
+                new LaneBorder(right, targetSide == Lane.Side.Right, outside ? RelativePosition.CenterLeft : RelativePosition.CenterRight)
             };
         }
 
         int? IGameObject.DrawLevel => null;
-        bool IGameObject.WantsRemoval => false;
+        bool IGameObject.WantsRemoval
+        {
+            get => false;
+            set { }
+        }
 
         void IGameObject.Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {

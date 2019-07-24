@@ -15,7 +15,7 @@ namespace KernelPanic.Table
         internal Lane.Side LaneSide { get; }
         internal Rectangle LaneRectangle { get; }
 
-        private Rectangle TileCutout => new Rectangle(
+        internal Rectangle TileCutout => new Rectangle(
             LaneSide == Lane.Side.Left ? LaneWidthInTiles : 0,
             LaneWidthInTiles,
             LaneRectangle.Width - LaneWidthInTiles,
@@ -120,9 +120,9 @@ namespace KernelPanic.Table
             return null;
         }
 
-        internal TileIndex? TileFromWorldPoint(Vector2 point, int subTileCount = 1)
+        internal TileIndex? TileFromWorldPoint(Vector2 point, int subTileCount = 1, bool cutoutAllowed = false)
         {
-            if (!Contains(point))
+            if (!Contains(point, cutoutAllowed))
                 return null;
 
             var subTileSize = (float) KachelSize / subTileCount;
@@ -133,10 +133,11 @@ namespace KernelPanic.Table
         /// Tests if the given <paramref name="point"/> lies in this grid.
         /// </summary>
         /// <param name="point">The point to test for.</param>
+        /// <param name="cutoutAllowed">do we want to allow to search in the cutout.</param>
         /// <returns><c>true</c> if the point is inside, <c>false</c> otherwise.</returns>
-        internal bool Contains(Vector2 point)
+        internal bool Contains(Vector2 point, bool cutoutAllowed = false)
         {
-            return Bounds.Contains(point) && !PixelCutout.Contains(point);
+            return Bounds.Contains(point) && (cutoutAllowed || !PixelCutout.Contains(point));
         }
 
         /// <summary>

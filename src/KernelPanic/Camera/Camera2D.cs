@@ -46,7 +46,7 @@ namespace KernelPanic.Camera
         public Point ViewportSize => mViewportSize;
 
         /// <inheritdoc />
-        public void Update(Point viewportSize, Change x, Change y, Change scrollVertical)
+        public void Update(Point viewportSize, Change x, Change y, Change scrollVertical, GameTime gameTime)
         {
             var newZoom = MathHelper.Clamp((float) Math.Pow(1.1, scrollVertical.Direction) * mZoom, MinZoom, MaxZoom);
             if (Math.Abs(newZoom - mZoom) > 0.05f)
@@ -71,8 +71,8 @@ namespace KernelPanic.Camera
             var maxDifference = mBoundingBox.Location.ToVector2() + mBoundingBox.Size.ToVector2() - windowLowerRight;
 
             // Update the camera position.
-            mX += MathHelper.Clamp(x.Direction * Movement / mZoom, minDifference.X, maxDifference.X);
-            mY += MathHelper.Clamp(y.Direction * Movement / mZoom, minDifference.Y, maxDifference.Y);
+            mX += MathHelper.Clamp(x.Direction * Movement / mZoom * gameTime.ElapsedGameTime.Milliseconds * 0.06f, minDifference.X, maxDifference.X);
+            mY += MathHelper.Clamp(y.Direction * Movement / mZoom * gameTime.ElapsedGameTime.Milliseconds * 0.06f, minDifference.Y, maxDifference.Y);
 
             // We recalculate the transformation and its inverse after each update, since the update occurs only once
             // during an update-cycle and in each update-cycle both will be used.

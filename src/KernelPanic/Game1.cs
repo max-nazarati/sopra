@@ -55,7 +55,7 @@ namespace KernelPanic
         /// </summary>
         protected override void Initialize()
         {
-            // IsFixedTimeStep = false; // this can experimented with, we need to make everything time based or tick based then tho
+            IsFixedTimeStep = false; // this can experimented with, we need to make everything time based or tick based then tho
             IsMouseVisible = true;
             mSoundManager = new SoundManager(Content);
             EventCenter.Default.Subscribe(Event.Id.AchievementUnlocked, @event =>
@@ -78,7 +78,7 @@ namespace KernelPanic
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
             mGameStateManager =
                 new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mGraphics);
-            InGameState.PushGameStack(mGameStateManager, new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
+            InGameState.PushGameStack(mGameStateManager, new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState, new GameTime()));
             // SoundManager.Instance.PlayBackgroundMusic();
         }
 
@@ -105,7 +105,7 @@ namespace KernelPanic
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
             mGameStateManager.Update(mInputState, gameTime);
             EventCenter.Default.Run();
-            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
+            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState, gameTime));
             base.Update(gameTime);
         }
 

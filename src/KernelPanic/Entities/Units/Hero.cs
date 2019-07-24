@@ -114,6 +114,7 @@ namespace KernelPanic.Entities.Units
 
             var nextTarget = new TileIndex(path.Count > 2 ? path[1] : target, 1);
             MoveTarget = positionProvider.Grid.GetTile(nextTarget).Position;
+            MoveVector = MoveTarget - Sprite.Position;
         }
         
         private void MoveTargetReached(PositionProvider positionProvider, TileIndex tileTarget)
@@ -124,6 +125,7 @@ namespace KernelPanic.Entities.Units
 
             mAStar = null;
             mTarget = null;
+            MoveVector = null;
             mPathVisualizer = null;
         }
 
@@ -325,6 +327,10 @@ namespace KernelPanic.Entities.Units
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
             mAStar = positionProvider.MakePathFinding(this, basePosition);
+            if (mAStar.Path == null)
+            {
+                return;
+            }
             mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
             ShouldMove = true;
         }

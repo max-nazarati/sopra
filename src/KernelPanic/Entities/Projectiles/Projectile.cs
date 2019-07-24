@@ -25,9 +25,15 @@ namespace KernelPanic.Entities.Projectiles
 
         internal Tower Origin { get; }
         
+        /// <summary>
+        /// calling this with direction == Vector.Zero will not work -> game crash (out of bound, entityG.)
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="direction"></param>
+        /// <param name="sprite"></param>
+        /// <param name="offset"></param>
         internal Projectile(Tower origin, Vector2 direction, Sprite sprite, float offset = 0)
         {
-            // calling this with direction == Vector.Zero will not work -> game crash (out of bound, entityG.)
             Origin = origin;
             Radius = origin.Radius;
             Damage = origin.Damage;
@@ -45,11 +51,11 @@ namespace KernelPanic.Entities.Projectiles
 
         public int? DrawLevel => 2;    // Above all units and buildings.
         
-        public bool WantsRemoval { get; protected set; }
+        public bool WantsRemoval { get; set; }
 
         public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            Sprite.Position += MoveVector;
+            Sprite.Position += MoveVector * gameTime.ElapsedGameTime.Milliseconds * 0.06f;
 
             if (Vector2.DistanceSquared(Sprite.Position, StartPoint) >= Radius * Radius)
             {

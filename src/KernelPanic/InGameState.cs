@@ -86,13 +86,15 @@ namespace KernelPanic
 
             foreach (var kv in mHud.UnitBuyingMenu.BuyingActions)
             {
+                mBoard.PlayerA.Base.Power = 9999;
+                mBoard.PlayerB.Base.Power = 9999;
                 if (typeof(Hero).IsAssignableFrom(kv.Key))
                 {
                     // Skip heroes.
                     continue;
                 }
 
-                for (var i = 0; i < 100; i++)
+                for (var i = 0; i < 200; i++)
                 {
                     mBoard.PlayerA.Bitcoins = mBoard.PlayerB.Bitcoins = 9999;
                     kv.Value.TryPurchase(mBoard.PlayerA);

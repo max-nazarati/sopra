@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
@@ -67,8 +68,14 @@ namespace KernelPanic
             if (gameObject is Tower tower)
                 tower.FireAction = Add;
 
-            QuadTree.Add(gameObject);
-            AddDrawObject(gameObject);
+            if (QuadTree.Add(gameObject))
+            {
+                AddDrawObject(gameObject);
+            }
+            else
+            {
+                gameObject.WantsRemoval = true;
+            }
         }
 
         private void AddDrawObject(IGameObject gameObject)
@@ -104,7 +111,7 @@ namespace KernelPanic
         {
             return QuadTree.EntitiesAt(point).OfType<Entity>();
         }
-        
+
         #endregion
 
         #region Updating
@@ -127,14 +134,17 @@ namespace KernelPanic
             // overlaps and collisions can be determined correctly.
             MoveUnits(positionProvider, gameTime, inputManager);
 
-            QuadTree.Rebuild(entity => entity.WantsRemoval);
+            foreach (var gameObject in QuadTree.Rebuild(entity => entity.WantsRemoval))
+            {
+                gameObject.WantsRemoval = true;
+            }
 
             foreach (var objects in mDrawObjects.Values)
             {
                 objects.RemoveAll(@object => @object.WantsRemoval);
             }
 
-            FixMovementCollisions(positionProvider);
+            // FixMovementCollisions(positionProvider);
             HandleCollisions(positionProvider);
 
             mMidUpdate = false;

@@ -105,6 +105,21 @@ namespace KernelPanic.Entities.Units
                 }
                 goal -= mAbility.Pop();
             }
+
+            // yet another error fixed :)
+            var cancelJump = false;
+            try
+            {
+                var _ = (positionProvider.RequireTile(goal).ToPoint());
+            }
+            catch (InvalidOperationException)
+            {
+                cancelJump = true;
+            }
+            if (cancelJump)
+            {
+                mAbility = new Stack<Vector2>();
+            }
         }
 
         protected override void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
@@ -133,6 +148,7 @@ namespace KernelPanic.Entities.Units
                 }
             }
             #endregion
+
         }
 
         protected override void FinishAbility(PositionProvider positionProvider)
@@ -197,7 +213,19 @@ namespace KernelPanic.Entities.Units
         }
 
         #endregion
-        
+
+        protected override void AdaptSpriteDirection(Vector2? direction)
+        {
+            if (mAbility.Count != 0)
+            {
+                base.AdaptSpriteDirection(mAbility.Peek());
+            }
+            else
+            {
+                base.AdaptSpriteDirection(direction);
+            }
+        }
+
         #region Draw
 
         protected override void DrawAbility(SpriteBatch spriteBatch, GameTime gameTime)

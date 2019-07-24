@@ -77,15 +77,15 @@ namespace KernelPanic.PathPlanning
                         typeof(Lane.Side));
             }
 
-            mVectorField = new VectorField(heatMap, spawnPoints, spawnDirection, Target, targetDirection);
-            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
+            mVectorField = new VectorField(heatMap, mGrid.TileCutout, spawnPoints, spawnDirection, Target, targetDirection);
+            mSmallVectorField = new VectorField(smallHeatMap, mGrid.TileCutout, spawnPoints, spawnDirection, Target, targetDirection);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(mGrid.LaneRectangle.Size, mGrid.LaneSide);
         }
 
         internal Vector2 RelativeMovement(Unit unit, Vector2? position = null)
         {
             var subTiles = unit is Troupe troupe && troupe.IsSmall ? 2 : 1;
-            var maybeTile = mGrid.TileFromWorldPoint(position ?? unit.Sprite.Position, subTiles);
+            var maybeTile = mGrid.TileFromWorldPoint(position ?? unit.Sprite.Position, subTiles, true);
             if (!(maybeTile is TileIndex tile))
                 return Vector2.Zero;
 
@@ -94,10 +94,10 @@ namespace KernelPanic.PathPlanning
             return vector * size;
         }
 
-        private static Vector2 RelativeMovement(TileIndex tile, VectorField vectorField)
+        private Vector2 RelativeMovement(TileIndex tile, VectorField vectorField)
         {
             var rectangle = new Rectangle(new Point(-1), new Point(2));
-            return rectangle.At(vectorField[tile.ToPoint()]);
+            return rectangle.At(vectorField[tile.ToPoint(), mGrid.LaneSide]);
         }
 
         private VectorField SelectVectorField(Unit unit)

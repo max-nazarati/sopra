@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using KernelPanic.Events;
@@ -7,6 +8,8 @@ using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using KernelPanic.Data;
+using KernelPanic.Entities.Buildings;
+using KernelPanic.Entities.Units;
 
 
 namespace KernelPanic.Entities
@@ -18,6 +21,8 @@ namespace KernelPanic.Entities
         private ImageSprite mDamageBar;
 
         [DataMember] protected internal Vector2? MoveTarget { get; protected set; }
+
+        protected Vector2? MoveVector { get; set; }
 
         /// <summary>
         /// The speed (GS) of this unit.
@@ -44,6 +49,7 @@ namespace KernelPanic.Entities
         [DataMember]
         internal int RemainingLife { get; set; }
 
+        [DataMember] // TODO does this fix #270
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
         [DataMember]
@@ -146,7 +152,7 @@ namespace KernelPanic.Entities
 
         #region Movement
 
-        private bool mSlowedDown;
+        protected bool mSlowedDown;
         private Vector2 mLastPosition;
         private Vector2? mLastMoveTarget;
 
@@ -173,9 +179,24 @@ namespace KernelPanic.Entities
             PositionProvider positionProvider,
             InputManager inputManager);
 
-        private Vector2? PerformMove(Vector2 target,
+        protected virtual void DoMove(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        {
+            mLastPosition = Sprite.Position;
+            mLastMoveTarget = MoveTarget;
+            var move = ShouldMove && MoveTarget is Vector2 target
+                ? PerformMove(target, positionProvider, inputManager, gameTime)
+                : null;
+
+            if (move is Vector2 theMove)
+            {
+                Sprite.Position += theMove;
+            }
+        }
+
+        protected virtual Vector2? PerformMove(Vector2 target,
             PositionProvider positionProvider,
-            InputManager inputManager)
+            InputManager inputManager,
+            GameTime gameTime)
         {
             var initialTarget = target;
             var targetMove = target - Sprite.Position;
@@ -256,27 +277,12 @@ namespace KernelPanic.Entities
             mInfoText.Text += $"\nLeben: {RemainingLife}";
         }
 
-        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        protected virtual void AdaptSpriteDirection(Vector2? direction)
         {
-            CalculateMovement(null, positionProvider, inputManager);
-
-            mLastPosition = Sprite.Position;
-            mLastMoveTarget = MoveTarget;
-            var move = ShouldMove && MoveTarget is Vector2 target
-                ? PerformMove(target, positionProvider, inputManager)
-                : null;
-
-            if (move is Vector2 theMove)
-            {
-                Sprite.Position += theMove;
-            }
-            
-            UpdateHealthBar();
-
             if (!(Sprite is AnimatedSprite animated))
                 return;
 
-            if (move?.X is float x)
+            if (direction?.X is float x)
             {
                 // choose correct movement direction based on x value or direction of idle animation
                 animated.MovementDirection = (animated.Effect == SpriteEffects.None && (int)x == 0) || x < 0
@@ -286,6 +292,313 @@ namespace KernelPanic.Entities
             else
                 animated.MovementDirection = AnimatedSprite.Direction.Standing;
         }
+        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        {
+            CalculateMovement(null, positionProvider, inputManager);
+            DoMove(positionProvider, inputManager, gameTime);
+            UpdateHealthBar();
+            AdaptSpriteDirection(MoveVector);
+        }
+
+        #region Flocking
+
+        /// <summary>
+        /// adapted version of this tutorial
+        /// https://gamedevelopment.tutsplus.com/tutorials/3-simple-rules-of-flocking-behaviors-alignment-cohesion-and-separation--gamedev-3444
+        /// </summary>
+        /// <param name="positionProvider"></param>
+        /// <returns></returns>
+        protected Vector2? GetNextMoveVector(PositionProvider positionProvider)
+        {
+            // the holy overFit parameter
+            const int neighbourhoodRadius = 85;
+            const float vectorWeight = 90 / 100f; // VectorField (Heatmap)
+            const float alignmentWeight = 40 / 100f;
+            const float cohesionWeight = 20 / 100f;
+            const float separationWeight = 70 / 100f;
+            const float obstacleWeight = 125 / 100f;
+            const float borderWeight = 250 / 100f;
+
+            #region Get Enumerators
+
+            // Iterate over the Entity Graph only one time and get EVERYTHING
+            var rect = new Rectangle(Sprite.Position.ToPoint() - new Point(neighbourhoodRadius / 2),
+                new Point(neighbourhoodRadius));
+            var completeNeighbourhood = positionProvider.EntitiesAt(rect);
+
+            // Create explicitly forced Lists to iterate over, depending on which unit we are
+            var neighbourTroupes = new List<Troupe>();
+            var neighbourBuilding = new List<Building>();
+            var neighbourBorder = new List<LaneBorder>();
+
+            if (this is Bug || this is Virus)
+            {
+                foreach (var thing in completeNeighbourhood)
+                {
+                    switch (thing)
+                    {
+                        case Bug bug:
+                            neighbourTroupes.Add(bug);
+                            continue;
+                        case Virus virus:
+                            neighbourTroupes.Add(virus);
+                            continue;
+                        case Building building:
+                            if (!(building is ShockField))
+                            {
+                                neighbourBuilding.Add(building);
+                            }
+                            continue;
+                        case LaneBorder laneBorder:
+                            if (!laneBorder.IsTargetBorder)
+                            {
+                                neighbourBorder.Add(laneBorder);
+                            }
+                            continue;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            else if (this is Nokia || this is Trojan)
+            {
+                foreach (var thing in completeNeighbourhood)
+                {
+                    switch (thing)
+                    {
+                        case Trojan trojan:
+                            neighbourTroupes.Add(trojan);
+                            continue;
+                        case Nokia nokia:
+                            neighbourTroupes.Add(nokia);
+                            continue;
+                        case Building building:
+                            if (!(building is ShockField))
+                            {
+                                neighbourBuilding.Add(building);
+                            }
+                            continue;
+                        case LaneBorder laneBorder:
+                            if (!laneBorder.IsTargetBorder)
+                            {
+                                neighbourBorder.Add(laneBorder);
+                            }
+                            continue;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            else if (this is Thunderbird)
+            {
+                foreach (var thing in completeNeighbourhood)
+                {
+                    switch (thing)
+                    {
+                        case Thunderbird thunderbird:
+                            neighbourTroupes.Add(thunderbird);
+                            continue;
+                        case LaneBorder laneBorder:
+                            if (!laneBorder.IsTargetBorder)
+                            {
+                                neighbourBorder.Add(laneBorder);
+                            }
+                            continue;
+                        default:
+                            continue;
+                    }
+                }
+            }
+
+            #endregion
+            
+            // var move = Vector2.Zero;
+            var vector = positionProvider.TroupeData.RelativeMovement(this, Sprite.Position);
+            if (float.IsNaN(vector.X) || vector == Vector2.Zero)
+            {
+                vector = Vector2.Zero;
+            }
+            else
+            {
+                vector.Normalize();
+            }
+            
+            // using the 3 different lists to iterate over
+            var alignment = ComputeFlockingAlignment(positionProvider, neighbourTroupes);
+            var cohesion = ComputeFlockingCohesion(neighbourTroupes);
+            var separation = ComputeFlockingSeparation(neighbourTroupes);
+            var obstacle = ComputeFlockingBuilding(neighbourBuilding);
+            var border = ComputeFlockingBorder(neighbourBorder);
+
+            // putting all pieces together with their individual weight
+            var move = Vector2.Zero;
+
+            move += vectorWeight * vector;
+            move += alignmentWeight * alignment;
+            move += cohesionWeight * cohesion;
+            move += separationWeight * separation;
+            move += obstacleWeight * obstacle;
+            move += borderWeight * border;
+
+            move.Normalize();
+            move *= Speed;
+            return float.IsNaN(move.X) ? Vector2.Zero : move;
+
+        }
+
+        /// <summary>
+        /// Alignment is a behavior that causes a particular Troupe to line up with Troupes close by
+        /// </summary>
+        /// <returns>A normalized vector or zero</returns>
+        private Vector2 ComputeFlockingAlignment(PositionProvider positionProvider, IEnumerable<Troupe> neighbourhood)
+        {
+            var result = Vector2.Zero;
+            var neighbourCount = 0;
+
+            foreach (var unit in neighbourhood)
+            {
+                result += unit.MoveVector ?? positionProvider.TroupeData.RelativeMovement(unit, unit.Sprite.Position);
+                neighbourCount++;
+            }
+
+            if (neighbourCount == 0)
+            {
+                return result;
+            }
+
+            // Console.WriteLine("Alignment: " + result);
+            result.Normalize();
+            // Console.WriteLine("Alignment Normalized: " + result);
+
+            // NaN after Normalize?
+            return float.IsNaN(result.X) ? Vector2.Zero : result;
+        }
+
+        /// <summary>
+        /// Cohesion is a behavior that causes agents to steer towards the "center of mass" - that is,
+        /// the average position of the agents within a certain radius
+        /// </summary>
+        /// <returns>A normalized vector or zero</returns>
+        private Vector2 ComputeFlockingCohesion(IEnumerable<Troupe> neighbourhood)
+        {
+            var center = Vector2.Zero;
+            var neighbourCount = 0;
+
+            foreach (var unit in neighbourhood)
+            {
+                center += unit.Sprite.Position;
+                neighbourCount++;
+            }
+
+            if (neighbourCount == 0)
+            {
+                return Vector2.Zero;
+            }
+
+            center.X /= neighbourCount;
+            center.Y /= neighbourCount;
+
+            // we dont want the center of mass but our direction to it
+            var result = center - Sprite.Position;
+            // Console.WriteLine("Cohesion: " + result);
+            result.Normalize();
+            // Console.WriteLine("Cohesion Normalized: " + result);
+
+            // NaN after Normalize
+            return float.IsNaN(result.X) ? Vector2.Zero : result;
+        }
+
+        /// <summary>
+        /// Separation is the behavior that causes an agent to steer away from all of its neighbors
+        /// Should return a negative value, so we move away from the other units
+        /// </summary>
+        /// <returns>A normalized negative vector, or zero</returns>
+        private Vector2 ComputeFlockingSeparation(IEnumerable<Troupe> neighbourhood)
+        {
+            var result = Vector2.Zero;
+            var neighbourCount = 0;
+
+            foreach (var unit in neighbourhood)
+            {
+                result += unit.Sprite.Position - Sprite.Position;
+                neighbourCount++;
+            }
+
+            if (neighbourCount == 0)
+            {
+                return result;
+            }
+
+            // Console.WriteLine("Separation: " + result);
+            result.Normalize();
+            // Console.WriteLine("Separation Normalized: " + result);
+            // NaN after Normalize
+            return float.IsNaN(result.X) ? Vector2.Zero : -1 * result;
+        }
+
+        private Vector2 ComputeFlockingBuilding(IEnumerable<Building> neighbourhood)
+        {
+            var result = Vector2.Zero;
+            if (this is Thunderbird)
+            {
+                return result;
+            }
+
+            Building closestBuilding = null;
+            var minDistanceSq = float.NaN;
+            foreach (var building in neighbourhood)
+            {
+                var distanceSq = Vector2.DistanceSquared(Sprite.Position, building.Sprite.Position);
+                if (distanceSq < minDistanceSq || float.IsNaN(minDistanceSq))
+                {
+                    closestBuilding = building;
+                    minDistanceSq = distanceSq;
+                }
+            }
+
+            // can only be NaN if we never found a building
+            if (float.IsNaN(minDistanceSq))
+            {
+                return result;
+            }
+            result = Sprite.Position - closestBuilding.Sprite.Position;
+            result.Normalize();
+            // return result; // dont need to return negative, we directly calculated reversed
+            return float.IsNaN(result.X) ? Vector2.Zero : result;
+        }
+
+        /// <summary>
+        /// This function does not check for IsTargetBorder
+        /// </summary>
+        /// <param name="neighbourhood"></param>
+        /// <returns></returns>
+        private Vector2 ComputeFlockingBorder(IEnumerable<LaneBorder> neighbourhood)
+        {
+            var result = Vector2.Zero;
+            foreach (var border in neighbourhood)
+            {
+                switch (border.mDirectionToLane)
+                {
+                    case RelativePosition.CenterBottom:
+                        result += new Vector2(0, 1);
+                        break;
+                    case RelativePosition.CenterLeft:
+                        result += new Vector2(-1, 0);
+                        break;
+                    case RelativePosition.CenterTop:
+                        result += new Vector2(0, -1);
+                        break;
+                    case RelativePosition.CenterRight:
+                        result += new Vector2(1, 0);
+                        break;
+                }
+            }
+            result.Normalize();
+            return float.IsNaN(result.X) ? Vector2.Zero : result;
+
+        }
+
+        #endregion
 
         private void UpdateHealthBar()
         {

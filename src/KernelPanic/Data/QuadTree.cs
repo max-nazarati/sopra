@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using KernelPanic.Entities;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
@@ -44,7 +46,10 @@ namespace KernelPanic.Data
         /// <returns>A new <see cref="QuadTree{T}"/></returns>
         internal static QuadTree<T> Create<TInitial>(ICollection<TInitial> elements) where TInitial : T
         {
-            return elements.Count == 0 ? Empty : new QuadTree<T>(elements.Union()) {elements.Cast<T>()};
+            var tree = elements.Count == 0 ? Empty : new QuadTree<T>(elements.Union());
+            tree.Add(elements.Cast<T>());
+            
+            return tree;
         }
 
         /// <summary>
@@ -141,30 +146,32 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="entity">The value to be added.</param>
         /// <exception cref="InvalidOperationException">If <paramref name="entity"/> is outside this <see cref="QuadTree{T}"/>'s bounds.</exception>
-        public void Add(T entity)
+        public bool Add(T entity)
         {
             if (!mBounds.Contains(entity.Bounds))
-                throw new InvalidOperationException(
-                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}: {entity}");
+            {
+                /* throw new InvalidOperationException(
+                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}: {entity}");*/
+                return false;
+            }
 
             Count++;
 
             if (mChildren != null && CalculatePosition(entity) is SquareIndex index)
             {
                 mChildren[(int) index].Add(entity);
-                return;
+                return true;
             }
 
             mObjects.Add(entity);
             SplitIfApplicable();
+            return true;
         }
 
-        /*internal*/ private void Add(IEnumerable<T> elements)
+        /*internal*/ private IEnumerable<T> Add(IEnumerable<T> elements)
         {
-            foreach (var element in elements)
-            {
-                Add(element);
-            }
+            // We force the to list so buttons are pressAble (lazy stuff)
+            return elements.Where(element => !Add(element)).ToList();
         }
 
         #endregion
@@ -176,12 +183,13 @@ namespace KernelPanic.Data
         /// given, all objects are removed for which <c>true</c> is returned.
         /// </summary>
         /// <param name="removePredicate">Used to filter the objects.</param>
-        internal void Rebuild(Func<T, bool> removePredicate = null)
+        internal IEnumerable<T> Rebuild(Func<T, bool> removePredicate = null)
         {
             var sink = new List<T>();
             RebuildImpl(removePredicate, sink);
-            Add(sink);
+            var result = Add(sink);
             Shake();
+            return result;
         }
 
         private void RebuildImpl(Func<T, bool> removePredicate, List<T> parentSink)
@@ -235,9 +243,8 @@ namespace KernelPanic.Data
             for (var i = index; i < count; ++i)
             {
                 var value = parentSink[i];
-                if (mBounds.Contains(value.Bounds))
+                if (Add(value))
                 {
-                    Add(value);
                     continue;
                 }
 

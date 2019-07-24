@@ -38,6 +38,12 @@ namespace KernelPanic.Entities.Units
             base.Update(positionProvider, inputManager, gameTime);
         }
 
+        protected override void CalculateMovement(Vector2? projectionStart, PositionProvider positionProvider, InputManager inputManager)
+        {
+            var move = GetNextMoveVector(positionProvider);
+            MoveVector = move;
+        }
+/*
         protected override void CalculateMovement(Vector2? projectionStart,
             PositionProvider positionProvider,
             InputManager inputManager)
@@ -65,6 +71,22 @@ namespace KernelPanic.Entities.Units
         {
             mLastReferencePoint = mSavedReferencePoint;
             return base.ResetMovement();
+        }
+        */
+
+        protected override void DoMove(PositionProvider positionProvider,
+            InputManager inputManager,
+            GameTime gameTime)
+        {
+            CalculateMovement(null, positionProvider, inputManager);
+            if (MoveVector is Vector2 theMove)
+            {
+                theMove.Normalize();
+                var modifiedSpeed = mSlowedDown ? Speed / 2f : Speed;
+                mSlowedDown = false;
+                var distance = modifiedSpeed * gameTime.ElapsedGameTime.Milliseconds * 0.06f;
+                Sprite.Position += theMove * distance;
+            }
         }
 
         internal new Troupe Clone() => Clone<Troupe>();
