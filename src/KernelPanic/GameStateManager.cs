@@ -6,6 +6,8 @@ using KernelPanic.Data;
 using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Interface;
+using KernelPanic.Options;
+using KernelPanic.Serialization;
 using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -36,6 +38,8 @@ namespace KernelPanic
 
         internal Action ExitAction { get; }
 
+        internal OptionsData Settings { get; } = StorageManager.LoadSettings() ?? new OptionsData();
+
         internal Statistics Statistics { get; } = new Statistics();
 
         internal AchievementPool AchievementPool { get; } = AchievementPool.LoadGlobal();
@@ -53,6 +57,7 @@ namespace KernelPanic
             {
                 Statistics.Dispose();
                 AchievementPool.Dispose();
+                StorageManager.SaveSettings(Settings);
             }
 
             base.Dispose(disposing);
@@ -105,7 +110,7 @@ namespace KernelPanic
             {
                 var state = info.State;
                 var newClickTargets = new List<ClickTarget>();
-                var input = new InputManager(newClickTargets, state.Camera, rawInput);
+                var input = new InputManager(Settings.KeyMap, newClickTargets, state.Camera, rawInput);
 
                 if (InvokeClickTargets(input, info.ClickTargets) is object requiredClaim)
                     rawInput.Claim(requiredClaim);
