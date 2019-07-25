@@ -175,16 +175,16 @@ namespace KernelPanic
             title.SetOrigin(RelativePosition.TopRight);
 
             var description = stateManager.Sprite.CreateText("" +
-                "Verteidige deine Basis mit:\n\n" +
-                "    -Kabel: effektiv eine Mauer.\n" +
-                "    -Mauszeigerschütze: der schwächste Turm der dir zur Verfügung steht.\n" +
-                "    -Lüftung: macht gegnerische Einheiten in ihrer Umgebung langsamer.\n" +
-                "    -Antivirusprogramm: ein stärkerer Turm.\n" +
-                "    -Wifi-Router: schießt in Wellen statt mit Projektilien.\n" +
-                "    -Schockfeld: verursacht Schaden an die Einheiten die darüber laufen.\n" +
-                "    -CD-Werfer: ein Turm der CDs schießt, nach einem Upgrade können diese auch zurückkehrend Schaden verursachen.\n\n");
+                "Verteidige deine Basis mit:\n" +
+                " - Kabel: Versperrt den Weg.\n" +
+                " - Mauszeigerschütze: günstiger Turm, der eine ziemlich hohe Feuerrate hat.\n" +
+                " - Lüftung: verlangsamt gegnerische Einheiten in ihrer Umgebung.\n" +
+                " - Antivirusprogramm: hohe Reichweite, hoher Schaden, aber geringe Feuerrate.\n" +
+                " - Wifi-Router: Verursacht Schaden in einem Kegelförmigen Bereich.\n" +
+                " - Schockfeld: verursacht Schaden an den Einheiten, die darüber laufen.\n" +
+                " - CD-Werfer: Das CD Projektil verursacht Schaden an allen Einheiten auf ihrem Weg.\n");
 
-            description.X = 20;
+            description.X = 70;
             description.Y = 100;
             return new MenuState(stateManager)
             {
@@ -248,19 +248,19 @@ namespace KernelPanic
             title.SetOrigin(RelativePosition.TopRight);
 
             var description = stateManager.Sprite.CreateText("" +
-                "Greife gegnerische Basis an mit:\n\n" +
-                "    -Bug: schwach, aber schnell und billig.\n" +
-                "    -Virus: stärker als der Bug aber immer noch nicht zu teuer.\n" +
-                "    -Trojan: kann mehr Schaden ertragen, beim Tod spawnt er Bugs an seiner Position.\n" +
-                "    -Thunderbird: fliegende Einheit die sich über Türme und Kabeln bewegen kann.\n" +
-                "    -Nokia: sehr robuste Einheit die viel Schaden verursachen kann, wenn sie genug Zeite hatte um das Ziel zu erreichen.\n\n" +
-                "Die obige Einheiten spawnen am Anfang der nächsten Welle, es gibt jedoch noch Helden,\n" +
-                "die man selbst auf dem Spielfeld unabhängig von dem Wellen-Zycklus kaufen und bewegen kann:\n\n" +
-                "    -Firefox: ein Held der über gewisse Abstände springen kann um einen kürzeren Weg zum Ziel zu finden.\n" +
-                "    -Settings: ein Held der Einheiten in seiner Nähe heilen kann.\n" +
-                "    -Bluescreen: ein Held der gegnerische Türme temporär ausschalten kann.\n\n");
+                "TRUPPEN spawnen zu Beginn der Wellen:\n" +
+                " - Bug: schwach, aber schnell und billig.\n" +
+                " - Virus: stärker als der Bug aber immer noch nicht zu teuer.\n" +
+                " - Trojan: kann mehr Schaden ertragen, beim Tod spawnt er Bugs an seiner Position.\n" +
+                " - Thunderbird: fliegende Einheit die sich über Türme und Kabeln bewegen kann.\n" +
+                " - Nokia: sehr robuste Einheit, allerdings auch ziemlich langsam.\n\n" +
 
-            description.X = 20;
+                "HELDEN gehören nicht zu den Wellen und können selbst bewegt werden:\n" +
+                " - Firefox: kann über gewisse Abstände springen, um einen kürzeren Weg zum Ziel zu finden.\n" +
+                " - Settings: heilt Truppen in seiner Nähe.\n" +
+                " - Bluescreen: kann gegnerische Türme temporär ausschalten; Fähigkeit lädt sich in der Basis auf.\n");
+
+            description.X = 70;
             description.Y = 100;
             return new MenuState(stateManager)
             {
@@ -294,16 +294,23 @@ namespace KernelPanic
             title.SetOrigin(RelativePosition.TopRight);
 
             var description = stateManager.Sprite.CreateText("" +
-                "Ziel: zerstöre die gegnerische Basis.\n\n" +
-                "Um das zu machen bekommst du regelmäßig Bitcoins, womit du sowohl neue Einheiten und Türme kaufen\n" +
-                "als auch Türme verbessern kannst.\n\n" +
-                "Sachen kauft man aus den 2 Menus die man im Spiel sieht, Türme verbessert man einzeln indem man auf ein Turm\n" +
-                "klickt und ein Update kauft. Bei den Türmen kann man so auch eine Strategie angeben.\n\n" +
-                "Außerdem bekommt man Erfahrungspunkte (EP) am Ende jeder gegnerischen Welle. Damit kann man die Upgrades,\n" +
-                "die in der Mitte des Spielfeldes sind, bekommen. Man muss aber schnell sein, denn sie mit dem Gegner geteilt sind\n" +
-                "und nur einer von euch jedes von ihnen bekommen kann.\n");
+                "ZIEL:  Zerstöre die gegnerische Basis, bevor deine Basis zerstört wird.\n\n" +
 
-            description.X = 20;
+                "Beide Spieler bekommen regelmäßig BITCOINS, damit werden Angriffseinheiten gekauft, Türme gekauft\n" +
+                "und auch bestehende Türme verbessert.\n\n" +
+
+                "TÜRME verteidigen dich gegen gegnerische Angriffseinheiten.\n" +
+                "Kaufe sie im linken Menü. Anschließend kannst du sie auswählen, um zu verbessern oder eine Strategie zu wählen\n\n" +
+
+                "ANGRIFFSEINHEITEN fügen der gegnerischen Basis schaden zu, wenn sie diese erreichen.\n\n" +
+
+                "Jede WELLE enthält alle Angriffseinheiten, die bisher von dir gekauft wurden.\n" +
+                "Nach einer Welle wird man mit einem Erfahrungspunkt (EP) belohnt und die nächste startet.\n\n" +
+
+                "In der Mitte des Spielfeldes gibts es UPGRADES, diese werden mit EP gekauft.\n" +
+                "Jedes Upgrade kann nur von einem Spieler gekauft werden, sei also schnell!\n");
+
+            description.X = 70;
             description.Y = 100;
             return new MenuState(stateManager)
             {
