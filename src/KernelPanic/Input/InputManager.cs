@@ -98,8 +98,18 @@ namespace KernelPanic.Input
 
         private Point MousePosition => mInputState.CurrentMouse.Position;
 
-        internal Vector2 TranslatedMousePosition =>
-            Vector2.Transform(MousePosition.ToVector2(), mCamera.InverseTransformation);
+        internal Vector2? mLazyTranslatedMousePosition;
+        internal Vector2 TranslatedMousePosition
+        {
+            get
+            {
+                if (mLazyTranslatedMousePosition is Vector2 position)
+                    return position;
+                position = Vector2.Transform(MousePosition.ToVector2(), mCamera.InverseTransformation);
+                mLazyTranslatedMousePosition = position;
+                return position;
+            }
+        }
 
         internal void RegisterClickTarget(Rectangle position, Action<InputManager> action) =>
             mClickTargets.Add(new ClickTarget(position, action));
