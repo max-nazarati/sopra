@@ -41,7 +41,7 @@ namespace KernelPanic.Options
             fullScreenWindowButton.Clicked += (button, input) =>
             {
                 settings.IsFullscreen = !settings.IsFullscreen;
-                fullScreenWindowButton.Title = YesNoTitle(settings.ScrollInverted);
+                fullScreenWindowButton.Title = YesNoTitle(settings.IsFullscreen);
             };
 
             var invertScroll = CreateButton(stateManager.Sprite, "Scroll invertieren", 540, 150);
