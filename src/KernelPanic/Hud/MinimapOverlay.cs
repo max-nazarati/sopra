@@ -161,10 +161,35 @@ namespace KernelPanic.Hud
 
             rect.Width = (int)((mCamera.ViewportSize.X / mScale) / mCamera.Transformation.M11);
             rect.Height = (int)((mCamera.ViewportSize.Y / mScale) / mCamera.Transformation.M11);
-            if (rect.X < 0) rect.X = 0;
-            if (rect.Y < 0) rect.Y = 0;
-            if (rect.X + rect.Width >= mSize) rect.X = mSize - rect.Width - 1;
-            if (rect.Y + rect.Height >= mSize) rect.Y = mSize - rect.Height - 1;
+
+            if (rect.Width >= mSize)
+            {
+                rect.X = 0;
+                rect.Width = mSize - 1;
+            }
+            else if (rect.Left < 0)
+            {
+                rect.X = 0;
+            }
+            else if (rect.Right >= mSize)
+            {
+                rect.X = mSize - rect.Width - 1;
+            }
+
+            if (rect.Height >= mSize)
+            {
+                rect.Y = 0;
+                rect.Height = mSize - 1;
+            }
+            else if (rect.Top < 0)
+            {
+                rect.Y = 0;
+            }
+            else if (rect.Bottom >= mSize)
+            {
+                rect.Y = mSize - rect.Height - 1;
+            }
+
             return rect;
         }
 
