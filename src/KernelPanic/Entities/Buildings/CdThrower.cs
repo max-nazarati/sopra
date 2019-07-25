@@ -12,7 +12,7 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class CdThrower : StrategicTower
     {
-        protected override bool WantsRotation => true;
+        protected override bool WantsRotation => false;
 
         [JsonProperty]
         internal bool ShootsBoomerang { get; set; }

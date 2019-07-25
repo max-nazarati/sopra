@@ -12,7 +12,7 @@ namespace KernelPanic.Entities.Buildings
     internal sealed class WifiRouter : StrategicTower
     {
         private int mWaveAmount;
-        protected override bool WantsRotation => true;
+        protected override bool WantsRotation => false;
 
         internal WifiRouter(SpriteManager spriteManager)
             : base(80, 3.0f, 1,3, TimeSpan.FromSeconds(2), spriteManager.CreateWifiRouter(), spriteManager)
