@@ -46,7 +46,7 @@ namespace KernelPanic.Entities.Units
 
         protected TileIndex? mTarget;
         protected AStar mAStar; // save the AStar for path-drawing
-        private Visualizer mPathVisualizer;
+        private Lazy<Visualizer> mPathVisualizer;
 
         internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
@@ -102,14 +102,21 @@ namespace KernelPanic.Entities.Units
 
             // calculate the path
             mAStar = positionProvider.MakePathFinding(this, new[] {target});
-            mPathVisualizer = positionProvider.Visualize(mAStar);
+            mPathVisualizer = new Lazy<Visualizer>(() => positionProvider.Visualize(mAStar), false);
             var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
                 mAStar = positionProvider.MakePathFinding(this, new[] {target});
-                mPathVisualizer = positionProvider.Visualize(mAStar);
+                mPathVisualizer = new Lazy<Visualizer>(() => positionProvider.Visualize(mAStar), false);
                 path = mAStar.Path;
+            }
+
+            if (path == null)
+            {
+                MoveTarget = null;
+                MoveVector = Vector2.Zero;
+                return;
             }
 
             var nextTarget = new TileIndex(path.Count > 2 ? path[1] : target, 1);
@@ -425,7 +432,7 @@ namespace KernelPanic.Entities.Units
         {
             if (Selected && DebugSettings.VisualizeAStar)
             {
-                mPathVisualizer?.Draw(spriteBatch, gameTime);
+                mPathVisualizer?.Value?.Draw(spriteBatch, gameTime);
             }
         }
 

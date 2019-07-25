@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Entities.Units;
@@ -105,11 +106,13 @@ namespace KernelPanic
 
         internal AStar MakePathFinding(Hero hero, Point[] target)
         {
-            var start = RequireTile(hero).ToPoint();
+            if (!(Grid.TileFromWorldPoint(hero.Sprite.Position) is TileIndex start))
+                return new AStar();
+
             var otherHeroes = mEntities.AllEntities
                 .Where(entity => entity is Hero && entity != hero)
-                .Select(entity => RequireTile(entity).ToPoint());
-            var aStar = new AStar(start, target, TroupeData.BuildingMatrix, new HashSet<Point>(otherHeroes));
+                .SelectMaybe(entity => Grid.TileFromWorldPoint(entity.Sprite.Position)?.ToPoint());
+            var aStar = new AStar(start.ToPoint(), target, TroupeData.BuildingMatrix, new HashSet<Point>(otherHeroes));
             aStar.CalculatePath();
             return aStar;
         }

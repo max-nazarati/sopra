@@ -27,6 +27,10 @@ namespace KernelPanic.PathPlanning
             mStart = start;
         }
 
+        internal AStar() : this(Point.Zero, null, null)
+        {
+        }
+
         private Node FindTarget()
         {
             return Run(new[] {mStart}).FirstOrDefault(node => mTargets.Contains(node.Position));
@@ -34,6 +38,9 @@ namespace KernelPanic.PathPlanning
 
         internal bool CalculatePath()
         {
+            if (mTargets == null)
+                return false;
+
             var goalNode = FindTarget();
             if (goalNode == null)
                 return false;
@@ -96,6 +103,9 @@ namespace KernelPanic.PathPlanning
 
         internal Visualizer CreateVisualization(Grid grid, SpriteManager spriteManager)
         {
+            if (mTargets == null)
+                return null;
+
             var visualization = TileVisualizer.Border(mObstacles.SubTileCount, grid, spriteManager);
             visualization.Append(mObstacles);
             visualization.Append(mBlocked, Color.Orange);
