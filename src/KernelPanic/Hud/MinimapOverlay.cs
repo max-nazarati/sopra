@@ -32,9 +32,9 @@ namespace KernelPanic.Hud
         private readonly Color mColorLaneB = Color.SlateGray;
         private readonly Color mColorSelected = Color.BlueViolet;
         private readonly Color mScreenBorder = Color.White;
-        
+
         #endregion
-        
+
         private readonly Color[] mData;
         private readonly Color[] mInitializedData;
 
