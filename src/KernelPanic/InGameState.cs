@@ -53,7 +53,7 @@ namespace KernelPanic
 
         internal static void PushTechDemo(GameStateManager gameStateManager)
         {
-            var game = new InGameState(null, 5, gameStateManager);
+            var game = new InGameState(null, 4, gameStateManager);
             game.InitializeTechDemo();
             gameStateManager.Restart(game);
             gameStateManager.Push(game.mHud);
