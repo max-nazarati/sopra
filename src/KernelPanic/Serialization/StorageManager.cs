@@ -180,7 +180,6 @@ namespace KernelPanic.Serialization
             return new JsonSerializer
             {
                 TypeNameHandling = TypeNameHandling.Auto,
-                Formatting = Formatting.Indented,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 ContractResolver = CreateContractResolver(gameStateManager)
             };
@@ -191,7 +190,6 @@ namespace KernelPanic.Serialization
             return new JsonSerializer
             {
                 TypeNameHandling = TypeNameHandling.Auto,
-                Formatting = Formatting.Indented,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects
             };
         }
