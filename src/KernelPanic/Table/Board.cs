@@ -165,7 +165,7 @@ namespace KernelPanic.Table
                 selection.UpdateOverlay(owner[selection], inputManager, gameTime);
             }
 
-            PlayerB.Update(gameTime);
+            PlayerB.Update();
             mUpgradePool.Update(inputManager, gameTime);
             WaveManager.Update(gameTime);
             mBitcoinManager.Update(gameTime);

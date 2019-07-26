@@ -122,7 +122,7 @@ namespace KernelPanic.Entities.Units
             }
         }
 
-        protected override void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
+        protected override void ContinueAbility(PositionProvider positionProvider)
         {
             if (mAbility.Count == 0)
             {

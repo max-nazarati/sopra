@@ -36,9 +36,9 @@ namespace KernelPanic.ArtificialIntelligence
 
         // training statistics
         var predicted = Model.Decide(xTrain);
-        var error = new ZeroOneLoss(yTrain).Loss(predicted);
-        Console.Write("finished training - ");
-        Console.WriteLine("training error: " + error);
+        // var error = new ZeroOneLoss(yTrain).Loss(predicted);
+        // Console.Write("finished training - ");
+        // Console.WriteLine("training error: " + error);
         }
 
         /// <summary>
@@ -103,6 +103,7 @@ namespace KernelPanic.ArtificialIntelligence
         /// </summary>
         /// <returns>The set of rules</returns>
         */
+        /*
         public override String ToString()
         {
             var model = Model;
@@ -110,7 +111,7 @@ namespace KernelPanic.ArtificialIntelligence
             var result = rules.ToString(mCodebook, "Aktion",
                 System.Globalization.CultureInfo.InvariantCulture);
             return result;
-        }
+        } */
 
         /// <summary>
         /// Predict single label, e.g.:

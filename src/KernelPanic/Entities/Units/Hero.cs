@@ -238,7 +238,7 @@ namespace KernelPanic.Entities.Units
                 
                 case AbilityState.Active:
                     // take one action per update cycle until the ability is finished
-                    ContinueAbility(positionProvider, gameTime);
+                    ContinueAbility(positionProvider);
                     break;
 
                 case AbilityState.Finished:
@@ -310,7 +310,7 @@ namespace KernelPanic.Entities.Units
             EventCenter.Default.Send(Event.HeroAbility(this));
         }
         
-        protected virtual void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
+        protected virtual void ContinueAbility(PositionProvider positionProvider)
         {
             // Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
             AbilityStatus = AbilityState.Finished;

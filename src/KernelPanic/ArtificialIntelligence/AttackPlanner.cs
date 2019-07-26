@@ -5,7 +5,6 @@ using KernelPanic.Entities.Units;
 using KernelPanic.Events;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
-using Microsoft.Xna.Framework;
 
 namespace KernelPanic.ArtificialIntelligence
 {
@@ -66,7 +65,7 @@ namespace KernelPanic.ArtificialIntelligence
         ///  Bug          Virus        Trojaner         Nokia         Thunderbird       Settings        Firefox        Bluescreen
         /// </summary>
         /// <returns></returns>
-        public string MakeChoice()
+        private string MakeChoice()
         {
             string[] choices = new[] { "Bug", "Virus", "Trojaner", "Nokia", "Thunderbird", "Settings", "Firefox", "Bluescreen" };
 

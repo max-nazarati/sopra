@@ -9,7 +9,6 @@ using KernelPanic.Players;
 using KernelPanic.Purchasing;
 using KernelPanic.Table;
 using KernelPanic.Upgrades;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace KernelPanic.ArtificialIntelligence
@@ -281,7 +280,7 @@ namespace KernelPanic.ArtificialIntelligence
             if (number == 1) mDefencePlanner.BuyRandomTower();
         }
 
-        public void Update(GameTime gameTime)
+        public void Update()
         {
             if (mAttackPlanner == null || mDefencePlanner == null || mUpgradePlanner == null || EventCenter.Default == null)
             {

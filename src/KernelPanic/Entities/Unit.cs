@@ -184,7 +184,7 @@ namespace KernelPanic.Entities
             mLastPosition = Sprite.Position;
             mLastMoveTarget = MoveTarget;
             var move = ShouldMove && MoveTarget is Vector2 target
-                ? PerformMove(target, positionProvider, inputManager, gameTime)
+                ? PerformMove(target, positionProvider, inputManager)
                 : null;
 
             if (move is Vector2 theMove)
@@ -195,8 +195,7 @@ namespace KernelPanic.Entities
 
         protected virtual Vector2? PerformMove(Vector2 target,
             PositionProvider positionProvider,
-            InputManager inputManager,
-            GameTime gameTime)
+            InputManager inputManager)
         {
             var initialTarget = target;
             var targetMove = target - Sprite.Position;
