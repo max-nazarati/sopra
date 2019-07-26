@@ -58,7 +58,7 @@ namespace KernelPanic
         {
             mCooldown.Select(player).CooledDown += component =>
             {
-                player.Bitcoins++;
+                player.Bitcoins += 5;
                 component.Reset(TimerInterval(player));
             };
         }
