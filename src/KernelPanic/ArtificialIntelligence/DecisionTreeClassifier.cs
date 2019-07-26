@@ -1,7 +1,6 @@
 ﻿using Accord.MachineLearning.DecisionTrees;
 using Accord.MachineLearning.DecisionTrees.Learning;
 using Accord.Math;
-using Accord.Math.Optimization.Losses;
 using Accord.Statistics.Filters;
 using System;
 using System.Collections.Generic;
@@ -35,7 +34,7 @@ namespace KernelPanic.ArtificialIntelligence
         Model = teacher.Learn(xTrain, yTrain);
 
         // training statistics
-        var predicted = Model.Decide(xTrain);
+        // var predicted = Model.Decide(xTrain);
         // var error = new ZeroOneLoss(yTrain).Loss(predicted);
         // Console.Write("finished training - ");
         // Console.WriteLine("training error: " + error);
