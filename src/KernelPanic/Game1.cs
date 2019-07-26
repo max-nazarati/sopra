@@ -2,6 +2,7 @@
 using KernelPanic.Camera;
 using KernelPanic.Events;
 using KernelPanic.Input;
+using KernelPanic.Options;
 using KernelPanic.Tracking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,7 +18,7 @@ namespace KernelPanic
         private SpriteBatch mSpriteBatch;
         private GameStateManager mGameStateManager;
         private readonly RawInputState mInputState;
-        private SoundManager mSoundManager;
+        private bool mBecameInactive;
 
         public Game1()
         {
@@ -54,9 +55,8 @@ namespace KernelPanic
         /// </summary>
         protected override void Initialize()
         {
-            // IsFixedTimeStep = false; // this can experimented with, we need to make everything time based or tick based then tho
+            IsFixedTimeStep = false; // this can experimented with, we need to make everything time based or tick based then tho
             IsMouseVisible = true;
-            mSoundManager = new SoundManager(Content);
             EventCenter.Default.Subscribe(Event.Id.AchievementUnlocked, @event =>
             {
                 var achievement = @event.Get<Achievement>(Event.Key.Achievement);
@@ -75,10 +75,11 @@ namespace KernelPanic
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             mSpriteBatch = new SpriteBatch(mGraphics.GraphicsDevice);
-            mGameStateManager =
-                new GameStateManager(Exit, new SpriteManager(Content, GraphicsDevice), mGraphics);
-            InGameState.PushGameStack(0, mGameStateManager);
-            // SoundManager.Instance.PlayBackgroundMusic();
+            mGameStateManager = new GameStateManager(Exit,
+                new SoundManager(Content),
+                new SpriteManager(Content, GraphicsDevice),
+                mGraphics);
+            mGameStateManager.Push(MenuState.CreateMainMenu(mGameStateManager));
         }
 
         /// <summary>
@@ -97,10 +98,14 @@ namespace KernelPanic
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (mBecameInactive && !IsActive)
+                return;
+
+            mBecameInactive = !IsActive;
             mInputState.Update(IsActive, GraphicsDevice.Viewport);
             mGameStateManager.Update(mInputState, gameTime);
             EventCenter.Default.Run();
-            DebugSettings.Update(new InputManager(new List<ClickTarget>(), new StaticCamera(), mInputState));
+            DebugSettings.Update(new InputManager(new OptionsData(), new List<ClickTarget>(), new StaticCamera(), mInputState, gameTime));
             base.Update(gameTime);
         }
 

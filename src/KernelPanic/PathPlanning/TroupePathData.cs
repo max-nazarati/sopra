@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
@@ -18,31 +17,15 @@ namespace KernelPanic.PathPlanning
         internal ObstacleMatrix BuildingMatrix { get; }
 
         /// <summary>
-        /// The <see cref="HeatMap"/> generated from <see cref="BuildingMatrix"/> used for calculating
-        /// <see cref="mVectorField"/>.
-        /// </summary>
-        private readonly HeatMap mHeatMap;
-
-        /// <summary>
         /// The <see cref="VectorField"/> for non-small troupes. <see cref="Thunderbird"/> uses
         /// <see cref="mThunderbirdVectorField"/>.
         /// </summary>
         private readonly VectorField mVectorField;
 
         /// <summary>
-        /// The <see cref="VectorField"/> for small troupes.
-        /// </summary>
-        private readonly VectorField mSmallVectorField;
-
-        /// <summary>
         /// The <see cref="VectorField"/> for <see cref="Thunderbird"/>.
         /// </summary>
         private readonly VectorField mThunderbirdVectorField;
-
-        /// <summary>
-        /// Used in <see cref="Update"/>. Stored globally to avoid costly re-allocations each time it is called.
-        /// </summary>
-        private readonly List<Point> mLargeUnits = new List<Point>();
 
         /// <summary>
         /// The target of all troupes.
@@ -63,9 +46,6 @@ namespace KernelPanic.PathPlanning
             if (initialBuildings != null)
                 BuildingMatrix.Raster(initialBuildings);
 
-            mHeatMap = new HeatMap(BuildingMatrix);
-            var smallHeatMap = new HeatMap(BuildingMatrix);
-
             RelativePosition spawnDirection, targetDirection;
             switch (mGrid.LaneSide)
             {
@@ -82,15 +62,16 @@ namespace KernelPanic.PathPlanning
                         (int) mGrid.LaneSide,
                         typeof(Lane.Side));
             }
-            mVectorField = new VectorField(mHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
-            mSmallVectorField = new VectorField(smallHeatMap, spawnPoints, spawnDirection, Target, targetDirection);
+
+            var heatMap = new HeatMap(BuildingMatrix);
+            mVectorField = new VectorField(heatMap, mGrid.TileCutout, spawnPoints, spawnDirection, Target, targetDirection);
             mThunderbirdVectorField = VectorField.GetVectorFieldThunderbird(mGrid.LaneRectangle.Size, mGrid.LaneSide);
         }
 
         internal Vector2 RelativeMovement(Unit unit, Vector2? position = null)
         {
             var subTiles = unit is Troupe troupe && troupe.IsSmall ? 2 : 1;
-            var maybeTile = mGrid.TileFromWorldPoint(position ?? unit.Sprite.Position, subTiles);
+            var maybeTile = mGrid.TileFromWorldPoint(position ?? unit.Sprite.Position, subTiles, true);
             if (!(maybeTile is TileIndex tile))
                 return Vector2.Zero;
 
@@ -99,79 +80,30 @@ namespace KernelPanic.PathPlanning
             return vector * size;
         }
 
-        private static Vector2 RelativeMovement(TileIndex tile, VectorField vectorField)
+        private Vector2 RelativeMovement(TileIndex tile, VectorField vectorField)
         {
             var rectangle = new Rectangle(new Point(-1), new Point(2));
-            return rectangle.At(vectorField[tile.ToPoint()]);
+            return rectangle.At(vectorField[tile.ToPoint(), mGrid.LaneSide]);
         }
 
         private VectorField SelectVectorField(Unit unit)
         {
-            switch (unit)
-            {
-                case Thunderbird _:
-                    return mThunderbirdVectorField;
-                case Troupe troupe when troupe.IsSmall:
-                    return mSmallVectorField;
-                default:
-                    return mVectorField;
-            }
+            return unit is Thunderbird ? mThunderbirdVectorField : mVectorField;
         }
 
-        internal int? TileHeat(Point point)
+        internal int? TileHeat(Point point, Unit unit = null)
         {
-            return (int?) mHeatMap[point];
+            var vectorField = unit == null ? mVectorField : SelectVectorField(unit);
+            return (int?) vectorField.HeatMap[point];
         }
 
-        internal void Update(EntityGraph entityGraph, bool buildingsChanged)
+        internal void Update()
         {
-            if (buildingsChanged)
-            {
-                BreadthFirstSearch.UpdateHeatMap(mHeatMap, Target);
-                mVectorField.Update();
-            }
-            
-            var hadLargeUnits = mLargeUnits.Count > 0;
-            UpdateLargeUnits(entityGraph);
-
-            // If there was no change in the buildings and the number of large units is and was zero, we can skip this
-            // update.
-            if (!buildingsChanged && !hadLargeUnits && mLargeUnits.Count == 0)
+            if (!BuildingMatrix.WasUpdated)
                 return;
 
-            BreadthFirstSearch.UpdateHeatMap(mSmallVectorField.HeatMap, Target, mLargeUnits);
-            mSmallVectorField.Update();
-        }
-
-        private void UpdateLargeUnits(EntityGraph entityGraph)
-        {
-            var largeUnits = entityGraph.Entities<Troupe>()
-                .SelectMany(
-                    troupe => troupe.IsSmall || troupe is Thunderbird
-                                ? Enumerable.Empty<TileIndex>()
-                                : ProjectMovement(troupe, 2),
-                    (troupe, index) => index.ToPoint());
-            mLargeUnits.Clear();
-            mLargeUnits.AddRange(largeUnits);
-            mLargeUnits.Sort(new PointComparer());
-        }
-
-        private IEnumerable<TileIndex> ProjectMovement(Entity troupe, int depth)
-        {
-            if (!(mGrid.TileFromWorldPoint(troupe.Sprite.Position) is TileIndex tile))
-                yield break;
-
-            yield return tile;
-
-            while (depth-- > 0)
-            {
-                var movement = RelativeMovement(tile, mVectorField);
-                tile = new TileIndex(tile.Row + (int) movement.Y, tile.Column + (int) movement.X, tile.SubTileCount);
-                if (!mGrid.Contains(tile))
-                    yield break;
-
-                yield return tile;
-            }
+            BreadthFirstSearch.UpdateHeatMap(mVectorField.HeatMap, Target);
+            mVectorField.Update();
         }
 
         internal void Visualize(SpriteManager spriteManager, SpriteBatch spriteBatch, GameTime gameTime)
@@ -182,8 +114,6 @@ namespace KernelPanic.PathPlanning
                 {
                     case DebugSettings.TroupeDataVisualization.Normal:
                         return mVectorField;
-                    case DebugSettings.TroupeDataVisualization.Small:
-                        return mSmallVectorField;
                     case DebugSettings.TroupeDataVisualization.Thunderbird:
                         return mThunderbirdVectorField;
 
@@ -194,14 +124,13 @@ namespace KernelPanic.PathPlanning
                 }
             }
             
-            if (Select(DebugSettings.HeatMapVisualization) is VectorField vectorField1)
-                vectorField1.HeatMap.Visualize(mGrid, spriteManager).Draw(spriteBatch, gameTime);
+            if (DebugSettings.VisualizeHeatMap)
+                mVectorField.HeatMap.Visualize(mGrid, spriteManager).Draw(spriteBatch, gameTime);
 
             if (Select(DebugSettings.VectorFieldVisualization) is VectorField vectorField2)
                 vectorField2.Visualize(mGrid, spriteManager).Draw(spriteBatch, gameTime);
 
-            if (DebugSettings.HeatMapVisualization == DebugSettings.TroupeDataVisualization.None ||
-                DebugSettings.VectorFieldVisualization == DebugSettings.TroupeDataVisualization.None)
+            if (!DebugSettings.VisualizeHeatMap && DebugSettings.VectorFieldVisualization == DebugSettings.TroupeDataVisualization.None)
             {
                 return;
             }

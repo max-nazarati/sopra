@@ -10,7 +10,8 @@ namespace KernelPanic.Sprites
         #region Properties
 
         internal float Rotation { get; set; }
-        /* internal */ private float Scale { get; set; } = 1.0f;
+        /* internal */
+        internal float Scale { get; set; } = 1.0f;
         
         /// <summary>
         /// The origin of a sprite is used as the center for rotation and as a offset for <see cref="Position"/>.

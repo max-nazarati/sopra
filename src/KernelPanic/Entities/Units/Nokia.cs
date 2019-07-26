@@ -10,7 +10,7 @@ namespace KernelPanic.Entities.Units
         private static Point HitBoxSize => new Point(18, 39);
 
         internal Nokia(SpriteManager spriteManager)
-            : base(50, 1, 100, 15, HitBoxSize, spriteManager.CreateNokia(), spriteManager)
+            : base(100, 1, 100, 10, HitBoxSize, spriteManager.CreateNokia(), spriteManager)
         {
         }
 

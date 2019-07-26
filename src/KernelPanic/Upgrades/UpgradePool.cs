@@ -54,11 +54,8 @@ namespace KernelPanic.Upgrades
 
         private readonly SpriteManager mSpriteManager;
 
-        /// <summary>
-        /// Stores for each upgrade, whether it is already purchased.
-        /// </summary>
         [JsonProperty]
-        private List<bool> mSerializedPurchasedMask;
+        private readonly Dictionary<Upgrade.Id, Player> mBoughtUpgrades = new Dictionary<Upgrade.Id, Player>();
 
         /// <summary>
         /// Creates a new <see cref="UpgradePool"/> with all available upgrades.
@@ -76,34 +73,30 @@ namespace KernelPanic.Upgrades
         {
             mUpgrades = Upgrade.Matrix.Select(upgrades =>
                 upgrades.Select(upgrade =>
-                    new UpgradeReference(upgrade, mPlayer, mSpriteManager)
-                ).ToArray()
+                {
+                    var reference = new UpgradeReference(upgrade, mPlayer, mSpriteManager);
+                    reference.Button.Action.Purchased += RememberUpgrade;
+                    return reference;
+                }).ToArray()
             ).ToArray();
         }
 
+        private void RememberUpgrade(Player buyer, Upgrade upgrade)
+        {
+            mBoughtUpgrades.Add(upgrade.Kind, buyer);
+        }
+
         #region Serialization
-
-        [OnSerializing]
-        private void BeforeSerialization(StreamingContext context)
-        {
-            mSerializedPurchasedMask = UpgradeActions.Select(action => action.IsPurchased).ToList();
-        }
-
-        [OnSerialized]
-        private void AfterSerialization(StreamingContext context)
-        {
-            mSerializedPurchasedMask = null;
-        }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
             Initialize();
 
-            foreach (var (action, isPurchased) in UpgradeActions.Zip(mSerializedPurchasedMask))
-                action.IsPurchased = isPurchased;
-
-            mSerializedPurchasedMask = null;
+            foreach (var upgradeId in mBoughtUpgrades.Keys)
+            {
+                this[upgradeId].IsPurchased = true;
+            }
         }
 
         #endregion
@@ -158,12 +151,6 @@ namespace KernelPanic.Upgrades
         #endregion
 
         /// <summary>
-        /// Enumerates through all upgrades.
-        /// </summary>
-        private IEnumerable<SinglePurchasableAction<Upgrade>> UpgradeActions =>
-            mUpgrades.Flatten().Select(upgrade => upgrade.Button.Action);
-
-        /// <summary>
         /// Returns the <see cref="SinglePurchasableAction{Upgrade}"/> which corresponds to
         /// this <see cref="Upgrade.Id"/>.
         /// </summary>
@@ -188,7 +175,14 @@ namespace KernelPanic.Upgrades
             {
                 foreach (var upgrade in upgrades)
                 {
-                    upgrade.Button.Draw(spriteBatch, gameTime);
+                    // tint button
+                    // gray: if player hasn't got enough resources
+                    // blue: player already bought the upgrade
+                    // red: the other player bought the upgrade
+                    var tintColor = mBoughtUpgrades.TryGetValue(upgrade.Id, out var buyer)
+                        ? buyer.Select(Color.SteelBlue, Color.IndianRed)
+                        : Color.Gray;
+                    upgrade.Button.DrawTint(spriteBatch, gameTime, tintColor);
                 }
             }
         }

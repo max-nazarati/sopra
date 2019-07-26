@@ -6,8 +6,10 @@ using KernelPanic.Sprites;
 using KernelPanic.Input;
 using KernelPanic.Data;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Options;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Input;
+using KernelPanic.Players;
 
 namespace KernelPanic.Hud
 {
@@ -44,7 +46,9 @@ namespace KernelPanic.Hud
                 sprite.SetOrigin(RelativePosition.TopLeft);
                 sprite.ScaleToWidth(iconSize); // for some reason cable has a size of 100x100
                 Button = new ImageButton(spriteManager, (ImageSprite)sprite, buttonSize, buttonSize);
-                mInfoText = building.mInfoText;
+
+                mInfoText = spriteManager.CreateText($"Preis: {building.Price}");
+                mInfoText.TextColor = Color.White;
                 mInfoText.SetOrigin(RelativePosition.TopLeft);
                 mInfoText.Position = sprite.Position;
                 mInfoText.X += buttonSize + 5;
@@ -69,7 +73,6 @@ namespace KernelPanic.Hud
             : base(MenuPosition(Lane.Side.Left, spriteManager), elements)
         {
             mBuildingBuyer = buildingBuyer;
-
             foreach (var element in Elements)
             {
                 element.Button.Clicked += (button, input) =>
@@ -77,9 +80,7 @@ namespace KernelPanic.Hud
                     if (Deselect(button))
                         return;
 
-                    button.ViewPressed = true;
-                    mSelectedButton = button;
-                    mBuildingBuyer.Building = element.Building;
+                    Select(element);
                 };
             }
         }
@@ -87,9 +88,26 @@ namespace KernelPanic.Hud
         internal override void Update(InputManager inputManager, GameTime gameTime)
         {
             base.Update(inputManager, gameTime);
-
             if (mSelectedButton != null && inputManager.KeyPressed(Keys.Escape))
                 Deselect(mSelectedButton);
+            
+            foreach (var (element, key) in Elements.Zip(ControlsMenu.DefaultTowerKeys))
+            {
+                if (!inputManager.KeyPressed(key))
+                    continue;
+
+                if (!Deselect(element.Button))
+                    Select(element);
+
+                break;
+            }
+        }
+
+        private void Select(Element element)
+        {
+            element.Button.ViewPressed = true;
+            mSelectedButton = element.Button;
+            mBuildingBuyer.Building = element.Building;
         }
 
         private bool Deselect(IDrawable button)
@@ -106,19 +124,19 @@ namespace KernelPanic.Hud
         }
 
         internal static BuildingBuyingMenu Create(BuildingBuyer buildingBuyer,
-            SpriteManager spriteManager)
+            SpriteManager spriteManager, Player buyer)
         {
             Element CreateElement<TBuilding>() where TBuilding : Building =>
                 new Element(Building.Create<TBuilding>(spriteManager), spriteManager);
 
             return new BuildingBuyingMenu(buildingBuyer, spriteManager,
+                CreateElement<Cable>(),
                 CreateElement<CursorShooter>(),
-                CreateElement<WifiRouter>(),
-                CreateElement<CdThrower>(),
-                CreateElement<Antivirus>(),
                 CreateElement<Ventilator>(),
+                CreateElement<Antivirus>(),
+                CreateElement<WifiRouter>(),
                 CreateElement<ShockField>(),
-                CreateElement<Cable>());
+                CreateElement<CdThrower>());
         }
     }
 }

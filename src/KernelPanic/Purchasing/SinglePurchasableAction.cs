@@ -7,9 +7,12 @@ namespace KernelPanic.Purchasing
     {
         internal bool IsPurchased { get; set; }
 
+        internal Player Buyer { get; private set; }
+
         internal SinglePurchasableAction(TResource resource, bool isPurchased = false) : base(resource)
         {
             IsPurchased = isPurchased;
+            Buyer = null;
         }
 
         internal override bool Available(Player buyer) => !IsPurchased && base.Available(buyer);
@@ -17,6 +20,7 @@ namespace KernelPanic.Purchasing
         protected override void Purchase(Player buyer)
         {
             IsPurchased = true;
+            Buyer = buyer;
             base.Purchase(buyer);
         }
     }

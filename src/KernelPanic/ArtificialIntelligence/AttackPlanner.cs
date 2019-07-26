@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace KernelPanic.ArtificialIntelligence
 {
-    internal sealed class AttackPlanner : Planner
+    internal sealed class AttackPlanner : Planner, IDisposable
     {
         private readonly Dictionary<Type, PurchasableAction<Unit>> mActions;
         private readonly double[] mUnitDistribution;
@@ -22,24 +22,23 @@ namespace KernelPanic.ArtificialIntelligence
         private const int IndexSettings = 5;
         private const int IndexFirefox = 6;
         private const int IndexBluescreen = 7;
+        private readonly List<IDisposable> mSubscriptions;
 
         #region Konstruktor
 
         public AttackPlanner(Player player, Dictionary<Type, PurchasableAction<Unit>> actions) : base(player)
         {
             mActions = actions;
-            mUnitDistribution = new[] {1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d, 1/8d};
+            // Bug  Virus   Trojaner   Nokia   Thunderbird    Settings    Firefox    Bluescreen
+            mUnitDistribution = new[] {0.25, 0.2, 0.2, 0.1, 0.1, 0, 0.1, 0.05};
             var eventCenter = EventCenter.Default;
-            eventCenter.Subscribe(Event.Id.DamagedBase,
+            mSubscriptions = new List<IDisposable>();
+            mSubscriptions.Add(eventCenter.Subscribe(Event.Id.DamagedBase,
                 e => UpdateHeuristic(Event.Id.DamagedBase, e),
-                e => e.IsActivePlayer(Event.Key.Defender));
-            eventCenter.Subscribe(Event.Id.KilledUnit,
+                e => e.IsActivePlayer(Event.Key.Defender)));
+            mSubscriptions.Add(eventCenter.Subscribe(Event.Id.KilledUnit,
                 e => UpdateHeuristic(Event.Id.KilledUnit, e),
-                e => !e.IsActivePlayer(Event.Key.Attacker));
-            //BuyEntity<Firefox>();
-            //BuyEntity<Settings>();
-            //BuyEntity<Bluescreen>();
-            BuyEntity<Bug>();
+                e => !e.IsActivePlayer(Event.Key.Attacker)));
         }
 
         #endregion
@@ -48,6 +47,9 @@ namespace KernelPanic.ArtificialIntelligence
         {
             for (var i = 0; i < amount; i++)
             {
+                if (!mPlayer.ValidHeroPurchase(typeof(T)))
+                    return;
+
                 mActions[typeof(T)].TryPurchase(mPlayer);
             }
         }
@@ -69,12 +71,12 @@ namespace KernelPanic.ArtificialIntelligence
             string[] choices = new[] { "Bug", "Virus", "Trojaner", "Nokia", "Thunderbird", "Settings", "Firefox", "Bluescreen" };
 
             Random numberGenerator = new Random();
-            double number = numberGenerator.NextDouble();
+            double probability = numberGenerator.NextDouble();
             int choiceIndex = 0;
             double upperBound = mUnitDistribution[0];
             for (int i = 1; i < 8; i++)
             {
-                if (number <= upperBound) break;
+                if (probability <= upperBound) break;
                 else
                 {
                     choiceIndex++;
@@ -236,5 +238,13 @@ namespace KernelPanic.ArtificialIntelligence
         } */
 
         #endregion
+
+        public void Dispose()
+        {
+            foreach (var subscription in mSubscriptions)
+            {
+                subscription.Dispose();
+            }
+        }
     }
 }

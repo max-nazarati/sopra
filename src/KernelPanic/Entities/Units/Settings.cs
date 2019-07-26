@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using KernelPanic.Entities.Buildings;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities.Units
 {
@@ -14,22 +17,35 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Settings : Hero
     {
-        private readonly ImageSprite mIndicator;
         private const int AbilityRange = Grid.KachelSize * 3;
-        private float mAbilityRangeAmplifier = 1;
-        private readonly List<Troupe> mTroupesInRange;
         private const int HealValue = -5;
-        private readonly ImageSprite mTroupeMarker;
+
+        private Sprite mIndicator;
+        private Sprite mTroupeMarker;
+        private List<Troupe> mTroupesInRange;
+
+        [JsonProperty]
+        private float mAbilityRangeAmplifier = 1;
 
         private static Point HitBoxSize => new Point(56, 59);
 
-        // Heilt alle zwei Sekunden, Truppen im Radius von 1 Kachel um 2 LP
         internal Settings(SpriteManager spriteManager)
             : base(50, 4, 25, 0, TimeSpan.FromSeconds(1), HitBoxSize, spriteManager.CreateSettings(), spriteManager)
         {
-            mIndicator = spriteManager.CreateHealIndicator(AbilityRange * mAbilityRangeAmplifier);
             mTroupesInRange = new List<Troupe>();
             mTroupeMarker = spriteManager.CreateTroupeMarker();
+            RecreateIndicator();
+        }
+
+        [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            RecreateIndicator();
+        }
+
+        private void RecreateIndicator()
+        {
+            mIndicator = SpriteManager.CreateHealIndicator(AbilityRange * mAbilityRangeAmplifier);
         }
 
         protected override void CompleteClone()
@@ -37,6 +53,20 @@ namespace KernelPanic.Entities.Units
             base.CompleteClone(); 
             Cooldown = new CooldownComponent(Cooldown.Cooldown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
+            mIndicator = mIndicator.Clone();
+            mTroupeMarker = mTroupeMarker.Clone();
+            mTroupesInRange = new List<Troupe>();
+        }
+
+        internal void AmplifyAbilityRange(float scale)
+        {
+            mAbilityRangeAmplifier += scale;
+            RecreateIndicator();
+        }
+
+        internal void DecreaseHealCooldown(float multiplier)
+        {
+            Cooldown.Cooldown = new TimeSpan((long) (Cooldown.Cooldown.Ticks * multiplier));
         }
 
         /// <summary>
@@ -84,18 +114,9 @@ namespace KernelPanic.Entities.Units
             }
         }
 
-        protected override void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
-        {
-            if (/*TODO ask if we are back in base */ true) // ask for base tile hit
-            {
-                base.UpdateCooldown(gameTime, positionProvider);
-            }
-        }
-
         protected override void TryActivateAbility(InputManager inputManager, bool button = false)
         {
             // TODO show the cooldown and disable the click ability (or make it active i dunno, im just a comment not a cop)
-            Console.WriteLine("TODO: settings ability is passive");
         }
 
         
@@ -105,9 +126,11 @@ namespace KernelPanic.Entities.Units
             {
                 // if the CoolDown should only be used when there is a troupe in Range, remove this if
             }
-            else foreach (var troupe in mTroupesInRange)
+            else 
             {
-                troupe.DealDamage(HealValue, positionProvider);
+                EventCenter.Default.Send(Event.HeroAbility(this));
+                foreach (var troupe in mTroupesInRange)
+                    troupe.DealDamage(HealValue, positionProvider);
             }
 
             // Ability was successfully cast;
@@ -126,36 +149,69 @@ namespace KernelPanic.Entities.Units
                 mTroupesInRange.Add(troupe);
             }
         }
-        
-        internal void AmplifyAbilityRange(float scale)
-        {
-            mAbilityRangeAmplifier += scale;
-            // mIndicator = spriteManager.CreateHealIndicator(AbilityRange * mAbilityRangeAmplifier);
-            // we are scaling bc we dont know the spriteManager in this context
-            // seems to be doing fine, just had to figure out that we need a factor 2 bc of radius vs diameter
-            mIndicator.ScaleToWidth(AbilityRange * mAbilityRangeAmplifier * 2);
-        }
 
-        protected override float PointHeuristic(Point point, PositionProvider positionProvider)
+        /// <summary>
+        /// try not to die while attacking.
+        /// sets mTarget and ShouldMove
+        /// </summary>
+        protected override void AutonomousAttack(InputManager inputManager, PositionProvider positionProvider)
         {
-            point *= new Point(Grid.KachelSize);
-            var result = 0f;
-            foreach (var tower in positionProvider.NearEntities<Tower>(point.ToVector2(), AbilityRange * mAbilityRangeAmplifier))
+            var startPoint = positionProvider.RequireTile(Sprite.Position).ToPoint();
+            var neighbours = GetNeighbours(positionProvider);
+            
+            #region calculate a heuristic for all neighbours and choose the best
+            var bestPoint = startPoint;
+            var bestValue = 0f;
+            foreach (var point in neighbours)
             {
-                if (Vector2.DistanceSquared(tower.Bounds.Center.ToVector2(), Bounds.Center.ToVector2()) < tower.Radius * tower.Radius)
+                var currentValue = PointHeuristic(point, positionProvider);
+                if (currentValue <= bestValue)
+                    continue;
+
+                bestPoint = point;
+                bestValue = currentValue;
+            }
+            #endregion
+
+            #region set the optimum as walking target
+            mAStar = positionProvider.MakePathFinding(this, new[] {bestPoint});
+            if (mAStar.Path != null)
+            {
+                if (mAStar.Path[mAStar.Path.Count - 1] is Point target)
                 {
-                    result -= 10;
+                    mTarget = new TileIndex(target, 1);
                 }
             }
 
+            ShouldMove = true;
+            #endregion
+        }
+
+        private float PointHeuristic(Point point, PositionProvider positionProvider)
+        {
+            point *= new Point(Grid.KachelSize);
+            var result = 0f;
+
+            // every unit counted positive
             foreach (var troupe in positionProvider.NearEntities<Troupe>(point.ToVector2(),
                 AbilityRange * mAbilityRangeAmplifier))
             {
                 var tile = positionProvider.RequireTile(troupe).BaseTile;
                 var heat = positionProvider.TroupeData.TileHeat(tile.ToPoint());
-                result += (heat ?? 1 ) < 10 ? 20 : (heat ?? 1 ) < 15 ? 16 : (heat ?? 1 ) < 20 ? 12 : (heat ?? 1 ) < 25 ? 8 : (heat ?? 1 ) < 30 ? 4 : (heat ?? 1 ) < 40 ? 2 : 1;
+                result += 10; // just setting a base value
+                var factor = 1 + troupe.MaximumLife - troupe.RemainingLife;
+                result += factor * (heat ?? 1 ) < 10 ? 20 : (heat ?? 1 ) < 15 ? 16 : (heat ?? 1 ) < 20 ? 12 : (heat ?? 1 ) < 25 ? 8 : (heat ?? 1 ) < 30 ? 4 : (heat ?? 1 ) < 40 ? 2 : 1;
             }
 
+            // every tower is negative
+            foreach (var tower in positionProvider.NearEntities<Tower>(point.ToVector2(), 3 * AbilityRange))
+            {
+                if (Vector2.DistanceSquared(tower.Bounds.Center.ToVector2(), Bounds.Center.ToVector2()) < tower.Radius * tower.Radius)
+                {
+                    result /= 1.5f;
+                    result -= 1;
+                }
+            }
             return result;
         }
 
@@ -163,13 +219,10 @@ namespace KernelPanic.Entities.Units
         {
             mIndicator.Position = Sprite.Position;
             mIndicator.Draw(spriteBatch, gameTime);
-            if (mTroupesInRange != null)
+            foreach (var troupe in mTroupesInRange)
             {
-                foreach (var troupe in mTroupesInRange)
-                {
-                    mTroupeMarker.Position = troupe.Sprite.Position;
-                    mTroupeMarker.Draw(spriteBatch, gameTime);
-                }
+                mTroupeMarker.Position = troupe.Sprite.Position;
+                mTroupeMarker.Draw(spriteBatch, gameTime);
             }
         }
         

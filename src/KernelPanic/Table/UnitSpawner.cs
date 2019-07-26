@@ -14,12 +14,14 @@ namespace KernelPanic.Table
             private readonly Queue<T> mQueue;
             private readonly Vector2[] mSpawnPoints;
             private int mSpawnIndex;
+            private TimeSpan mTimeTillNextSpawn;
 
             internal SpawnQueue(params Vector2[] spawnPoints)
             {
                 mSpawnIndex = 0;
                 mQueue = new Queue<T>();
                 mSpawnPoints = spawnPoints;
+                mTimeTillNextSpawn = TimeSpan.Zero;
             }
 
             internal bool Empty => mQueue.Count == 0;
@@ -31,9 +33,24 @@ namespace KernelPanic.Table
                 mQueue.Enqueue(unit);
             }
 
-            internal bool Spawn(EntityGraph entityGraph)
+            internal void Spawn(GameTime gameTime, EntityGraph entityGraph)
             {
-                if (mQueue.Count == 0)
+                if (Empty)
+                    return;
+
+                if (mTimeTillNextSpawn > TimeSpan.Zero)
+                {
+                    mTimeTillNextSpawn -= gameTime.ElapsedGameTime;
+                    return;
+                }
+
+                SpawnNow(entityGraph);
+                mTimeTillNextSpawn = SpawnDelay;
+            }
+
+            internal bool SpawnNow(EntityGraph entityGraph)
+            {
+                if (Empty)
                     return false;
 
                 var next = mQueue.Peek();
@@ -43,6 +60,8 @@ namespace KernelPanic.Table
                 entityGraph.Add(mQueue.Dequeue());
                 return true;
             }
+            
+            private static TimeSpan SpawnDelay => TimeSpan.FromSeconds(0.5);
 
             internal IEnumerable<Troupe> QueuedUnits => mQueue;
         }
@@ -76,7 +95,7 @@ namespace KernelPanic.Table
         internal bool Ready =>
             mBugs.Empty && mViruses.Empty && mTrojans.Empty && mNokias.Empty && mThunderbirds.Empty;
 
-        public UnitSpawner(Grid grid, EntityGraph entityGraph, List<Troupe> restored)
+        public UnitSpawner(Grid grid, EntityGraph entityGraph, IReadOnlyCollection<Troupe> restored)
         {
             mEntityGraph = entityGraph;
             mGrid = grid;
@@ -105,7 +124,7 @@ namespace KernelPanic.Table
                 var spawned = false;
                 foreach (var queue in mAdditionalSpawns.Values)
                 {
-                    spawned |= queue.Spawn(mEntityGraph);
+                    spawned |= queue.SpawnNow(mEntityGraph);
                 }
                 
                 if (spawned)
@@ -129,15 +148,13 @@ namespace KernelPanic.Table
         /// <param name="spawnTile">An alternative position compared to the base.</param>
         internal void Register(Troupe troupe, TileIndex spawnTile)
         {
-            if (mAdditionalSpawns.TryGetValue(spawnTile, out var queue))
+            if (!mAdditionalSpawns.TryGetValue(spawnTile, out var queue))
             {
-                queue.Add(troupe);
-                return;
+                queue = new SpawnQueue<Troupe>(mGrid.GetTile(spawnTile).Position);
+                mAdditionalSpawns[spawnTile] = queue;
             }
-            
-            queue = new SpawnQueue<Troupe>(mGrid.GetTile(spawnTile).Position);
+
             queue.Add(troupe);
-            mAdditionalSpawns[spawnTile] = queue;
             mSpawnCooldown.Enabled = true;
         }
 
@@ -151,6 +168,8 @@ namespace KernelPanic.Table
             {
                 case Hero hero:
                 {
+                    // TODO fix the Unhandled Exception:
+                    // System.InvalidOperationException: Sequence contains no matching element   thrown here
                     hero.Sprite.Position = mHeroSpawns.First(point => !mEntityGraph.HasEntityAt(point));
                     mEntityGraph.Add(hero);
                     return;
@@ -176,11 +195,11 @@ namespace KernelPanic.Table
 
         internal void Update(GameTime gameTime)
         {
-            mBugs.Spawn(mEntityGraph);
-            mViruses.Spawn(mEntityGraph);
-            mTrojans.Spawn(mEntityGraph);
-            mNokias.Spawn(mEntityGraph);
-            mThunderbirds.Spawn(mEntityGraph);
+            mBugs.Spawn(gameTime, mEntityGraph);
+            mViruses.Spawn(gameTime, mEntityGraph);
+            mTrojans.Spawn(gameTime, mEntityGraph);
+            mNokias.Spawn(gameTime, mEntityGraph);
+            mThunderbirds.Spawn(gameTime, mEntityGraph);
             mSpawnCooldown.Update(gameTime);
         }
 

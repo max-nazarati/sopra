@@ -73,6 +73,18 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/base_2.png;base_2.png
 
+#begin ../../KernelPanic/Content/bitcoinLogo.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/bitcoinLogo.png;bitcoinLogo.png
+
 #begin ../../KernelPanic/Content/Border.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -351,17 +363,35 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/skill_tile.png;skill_tile.png
 
+#begin ../../KernelPanic/Content/sounds/AntivirusShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/AntivirusShoot.mp3;sounds/AntivirusShoot.mp3
+
 #begin ../../KernelPanic/Content/sounds/ButtonClick.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/ButtonClick.mp3;sounds/ButtonClick.mp3
 
-#begin ../../KernelPanic/Content/sounds/CursorShoot.mp3
+#begin ../../KernelPanic/Content/sounds/BluescreenAbility.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/CursorShoot.mp3;sounds/CursorShoot.mp3
+/build:../../KernelPanic/Content/sounds/BluescreenAbility.mp3;sounds/BluescreenAbility.mp3
+
+#begin ../../KernelPanic/Content/sounds/CursorShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/CursorShoot.wav;sounds/CursorShoot.wav
+
+#begin ../../KernelPanic/Content/sounds/SettingsAbility.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/SettingsAbility.wav;sounds/SettingsAbility.wav
 
 #begin ../../KernelPanic/Content/sounds/DiscShoot.mp3
 /importer:Mp3Importer
@@ -369,29 +399,17 @@
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/DiscShoot.mp3;sounds/DiscShoot.mp3
 
-#begin ../../KernelPanic/Content/sounds/ElectroShock.mp3
-/importer:Mp3Importer
+#begin ../../KernelPanic/Content/sounds/ElectroShock.wav
+/importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/ElectroShock.mp3;sounds/ElectroShock.mp3
+/build:../../KernelPanic/Content/sounds/ElectroShock.wav;sounds/ElectroShock.wav
 
 #begin ../../KernelPanic/Content/sounds/MoneyEarned.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/MoneyEarned.mp3;sounds/MoneyEarned.mp3
-
-#begin ../../KernelPanic/Content/sounds/WifiShoot.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/WifiShoot.mp3;sounds/WifiShoot.mp3
-
-#begin ../../KernelPanic/Content/sounds/AntivirusShoot.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../KernelPanic/Content/sounds/AntivirusShoot.mp3;sounds/AntivirusShoot.mp3
 
 #begin ../../KernelPanic/Content/sounds/shoot.mp3
 /importer:Mp3Importer
@@ -411,6 +429,12 @@
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/Soundtrack2.mp3;sounds/Soundtrack2.mp3
 
+#begin ../../KernelPanic/Content/sounds/CreditsSoundtrack.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/CreditsSoundtrack.mp3;sounds/CreditsSoundtrack.mp3
+
 #begin ../../KernelPanic/Content/sounds/SwooshFirefox.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
@@ -422,6 +446,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:../../KernelPanic/Content/sounds/TowerPlacement.mp3;sounds/TowerPlacement.mp3
+
+#begin ../../KernelPanic/Content/sounds/WifiShoot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../KernelPanic/Content/sounds/WifiShoot.mp3;sounds/WifiShoot.mp3
 
 #begin ../../KernelPanic/Content/StartMenuTitle.spritefont
 /importer:FontDescriptionImporter
@@ -669,6 +699,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/towers/shock_field.png;towers/shock_field.png
+
+#begin ../../KernelPanic/Content/towers/umbrella.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../KernelPanic/Content/towers/umbrella.png;towers/umbrella.png
 
 #begin ../../KernelPanic/Content/towers/WifiProjectile.png
 /importer:TextureImporter

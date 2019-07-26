@@ -120,6 +120,9 @@
     <Compile Include="..\KernelPanic\Data\RelativePosition.cs">
       <Link>Data\RelativePosition.cs</Link>
     </Compile>
+    <Compile Include="..\KernelPanic\Data\SingleQueue.cs">
+      <Link>Data\SingleQueue.cs</Link>
+    </Compile>
     <Compile Include="..\KernelPanic\Data\VectorField.cs">
       <Link>Data\VectorField.cs</Link>
     </Compile>
@@ -173,6 +176,9 @@
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Projectiles\Projectile.cs">
       <Link>Entities\Projectiles\Projectile.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Entities\Projectiles\Wifi.cs">
+      <Link>Entities\Projectiles\Wifi.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\Entities\Unit.cs">
       <Link>Entities\Unit.cs</Link>
@@ -255,9 +261,6 @@
     <Compile Include="..\KernelPanic\Input\RawInputState.cs">
       <Link>Input\RawInputState.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Interface\AnimatedButton.cs">
-      <Link>Interface\AnimatedButton.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Interface\Button.cs">
       <Link>Interface\Button.cs</Link>
     </Compile>
@@ -281,6 +284,18 @@
     </Compile>
     <Compile Include="..\KernelPanic\MenuState.cs">
       <Link>MenuState.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Options\ControlsMenu.cs">
+      <Link>Options\ControlsMenu.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Options\KeyMap.cs">
+      <Link>Options\KeyMap.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Options\OptionsData.cs">
+      <Link>Options\OptionsData.cs</Link>
+    </Compile>
+    <Compile Include="..\KernelPanic\Options\OptionsMenu.cs">
+      <Link>Options\OptionsMenu.cs</Link>
     </Compile>
     <Compile Include="..\KernelPanic\PathPlanning\AStar.cs">
       <Link>PathPlanning\AStar.cs</Link>

@@ -7,7 +7,7 @@ using KernelPanic.Events;
 
 namespace KernelPanic
 {
-    internal sealed class BitcoinManager
+    internal sealed class BitcoinManager : IDisposable
     {
         [JsonProperty("players")]
         private readonly PlayerIndexed<Player> mPlayers;
@@ -28,6 +28,11 @@ namespace KernelPanic
                 new CooldownComponent(oneSecond, false),
                 new CooldownComponent(oneSecond, false)
             );
+        }
+
+        public void Dispose()
+        {
+            mSubscription.Dispose();
         }
 
         [JsonConstructor]

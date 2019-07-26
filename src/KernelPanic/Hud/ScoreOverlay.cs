@@ -3,6 +3,7 @@ using KernelPanic.Sprites;
 using KernelPanic.Interface;
 using KernelPanic.Input;
 using KernelPanic.Players;
+using KernelPanic.Waves;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -18,18 +19,17 @@ namespace KernelPanic.Hud
         private readonly PlayerIndexed<TextSprite> mMoneyTexts;
         private readonly PlayerIndexed<TextSprite> mExperienceTexts;
         private readonly TextSprite mTextTime;
+        private readonly TextSprite mDefeatedWavesByHuman, mDefeatedWavesByComputer;
+        private readonly WaveManager mWaveManager;
         private readonly ImageButton mPauseButton;
 
         internal bool Pause { get; set; }
 
-        private const float Scale = 1.5f;
-        private static Point PowerIndicatorSize => new Point((int)(60*Scale), (int)(28 *Scale));
-        private static Point ClockSize => new Point((int)(80 * Scale), (int)(18 * Scale));
-
-        public ScoreOverlay(PlayerIndexed<Player> players, SpriteManager spriteManager, TimeSpan time)
+        public ScoreOverlay(WaveManager waveManager, SpriteManager spriteManager, TimeSpan time)
         {
-            mPlayers = players;
+            mPlayers = waveManager.Players;
             mPlayTime = new PlayTime(time);
+            mWaveManager = waveManager;
 
             var sprites = spriteManager.CreateScoreDisplay();
             mSprite = sprites.Main;
@@ -38,6 +38,12 @@ namespace KernelPanic.Hud
             mExperienceTexts = new PlayerIndexed<TextSprite>(sprites.LeftEP, sprites.RightEP);
             mTextTime = sprites.Clock;
             mTextTime.Text = mPlayTime.Time;
+
+            mDefeatedWavesByHuman = sprites.DefeatedWavesByHuman;
+            mDefeatedWavesByHuman.Text = waveManager.mByHumanDefeatedWaves.ToString();
+            
+            mDefeatedWavesByComputer = sprites.DefeatedWavesByComputer;
+            mDefeatedWavesByComputer.Text = waveManager.mByComputerDefeatedWaves.ToString();
 
             var sprite = spriteManager.CreatePause();
             mPauseButton = new ImageButton(spriteManager, sprite, 40, 40);
@@ -53,13 +59,16 @@ namespace KernelPanic.Hud
         {
             mPowerTexts.A.Text = mPlayers.A.Base.Power + "%";
             mPowerTexts.B.Text = mPlayers.B.Base.Power + "%";
-            mMoneyTexts.A.Text = mPlayers.A.Bitcoins + "$";
-            mMoneyTexts.B.Text = mPlayers.B.Bitcoins + "$";
+            mMoneyTexts.A.Text = mPlayers.A.Bitcoins + "";
+            mMoneyTexts.B.Text = mPlayers.B.Bitcoins + "";
             mExperienceTexts.A.Text = mPlayers.A.ExperiencePoints + " EP";
             mExperienceTexts.B.Text = mPlayers.B.ExperiencePoints + " EP";
 
             mPlayTime.Update(gameTime);
             mTextTime.Text = mPlayTime.Time;
+
+            mDefeatedWavesByHuman.Text = mWaveManager.mByHumanDefeatedWaves + " Wellen besiegt";
+            mDefeatedWavesByComputer.Text = mWaveManager.mByComputerDefeatedWaves + " Wellen besiegt";
 
             mPauseButton.Update(inputManager, gameTime);
         }

@@ -8,7 +8,7 @@ namespace KernelPanic.Entities.Projectiles
     {
         private bool Boomerang { get; set; }
 
-        internal Disc(CdThrower cdThrower, Vector2 direction, ImageSprite sprite)
+        internal Disc(CdThrower cdThrower, Vector2 direction, Sprite sprite)
             : base(cdThrower, direction, sprite)
         {
             Boomerang = cdThrower.ShootsBoomerang;

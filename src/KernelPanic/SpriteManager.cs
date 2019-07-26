@@ -61,7 +61,9 @@ namespace KernelPanic
             LaneTop2,
             LaneTop3,
             LaneTopRight,
-            LaneTopRightCorner
+            LaneTopRightCorner,
+            BitcoinLogo,
+            Umbrella
         }
 
         private enum Font
@@ -127,6 +129,8 @@ namespace KernelPanic
                 Texture(Image.LaneTop3, "tiles/lane_top_3"),
                 Texture(Image.LaneTopRight, "tiles/lane_top_right"),
                 Texture(Image.LaneTopRightCorner, "tiles/lane_corner_top_right"),
+                Texture(Image.BitcoinLogo, "bitcoinLogo"),
+                Texture(Image.Umbrella, "towers/umbrella"),
                 (Image.SelectionBorder, CreateSelectionBorderTexture(Color.LightBlue))
             };
             Array.Sort(mTextures);
@@ -216,26 +220,232 @@ namespace KernelPanic
         internal ImageSprite CreateLaneTile() => new ImageSprite(Lookup(Image.LaneTile));
         internal ImageSprite CreateLaneBorder() => new ImageSprite(Lookup(Image.LaneBorder));
 
-        internal PatternSprite CreateBoardBackground(Rectangle bounds, int tileSize)
+        private CompositeSprite CreateTopLaneRow(int columns, int tileSize, bool bottom = false)
+        {
+            var sprite = new CompositeSprite();
+            var random = new Random();
+            // add tiles
+            var texture1 = Lookup(Image.LaneTop1);
+            var texture2 = Lookup(Image.LaneTop2);
+            var texture3 = Lookup(Image.LaneTop3);
+            
+            for (var x = 0; x < columns; x++)
+            {
+                // randomly choose image for tile
+                var number = random.Next(1, 3);
+                var texture = number == 1 ? texture1 : number == 2 ? texture2 : texture3;
+                var tile = new ImageSprite(texture);
+
+                if (x == 0 || x == columns - 1)
+                {
+                    tile = new ImageSprite(Lookup(Image.LaneTopRight));
+                    if (x == 0 && !bottom)
+                    {
+                        tile.Rotation = -(float)(Math.PI / 2);
+                    }
+                    if (x == columns - 1 && bottom)
+                    {
+                        tile.Rotation -= (float)Math.PI / 2;
+                    }
+                }
+                // scale and position tile
+                tile.ScaleToWidth(tileSize);
+                tile.Position = new Vector2(x * tileSize + tileSize / 2, (float)(tileSize * 0.5));
+                tile.SetOrigin(RelativePosition.Center);
+                if (bottom)
+                {
+                    tile.Rotation += (float)Math.PI;
+                }
+                sprite.Children.Add(tile);
+            }
+            return sprite;
+        }
+
+        private CompositeSprite CreateBorderLaneRow(Lane.Side side, int columns, int laneWidth, int tileSize, bool bottom = false)
+        {
+            var random = new Random();
+            var middle = CreateMiddleLaneRow(laneWidth, tileSize, random);
+            var border = CreateTopLaneRow(columns - laneWidth + 1, tileSize, bottom);
+            var corner = new ImageSprite(Lookup(Image.LaneTopRightCorner));
+            corner.SetOrigin(RelativePosition.Center);
+            corner.ScaleToWidth(tileSize);
+            corner.Y = (float)(tileSize * 0.5);
+            if (side == Lane.Side.Left)
+            {
+                border.X = (laneWidth - 1) * tileSize;
+                corner.X = (laneWidth - 1) * tileSize + tileSize / 2;
+                if (bottom)
+                {
+                    corner.Rotation += (float)Math.PI;
+                }
+            }
+            else
+            {
+                middle.X = (laneWidth - 2) * tileSize;
+                corner.X = (columns-laneWidth) * tileSize + tileSize / 2;
+                corner.Rotation -= (float)(Math.PI / 2);
+            }
+            if (bottom)
+            {
+                corner.Rotation -= (float)(Math.PI / 2);
+            }
+            var sprite = new CompositeSprite
+            {
+                Children = { middle, border, corner }
+            };
+            return sprite;
+        }
+
+        private CompositeSprite CreateMiddleLaneRow(int columns, int tileSize, Random random)
+        {
+            var sprite = new CompositeSprite();
+
+            var texture1 = Lookup(Image.LaneMiddle1);
+            var texture2 = Lookup(Image.LaneMiddle2);
+            var texture3 = Lookup(Image.LaneMiddle3);
+
+            for (var x = 0; x < columns; x++)
+            {
+                var number = random.Next(0, 30);
+                var texture = number < 25 ? texture2 : number < 28 ? texture1 : texture3;
+                var tile = new ImageSprite(texture);
+                number = random.Next(0, 3);
+                tile.Rotation = (float)(number * Math.PI / 2);
+
+                // replace edges
+                if (x == 0 || x == columns - 1)
+                {
+                    var edge1 = Lookup(Image.LaneTop1);
+                    var edge2 = Lookup(Image.LaneTop2);
+                    var edge3 = Lookup(Image.LaneTop3);
+                    texture = number == 1 ? edge1 : number == 2 ? edge2 : edge3;
+                    tile = new ImageSprite(texture);
+                    if (x == columns - 1)
+                    {
+                        tile.Rotation = (float)(Math.PI / 2);
+                    }
+                    else if (x == 0)
+                    {
+                        tile.Rotation = (float)(3 * Math.PI / 2);
+                    }
+                }
+
+                // scale and position tile
+                tile.ScaleToWidth(tileSize);
+                tile.Position = new Vector2(x * tileSize + tileSize / 2, (float)(tileSize * 0.5));
+                tile.SetOrigin(RelativePosition.Center);
+                sprite.Children.Add(tile);
+            }
+            return sprite;
+        }
+
+        internal CompositeSprite CreateLaneTop(Lane.Side side, int laneWidth, int columns, int tileSize)
+        {
+            var top = CreateTopLaneRow(columns, tileSize);
+            var border = CreateBorderLaneRow(side, columns, laneWidth, tileSize, true);
+            border.Y = (laneWidth - 1) * tileSize;
+            var sprite = new CompositeSprite
+            {
+                Children = { top, border }
+            };
+            var random = new Random();
+            for (var y = 1; y < laneWidth-1; y++)
+            {
+                var row = CreateMiddleLaneRow(columns, tileSize, random);
+                row.Y = y * tileSize;
+                sprite.Children.Add(row);
+            }
+            
+
+            return sprite;
+        }
+
+        internal CompositeSprite CreateLaneMiddle(int laneWidth, int rows, int tileSize)
+        {
+            var sprite = new CompositeSprite();
+            var random = new Random();
+            for (var y = 0; y < rows - 2 * laneWidth; y++)
+            {
+                var row = CreateMiddleLaneRow(laneWidth, tileSize, random);
+                row.Y = y * tileSize;
+                sprite.Children.Add(row);
+            }
+            return sprite;
+        }
+
+        internal CompositeSprite CreateLaneBottom(Lane.Side side, int laneWidth, int columns, int tileSize)
+        {
+            var bottom = CreateTopLaneRow(columns, tileSize, true);
+            bottom.Y = (laneWidth - 1) * tileSize;
+            var border = CreateBorderLaneRow(side, columns, laneWidth, tileSize);
+            var sprite = new CompositeSprite
+            {
+                Children = { bottom, border }
+            };
+            var random = new Random();
+            for (var y = 1; y < laneWidth-1; y++)
+            {
+                var row = CreateMiddleLaneRow(columns, tileSize, random);
+                row.Y = y * tileSize;
+                sprite.Children.Add(row);
+            }
+            return sprite;
+        }
+
+        internal CompositeSprite CreateBoardBackground(Rectangle bounds, int tileSize)
         {
             var rows = bounds.Height / 100;
             var columns = bounds.Width / 100;
-            var tile = new ImageSprite(Lookup(Image.BackgroundTile1));
-            tile.ScaleToWidth(tileSize);
-            var sprite = new PatternSprite(tile, rows, columns)
+            var composite = new CompositeSprite();
+            var random = new Random();
+            var texture1 = Lookup(Image.BackgroundTile1);
+            var texture2 = Lookup(Image.BackgroundTile2);
+            var texture3 = Lookup(Image.BackgroundTile3);
+
+            // generate all tiles
+            for (var x = 0; x < columns; x++)
             {
-                Position = new Vector2(bounds.X, bounds.Y)
-            };
-            return sprite;
+                for (var y = 0; y < rows; y++)
+                {
+                    // randomly choose image for tile
+                    var number = random.Next(0, 30);
+                    var texture = number < 15 ? texture1 : number < 26 ? texture2 : texture3;
+                    var tile = new ImageSprite(texture);
+                    tile.ScaleToWidth(tileSize);
+
+                    // rotate tile randomly around its center
+                    tile.Position = new Vector2(bounds.X + x * 100 + 50, bounds.Y + y * 100 + 50);
+                    tile.SetOrigin(RelativePosition.Center);
+                    number = random.Next(0, 3);
+                    tile.Rotation = (float)(number * Math.PI / 2);
+
+                    composite.Children.Add(tile);
+                }
+            }
+            return composite;
         }
 
         #endregion
 
         #region Buildings
 
+        internal ImageSprite CreateTowerLevelOne()
+        {
+            var sprite = new ImageSprite(CreateCircleTexture(5, Color.Gold));
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
+        }
+        
+        internal ImageSprite CreateTowerLevelTwo()
+        {
+            var sprite = new ImageSprite(CreateCircleTexture(5, Color.Orange));
+            sprite.SetOrigin(RelativePosition.Center);
+            return sprite;
+        }
+
         internal ImageSprite CreateWifiRouter() => new ImageSprite(Lookup(Image.Router));
         internal ImageSprite CreateVentilator() => new ImageSprite(Lookup(Image.FanPropeller));
-        internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus));
+        internal ImageSprite CreateAntivirus() => new ImageSprite(Lookup(Image.Antivirus)) {Scale = 1.5f};
         internal ImageSprite CreateCable() => new ImageSprite(Lookup(Image.Cable));
         internal ImageSprite CreateShockField() => new ImageSprite(Lookup(Image.ShockField));
         internal ImageSprite CreateCdThrower() => new ImageSprite(Lookup(Image.CdThrower));
@@ -259,7 +469,7 @@ namespace KernelPanic
             {
                 DestinationRectangle = new Rectangle(0, 0, 40, 3)
             };
-            sprite.SetOrigin(RelativePosition.Center);
+            sprite.SetOrigin(RelativePosition.TopRight);
             //sprite.ScaleToWidth(40);
             return sprite;
         }
@@ -269,6 +479,14 @@ namespace KernelPanic
             var sprite = new ImageSprite(Lookup(Image.Cursor));
             sprite.SetOrigin(RelativePosition.Center);
             sprite.ScaleToWidth(20);
+            return sprite;
+        }
+
+        internal ImageSprite CreateUmbrellaProjectile()
+        {
+            var sprite = new ImageSprite(Lookup(Image.Umbrella));
+            sprite.SetOrigin(RelativePosition.Center);
+            sprite.ScaleToWidth(50);
             return sprite;
         }
 
@@ -282,61 +500,97 @@ namespace KernelPanic
             return sprite;
         }
 
-        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right, TextSprite RightMoney, TextSprite RightEP, TextSprite Clock) CreateScoreDisplay()
+        internal (Sprite Main, TextSprite Left, TextSprite LeftMoney, TextSprite LeftEP, TextSprite Right
+            , TextSprite RightMoney, TextSprite RightEP, TextSprite Clock, TextSprite DefeatedWavesByHuman
+            , TextSprite DefeatedWavesByComputer) CreateScoreDisplay()
         {
             const float scale = 1.8f;
-            const float hudWidth = scale * 318;
+            const float hudWidth = scale * 600;
             const float moneyWidth = scale * 60;
             const float hudHeight = scale * 44;
             const float padding = scale * 5;
             const float topPadding = scale * 8;
             var font = Lookup(Font.Hud);
+            
             var leftBoarder = (int)((float)ScreenSize.X / 2 - hudWidth / 2);
 
             var leftMoneyText = new TextSprite(font, "00000 $")
             {
-                Position = new Vector2(padding, topPadding)
+                Position = new Vector2(padding * 25, topPadding)
             };
+            
             var leftEpText = new TextSprite(font, "000 EP")
             {
-                Position = new Vector2(moneyWidth + padding, topPadding)
+                Position = new Vector2(moneyWidth * 2 + padding*15, topPadding)
             };
+            
             var leftText = new TextSprite(font, "000%")
             {
-                Position = new Vector2(2 * moneyWidth + padding, topPadding),
+                Position = new Vector2(hudWidth / 2 - 10 * padding, topPadding),
                 TintColor = Color.DarkBlue
             };
+            
             var rightMoneyText = new TextSprite(font, "00000$")
             {
-                Position = new Vector2(hudWidth - padding, topPadding)
+                Position = new Vector2(hudWidth - padding * 26, topPadding)
             };
             rightMoneyText.SetOrigin(RelativePosition.TopRight);
+            
             var rightEpText = new TextSprite(font, "000 EP")
             {
-                Position = new Vector2(hudWidth - moneyWidth - padding, topPadding),
-                
+                Position = new Vector2(hudWidth - 2 * moneyWidth - padding*12, topPadding)
             };
             rightEpText.SetOrigin(RelativePosition.TopRight);
+            
             var rightText = new TextSprite(font, "000%")
             {
-                Position = new Vector2(hudWidth - 2 * moneyWidth - padding, topPadding),
+                Position = new Vector2(hudWidth / 2 + 10 * padding, topPadding),
                 TintColor = Color.DarkRed
             };
+            
             rightText.SetOrigin(RelativePosition.TopRight);
+            
             var clockText = new TextSprite(font, "00:00:00")
             {
                 Position = new Vector2(hudWidth / 2, hudHeight / 2 + topPadding)
             };
             clockText.SetOrigin(RelativePosition.CenterTop);
+            
+            var defeatedWavesByHumanText = new TextSprite(font, "00:00:00")
+            {
+                Position = new Vector2(75, topPadding)
+            };
+            defeatedWavesByHumanText.SetOrigin(RelativePosition.CenterTop);
+            
+            var defeatedWavesByComputerText = new TextSprite(font, "00:00:00")
+            {
+                Position = new Vector2(hudWidth-150, topPadding)
+            };
+            defeatedWavesByComputerText.SetOrigin(RelativePosition.CenterTop);
 
             var hudSprite = new ImageSprite(Lookup(Image.ScoreBackground));
-            hudSprite.ScaleToWidth(hudWidth);
+            hudSprite.DestinationRectangle = new Rectangle(hudSprite.Position.ToPoint()
+                , new Point((int)hudWidth,(int)hudHeight));
+            var bitcoinSpriteLeft = new ImageSprite(Lookup(Image.BitcoinLogo))
+            {
+                Position = new Vector2(padding * 25 + leftMoneyText.Width/1.7f + 4, 12)
+            };
+            bitcoinSpriteLeft.ScaleToHeight(23);
+            
+            var bitcoinSpriteRight = new ImageSprite(Lookup(Image.BitcoinLogo))
+            {
+                Position = new Vector2(hudWidth - padding * 24 - rightMoneyText.Width/1.7f, 12)
+            };
+            bitcoinSpriteRight.ScaleToHeight(23);
+            
             var sprite = new CompositeSprite
             {
-                Children = { hudSprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText },
+                Children = { hudSprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText
+                    , clockText, defeatedWavesByHumanText, defeatedWavesByComputerText, bitcoinSpriteLeft, bitcoinSpriteRight },
                 Position = new Vector2(leftBoarder, 0)
             };
-            return (sprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText);
+            return (sprite, leftText, leftMoneyText, leftEpText, rightText, rightMoneyText, rightEpText, clockText
+                , defeatedWavesByHumanText, defeatedWavesByComputerText);
         }
 
         #region Troupes
@@ -396,7 +650,7 @@ namespace KernelPanic
             }
 
             // Fill rows in between.
-            for (var row = thickness; row < size.Y - thickness; ++row)
+            for (var row = thickness; row < size.Y - thickness - 1; ++row)
             {
                 // Fill the left and right border.
                 for (var col = 0; col < thickness; ++col)

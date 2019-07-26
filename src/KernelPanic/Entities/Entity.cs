@@ -74,35 +74,27 @@ namespace KernelPanic.Entities
         /// <summary>
         /// If this flag is <c>true</c> this entity should be removed from the <see cref="EntityGraph"/>.
         /// </summary>
-        public bool WantsRemoval { get; protected set; }
+        public bool WantsRemoval { get; set; }
 
         public bool Selected { get; set; }
 
         public abstract Rectangle Bounds { get; }
 
-        internal virtual void AttackBase(InputManager inputManager, PositionProvider positionProvider)
-        {
-            // do nothing (Troupes walk to the base anyways
-        }
+        public abstract void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime);
 
-        public virtual void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        internal void UpdateOverlay(Player owner, InputManager inputManager, GameTime gameTime)
         {
-            if (!Selected)
-                return;
-
-            var owner = positionProvider.Owner[this];
             if (mStoredActions == null)
             {
                 mStoredActions = Actions(owner).ToArray();
                 mDrawActions = owner.Select(true, false);
             }
 
-            if (mDrawActions)
-            {
-                PositionActions(action => action.Update(inputManager, gameTime));
-                UpdateInformation();
-            }
+            if (!mDrawActions)
+                return;
 
+            PositionActions(action => action.Update(inputManager, gameTime));
+            UpdateInformation();
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)

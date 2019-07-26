@@ -34,6 +34,8 @@ namespace KernelPanic
 
             UpdatePosition(input);
             CheckPath();
+            if (mPlayer.Bitcoins < Building.Price)
+                Building.State = BuildingState.Invalid;
 
             if (!input.MousePressed(InputManager.MouseButton.Left))
                 return;
@@ -60,6 +62,9 @@ namespace KernelPanic
 
         private void SetPosition(TileIndex tile)
         {
+            if (!Lane.Grid.Contains(tile))
+                return;
+
             var tilePoint = Lane.Grid.GetTile(tile).Position;
             if (Lane.EntityGraph.EntitiesAt(tilePoint).Any(entity => entity is Building))
             {
@@ -82,7 +87,9 @@ namespace KernelPanic
             buildingMatrix.Raster(Lane.EntityGraph.Entities<Building>(), b => b.GetType() != typeof(ShockField));
             buildingMatrix.Raster(new[] {Building}, b => b.GetType() != typeof(ShockField));
             var pathFinder = new AStar(Lane.SpawnPoints[0], Lane.TargetPoints, buildingMatrix);
-            Building.State = pathFinder.CalculatePath() ? BuildingState.Valid : BuildingState.Invalid;
+            var baseBuffer = Lane.Grid.LaneSide == Lane.Side.Left ? Lane.Grid.LaneRectangle.Width - mPosition?.Column - 2 > 0
+                : mPosition?.Column - 2 > 0;
+            Building.State = (pathFinder.CalculatePath() && baseBuffer) ? BuildingState.Valid : BuildingState.Invalid;
         }
 
         private bool TryPurchase()

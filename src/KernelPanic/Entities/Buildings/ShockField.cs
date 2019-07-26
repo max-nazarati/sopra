@@ -11,14 +11,10 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class ShockField : Tower
     {
-        private List<Unit> mDamagedUnits;
-
         internal ShockField(SpriteManager spriteManager)
-            : base(100, 1, 2, 0,TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager)
+            : base(50, 0, 2, 0,TimeSpan.FromSeconds(3), spriteManager.CreateShockField(), spriteManager)
         {
-            // The fire timer is not used by the Shockfield.
-            mDamagedUnits = new List<Unit>();
-            FireTimer.Enabled = false;
+            FireTimer.Enabled = true;
         }
 
         internal override void UpdateInformation()
@@ -27,24 +23,18 @@ namespace KernelPanic.Entities.Buildings
             mInfoText.Text += $"\nStärke: {Damage}";
         }
 
-        protected override void CompleteClone()
-        {
-            base.CompleteClone();
-            mDamagedUnits = new List<Unit>();
-        }
-
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             base.Update(positionProvider, inputManager, gameTime);
+            if (FireTimer.RemainingCooldown > TimeSpan.Zero)
+                return;
 
-            foreach(var unit in positionProvider.NearEntities<Unit>(this, Radius))
+            FireTimer.Reset();
+            EventCenter.Default.Send(Event.ProjectileShot(this));
+
+            foreach(var unit in positionProvider.EntitiesAt<Unit>(this))
             {
-                if (!Bounds.Intersects(unit.Bounds) || mDamagedUnits.Contains(unit))
-                    continue;
-
                 unit.DealDamage(Damage, positionProvider);
-                EventCenter.Default.Send(Event.ProjectileShot(this));
-                mDamagedUnits.Add(unit);
             }
         }
     }

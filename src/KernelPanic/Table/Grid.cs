@@ -15,7 +15,7 @@ namespace KernelPanic.Table
         internal Lane.Side LaneSide { get; }
         internal Rectangle LaneRectangle { get; }
 
-        private Rectangle TileCutout => new Rectangle(
+        internal Rectangle TileCutout => new Rectangle(
             LaneSide == Lane.Side.Left ? LaneWidthInTiles : 0,
             LaneWidthInTiles,
             LaneRectangle.Width - LaneWidthInTiles,
@@ -55,22 +55,22 @@ namespace KernelPanic.Table
             LaneRectangle = laneBounds;
             LaneSide = laneSide;
 
-            var tile = CreateTile(sprites);
-            var mainPart = new PatternSprite(tile, LaneRectangle.Height, LaneWidthInTiles);
+            var mainPart = sprites.CreateLaneMiddle(LaneWidthInTiles, LaneRectangle.Height, KachelSize);
+            mainPart.Y = LaneWidthInTiles * KachelSize;
 
-            var topPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
-            var bottomPart = new PatternSprite(tile, LaneWidthInTiles, LaneRectangle.Width - LaneWidthInTiles);
-            bottomPart.Y = mainPart.Height - bottomPart.Height;
+            var topPart = sprites.CreateLaneTop(laneSide, LaneWidthInTiles, LaneRectangle.Width, KachelSize);
+            var bottomPart = sprites.CreateLaneBottom(laneSide, LaneWidthInTiles, LaneRectangle.Width, KachelSize);
+            bottomPart.Y = (LaneRectangle.Height - LaneWidthInTiles)*KachelSize;
 
             switch (laneSide)
             {
                 case Lane.Side.Left:
-                    topPart.X = mainPart.Width;
-                    bottomPart.X = mainPart.Width;
+                    topPart.X = 0;
+                    bottomPart.X = 0;
                     break;
 
                 case Lane.Side.Right:
-                    mainPart.X = topPart.Width;
+                    mainPart.X = (LaneRectangle.Width-LaneWidthInTiles)*KachelSize;
                     break;
 
                 default:
@@ -120,9 +120,9 @@ namespace KernelPanic.Table
             return null;
         }
 
-        internal TileIndex? TileFromWorldPoint(Vector2 point, int subTileCount = 1)
+        internal TileIndex? TileFromWorldPoint(Vector2 point, int subTileCount = 1, bool cutoutAllowed = false)
         {
-            if (!Contains(point))
+            if (!Contains(point, cutoutAllowed))
                 return null;
 
             var subTileSize = (float) KachelSize / subTileCount;
@@ -133,10 +133,11 @@ namespace KernelPanic.Table
         /// Tests if the given <paramref name="point"/> lies in this grid.
         /// </summary>
         /// <param name="point">The point to test for.</param>
+        /// <param name="cutoutAllowed">do we want to allow to search in the cutout.</param>
         /// <returns><c>true</c> if the point is inside, <c>false</c> otherwise.</returns>
-        internal bool Contains(Vector2 point)
+        internal bool Contains(Vector2 point, bool cutoutAllowed = false)
         {
-            return Bounds.Contains(point) && !PixelCutout.Contains(point);
+            return Bounds.Contains(point) && (cutoutAllowed || !PixelCutout.Contains(point));
         }
 
         /// <summary>

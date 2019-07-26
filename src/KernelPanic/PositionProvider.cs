@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using KernelPanic.Data;
@@ -20,6 +21,7 @@ namespace KernelPanic
         internal Owner Owner { get; }
         internal Base Target { get; }
         internal TroupePathData TroupeData { get; }
+        private readonly Hashtable mCache = new Hashtable(); 
 
         internal PositionProvider(Base target,
             Owner owner,
@@ -37,12 +39,6 @@ namespace KernelPanic
         }
 
         #region Position Calculations
-
-        internal Rectangle TileBounds(Point tile)
-        {
-            var (position, size) = Grid.GetTile(new TileIndex(tile, 1));
-            return Bounds.ContainingRectangle(position, new Vector2(size));
-        }
 
         internal TileIndex RequireTile(Entity entity)
         {
@@ -88,6 +84,17 @@ namespace KernelPanic
             return mEntities.QuadTree.EntitiesAt(entity.Bounds).OfType<T>();
         }
 
+        internal List<IGameObject> EntitiesAt(Rectangle rectangle)
+        {
+            if (mCache[(rectangle.X / 25, rectangle.Y / 25)] is List<IGameObject> enumerable)
+            {
+                return enumerable;
+            }
+            var result = mEntities.QuadTree.EntitiesAt(rectangle).ToList();
+            mCache[(rectangle.X / 25, rectangle.Y / 25)] = result;
+            return result;
+        }
+
         internal bool HasEntityAt(Vector2 point, Func<IGameObject, bool> predicate = null)
         {
             return mEntities.HasEntityAt(point, predicate);
@@ -99,11 +106,13 @@ namespace KernelPanic
 
         internal AStar MakePathFinding(Hero hero, Point[] target)
         {
-            var start = RequireTile(hero).ToPoint();
+            if (!(Grid.TileFromWorldPoint(hero.Sprite.Position) is TileIndex start))
+                return new AStar();
+
             var otherHeroes = mEntities.AllEntities
                 .Where(entity => entity is Hero && entity != hero)
-                .Select(entity => RequireTile(entity).ToPoint());
-            var aStar = new AStar(start, target, TroupeData.BuildingMatrix, new HashSet<Point>(otherHeroes));
+                .SelectMaybe(entity => Grid.TileFromWorldPoint(entity.Sprite.Position)?.ToPoint());
+            var aStar = new AStar(start.ToPoint(), target, TroupeData.BuildingMatrix, new HashSet<Point>(otherHeroes));
             aStar.CalculatePath();
             return aStar;
         }

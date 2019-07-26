@@ -1,11 +1,15 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Projectiles;
+using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using KernelPanic.Table;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities.Units
 {
@@ -13,6 +17,7 @@ namespace KernelPanic.Entities.Units
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class Bluescreen : Hero
     {
+        [JsonProperty]
         private readonly int mAbilityRange;
         private readonly ImageSprite mIndicatorRange;
         private readonly ImageSprite mIndicatorTarget;
@@ -20,43 +25,35 @@ namespace KernelPanic.Entities.Units
         private Tower mAbilityTargetOne;
         private Tower mAbilityTargetTwo;
 
-        private Emp[] mEmps;
-
         private static Point HitBoxSize => new Point(64, 64);
 
-        #region Upgrades
-        internal bool TargetsTwoTower { private get; set; }
         private const double EmpDuration = 5;
-        internal float mEmpDurationAmplifier = 1;
-        
+
+        #region Upgrades
+
+        [JsonProperty] internal bool TargetsTwoTower { private get; set; }
+        [JsonProperty] internal float EmpDurationAmplifier { get; set; } = 1;
+
         #endregion
         
         internal Bluescreen(SpriteManager spriteManager)
             : base(50, 6, 15, 0, TimeSpan.FromSeconds(1), HitBoxSize, spriteManager.CreateBluescreen(), spriteManager)
         {
-            mAbilityRange = 1000;
+            mAbilityRange = 500;
             mIndicatorRange = spriteManager.CreateEmpIndicatorRange(mAbilityRange);
             mIndicatorTarget = spriteManager.CreateEmpIndicatorTarget();
             mEmpSprite = spriteManager.CreateEmp();
-
-            mEmps = new Emp[2];
         }
         
         protected override void CompleteClone()
         {
             base.CompleteClone();
-            mEmps = new Emp[2];
             Cooldown = new CooldownComponent(Cooldown.Cooldown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
         }
 
         #region Ability 
 
-        private static double Distance(Vector2 a, Vector2 b)
-        {
-            return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
-        }
-            
         protected override void IndicateAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // find nearest Tower in Range
@@ -66,7 +63,7 @@ namespace KernelPanic.Entities.Units
             double secondShortestDistance = mAbilityRange + 2;
             foreach (var tower in positionProvider.NearEntities<Tower>(Sprite.Position, mAbilityRange))
             {
-                var distance = Distance(tower.Sprite.Position, Sprite.Position);
+                var distance = Vector2.Distance(tower.Sprite.Position, Sprite.Position);
                 if (distance < shortestDistance)
                 {
                     // shift the old closest turret to the second place
@@ -86,56 +83,96 @@ namespace KernelPanic.Entities.Units
             }
 
             base.IndicateAbility(positionProvider, inputManager);
-            
         }
 
         protected override void StartAbility(PositionProvider positionProvider, InputManager inputManager)
         {
             // debug
             base.StartAbility(positionProvider, inputManager);
-            
             if (mAbilityTargetOne is Tower first)
             {
-                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite);
+                var empOne = new Emp(first, TimeSpan.FromSeconds(EmpDuration * EmpDurationAmplifier), mEmpSprite.Clone());
                 positionProvider.AddProjectile(empOne);
+                EventCenter.Default.Send(Event.HeroAbility(this));
             }
 
             if (mAbilityTargetTwo is Tower second && TargetsTwoTower)
             {
-                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * mEmpDurationAmplifier), mEmpSprite);
+                var empTwo = new Emp(second, TimeSpan.FromSeconds(EmpDuration * EmpDurationAmplifier), mEmpSprite.Clone());
                 positionProvider.AddProjectile(empTwo);
             }
         }
 
-        protected override void ContinueAbility(GameTime gameTime)
+        protected override void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
         {
             AbilityStatus = AbilityState.Finished;
         }
-        
-        protected override void FinishAbility()
+
+        protected override void UpdateCooldown(GameTime gameTime, PositionProvider positionProvider)
         {
-            base.FinishAbility();
-            // Projectiles in mEmp will clear themselves and should not be deleted here
+            var currTile = positionProvider.RequireTile(this);
+            if (InBase(currTile, positionProvider))
+            {
+                base.UpdateCooldown(gameTime, positionProvider);
+            }
         }
-        
+
         #endregion Ability
 
-        #region Update
-
-        public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
+        private static bool InBase(TileIndex tile, PositionProvider positionProvider)
         {
-            base.Update(positionProvider, inputManager, gameTime);
-            if (mEmps[0] is Emp empOne)
+            var inBase = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - tile.Column <= 2
+                                                                            && tile.Row < Grid.LaneWidthInTiles :
+                tile.Column <= 1 && tile.Row > Grid.LaneWidthInTiles;
+            return inBase;
+        }
+
+        protected override void AutonomousAttack(InputManager inputManager, PositionProvider positionProvider)
+        {
+            var currTile = positionProvider.RequireTile(this);
+
+            if (!Cooldown.Ready)
             {
-                empOne.Update(positionProvider, inputManager, gameTime);
+                // wait for the ability to be ready again
+                if (InBase(currTile, positionProvider))
+                {
+                    return;
+                }
+
+                // walk to the own base to refill
+                var basePositionX = positionProvider.Grid.LaneSide == Lane.Side.Left ? positionProvider.Grid.LaneRectangle.Width - 2 : 1;
+                var basePositionY = positionProvider.Grid.LaneSide == Lane.Side.Left ? Grid.LaneWidthInTiles - 1 : 1;
+                var translation = positionProvider.Grid.LaneSide == Lane.Side.Left ? -1 : 1;
+                var basePosition = new Point[Grid.LaneWidthInTiles];
+                for (var i = 0; i < Grid.LaneWidthInTiles; i++)
+                {
+                    basePosition[i] = new Point(basePositionX, basePositionY + i * translation);
+                }
+                mAStar = positionProvider.MakePathFinding(this, basePosition);
+                if (mAStar.Path == null)
+                {
+                    return;
+                }
+                mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
+                ShouldMove = true;
+
             }
-            if (mEmps[1] is Emp empTwo)
+            else
             {
-                empTwo.Update(positionProvider, inputManager, gameTime);
+                if (positionProvider.NearEntities<Tower>(this, mAbilityRange - 100).Any())
+                {
+                    IndicateAbility(positionProvider, inputManager);
+                    StartAbility(positionProvider, inputManager);
+                }
+                else
+                {
+                    base.AutonomousAttack(inputManager, positionProvider);
+                }
+                // Other strategy: search for a tower on adjacent tiles
+                // var neighbours = GetNeighbours(positionProvider);
             }
         }
 
-        #endregion
         
         #region Draw
         
@@ -145,16 +182,6 @@ namespace KernelPanic.Entities.Units
             if (AbilityStatus == AbilityState.Indicating)
             {
                 DrawIndicator(spriteBatch, gameTime);
-            }
-            
-            // Drawing the Emps needs to get moved, so the emp doesnt die together with the bluescreen
-            if (mEmps[0] is Emp empOne)
-            {
-                empOne.Draw(spriteBatch, gameTime);
-            }
-            if (mEmps[1] is Emp empTwo)
-            {
-                empTwo.Draw(spriteBatch, gameTime);
             }
         }
 

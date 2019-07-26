@@ -36,10 +36,11 @@ namespace KernelPanic.Upgrades
 
             // Tier 3 Upgrades.
             BeginningTier3,
-            CdBoomerang = BeginningTier3,
+            IncreaseSettingsHeal2 = BeginningTier3,
             IncreaseGsNokia,
             IncreaseGsFirefox,
             MoreTrojanChildren1,
+            IncreaseSettingsArea2, // TODO: was 5.3
 
             // Tier 4
             BeginningTier4,
@@ -51,10 +52,11 @@ namespace KernelPanic.Upgrades
 
             // Tier 5
             BeginningTier5,
-            EmpTwoTargets = BeginningTier5,
+            CdBoomerang = BeginningTier5,
+            EmpTwoTargets,
             AdditionalFirefox2,
-            IncreaseSettingsArea2,
-            IncreaseSettingsHeal2,
+            DoubleClick, 
+            IncreaseWifi,
 
             EndOfUpgrades
         }
@@ -109,34 +111,39 @@ namespace KernelPanic.Upgrades
                 case Id.IncreaseBitcoins:
                     return "+10% mehr Bitcoin";
 
-                case Id.CdBoomerang:
-                    return "CD als Boomerang";
+                case Id.IncreaseSettingsHeal2:
+                    return "+10% Heilrate von Settings";
                 case Id.IncreaseGsNokia:
                     return "+40% GS bei Nokia";
                 case Id.IncreaseGsFirefox:
                     return "+10% GS bei Firefox";
                 case Id.MoreTrojanChildren1:
                     return "+5 Einheiten bei Trojaner";
+                case Id.IncreaseSettingsArea2:
+                    return "+10% Bereich von Settings"; // TODO
 
                 case Id.EmpDuration:
                     return "+40% Dauer EMP";
                 case Id.AdditionalFirefox1:
                     return "+1 Firefox verfügbar";
                 case Id.IncreaseSettingsArea1:
-                    return "+5% Einzugsbereich von Settings";
+                    return "+5% Bereich von Settings";
                 case Id.IncreaseSettingsHeal1:
                     return "+5% Heilrate von Settings";
                 case Id.MoreTrojanChildren2:
                     return "+10 Einheiten bei Trojaner";
 
+                case Id.CdBoomerang:
+                    return "CD als Boomerang";
                 case Id.EmpTwoTargets:
                     return "Bluescreen trifft 2 Türme";
                 case Id.AdditionalFirefox2:
                     return "+1 Firefox verfügbar";
-                case Id.IncreaseSettingsArea2:
-                    return "+10% Einzugsbereich von Settings";
-                case Id.IncreaseSettingsHeal2:
-                    return "+10% Heilrate von Settings";
+                case Id.DoubleClick:
+                    return "Doppel-Klick Mäuse";
+                case Id.IncreaseWifi:
+                    return "Eduroam 2.0";
+
 
                 case Id.Invalid:
                     goto default;
@@ -149,23 +156,27 @@ namespace KernelPanic.Upgrades
 
         internal void Apply(Entity entity)
         {
-            var kind = Kind;
-            void NotImplemented() =>
-                Console.WriteLine("Applying Upgrade " + kind + " to " + entity + " – not implemented");
-
             switch (Kind)
             {
                 case Id.IncreaseLp1:
                 {
                     if (entity is Unit unit)
-                        unit.MaximumLife = (int) (unit.MaximumLife * 1.05);
+                    {
+                        if (unit.RemainingLife == unit.MaximumLife)
+                            unit.RemainingLife = (int)(unit.MaximumLife * 1.05);
+                        unit.MaximumLife = (int)(unit.MaximumLife * 1.05);
+                    }
                     break;
                 }
 
                 case Id.IncreaseLp2:
                 {
                     if (entity is Unit unit)
-                        unit.MaximumLife = (int) (unit.MaximumLife * 1.10);
+                    {
+                        if (unit.RemainingLife == unit.MaximumLife)
+                            unit.RemainingLife = (int)(unit.MaximumLife * 1.10);
+                        unit.MaximumLife = (int)(unit.MaximumLife * 1.10);
+                    }
                     break;
                 }
 
@@ -209,11 +220,6 @@ namespace KernelPanic.Upgrades
                     break;
                 }
 
-                case Id.CdBoomerang:
-                    if (entity is CdThrower cdThrower)
-                        cdThrower.ShootsBoomerang = true;
-                    break;
-
                 case Id.IncreaseGsNokia:
                     if (entity is Nokia nokia)
                         nokia.Speed *= 1.40f;
@@ -234,20 +240,23 @@ namespace KernelPanic.Upgrades
                 case Id.EmpDuration:
                 {
                     if (entity is Bluescreen bluescreen)
-                        bluescreen.mEmpDurationAmplifier += 0.4f;
+                        bluescreen.EmpDurationAmplifier += 0.4f;
                     break;
                 }
                 
                 case Id.IncreaseSettingsArea1:
                 {
                     if (entity is Settings settings)
-                        settings.AmplifyAbilityRange(0.5f);
+                        settings.AmplifyAbilityRange(1.5f);
                     break;
                 }
                     
                 case Id.IncreaseSettingsHeal1:
-                    NotImplemented();
+                {
+                    if (entity is Settings settings)
+                        settings.DecreaseHealCooldown(0.95f);
                     break;
+                }
 
                 case Id.MoreTrojanChildren2:
                 {
@@ -255,6 +264,11 @@ namespace KernelPanic.Upgrades
                         trojan.ChildCount += 10;
                     break;
                 }
+
+                case Id.CdBoomerang:
+                    if (entity is CdThrower cdThrower)
+                        cdThrower.ShootsBoomerang = true;
+                    break;
 
                 case Id.EmpTwoTargets:
                 {
@@ -271,8 +285,23 @@ namespace KernelPanic.Upgrades
                 }
 
                 case Id.IncreaseSettingsHeal2:
-                    NotImplemented();
+                {
+                    if (entity is Settings settings)
+                        settings.DecreaseHealCooldown(0.90f);
                     break;
+                }
+                case Id.DoubleClick:
+                {
+                    if (entity is CursorShooter cursor)
+                        cursor.ActivateDoubleClick();
+                    break;
+                }
+                case Id.IncreaseWifi:
+                {
+                    if (entity is WifiRouter router)
+                        router.IncreaseWaveCount();
+                    break;
+                }
 
                 case Id.IncreaseBitcoins:
                 case Id.AdditionalFirefox1:

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Accord.IO;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
 using KernelPanic.Players;
@@ -13,6 +14,9 @@ namespace KernelPanic.Waves
 
         [JsonProperty]
         internal PlayerIndexed<List<Troupe>> Troupes { get; }
+
+        internal int OriginalTroupeCountA { get; }
+        internal int OriginalTroupeCountB { get; }
 
         /// <summary>
         /// A <see cref="Wave"/> is unbalanced, if one player doesn't have any troupes.
@@ -30,6 +34,8 @@ namespace KernelPanic.Waves
         {
             Index = index;
             Troupes = troupes;
+            OriginalTroupeCountA = Troupes.A.Count;
+            OriginalTroupeCountB = Troupes.B.Count;
             Unbalanced = troupes.A.Count == 0 || troupes.B.Count == 0;
         }
 
@@ -61,5 +67,9 @@ namespace KernelPanic.Waves
         /// Returns <c>true</c> if neither player has <see cref="Unit"/>s remaining in this <see cref="Wave"/>.
         /// </summary>
         internal bool FullyDefeated => Troupes.A.Count == 0 && Troupes.B.Count == 0;
+
+        // True, if human player fully defeated the hostile wave
+        internal bool FullyDefeatedByHuman => Troupes.B.Count == 0;
+        internal bool FullyDefeatedByComputer => Troupes.A.Count == 0;
     }
 }

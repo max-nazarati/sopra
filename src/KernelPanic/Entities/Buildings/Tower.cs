@@ -16,12 +16,12 @@ namespace KernelPanic.Entities.Buildings
     {
         [DataMember] internal float Radius { get; set; }
         [DataMember] internal int Damage { get; set; }
-        
+
         [DataMember] internal int Speed { get; set; }
         [DataMember] internal CooldownComponent FireTimer { get; private set; }
         internal Action<Projectile> FireAction { get; set; }
 
-        protected Sprite mRadiusSprite;
+        private Sprite RadiusSprite { get; set; }
 
         internal Tower(int price,
             float radius,
@@ -37,37 +37,43 @@ namespace KernelPanic.Entities.Buildings
             Speed = speed;
             sprite.ScaleToHeight(64);
             sprite.SetOrigin(RelativePosition.Center);
-
-            mRadiusSprite = spriteManager.CreateTowerRadiusIndicator(Radius);
+            RadiusSprite = CreateRadiusSprite();
         }
 
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {
-            mRadiusSprite = SpriteManager.CreateTowerRadiusIndicator(Radius);
+
+            RadiusSprite = CreateRadiusSprite();
+        }
+
+        private Sprite CreateRadiusSprite()
+        {
+            return Radius > 0 ? SpriteManager.CreateTowerRadiusIndicator(Radius) : null;
         }
 
         protected override void CompleteClone()
         {
             base.CompleteClone();
-            mRadiusSprite = mRadiusSprite.Clone();
+            RadiusSprite = RadiusSprite?.Clone();
             FireTimer = new CooldownComponent(FireTimer.Cooldown, !FireTimer.Ready) { Enabled = FireTimer.Enabled };
         }
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            base.Update(positionProvider, inputManager, gameTime);
-
             if (State == BuildingState.Active)
                 FireTimer.Update(gameTime);
         }
 
         internal override void DrawActions(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            base.DrawActions(spriteBatch, gameTime);
+            if (RadiusSprite != null)
+            {
+                RadiusSprite.Position = Sprite.Position;
+                RadiusSprite.Draw(spriteBatch, gameTime);
+            }
 
-            mRadiusSprite.Position = Sprite.Position;
-            mRadiusSprite.Draw(spriteBatch, gameTime);
+            base.DrawActions(spriteBatch, gameTime);
         }
         
         internal void HitByEmp()

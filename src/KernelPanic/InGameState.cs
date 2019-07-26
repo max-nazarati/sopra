@@ -21,6 +21,7 @@ namespace KernelPanic
         private readonly BuildingBuyer mBuildingBuyer;
         private readonly InGameOverlay mHud;
         private readonly AchievementPool mAchievementPool;
+        private bool mIsTechDemo;
 
         internal int SaveSlot { get; }
 
@@ -34,9 +35,8 @@ namespace KernelPanic
             SaveSlot = saveSlot;
 
             var unitMenu = UnitBuyingMenu.Create(mBoard.WaveManager, gameStateManager.Sprite);
-            var buildingMenu = BuildingBuyingMenu.Create(mBuildingBuyer, gameStateManager.Sprite);
-            mHud = new InGameOverlay(mBoard.WaveManager.Players, unitMenu, buildingMenu, mSelectionManager
-                , gameStateManager, storage?.GameTime ?? TimeSpan.Zero, Camera);
+            var buildingMenu = BuildingBuyingMenu.Create(mBuildingBuyer, gameStateManager.Sprite, mBoard.PlayerA);
+            mHud = new InGameOverlay(mBoard.WaveManager, unitMenu, buildingMenu, gameStateManager, storage?.GameTime ?? TimeSpan.Zero, Camera);
 
             mBoard.PlayerB.InitializePlanners(
                 unitMenu.BuyingActions, // TODO implement this, just added it like this so i can build :)
@@ -53,7 +53,7 @@ namespace KernelPanic
 
         internal static void PushTechDemo(GameStateManager gameStateManager)
         {
-            var game = new InGameState(null, 5, gameStateManager);
+            var game = new InGameState(null, 4, gameStateManager);
             game.InitializeTechDemo();
             gameStateManager.Restart(game);
             gameStateManager.Push(game.mHud);
@@ -63,23 +63,34 @@ namespace KernelPanic
         {
             base.Dispose(disposing);
 
-            if (disposing)
-            {
+            if (!disposing)
+                return;
+
+            mBoard.Dispose();
+
+            if (mAchievementPool != null)
                 EventCenter.Default.Send(Event.CloseAchievementPool(mAchievementPool));
-            }
+            if (mIsTechDemo)
+                EventCenter.Default.Send(Event.TechDemoClosed());
         }
 
         private void InitializeTechDemo()
         {
+            mIsTechDemo = true;
+            EventCenter.Default.Send(Event.TechDemoStarted());
+
             foreach (var kv in mHud.UnitBuyingMenu.BuyingActions)
             {
+                mBoard.PlayerA.Base.Power = 9999;
+                mBoard.PlayerB.Base.Power = 9999;
+                mBoard.PlayerA.ExperiencePoints = 9999;
                 if (typeof(Hero).IsAssignableFrom(kv.Key))
                 {
                     // Skip heroes.
                     continue;
                 }
 
-                for (var i = 0; i < 100; i++)
+                for (var i = 0; i < 200; i++)
                 {
                     mBoard.PlayerA.Bitcoins = mBoard.PlayerB.Bitcoins = 9999;
                     kv.Value.TryPurchase(mBoard.PlayerA);
@@ -103,7 +114,7 @@ namespace KernelPanic
             mSelectionManager.Update(inputManager, mBuildingBuyer.Building != null);
             mBuildingBuyer.Update(inputManager);
 
-            mBoard.Update(gameTime, inputManager);
+            mBoard.Update(mSelectionManager, gameTime, inputManager);
             var gameState = mBoard.CheckGameState();
             if (gameState == Board.GameState.Playing)
                 return;
@@ -129,7 +140,7 @@ namespace KernelPanic
         {
             Board = mBoard,
             GameTime = mHud.ScoreOverlay.Time,
-            AchievementData = mAchievementPool.AchievementData
+            AchievementData = mAchievementPool?.AchievementData
         };
 
         #endregion

@@ -19,6 +19,7 @@ namespace KernelPanic.PathPlanning
         private readonly bool mHasBorder;
 
         internal int SubTileCount { get; }
+        internal bool WasUpdated { get; private set; }
 
         #endregion
 
@@ -129,6 +130,7 @@ namespace KernelPanic.PathPlanning
                     column++;
                 }
                 mObstacles[row, column] = value;
+                WasUpdated = true;
             }
         }
 
@@ -158,6 +160,11 @@ namespace KernelPanic.PathPlanning
                     throw new InvalidOperationException($"Element {element} is outside the bounds");
                 }
             }
+        }
+
+        internal void ResetUpdatedStatus()
+        {
+            WasUpdated = false;
         }
 
         #endregion

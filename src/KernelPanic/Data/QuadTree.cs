@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using KernelPanic.Entities;
 using Microsoft.Xna.Framework;
 
 namespace KernelPanic.Data
@@ -44,7 +46,10 @@ namespace KernelPanic.Data
         /// <returns>A new <see cref="QuadTree{T}"/></returns>
         internal static QuadTree<T> Create<TInitial>(ICollection<TInitial> elements) where TInitial : T
         {
-            return elements.Count == 0 ? Empty : new QuadTree<T>(elements.Union()) {elements.Cast<T>()};
+            var tree = elements.Count == 0 ? Empty : new QuadTree<T>(elements.Union());
+            tree.Add(elements.Cast<T>());
+            
+            return tree;
         }
 
         /// <summary>
@@ -141,57 +146,32 @@ namespace KernelPanic.Data
         /// </summary>
         /// <param name="entity">The value to be added.</param>
         /// <exception cref="InvalidOperationException">If <paramref name="entity"/> is outside this <see cref="QuadTree{T}"/>'s bounds.</exception>
-        public void Add(T entity)
+        public bool Add(T entity)
         {
             if (!mBounds.Contains(entity.Bounds))
-                throw new InvalidOperationException(
-                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}: {entity}");
+            {
+                /* throw new InvalidOperationException(
+                    $"Can't add {entity.Bounds} outside the quad-tree's bounds {mBounds}: {entity}");*/
+                return false;
+            }
 
             Count++;
 
             if (mChildren != null && CalculatePosition(entity) is SquareIndex index)
             {
                 mChildren[(int) index].Add(entity);
-                return;
+                return true;
             }
 
             mObjects.Add(entity);
-
-            if (mLevel >= MaximumDepth || mObjects.Count <= MaxObjects || mChildren != null)
-            {
-                // Don't split this level up if either
-                //    * the maximum depth is reached
-                //    * the maximum number of objects per level aren't reached
-                //    * this level is already split.
-                return;
-            }
-                
-            Split();
-            
-            // Try to move all objects one level down.
-            var indicesToRemove = new List<int>(mObjects.Count);
-            for (var i = 0; i < mObjects.Count; i++)
-            {
-                var value = mObjects[i];
-                if (!(CalculatePosition(value) is SquareIndex square))
-                    continue;
-
-                mChildren[(int) square].Add(value);
-                indicesToRemove.Add(i);
-            }
-
-            for (var i = indicesToRemove.Count - 1; i >= 0; i--)
-            {
-                mObjects.RemoveAt(indicesToRemove[i]);
-            }
+            SplitIfApplicable();
+            return true;
         }
 
-        /*internal*/ private void Add(IEnumerable<T> elements)
+        /*internal*/ private IEnumerable<T> Add(IEnumerable<T> elements)
         {
-            foreach (var element in elements)
-            {
-                Add(element);
-            }
+            // We force the to list so buttons are pressAble (lazy stuff)
+            return elements.Where(element => !Add(element)).ToList();
         }
 
         #endregion
@@ -203,21 +183,32 @@ namespace KernelPanic.Data
         /// given, all objects are removed for which <c>true</c> is returned.
         /// </summary>
         /// <param name="removePredicate">Used to filter the objects.</param>
-        internal void Rebuild(Func<T, bool> removePredicate = null)
+        internal IEnumerable<T> Rebuild(Func<T, bool> removePredicate = null)
         {
             var sink = new List<T>();
             RebuildImpl(removePredicate, sink);
-            Add(sink);
+            var result = Add(sink);
+            Shake();
+            return result;
         }
 
         private void RebuildImpl(Func<T, bool> removePredicate, List<T> parentSink)
         {
             RebuildObjects(removePredicate, parentSink);
-            
+
             if (mChildren != null)
                 RebuildChildren(removePredicate, parentSink);
+
+            Count = mObjects.Count + (mChildren?.Sum(child => child.Count) ?? 0);
         }
 
+        /// <summary>
+        /// Filters the objects in <see cref="mObjects"/> based on the <paramref name="removePredicate"/>. Objects that
+        /// have a bound not contained in <see cref="mBounds"/> are removed from this level and added to
+        /// <paramref name="parentSink"/>.
+        /// </summary>
+        /// <param name="removePredicate">Filters the elements, may be <c>null</c>.</param>
+        /// <param name="parentSink">Container for all elements which have to move upwards.</param>
         private void RebuildObjects(Func<T, bool> removePredicate, ICollection<T> parentSink)
         {
             var bounds = mBounds;
@@ -234,6 +225,12 @@ namespace KernelPanic.Data
             Count -= removed;
         }
 
+        /// <summary>
+        /// Rebuilds all child-trees using <see cref="RebuildImpl"/>. The elements from the child-trees which didn't fit
+        /// there any more are tried to in this level.
+        /// </summary>
+        /// <param name="removePredicate">Filters the elements, may be <c>null</c>.</param>
+        /// <param name="parentSink">Container for all elements which have to move upwards.</param>
         private void RebuildChildren(Func<T, bool> removePredicate, List<T> parentSink)
         {
             var index = parentSink.Count;
@@ -246,19 +243,81 @@ namespace KernelPanic.Data
             for (var i = index; i < count; ++i)
             {
                 var value = parentSink[i];
-                if (!mBounds.Contains(value.Bounds))
+                if (Add(value))
                 {
-                    if (i != index)
-                        parentSink[index] = value;
-
-                    ++index;
                     continue;
                 }
 
-                Add(value);
+                if (i != index)
+                    parentSink[index] = value;
+
+                ++index;
             }
             
             parentSink.RemoveRange(index, count - index);
+        }
+
+        /// <summary>
+        /// Eliminate leaves.
+        /// </summary>
+        private void Shake()
+        {
+            // No children to eliminate.
+            if (mChildren == null)
+            {
+                SplitIfApplicable();
+                return;
+            }
+
+            // Recurse into the children; they have too many objects to put them all into this level.
+            if (Count >= MaxObjects)
+            {
+                // Try to move objects from this level
+                PushObjectsDown();
+            
+                foreach (var child in mChildren)
+                    child.Shake();
+                return;
+            }
+
+            // Combine all children.
+            if (mObjects.Capacity < Count)
+                mObjects.Capacity = Count;
+            mObjects.AddRange(mChildren.Flatten());
+            mChildren = null;
+        }
+
+        /// <summary>
+        /// Splits this level up into sub-levels if the parameters are met.
+        /// </summary>
+        private void SplitIfApplicable()
+        {
+            if (mLevel >= MaximumDepth || mObjects.Count <= MaxObjects || mChildren != null)
+            {
+                // Don't split this level up if either
+                //    * the maximum depth is reached
+                //    * the maximum number of objects per level aren't reached
+                //    * this level is already split.
+                return;
+            }
+
+            Split();
+            PushObjectsDown();
+        }
+
+        /// <summary>
+        /// Tries to move all objects one level down.
+        /// </summary>
+        private void PushObjectsDown()
+        {
+            mObjects.RemoveAll(value =>
+            {
+                if (!(CalculatePosition(value) is SquareIndex square))
+                    return false;
+
+                mChildren[(int) square].Add(value);
+                return true;
+            });
         }
 
         #endregion
@@ -363,12 +422,13 @@ namespace KernelPanic.Data
         /// </para>
         /// </summary>
         /// <returns>All pairs of overlapping elements.</returns>
-        internal IEnumerable<(T, T)> Overlaps()
+        internal IEnumerable<(T, T)> Overlaps(Func<T, bool> overlapPreSelector = null)
         {
-            return LocalOverlaps(Array.Empty<T>()).Concat(ChildOverlaps(mObjects));
+            return LocalOverlaps(Array.Empty<T>(), overlapPreSelector)
+                .Concat(ChildOverlaps(mObjects, overlapPreSelector));
         }
 
-        private IEnumerable<(T, T)> ChildOverlaps(IReadOnlyCollection<T> parentElements)
+        private IEnumerable<(T, T)> ChildOverlaps(IReadOnlyCollection<T> parentElements, Func<T, bool> overlapPreSelector)
         {
             if (mChildren == null)
                 return Enumerable.Empty<(T, T)>();
@@ -376,7 +436,7 @@ namespace KernelPanic.Data
             var parentElementsCount = parentElements.Count;
             var parentElementsCopy = parentElementsCount == 0 ? null : new List<T>(parentElements);
 
-            return mChildren.SelectMany(tree =>
+            return mChildren.Where(tree => tree.Count > 0).SelectMany(tree =>
             {
                 if (parentElementsCopy != null)
                 {
@@ -385,8 +445,8 @@ namespace KernelPanic.Data
                     parentElementsCopy.AddRange(tree.mObjects);
                 }
 
-                var locals = tree.LocalOverlaps(parentElements);
-                var children = tree.ChildOverlaps(parentElementsCopy ?? tree.mObjects);
+                var locals = tree.LocalOverlaps(parentElements, overlapPreSelector);
+                var children = tree.ChildOverlaps(parentElementsCopy ?? tree.mObjects, overlapPreSelector);
                 return locals.Concat(children);
             });
         }
@@ -396,12 +456,16 @@ namespace KernelPanic.Data
         /// elements in <see cref="mObjects"/> and <paramref name="parentElements"/>.
         /// </summary>
         /// <param name="parentElements">Elements from upper levels which might overlap with elements from this level.</param>
+        /// <param name="overlapPreSelector"></param>
         /// <returns>All overlaps.</returns>
-        private IEnumerable<(T, T)> LocalOverlaps(IReadOnlyCollection<T> parentElements)
+        private IEnumerable<(T, T)> LocalOverlaps(IReadOnlyCollection<T> parentElements, Func<T, bool> overlapPreSelector)
         {
             for (var i = 0; i < mObjects.Count; ++i)
             {
                 var x = mObjects[i];
+                if (overlapPreSelector != null && !overlapPreSelector(x))
+                    continue;
+
                 for (var j = i + 1; j < mObjects.Count; ++j)
                 {
                     var y = mObjects[j];

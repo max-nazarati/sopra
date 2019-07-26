@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Entities.Units;
@@ -15,6 +16,7 @@ namespace KernelPanic.ArtificialIntelligence
 {
     internal enum Feature
     {
+        // Ep = 0,
         Bitcoins = 0,
         Bug = 1,
         Virus = 2,
@@ -45,6 +47,7 @@ namespace KernelPanic.ArtificialIntelligence
         private bool mEnemyBoughtUnit;
         private bool mBaseTookDamageAi;
         private bool mNeedOffensiveUnits;
+        private CompositeDisposable mSubscriptions;
 
         // private int[] mOwnTroupeAmount;
 
@@ -59,29 +62,30 @@ namespace KernelPanic.ArtificialIntelligence
             mDefenceData[(int)Feature.Bitcoins] = bitcoins;
             var eventCenter = EventCenter.Default;
 
-            eventCenter.Subscribe(Event.Id.BoughtUnit,
+            mSubscriptions += eventCenter.Subscribe(Event.Id.BoughtUnit,
                 e =>
                 {
                     UpdateDefenceData(Event.Id.BoughtUnit, e);
                     mEnemyBoughtUnit = true;
                 },
                 e => e.IsActivePlayer(Event.Key.Buyer));
-            eventCenter.Subscribe(Event.Id.BuildingPlaced,
+            mSubscriptions += eventCenter.Subscribe(Event.Id.BuildingPlaced,
                 e => UpdateDefenceData(Event.Id.BuildingPlaced, e),
                 e => !e.IsActivePlayer(Event.Key.Buyer));
-            eventCenter.Subscribe(Event.Id.BoughtUnit,
+            mSubscriptions += eventCenter.Subscribe(Event.Id.BoughtUnit,
                 e => UpdateAttackData(Event.Id.BoughtUnit, e),
                 e => !e.IsActivePlayer(Event.Key.Buyer));
-            eventCenter.Subscribe(Event.Id.BuildingPlaced,
+            mSubscriptions += eventCenter.Subscribe(Event.Id.BuildingPlaced,
                 e =>
                 {
                     UpdateAttackData(Event.Id.BuildingPlaced, e);
                     mNeedOffensiveUnits = true;
                 },
                 e => e.IsActivePlayer(Event.Key.Buyer));
-            eventCenter.Subscribe(Event.Id.DamagedBase,
+            mSubscriptions += eventCenter.Subscribe(Event.Id.DamagedBase,
                 e => mBaseTookDamageAi = true,
                 e => !e.IsActivePlayer(Event.Key.Defender));
+
             // mOwnTroupeAmount = new int[5]; // amount of different troupes in the game       
             SetData();
         }
@@ -276,7 +280,7 @@ namespace KernelPanic.ArtificialIntelligence
             var numberGenerator = new Random();
             var number = numberGenerator.Next(0, 500);
             if (number == 0) mAttackPlanner.Update(mAttackData, gameTime);
-            if (number == 1) mDefencePlanner.BuyRandomTower(gameTime);
+            if (number == 1) mDefencePlanner.BuyRandomTower();
         }
 
         public void Update(GameTime gameTime)
@@ -291,11 +295,11 @@ namespace KernelPanic.ArtificialIntelligence
             SetData();
             
             if (mNeedOffensiveUnits) mAttackPlanner.Update(mAttackData, gameTime);
-            if (mEnemyBoughtUnit) mDefencePlanner.Update(mDefenceData, gameTime);
+            if (mEnemyBoughtUnit) mDefencePlanner.Update(mDefenceData);
             if (mBaseTookDamageAi)
             {
-                mDefencePlanner.Update(mDefenceData, gameTime);
-                mDefencePlanner.BuyRandomTower(gameTime);
+                mDefencePlanner.Update(mDefenceData);
+                mDefencePlanner.BuyRandomTower();
             }
             mUpgradePlanner.Update();
             mEnemyBoughtUnit = false;
@@ -307,7 +311,17 @@ namespace KernelPanic.ArtificialIntelligence
 
         public void Dispose()
         {
-            // TODO
+            mSubscriptions.Dispose();
         }
+
+        internal override void ApplyUpgrades(Entity entity)
+        {
+            base.ApplyUpgrades(entity);
+            if (entity is Hero hero)
+            {
+                hero.StrategyStatus = Hero.Strategy.Autonomous;
+            }
+        }
+
     }
 }

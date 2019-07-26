@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using KernelPanic.Camera;
+using KernelPanic.Options;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -10,12 +12,8 @@ namespace KernelPanic.Input
     /// <summary>
     /// Handles all input coming from the mouse and the keyboard including de-bouncing.
     /// </summary>
-    public sealed class InputManager
+    internal sealed class InputManager
     {
-        // private const double MaximumDoubleClickDelay = 330; // You have 333ms to enter your double click
-        // private double mTimeLastClick = MaximumDoubleClickDelay; // Left MouseButton (init is for 'reset')
-        // private int mDoubleClickFrameCount; 
-        
         /// <summary>
         /// The width/height of the stripe around the screen border in which the camera is moved.
         /// </summary>
@@ -25,6 +23,8 @@ namespace KernelPanic.Input
         private readonly ICamera mCamera;
         private readonly List<ClickTarget> mClickTargets;
 
+        private readonly OptionsData mSettings;
+
         /// <summary>
         /// Left, Middle and Right MouseButton
         /// </summary>
@@ -33,13 +33,14 @@ namespace KernelPanic.Input
             Left, Middle, Right
         }
 
-        internal InputManager(List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState)
+        internal InputManager(OptionsData settings, List<ClickTarget> clickTargets, ICamera camera, RawInputState inputState, GameTime gameTime)
         {
             mCamera = camera;
+            mSettings = settings;
             mInputState = inputState;
             mClickTargets = clickTargets;
 
-            UpdateCamera();
+            UpdateCamera(gameTime);
         }
 
         internal bool IsActive => mInputState.IsActive;
@@ -54,84 +55,42 @@ namespace KernelPanic.Input
 
         #region Keys
 
-        /// <summary>
-        /// checks if any of the Keyboard Buttons has been pressed (at this exact moment)
-        /// </summary>
-        /// <param name="keys">Keys that should be checked</param>
-        /// <returns>True if any of the keys was pressed</returns>
-        internal bool KeyPressed(params Keys[] keys)
-        {
-            return KeyChanged(keys, true);
-        }
+        internal bool AnyKeyPressed => mInputState.CurrentKeyboard.GetPressedKeys().Any();
 
-        /* TODO uncomment this
-        /// <summary>
-        /// checks if any of the Keyboard Buttons has been released (at this exact moment)
-        /// </summary>
-        /// <param name="keys">Keys that should be checked</param>
-        /// <returns>True if any of the keys was released</returns>
-        internal bool KeyReleased(params Keys[] keys)
+        internal Keys PressedKey(Func<Keys, bool> predicate)
         {
-            return KeyChanged(keys, true);
-        }
-        */
-
-        private bool KeyChanged(IEnumerable<Keys> keys, bool currentDown)
-        {
-            foreach (var key in keys)
-            {
-                if (mInputState.IsClaimed(key) ||
-                    mInputState.PreviousKeyboard.IsKeyDown(key) == currentDown ||
-                    mInputState.CurrentKeyboard.IsKeyDown(key) != currentDown)
-                {
-                    continue;
-                }
-
+            var key = mInputState.CurrentKeyboard.GetPressedKeys().FirstOrDefault(predicate);
+            if (key != Keys.None)
                 mInputState.Claim(key);
-                return true;
-            }
-
-            return false;
+            return key;
         }
 
         /// <summary>
-        /// checks if any of the Keyboard Buttons is currently being pressed
+        /// Checks if the given key was pressed in this frame (de-bounced).
         /// </summary>
-        /// <param name="keys">Keys that should be checked</param>
-        /// <returns>True if any of the keys was down</returns>
-        private bool KeyDown(params Keys[] keys)
+        /// <param name="key">Key that should be checked.</param>
+        /// <returns><c>true</c> if the key became pressed.</returns>
+        internal bool KeyPressed(Keys key)
         {
-            foreach (var key in keys)
+            key = mSettings.KeyMap[key];
+            if (mInputState.IsClaimed(key) || mInputState.PreviousKeyboard.IsKeyDown(key) || !mInputState.CurrentKeyboard.IsKeyDown(key))
             {
-                if (mInputState.CurrentKeyboard.IsKeyDown(key))
-                {
-                    return true;
-                }
+                return false;
             }
 
-            return false;
+            mInputState.Claim(key);
+            return true;
         }
 
-        /* TODO uncomment this
         /// <summary>
-        /// checks if any of the Keyboard Buttons is currently not being pressed
-        /// (this is not equal to '!KeyDown(keys)'
+        /// Checks if the given key is in a pressed state.
         /// </summary>
-        /// <param name="keys">Keys that should be checked</param>
-        /// <returns>True if any of the keys was up</returns>
-        public bool KeyUp(params Keys[] keys)
+        /// <param name="key">Key that should be checked.</param>
+        /// <returns><c>true</c> if the key is down.</returns>
+        private bool KeyDown(Keys key)
         {
-            foreach (Keys key in keys)
-            {
-                if (mInputState.CurrentKeyboard.IsKeyUp(key))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return mInputState.CurrentKeyboard.IsKeyDown(mSettings.KeyMap[key]);
         }
-        */
 
         #endregion
 
@@ -139,17 +98,19 @@ namespace KernelPanic.Input
 
         private Point MousePosition => mInputState.CurrentMouse.Position;
 
-        internal Vector2 TranslatedMousePosition =>
-            Vector2.Transform(MousePosition.ToVector2(), mCamera.InverseTransformation);
+        internal Vector2? mLazyTranslatedMousePosition;
+        internal Vector2 TranslatedMousePosition
+        {
+            get
+            {
+                if (mLazyTranslatedMousePosition is Vector2 position)
+                    return position;
+                position = Vector2.Transform(MousePosition.ToVector2(), mCamera.InverseTransformation);
+                mLazyTranslatedMousePosition = position;
+                return position;
+            }
+        }
 
-        /*
-        /// <summary>
-        /// calculates the X and Y difference since the last update
-        /// </summary>
-        /// <returns>Tuple with X and Y distance</returns>
-        internal Point MouseMovement =>
-            new Point(mInputState.CurrentMouse.X - mInputState.PreviousMouse.X, mInputState.CurrentMouse.Y - mInputState.PreviousMouse.Y);
-        */
         internal void RegisterClickTarget(Rectangle position, Action<InputManager> action) =>
             mClickTargets.Add(new ClickTarget(position, action));
 
@@ -243,33 +204,6 @@ namespace KernelPanic.Input
             return down;
         }
 
-#if false // Uncomment when used.
-        public Point LatestMouseLeftClickPosition { get; private set; }
-        public Point LatestMouseMiddleClickPosition { get; private set; }
-        public Point LatestMouseRightClickPosition { get; private set; }
-
-        /// <summary>
-        /// Checking for and updating the newest mouse Click positions
-        /// </summary>
-        private void UpdateMouseClickPosition()
-        {
-            if (MousePressed(MouseButton.Left))
-            {
-                LatestMouseLeftClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-            
-            if (MousePressed(MouseButton.Middle))
-            {
-                LatestMouseMiddleClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-            
-            if (MousePressed(MouseButton.Right))
-            {
-                LatestMouseRightClickPosition = new Point(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            }
-        }
-#endif
-
         #endregion
 
         #region Scroll Wheel
@@ -289,7 +223,7 @@ namespace KernelPanic.Input
         /// <returns></returns>
         private bool ScrolledDown()
         {
-            return ScrollWheelMovement() < 0;
+            return mSettings.ScrollInverted ? ScrollWheelMovement() < 0 : ScrollWheelMovement() > 0;
         }
 
         /// <summary>
@@ -298,32 +232,18 @@ namespace KernelPanic.Input
         /// <returns></returns>
         private bool ScrolledUp()
         {
-            return ScrollWheelMovement() > 0;
+            return mSettings.ScrollInverted ? ScrollWheelMovement() > 0 : ScrollWheelMovement() < 0;
         }
 
         #endregion
-
-        /* TODO uncomment this
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
-        public Tuple<bool, Tuple<int, int>, Tuple<int, int>> MouseDragged(MouseButton mouseButton) // TODO implement this iff we need a rectangular selection
-        {
-            var startPointXy = new Tuple<int, int> (mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-            var endPointXy = new Tuple<int, int>(mInputState.CurrentMouse.X, mInputState.CurrentMouse.Y);
-
-            var result = new Tuple<bool, Tuple<int, int>, Tuple<int, int>>(false, startPointXy, endPointXy);
-            return result;
-        }
-        */
 
         #region Camera
 
         /// <summary>
         /// Updates the camera's translation based on the current mouse/keyboard state. 
         /// </summary>
-        private void UpdateCamera()
+        /// <param name="gameTime"></param>
+        private void UpdateCamera(GameTime gameTime)
         {
             var xLeft = KeyDown(Keys.A);
             var xRight = KeyDown(Keys.D);
@@ -359,7 +279,8 @@ namespace KernelPanic.Input
             mCamera.Update(mInputState.Viewport.Bounds.Size,
                 ChooseDirection(true, xLeft, xRight, mouseXLeft, mouseXRight),
                 ChooseDirection(true, yUp, yDown, mouseYUp, mouseYDown),
-                ChooseDirection(false, ScrolledUp(), ScrolledDown())
+                ChooseDirection(false, ScrolledUp(), ScrolledDown()),
+                gameTime
             );
         }
 

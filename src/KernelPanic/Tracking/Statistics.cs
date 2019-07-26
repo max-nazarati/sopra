@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Data;
 using KernelPanic.Events;
 using KernelPanic.Players;
 using KernelPanic.Serialization;
@@ -27,32 +28,42 @@ namespace KernelPanic.Tracking
         }
 
         private Data mData;
+        private CompositeDisposable mDisposable;
 
         internal Statistics()
         {
             mData = StorageManager.LoadStatistics().GetValueOrDefault();
 
             var eventCenter = EventCenter.Default;
+            eventCenter.Subscribe(Event.Id.TechDemoStarted, e => mDisposable.Dispose());
+            eventCenter.Subscribe(Event.Id.TechDemoClosed, e => CreateSubscriptions());
+
+            CreateSubscriptions();
+        }
+
+        private void CreateSubscriptions()
+        {
+            var eventCenter = EventCenter.Default;
             var isDefender = IsActive(Event.Key.Defender);
             var isBuyer = IsActive(Event.Key.Buyer);
 
-            eventCenter.Subscribe(Event.Id.GameWon, e => mData.NumberOfWins++);
-            eventCenter.Subscribe(Event.Id.GameLost, e => mData.NumberOfLoses++);
+            mDisposable += eventCenter.Subscribe(Event.Id.GameWon, e => mData.NumberOfWins++);
+            mDisposable += eventCenter.Subscribe(Event.Id.GameLost, e => mData.NumberOfLoses++);
 
-            eventCenter.Subscribe(Event.Id.DamagedUnit,
+            mDisposable += eventCenter.Subscribe(Event.Id.DamagedUnit,
                 e => mData.DamageDealt += (ulong) e.Get<int>(Event.Key.Damage),
                 isDefender);
-            eventCenter.Subscribe(Event.Id.KilledUnit,
+            mDisposable += eventCenter.Subscribe(Event.Id.KilledUnit,
                 e => mData.NumberOfKilledUnits++,
                 isDefender);
 
-            eventCenter.Subscribe(Event.Id.BoughtUnit,
+            mDisposable += eventCenter.Subscribe(Event.Id.BoughtUnit,
                 e => mData.AttackInvestments += (ulong) e.Get<int>(Event.Key.Price),
                 isBuyer);
-            eventCenter.Subscribe(new[] {Event.Id.BuildingPlaced, Event.Id.BuildingImproved},
+            mDisposable += eventCenter.Subscribe(new[] {Event.Id.BuildingPlaced, Event.Id.BuildingImproved},
                 e => mData.DefenceInvestments += (ulong) e.Get<int>(Event.Key.Price),
                 isBuyer);
-            eventCenter.Subscribe(Event.Id.UpgradeBought,
+            mDisposable += eventCenter.Subscribe(Event.Id.UpgradeBought,
                 e => mData.UpgradeInvestments += (ulong) e.Get<int>(Event.Key.Price),
                 isBuyer);
         }

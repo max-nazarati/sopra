@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using KernelPanic.Entities.Projectiles;
 using KernelPanic.Events;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace KernelPanic.Entities.Buildings
 {
@@ -11,12 +12,13 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class CdThrower : StrategicTower
     {
-        protected override bool WantsRotation => true;
+        protected override bool WantsRotation => false;
 
+        [JsonProperty]
         internal bool ShootsBoomerang { get; set; }
         
         internal CdThrower(SpriteManager spriteManager)
-            : base(50, 4, 5, 7,TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager)
+            : base(60, 3, 3, 7,TimeSpan.FromSeconds(2), spriteManager.CreateCdThrower(), spriteManager)
         {
         }
 

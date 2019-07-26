@@ -32,6 +32,9 @@ namespace KernelPanic.Selection
         [DataMember]
         private Entity mSelection;
 
+        [DataMember]
+        internal Lane.Side SelectionSide { get; private set; }
+
         internal SelectionManager(Lane leftLane, Lane rightLane, SpriteManager spriteManager)
         {
             mLeftLane = leftLane;
@@ -88,6 +91,9 @@ namespace KernelPanic.Selection
                     return false;
 
                 Selection = Selection == entity ? null : entity;
+                if (Selection != null)
+                    SelectionSide = lane.Grid.LaneSide;
+
                 return true;
             }
 
@@ -97,12 +103,9 @@ namespace KernelPanic.Selection
             if (leftOnlyBuildings && mLeftLane.Contains(mouse))
                 return;
 
-            if (mSelection == null || !(mLeftLane.Contains(mouse) || mRightLane.Contains(mouse)))
-                return;
-
-            if (inputManager.MousePressed(InputManager.MouseButton.Left))
+            if (mSelection != null && inputManager.MousePressed(InputManager.MouseButton.Left))
             {
-                // The click was inside a lane but not on an entity => deselect any selected entities.
+                // We had a selection but clicked somewhere where no entity is.
                 Selection = null;
             }
         }

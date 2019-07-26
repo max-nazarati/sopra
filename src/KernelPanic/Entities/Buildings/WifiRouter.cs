@@ -11,24 +11,31 @@ namespace KernelPanic.Entities.Buildings
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class WifiRouter : StrategicTower
     {
-        protected override bool WantsRotation => true;
+        private int mWaveAmount;
+        protected override bool WantsRotation => false;
 
         internal WifiRouter(SpriteManager spriteManager)
-            : base(80, 3, 1,3, TimeSpan.FromSeconds(1), spriteManager.CreateWifiRouter(), spriteManager)
+            : base(80, 3.0f, 1,3, TimeSpan.FromSeconds(2), spriteManager.CreateWifiRouter(), spriteManager)
         {
+            mWaveAmount = 2;
         }
 
         protected override IEnumerable<Projectile> CreateProjectiles(Vector2 direction)
         {
             direction = Vector2.Normalize(direction);
             EventCenter.Default.Send(Event.ProjectileShot(this));
-            for (var i = 0; i < 3; ++i)
+            for (var i = 0; i < mWaveAmount; ++i)
             {
-                yield return new Projectile(this, direction, SpriteManager.CreateWifiProjectile(), 4 * i)
+                yield return new Wifi(this, direction, SpriteManager.CreateWifiProjectile(), this, 16 * i)
                 {
-                    SingleTarget = true
+                    SingleTarget = false
                 };
             }
+        }
+
+        internal void IncreaseWaveCount(int amount = 2)
+        {
+            mWaveAmount += amount;
         }
     }
 }

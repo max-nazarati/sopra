@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using KernelPanic.PathPlanning;
@@ -11,6 +12,10 @@ namespace KernelPanic.Data
         internal HeatMap HeatMap { get; }
 
         private readonly RelativePosition[,] mRelativeField;
+        private Rectangle mCutout;
+
+        private int Width => mRelativeField.GetLength(1);
+        private int Height => mRelativeField.GetLength(0);
 
         /// <summary>
         /// Creates a <see cref="VectorField"/> from a <see cref="HeatMap"/>.
@@ -33,14 +38,16 @@ namespace KernelPanic.Data
         /// with each square additionally normalized.
         /// </example>
         /// <param name="heatMap">The heat map.</param>
+        /// <param name="cutout"></param>
         /// <param name="spawn"></param>
         /// <param name="spawnDirection"></param>
         /// <param name="target"></param>
         /// <param name="targetDirection"></param>
-        internal VectorField(HeatMap heatMap, IEnumerable<Point> spawn, RelativePosition spawnDirection, IEnumerable<Point> target, RelativePosition targetDirection)
+        internal VectorField(HeatMap heatMap, Rectangle cutout, IEnumerable<Point> spawn, RelativePosition spawnDirection, IEnumerable<Point> target, RelativePosition targetDirection)
         {
             HeatMap = heatMap;
             mRelativeField = new RelativePosition[heatMap.Height, heatMap.Width];
+            mCutout = cutout;
 
             foreach (var (column, row) in spawn)
                 mRelativeField[row, column] = spawnDirection;
@@ -51,6 +58,66 @@ namespace KernelPanic.Data
         private VectorField(RelativePosition[,] vectorField)
         {
             mRelativeField = vectorField;
+        }
+
+        private void HandleDiagonalLocalMinima()
+        {
+            RelativePosition gradient;
+            RelativePosition gradientNeighbourTopLeft;
+            RelativePosition gradientNeighbourTopRight;
+            RelativePosition gradientNeighbourBottomLeft;
+            RelativePosition gradientNeighbourBottomRight;
+
+            for (int row = 0; row < HeatMap.Height; ++row)
+            {
+                for (int col = 0; col < HeatMap.Width; ++col)
+                {
+                    gradient = mRelativeField[row, col];
+                    if (row > 0 && col > 0)
+                    {
+                        gradientNeighbourTopLeft = mRelativeField[row - 1, col - 1];
+                        if (gradient == RelativePosition.TopLeft &&
+                            gradientNeighbourTopLeft == RelativePosition.BottomRight)
+                        {
+                            mRelativeField[row, col] = RelativePosition.CenterLeft;
+                            mRelativeField[row - 1, col - 1] = RelativePosition.CenterRight;
+                        }
+                    }
+
+                    if (row > 0 && col < HeatMap.Width - 1)
+                    {
+                        gradientNeighbourTopRight = mRelativeField[row - 1, col + 1];
+                        if (gradient == RelativePosition.TopRight &&
+                            gradientNeighbourTopRight == RelativePosition.BottomLeft)
+                        {
+                            mRelativeField[row, col] = RelativePosition.CenterRight;
+                            mRelativeField[row - 1, col + 1] = RelativePosition.CenterLeft;
+                        }
+                    }
+
+                    if (row < HeatMap.Height - 1 && col > 0)
+                    {
+                        gradientNeighbourBottomLeft = mRelativeField[row + 1, col - 1];
+                        if (gradient == RelativePosition.BottomLeft &&
+                            gradientNeighbourBottomLeft == RelativePosition.TopRight)
+                        {
+                            mRelativeField[row, col] = RelativePosition.CenterLeft;
+                            mRelativeField[row + 1, col - 1] = RelativePosition.CenterRight;
+                        }
+                    }
+
+                    if (row < HeatMap.Height - 1 && col < HeatMap.Width - 1)
+                    {
+                        gradientNeighbourBottomRight = mRelativeField[row + 1, col + 1];
+                        if (gradient == RelativePosition.BottomRight &&
+                            gradientNeighbourBottomRight == RelativePosition.TopLeft)
+                        {
+                            mRelativeField[row, col] = RelativePosition.CenterRight;
+                            mRelativeField[row + 1, col + 1] = RelativePosition.CenterLeft;
+                        }
+                    }
+                }
+            }
         }
 
         internal void Update()
@@ -64,6 +131,7 @@ namespace KernelPanic.Data
                         mRelativeField[row, col] = relative;
                 }
             }
+            HandleDiagonalLocalMinima();
         }
 
         #region Thunderbird's vector field
@@ -140,8 +208,50 @@ namespace KernelPanic.Data
 
         #endregion
 
-        public RelativePosition this[Point point] => mRelativeField[point.Y, point.X];
+        public RelativePosition this[Point point, Lane.Side side]
+        {
+            get
+            {
+                if (point.X < 0)
+                    return RelativePosition.CenterRight;
+                if (point.X >= Width)
+                    return RelativePosition.CenterLeft;
+                if (point.Y < 0)
+                    return RelativePosition.CenterBottom;
+                if (point.Y >= Height)
+                    return RelativePosition.CenterTop;
 
+                if (!mCutout.Contains(point))
+                    return mRelativeField[point.Y, point.X];
+
+                if (side == Lane.Side.Left)
+                {
+                    if (point.Y == mCutout.Bottom - 1)
+                        return RelativePosition.CenterBottom;
+                    if (point.X == mCutout.Left)
+                        return RelativePosition.CenterLeft;
+                    if (point.X == mCutout.Right - 1)
+                        return RelativePosition.CenterRight;
+                    if (point.Y == mCutout.Top)
+                        return RelativePosition.CenterTop;
+                }
+                else
+                {
+                    if (point.X == mCutout.Left)
+                        return RelativePosition.CenterLeft;
+                    if (point.X == mCutout.Right - 1)
+                        return RelativePosition.CenterRight;
+                    if (point.Y == mCutout.Top)
+                        return RelativePosition.CenterTop;
+                    if (point.Y == mCutout.Bottom - 1)
+                        return RelativePosition.CenterBottom;
+                }
+
+
+
+                throw new ArgumentOutOfRangeException(nameof(point), point, "Too far into the cutout.");
+            }
+        }
         internal Visualizer Visualize(Grid grid, SpriteManager spriteManager)
         {
             var visualizer = new ArrowVisualizer(HeatMap?.ObstacleMatrix.SubTileCount ?? 1, grid, spriteManager);

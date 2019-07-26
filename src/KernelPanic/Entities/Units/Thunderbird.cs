@@ -10,7 +10,7 @@ namespace KernelPanic.Entities.Units
         private static Point HitBoxSize => new Point(53, 55);
 
         internal Thunderbird(SpriteManager spriteManager)
-            : base(15, 2, 15, 3, HitBoxSize, spriteManager.CreateThunderbird(), spriteManager)
+            : base(15, 2, 12, 3, HitBoxSize, spriteManager.CreateThunderbird(), spriteManager)
         {
         }
 

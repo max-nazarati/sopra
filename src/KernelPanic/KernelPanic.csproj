@@ -67,6 +67,7 @@
     <Compile Include="Data\PriorityQueue.cs" />
     <Compile Include="Data\QuadTree.cs" />
     <Compile Include="Data\RelativePosition.cs" />
+    <Compile Include="Data\SingleQueue.cs" />
     <Compile Include="Data\VectorField.cs" />
     <Compile Include="DebugSettings.cs" />
     <Compile Include="Entities\Building.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Entities\Projectiles\Disc.cs" />
     <Compile Include="Entities\Projectiles\Emp.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
+    <Compile Include="Entities\Projectiles\Wifi.cs" />
     <Compile Include="Entities\Unit.cs" />
     <Compile Include="Entities\Units\Bluescreen.cs" />
     <Compile Include="Entities\Units\Bug.cs" />
@@ -108,13 +110,16 @@
     <Compile Include="Input\ClickTarget.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\RawInputState.cs" />
-    <Compile Include="Interface\AnimatedButton.cs" />
     <Compile Include="Interface\Button.cs" />
     <Compile Include="Interface\ImageButton.cs" />
     <Compile Include="Interface\InterfaceComponent.cs" />
     <Compile Include="Interface\StaticComponent.cs" />
     <Compile Include="Interface\TextButton.cs" />
     <Compile Include="IPositioned.cs" />
+    <Compile Include="Options\ControlsMenu.cs" />
+    <Compile Include="Options\KeyMap.cs" />
+    <Compile Include="Options\OptionsData.cs" />
+    <Compile Include="Options\OptionsMenu.cs" />
     <Compile Include="PathPlanning\AStar.cs" />
     <Compile Include="PathPlanning\BreadthFirstSearch.cs" />
     <Compile Include="PathPlanning\ObstacleMatrix.cs" />

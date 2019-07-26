@@ -15,7 +15,7 @@ namespace KernelPanic.Serialization
         internal TimeSpan GameTime { get; set; }
 
         [JsonProperty]
-        internal AchievementPool.Data AchievementData { get; set; }
+        internal AchievementPool.Data? AchievementData { get; set; }
 
         internal struct Info
         {

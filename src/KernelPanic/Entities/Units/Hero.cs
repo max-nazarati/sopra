@@ -33,11 +33,10 @@ namespace KernelPanic.Entities.Units
             Indicating, Starting, Active, Finished, CoolingDown
         }
 
-        protected enum Strategy
+        protected internal enum Strategy
         {
             Human = 0,
-            Attack,
-            Econ
+            Autonomous
         }
         
         #endregion
@@ -45,13 +44,13 @@ namespace KernelPanic.Entities.Units
         [DataMember]
         protected internal CooldownComponent Cooldown { get; set; }
 
-        private TileIndex? mTarget;
+        protected TileIndex? mTarget;
         protected AStar mAStar; // save the AStar for path-drawing
-        private Visualizer mPathVisualizer;
+        private Lazy<Visualizer> mPathVisualizer;
 
         internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
-        protected Strategy StrategyStatus { get; set; }
+        protected internal Strategy StrategyStatus { get; set; }
 
         #endregion
 
@@ -66,6 +65,12 @@ namespace KernelPanic.Entities.Units
         }
 
         #endregion
+
+        protected override void DidDie(PositionProvider positionProvider)
+        {
+            base.DidDie(positionProvider);
+            positionProvider.Owner[this].UpdateHeroCount(GetType(), -1);
+        }
 
         #region Movement
 
@@ -97,20 +102,28 @@ namespace KernelPanic.Entities.Units
 
             // calculate the path
             mAStar = positionProvider.MakePathFinding(this, new[] {target});
-            mPathVisualizer = positionProvider.Visualize(mAStar);
+            mPathVisualizer = new Lazy<Visualizer>(() => positionProvider.Visualize(mAStar), false);
             var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
                 target = FindNearestWalkableField(target);
                 mAStar = positionProvider.MakePathFinding(this, new[] {target});
-                mPathVisualizer = positionProvider.Visualize(mAStar);
+                mPathVisualizer = new Lazy<Visualizer>(() => positionProvider.Visualize(mAStar), false);
                 path = mAStar.Path;
+            }
+
+            if (path == null)
+            {
+                MoveTarget = null;
+                MoveVector = Vector2.Zero;
+                return;
             }
 
             var nextTarget = new TileIndex(path.Count > 2 ? path[1] : target, 1);
             MoveTarget = positionProvider.Grid.GetTile(nextTarget).Position;
+            MoveVector = MoveTarget - Sprite.Position;
         }
-
+        
         private void MoveTargetReached(PositionProvider positionProvider, TileIndex tileTarget)
         {
             var troupeData = positionProvider.TroupeData;
@@ -119,6 +132,7 @@ namespace KernelPanic.Entities.Units
 
             mAStar = null;
             mTarget = null;
+            MoveVector = null;
             mPathVisualizer = null;
         }
 
@@ -130,15 +144,10 @@ namespace KernelPanic.Entities.Units
         /// <param name="inputManager"></param>
         private void UpdateTarget(PositionProvider positionProvider, InputManager inputManager)
         {
-            if (StrategyStatus == Strategy.Attack)
+            if (StrategyStatus == Strategy.Autonomous)
             {
-                AttackBase(inputManager, positionProvider);
+                AutonomousAttack(inputManager, positionProvider);
                 return;
-            }
-
-            if (StrategyStatus == Strategy.Econ)
-            {
-                SlowPush(inputManager, positionProvider);
             }
 
             // only check for new target of selected and Right Mouse Button was pressed
@@ -229,12 +238,12 @@ namespace KernelPanic.Entities.Units
                 
                 case AbilityState.Active:
                     // take one action per update cycle until the ability is finished
-                    ContinueAbility(gameTime);
+                    ContinueAbility(positionProvider, gameTime);
                     break;
 
                 case AbilityState.Finished:
                     // finally cleaning up has to be done and starting to cool down
-                    FinishAbility();
+                    FinishAbility(positionProvider);
                     break;
 
                 case AbilityState.CoolingDown:
@@ -301,13 +310,13 @@ namespace KernelPanic.Entities.Units
             EventCenter.Default.Send(Event.HeroAbility(this));
         }
         
-        protected virtual void ContinueAbility(GameTime gameTime)
+        protected virtual void ContinueAbility(PositionProvider positionProvider, GameTime gameTime)
         {
             // Console.WriteLine(this + " JUST USED HIS ABILITY! (virtual method of class Hero)  [TIME:] " + gameTime.TotalGameTime);
             AbilityStatus = AbilityState.Finished;
         }
 
-        protected virtual void FinishAbility()
+        protected virtual void FinishAbility(PositionProvider positionProvider)
         {
             ShouldMove = true;
             AbilityStatus = AbilityState.CoolingDown;
@@ -318,34 +327,46 @@ namespace KernelPanic.Entities.Units
 
         #region KI
 
-        internal override void AttackBase(InputManager inputManager, PositionProvider positionProvider)
+        protected virtual void AutonomousAttack(InputManager inputManager, PositionProvider positionProvider)
         {
             var grid = positionProvider.Grid;
             var basePosition = Base.TargetPoints(grid.LaneRectangle.Size, grid.LaneSide);
             // TODO: is there a function for the calculation below?
             //       something like Grid.WorldPositionFromTile(basePosition);
             mAStar = positionProvider.MakePathFinding(this, basePosition);
+            if (mAStar.Path == null)
+            {
+                return;
+            }
             mTarget = new TileIndex(mAStar.Path[mAStar.Path.Count - 1], 1);
             ShouldMove = true;
         }
 
         /// <summary>
-        /// try not to die while attacking.
-        /// sets mTarget and ShouldMove
+        /// A List of the world positions of adjacent Tiles
         /// </summary>
-        protected virtual void SlowPush(InputManager inputManager, PositionProvider positionProvider)
+        /// <param name="positionProvider"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
+        protected List<Point> GetNeighbours(PositionProvider positionProvider, int distance = 2)
         {
-            #region get all translation for the 8 adjacent tiles
-            var startPoint = positionProvider.RequireTile(Sprite.Position).ToPoint();
-            var neighboursPosition = new List<(int, int)>(8)
+            var neighboursPosition = new List<(int, int)>()
             {
-                (-1, -1),  (0, -1), (1, -1),
-                (-1,  0),           (1,  0), // (0, 0) is the point itself
-                (-1,  1),  (0, 1),  (1,  1)
+                (-1, -1), (0, -1), (1, -1),
+                (-1,  0),          (1,  0), // (0, 0) is the point itself
+                (-1,  1), (0,  1), (1,  1)
             };
-            #endregion
-
-            #region add the points of the adjacent neighbours into a list (if they are on the lane)
+            if (distance >= 2)
+            {   // increases the radius by 1:
+                neighboursPosition.AddRange(new[]
+                {
+                    (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2),
+                    (-2, -1), (2, -1),
+                    (-2, 0), (2, 0),
+                    (-2, 1), (2, 1),
+                    (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2)
+                });
+            }
             var neighbours = new List<Point>();
             foreach (var (x, y) in neighboursPosition)
             {
@@ -354,57 +375,30 @@ namespace KernelPanic.Entities.Units
                     neighbours.Add(
                         positionProvider.RequireTile(
                             new Vector2(Sprite.Position.X + x * Grid.KachelSize,
-                                        Sprite.Position.Y + y * Grid.KachelSize)
-                            ).ToPoint());
+                                Sprite.Position.Y + y * Grid.KachelSize)
+                        ).ToPoint());
                 }
                 catch (InvalidOperationException)
                 {
                     // just dont add the point
                 }
             }
-            #endregion
 
-            #region calculate a heuristic for all neighbours and choose the best
-            var bestPoint = startPoint;
-            var bestValue = 1f;
-            foreach (var point in neighbours)
-            {
-                var currentValue = PointHeuristic(point, positionProvider);
-                if (currentValue <= bestValue)
-                    continue;
-
-                bestPoint = point;
-                bestValue = currentValue;
-            }
-            #endregion
-
-            #region set the optimum as walking target
-            mAStar = positionProvider.MakePathFinding(this, new[] {bestPoint});
-            ShouldMove = true;
-            #endregion
-        }
-
-        protected virtual float PointHeuristic(Point point, PositionProvider positionProvider)
-        {
-            return 0;
+            return neighbours;
         }
 
         #endregion
-        
+
         #region Update
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
             if (Selected)
             {
+                // TODO remove this for the final version
                 if (inputManager.KeyPressed(Keys.Space))
                 {
-                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Attack : Strategy.Human;
-                }
-
-                if (inputManager.KeyPressed(Keys.P))
-                {
-                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Econ : Strategy.Human;
+                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Autonomous : Strategy.Human;
                 }
             }
             // also updates the cooldown
@@ -438,7 +432,7 @@ namespace KernelPanic.Entities.Units
         {
             if (Selected && DebugSettings.VisualizeAStar)
             {
-                mPathVisualizer?.Draw(spriteBatch, gameTime);
+                mPathVisualizer?.Value?.Draw(spriteBatch, gameTime);
             }
         }
 
@@ -448,22 +442,36 @@ namespace KernelPanic.Entities.Units
 
         protected override IEnumerable<IAction> Actions(Player owner) =>
             base.Actions(owner).Extend(new AbilityAction(this, SpriteManager));
-        
+
         private sealed class AbilityAction : IAction
         {
+            private Hero Hero { get; }
             public Button Button { get; }
+            private readonly ImageSprite mOverlay;
 
             internal AbilityAction(Hero hero, SpriteManager sprites)
             {
-                Button = new AnimatedButton(sprites, hero) {Title = "Fähigkeit"};
+                Hero = hero;
+                Button = new TextButton(sprites) {Title = "Fähigkeit"};
                 Button.Clicked += (button, inputManager) => hero.TryActivateAbility(inputManager, true);
+                mOverlay = sprites.CreateColoredRectangle(1, 1, new[] {new Color(0.8f, 0.8f, 0.8f, 0.5f)});
             }
 
-            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) => 
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime)
+            {
+                var cooldown = Hero.Cooldown;
+                var width = (int) ((float) cooldown.RemainingCooldown.Ticks / cooldown.Cooldown.Ticks * Button.Size.X);
+                var size = new Point(width, (int) Button.Sprite.Height);
                 Button.Update(inputManager, gameTime);
+                Button.Enabled = cooldown.Ready;
+                mOverlay.DestinationRectangle = new Rectangle(Button.Position.ToPoint(), size);
+            }
 
-            void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
+            void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime)
+            {
                 Button.Draw(spriteBatch, gameTime);
+                mOverlay.Draw(spriteBatch, gameTime);
+            }
         }
 
         #endregion

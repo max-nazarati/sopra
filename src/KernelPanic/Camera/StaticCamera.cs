@@ -11,7 +11,7 @@ namespace KernelPanic.Camera
         public Matrix InverseTransformation => Matrix.Identity;
         public Point ViewportSize => Point.Zero;
 
-        public void Update(Point viewportSize, Change x, Change y, Change scrollVertical)
+        public void Update(Point viewportSize, Change x, Change y, Change scrollVertical, GameTime gameTime)
         {
             // A static camera never changes.
         }

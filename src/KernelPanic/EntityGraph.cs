@@ -1,24 +1,21 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using KernelPanic.Entities.Units;
 
 namespace KernelPanic
 {
-    [JsonArray]
     internal sealed class EntityGraph
     {
         #region Properties
 
-        [DataMember] internal QuadTree<IGameObject> QuadTree { get; }
+        internal QuadTree<IGameObject> QuadTree { get; }
 
         private readonly SortedDictionary<int, List<IGameObject>> mDrawObjects =
             new SortedDictionary<int, List<IGameObject>>();
@@ -70,8 +67,14 @@ namespace KernelPanic
             if (gameObject is Tower tower)
                 tower.FireAction = Add;
 
-            QuadTree.Add(gameObject);
-            AddDrawObject(gameObject);
+            if (QuadTree.Add(gameObject))
+            {
+                AddDrawObject(gameObject);
+            }
+            else
+            {
+                gameObject.WantsRemoval = true;
+            }
         }
 
         private void AddDrawObject(IGameObject gameObject)
@@ -107,7 +110,7 @@ namespace KernelPanic
         {
             return QuadTree.EntitiesAt(point).OfType<Entity>();
         }
-        
+
         #endregion
 
         #region Updating
@@ -130,14 +133,16 @@ namespace KernelPanic
             // overlaps and collisions can be determined correctly.
             MoveUnits(positionProvider, gameTime, inputManager);
 
-            QuadTree.Rebuild(entity => entity.WantsRemoval);
+            foreach (var gameObject in QuadTree.Rebuild(entity => entity.WantsRemoval))
+            {
+                gameObject.WantsRemoval = true;
+            }
 
             foreach (var objects in mDrawObjects.Values)
             {
                 objects.RemoveAll(@object => @object.WantsRemoval);
             }
 
-            FixMovementCollisions(positionProvider);
             HandleCollisions(positionProvider);
 
             mMidUpdate = false;
@@ -151,24 +156,7 @@ namespace KernelPanic
             {
                 if (!entity.WantsRemoval)
                     entity.Update(positionProvider, inputManager, gameTime);
-                
-                if (entity is Hero hero && hero.WantsRemoval)
-                    positionProvider.Owner[hero].HeroDied(hero);
             }
-        }
-
-        private void FixMovementCollisions(PositionProvider positionProvider)
-        {
-            bool collisionHandled;
-            do
-            {
-                collisionHandled = false;
-                foreach (var (a, b) in QuadTree.Overlaps())
-                {
-                    collisionHandled |= CollisionManager.HandleMovement(a, b, positionProvider);
-                }
-                QuadTree.Rebuild();
-            } while (collisionHandled);
         }
 
         private void HandleCollisions(PositionProvider positionProvider)

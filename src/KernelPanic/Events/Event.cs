@@ -34,9 +34,7 @@ namespace KernelPanic.Events
             DamagedUnit,
             KilledUnit,
             ProjectileShot,
-            PlayMusic,
             ButtonClicked,
-            
 
             DamagedBase,
             GameWon,
@@ -45,8 +43,10 @@ namespace KernelPanic.Events
             BitcoinChanged,
 
             SetupEnded,
+            TechDemoStarted,
+            TechDemoClosed,
 
-            FirefoxJump,            // TODO: Not sent yet.
+            FirefoxJump,
             HeroAbility
         }
 
@@ -194,7 +194,7 @@ namespace KernelPanic.Events
             /// <item><description><see cref="Id.CloseAchievementPool"/></description></item>
             /// </list>
             /// </summary>
-            AchievementPool,
+            AchievementPool
         }
 
         #region Creating events
@@ -215,21 +215,13 @@ namespace KernelPanic.Events
                     [Key.Loser] = loser
                 }
             };
-        
+
         internal static Event ProjectileShot(Tower tower) =>
             new Event(Id.ProjectileShot)
             {
                 mPayload =
                 {
                     [Key.Tower] = tower,
-                }
-            };
-        
-        internal static Event PlayMusic() =>
-            new Event(Id.PlayMusic)
-            {
-                mPayload =
-                {
                 }
             };
 
@@ -252,15 +244,9 @@ namespace KernelPanic.Events
                     [Key.Price] = player.Bitcoins
                 }
             };
-        
-        internal static Event ButtonClicked() =>
-            new Event(Id.GameWon)
-            {
-                mPayload =
-                {
-                }
-            };
-        
+
+        internal static Event ButtonClicked() => new Event(Id.ButtonClicked);
+
         internal static Event HeroAbility(Hero hero) =>
             new Event(Id.HeroAbility)
             {
@@ -395,6 +381,10 @@ namespace KernelPanic.Events
                     [Key.AchievementPool] = achievementPool
                 }
             };
+
+        internal static Event TechDemoStarted() => new Event(Id.TechDemoStarted);
+
+        internal static Event TechDemoClosed() => new Event(Id.TechDemoClosed);
 
         internal static Event SetupEnded() =>
             new Event(Id.SetupEnded);

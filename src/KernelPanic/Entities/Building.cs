@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using KernelPanic.Interface;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
+using KernelPanic.Table;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -20,13 +21,10 @@ namespace KernelPanic.Entities
     [DataContract]
     internal abstract class Building : Entity
     {
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification =
-            "Ensures that all buildings take a SoundManager in their constructor, which is required for Building.Create to work."
-        )]
         protected Building(int price, Sprite sprite, SpriteManager spriteManager)
             : base(price, new Point(Table.Grid.KachelSize), sprite, spriteManager)
         {
-            BitcoinWorth = price;
+            BitcoinWorth = (int) (price * 0.8f);
             sprite.ScaleToWidth(Table.Grid.KachelSize);
         }
 
@@ -55,11 +53,14 @@ namespace KernelPanic.Entities
 
         internal Building Clone() => Clone<Building>();
 
-        public override Rectangle Bounds => Sprite.Bounds;
+        public override Rectangle Bounds =>
+            new Rectangle(
+                (Sprite.Position - 0.5f * new Vector2(Grid.KachelSize)).ToPoint(),
+                new Point(Grid.KachelSize));
 
         public override int? DrawLevel => 0;    // Buildings have the lowest level.
 
-        private int BitcoinWorth { get; } //set; }
+        internal int BitcoinWorth { get; set; }
 
         private BuildingState mBuildingState;
 
@@ -92,6 +93,11 @@ namespace KernelPanic.Entities
             }
         }
 
+        internal override void UpdateInformation()
+        {
+            mInfoText.Text = $"Wert: {BitcoinWorth}";
+        }
+
         #region Actions
 
         protected override IEnumerable<IAction> Actions(Player owner) =>
@@ -122,10 +128,9 @@ namespace KernelPanic.Entities
             public Currency Currency => Currency.Bitcoin;
 
             // You get 80% of the buildings worth back when selling.
-            public int Price => (int) (mBuilding.BitcoinWorth * -0.8);
+            public int Price => -1 * mBuilding.BitcoinWorth;
 
-            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) =>
-                mButton.Update(inputManager, gameTime);
+            void IUpdatable.Update(InputManager inputManager, GameTime gameTime) => mButton.Update(inputManager, gameTime);
 
             void IDrawable.Draw(SpriteBatch spriteBatch, GameTime gameTime) =>
                 mButton.Draw(spriteBatch, gameTime);

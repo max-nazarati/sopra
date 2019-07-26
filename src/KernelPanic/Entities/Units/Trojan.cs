@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework;
 
@@ -12,7 +13,7 @@ namespace KernelPanic.Entities.Units
         private static Point HitBoxSize => new Point(34, 45);
 
         internal Trojan(SpriteManager spriteManager)
-            : base(30, 2, 30, 6, HitBoxSize, spriteManager.CreateTrojan(), spriteManager)
+            : base(30, 2, 20, 15, HitBoxSize, spriteManager.CreateTrojan(), spriteManager)
         {
         }
 
@@ -26,7 +27,7 @@ namespace KernelPanic.Entities.Units
                 var smallTiles = tile.Rescaled(2).ToList();
                 for (var i = 0; i < ChildCount; ++i)
                 {
-                    Wave.SpawnChild(new Bug(SpriteManager), smallTiles[i % smallTiles.Count]);
+                    Wave.SpawnChild(new Lazy<Troupe>(() => new Bug(SpriteManager)), smallTiles[i % smallTiles.Count]);
                 }
             }
             else
