@@ -39,7 +39,7 @@ namespace KernelPanic.ArtificialIntelligence
         public UpgradePlanner(Player player, Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup) : base(player)
         {
             mUpgradeLookup = upgradeLookup;
-            mTierPriority = new[] {0, 0.8d, 0.05, 0.05, 0.05, 0.05};
+            mTierPriority = new[] {0, 0.2, 0.2, 0.2, 0.2, 0.2};
 
             // Initialize distributions for each tier
             var tier1Distribution = new[] { 0.25, 0.25, 0.25, 0.25 };
