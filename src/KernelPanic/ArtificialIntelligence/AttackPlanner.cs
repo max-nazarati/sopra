@@ -143,7 +143,7 @@ namespace KernelPanic.ArtificialIntelligence
             }
         }
 
-        public void IncreaseUnitProbability(int unitIndex, double probability)
+        private void IncreaseUnitProbability(int unitIndex, double probability)
         {
             if (mUnitDistribution[unitIndex] >= 1)
             {
@@ -157,7 +157,7 @@ namespace KernelPanic.ArtificialIntelligence
             }
         }
 
-        public void DecreaseUnitProbability(int unitIndex, double probability)
+        private void DecreaseUnitProbability(int unitIndex, double probability)
         {
             if (mUnitDistribution[unitIndex] <= 0)
             {
@@ -206,7 +206,7 @@ namespace KernelPanic.ArtificialIntelligence
             }
         }
 
-        public void Update(int[] attackData, GameTime gameTime)
+        public new void Update()
         {
             base.Update();
             var choice = MakeChoice();

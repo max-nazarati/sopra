@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Collections.Generic;
 using KernelPanic.Events;
 using KernelPanic.Input;
 using Microsoft.Xna.Framework;

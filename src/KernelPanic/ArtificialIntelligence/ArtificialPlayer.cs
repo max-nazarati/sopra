@@ -43,7 +43,6 @@ namespace KernelPanic.ArtificialIntelligence
         private readonly int[] mDefenceData;
         private int[] mAttackData;
         private int mAttackMoney;
-        private int mDefenceMoney;
         private bool mEnemyBoughtUnit;
         private bool mBaseTookDamageAi;
         private bool mNeedOffensiveUnits;
@@ -118,7 +117,6 @@ namespace KernelPanic.ArtificialIntelligence
         {
             // for now we are only splitting the money equal between attack and defence
             mAttackMoney = (int)(Bitcoins * 0.5);
-            mDefenceMoney = (int)(Bitcoins * 0.5);
         }
 
         private void SetAttackData()
@@ -275,11 +273,11 @@ namespace KernelPanic.ArtificialIntelligence
 
         #endregion
 
-        private void MakeRandomChoice(GameTime gameTime)
+        private void MakeRandomChoice()
         {
             var numberGenerator = new Random();
             var number = numberGenerator.Next(0, 500);
-            if (number == 0) mAttackPlanner.Update(mAttackData, gameTime);
+            if (number == 0) mAttackPlanner.Update();
             if (number == 1) mDefencePlanner.BuyRandomTower();
         }
 
@@ -294,7 +292,7 @@ namespace KernelPanic.ArtificialIntelligence
             
             SetData();
             
-            if (mNeedOffensiveUnits) mAttackPlanner.Update(mAttackData, gameTime);
+            if (mNeedOffensiveUnits) mAttackPlanner.Update();
             if (mEnemyBoughtUnit) mDefencePlanner.Update(mDefenceData);
             if (mBaseTookDamageAi)
             {
@@ -306,7 +304,7 @@ namespace KernelPanic.ArtificialIntelligence
             mBaseTookDamageAi = false;
             mNeedOffensiveUnits = false;
 
-            MakeRandomChoice(gameTime);
+            MakeRandomChoice();
         }
 
         public void Dispose()

@@ -5,8 +5,6 @@ using KernelPanic.Interface;
 using KernelPanic.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using KernelPanic.Entities;
-using KernelPanic.Entities.Units;
 
 namespace KernelPanic.Purchasing
 {

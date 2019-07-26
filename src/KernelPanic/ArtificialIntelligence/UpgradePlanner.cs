@@ -34,7 +34,7 @@ namespace KernelPanic.ArtificialIntelligence
         private List<Upgrade.Id[]> mTierDictionnary;
 
         private readonly List<IDisposable> mSubscriptions;
-        private IDisposable mDisposableImplementation;
+        // private IDisposable mDisposableImplementation;
 
         public UpgradePlanner(Player player, Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup) : base(player)
         {

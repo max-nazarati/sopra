@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac.Util;
 using KernelPanic.Data;
-using KernelPanic.Events;
 using KernelPanic.Input;
 using KernelPanic.Interface;
 using KernelPanic.Options;
