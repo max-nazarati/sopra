@@ -250,7 +250,7 @@ namespace KernelPanic.Entities
             positionProvider.Owner[this].UpdateHeroCount(GetType(), -1);
             WantsRemoval = true;
         }
-
+        /*
         internal virtual bool ResetMovement()
         {
             if (Sprite.Position == mLastPosition)
@@ -259,9 +259,9 @@ namespace KernelPanic.Entities
             Sprite.Position = mLastPosition;
             MoveTarget = mLastMoveTarget;
             return true;
-        }
+        } */
 
-        internal bool MovementResettable => Sprite.Position != mLastPosition;
+        // internal bool MovementResettable => Sprite.Position != mLastPosition;
 
         internal virtual void SetInitialPosition(Vector2 position)
         {

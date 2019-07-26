@@ -14,10 +14,11 @@ namespace KernelPanic.PathPlanning
         private readonly Point mStart;
         internal List<Point> Path { get; private set; }
 
+        /*
         internal AStar(Point start, Point target, ObstacleMatrix obstacles, HashSet<Point> blocked = null)
             : this(start, new []{target}, obstacles, blocked)
         {
-        }
+        } */
 
         internal AStar(Point start, Point[] targets, ObstacleMatrix obstacles, HashSet<Point> blocked = null)
         {

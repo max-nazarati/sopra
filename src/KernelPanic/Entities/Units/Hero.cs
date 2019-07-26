@@ -48,7 +48,7 @@ namespace KernelPanic.Entities.Units
         protected AStar mAStar; // save the AStar for path-drawing
         private Lazy<Visualizer> mPathVisualizer;
 
-        internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
+        // internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
         protected internal Strategy StrategyStatus { get; set; }
 

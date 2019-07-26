@@ -109,6 +109,7 @@ namespace KernelPanic.Table
         /// <c>null</c> if <paramref name="point"/> does not lie on this lane, otherwise the position of the hit
         /// tile and the tiles size.
         /// </returns>
+        /*
         internal (Vector2 Position, float Size)? GridPointFromWorldPoint(
             Vector2 point,
             int subTileCount = 1,
@@ -118,7 +119,7 @@ namespace KernelPanic.Table
                 return GetTile(tile, origin);
 
             return null;
-        }
+        } */
 
         internal TileIndex? TileFromWorldPoint(Vector2 point, int subTileCount = 1, bool cutoutAllowed = false)
         {

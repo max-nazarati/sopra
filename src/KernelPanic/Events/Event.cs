@@ -307,7 +307,7 @@ namespace KernelPanic.Events
                     [Key.Price] = unit.Price
                 }
             };
-            
+        /*    
         internal static Event SpawnedUnit(Player attacker, Unit unit) =>
             new Event(Id.SpawnedUnit)
             {
@@ -316,7 +316,7 @@ namespace KernelPanic.Events
                     [Key.Attacker] = attacker,
                     [Key.Unit] = unit
                 }
-            };
+            }; */
 
         internal static Event DamagedUnit(Owner owner, Projectile projectile, Unit unit) =>
             new Event(Id.DamagedUnit)

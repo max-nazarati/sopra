@@ -29,9 +29,10 @@ namespace KernelPanic.Data
         /// <param name="vector1">The first vector for the calculation.</param>
         /// <param name="vector2">The second vector for the calculation.</param>
         /// <returns>The angle in radians.</returns>
+        /*
         internal static float Angle(Vector2 vector1, Vector2 vector2)
         {
             return (float) Math.Acos(Vector2.Dot(vector1, vector2) / (vector1.Length() * vector2.Length()));
-        }
+        } */
     }
 }
