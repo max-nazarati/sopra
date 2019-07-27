@@ -137,6 +137,14 @@ namespace KernelPanic.Serialization
                 Console.WriteLine($"Not loading {typeof(T)}: File doesn't exist.");
 #endif
             }
+            catch (DirectoryNotFoundException)
+            {
+#if DEBUG
+                Console.WriteLine($"Not loading {typeof(T)}: ›{path}‹ doesn't exist.");
+#else
+                Console.WriteLine($"Not loading {typeof(T)}: File doesn't exist.");
+#endif
+            }
             catch (Exception e)
             {
 #if DEBUG
