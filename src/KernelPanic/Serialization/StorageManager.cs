@@ -223,7 +223,11 @@ namespace KernelPanic.Serialization
             };
         }
 
-        private static readonly string sFolder = "SaveFiles" + Path.DirectorySeparatorChar;
+        #endregion
+
+        #region Paths & Folders
+
+        private static readonly string sFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "KernelPanic");
         private static string DataPath(int slot) => Path.Combine(sFolder, "data" + slot + ".json");
         private static string InfoPath(int slot) => Path.Combine(sFolder, "info" + slot + ".json");
 
