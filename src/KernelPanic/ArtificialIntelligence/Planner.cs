@@ -1,25 +1,23 @@
+using Autofac.Util;
+using KernelPanic.Data;
 using KernelPanic.Players;
 
 namespace KernelPanic.ArtificialIntelligence
 {
-    internal abstract class Planner
+    internal abstract class Planner : Disposable
     {
-        protected readonly Player mPlayer;
+        private readonly WeakReference<Player> mPlayer;
+
+        protected Player Player => mPlayer.Target;
 
         protected Planner(Player player)
         {
             mPlayer = player;
         }
 
-        /*
-        protected static void EntityBought(Player buyer, Entity unit)
-        {
-            buyer.AttackingLane.UnitSpawner.Register(unit.Clone<Entity>());
-        } */
-        
         public virtual void Update()
         {
-            // Console.WriteLine(this + " is updating.");
+            // Do nothing by default.
         }
     }
 }

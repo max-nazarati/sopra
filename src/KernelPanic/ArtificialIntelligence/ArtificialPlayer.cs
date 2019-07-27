@@ -309,6 +309,9 @@ namespace KernelPanic.ArtificialIntelligence
         public void Dispose()
         {
             mSubscriptions.Dispose();
+            mAttackPlanner.Dispose();
+            mDefencePlanner.Dispose();
+            mUpgradePlanner.Dispose();
         }
 
         internal override void ApplyUpgrades(Entity entity)

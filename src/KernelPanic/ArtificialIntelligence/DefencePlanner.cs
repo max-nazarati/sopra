@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Buildings;
 using KernelPanic.Events;
@@ -18,6 +19,8 @@ namespace KernelPanic.ArtificialIntelligence
         private const int UpperBoundX = 17;
         private bool mBuildForward;
 
+        private CompositeDisposable mSubscriptions;
+
         [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "That is the way the filename is spelled")]
         public DefencePlanner(Player player, SpriteManager spriteManager) : base(player)
         {
@@ -28,7 +31,7 @@ namespace KernelPanic.ArtificialIntelligence
             mDefenseDecisionMaker.ReaderCsv("sopra_defense_train.csv");
             mDefenseDecisionMaker.TrainModel();
             var eventCenter = EventCenter.Default;
-            eventCenter.Subscribe(Event.Id.BuildingPlaced,
+            mSubscriptions += eventCenter.Subscribe(Event.Id.BuildingPlaced,
                 e =>
                 {
                     UpdateBuildPosition();
@@ -39,7 +42,7 @@ namespace KernelPanic.ArtificialIntelligence
 
         private void BuyBuilding<T>(Point tile) where T : Building
         {
-            if (!BuildingBuyer.Buy(mPlayer, Building.Create<T>(mSpriteManager), tile))
+            if (!BuildingBuyer.Buy(Player, Building.Create<T>(mSpriteManager), tile))
                 Console.WriteLine("Wanted to build " + typeof(T) + " at " + tile + " which is not possible.");
         }
 
@@ -110,6 +113,12 @@ namespace KernelPanic.ArtificialIntelligence
                 }
                 mBuildY += 2;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            mSubscriptions.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

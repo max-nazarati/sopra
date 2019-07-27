@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KernelPanic.Data;
 using KernelPanic.Entities;
 using KernelPanic.Entities.Units;
 using KernelPanic.Events;
@@ -21,7 +22,7 @@ namespace KernelPanic.ArtificialIntelligence
         private const int IndexSettings = 5;
         private const int IndexFirefox = 6;
         private const int IndexBluescreen = 7;
-        private readonly List<IDisposable> mSubscriptions;
+        private CompositeDisposable mSubscriptions;
 
         #region Konstruktor
 
@@ -31,13 +32,12 @@ namespace KernelPanic.ArtificialIntelligence
             // Bug  Virus   Trojaner   Nokia   Thunderbird    Settings    Firefox    Bluescreen
             mUnitDistribution = new[] {0.25, 0.2, 0.2, 0.1, 0.1, 0, 0.1, 0.05};
             var eventCenter = EventCenter.Default;
-            mSubscriptions = new List<IDisposable>();
-            mSubscriptions.Add(eventCenter.Subscribe(Event.Id.DamagedBase,
+            mSubscriptions += eventCenter.Subscribe(Event.Id.DamagedBase,
                 e => UpdateHeuristic(Event.Id.DamagedBase, e),
-                e => e.IsActivePlayer(Event.Key.Defender)));
-            mSubscriptions.Add(eventCenter.Subscribe(Event.Id.KilledUnit,
+                e => e.IsActivePlayer(Event.Key.Defender));
+            mSubscriptions += eventCenter.Subscribe(Event.Id.KilledUnit,
                 e => UpdateHeuristic(Event.Id.KilledUnit, e),
-                e => !e.IsActivePlayer(Event.Key.Attacker)));
+                e => !e.IsActivePlayer(Event.Key.Attacker));
         }
 
         #endregion
@@ -46,10 +46,10 @@ namespace KernelPanic.ArtificialIntelligence
         {
             for (var i = 0; i < amount; i++)
             {
-                if (!mPlayer.ValidHeroPurchase(typeof(T)))
+                if (!Player.ValidHeroPurchase(typeof(T)))
                     return;
 
-                mActions[typeof(T)].TryPurchase(mPlayer);
+                mActions[typeof(T)].TryPurchase(Player);
             }
         }
 
@@ -237,12 +237,10 @@ namespace KernelPanic.ArtificialIntelligence
 
         #endregion
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            foreach (var subscription in mSubscriptions)
-            {
-                subscription.Dispose();
-            }
+            mSubscriptions.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

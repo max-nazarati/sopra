@@ -79,6 +79,9 @@ namespace KernelPanic
             }
             
             mGameStates.Clear();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
         }
 
         public void Pop()

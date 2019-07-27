@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KernelPanic.Data;
 using KernelPanic.Events;
 using KernelPanic.Players;
 using KernelPanic.Purchasing;
@@ -33,8 +34,7 @@ namespace KernelPanic.ArtificialIntelligence
         /// </summary>
         private List<Upgrade.Id[]> mTierDictionnary;
 
-        private readonly List<IDisposable> mSubscriptions;
-        // private IDisposable mDisposableImplementation;
+        private CompositeDisposable mSubscriptions;
 
         public UpgradePlanner(Player player, Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> upgradeLookup) : base(player)
         {
@@ -88,13 +88,12 @@ namespace KernelPanic.ArtificialIntelligence
             };
 
             var eventCenter = EventCenter.Default;
-            mSubscriptions = new List<IDisposable>();
-            mSubscriptions.Add(eventCenter.Subscribe(Event.Id.UpgradeBought,
+            mSubscriptions += eventCenter.Subscribe(Event.Id.UpgradeBought,
                 e =>
                 {
                     Upgrade upgrade = e.Get<Upgrade>(Event.Key.Upgrade);
                     RemoveAvailableUpdate(upgrade.Kind);
-                }));
+                });
         }
 
         /// <summary>
@@ -297,7 +296,7 @@ namespace KernelPanic.ArtificialIntelligence
         private void BuyUpgrade(Upgrade.Id id)
         {
             SinglePurchasableAction<Upgrade> upgrade = mUpgradeLookup.Invoke(id);
-            upgrade.TryPurchase(mPlayer);
+            upgrade.TryPurchase(Player);
         }
 
         public override void Update()
@@ -308,12 +307,10 @@ namespace KernelPanic.ArtificialIntelligence
             BuyUpgrade(upgrade);
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            foreach (var subscription in mSubscriptions)
-            {
-                subscription.Dispose();
-            }
+            mSubscriptions.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
