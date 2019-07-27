@@ -459,17 +459,18 @@ namespace KernelPanic.Data
             for (var i = 0; i < mObjects.Count; ++i)
             {
                 var x = mObjects[i];
+                var b = x.Bounds;
 
                 for (var j = i + 1; j < mObjects.Count; ++j)
                 {
                     var y = mObjects[j];
-                    if (x.Bounds.Intersects(y.Bounds))
+                    if (b.Intersects(y.Bounds))
                         yield return (x, y);
                 }
 
                 foreach (var z in parentElements)
                 {
-                    if (x.Bounds.Intersects(z.Bounds))
+                    if (b.Intersects(z.Bounds))
                         yield return (x, z);
                 }
             }
