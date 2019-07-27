@@ -173,8 +173,7 @@ namespace KernelPanic.ArtificialIntelligence
 
         #region Update
 
-
-        public void BuySingleUnit(string choice)
+        private void BuySingleUnit(string choice)
         {
             switch (choice)
             {

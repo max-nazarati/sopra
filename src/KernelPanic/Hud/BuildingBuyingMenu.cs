@@ -9,7 +9,6 @@ using KernelPanic.Entities.Buildings;
 using KernelPanic.Options;
 using KernelPanic.Table;
 using Microsoft.Xna.Framework.Input;
-using KernelPanic.Players;
 
 namespace KernelPanic.Hud
 {
@@ -123,8 +122,7 @@ namespace KernelPanic.Hud
             return true;
         }
 
-        internal static BuildingBuyingMenu Create(BuildingBuyer buildingBuyer,
-            SpriteManager spriteManager, Player buyer)
+        internal static BuildingBuyingMenu Create(BuildingBuyer buildingBuyer, SpriteManager spriteManager)
         {
             Element CreateElement<TBuilding>() where TBuilding : Building =>
                 new Element(Building.Create<TBuilding>(spriteManager), spriteManager);

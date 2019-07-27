@@ -28,7 +28,6 @@ namespace KernelPanic.Table
 
             internal void Add(T unit)
             {
-                unit.SetInitialPosition(mSpawnPoints[mSpawnIndex]);
                 mSpawnIndex = (mSpawnIndex + 1) % mSpawnPoints.Length;
                 mQueue.Enqueue(unit);
             }

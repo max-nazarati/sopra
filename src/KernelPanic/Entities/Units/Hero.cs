@@ -50,7 +50,7 @@ namespace KernelPanic.Entities.Units
 
         // internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
         protected AbilityState AbilityStatus { get; set; }
-        protected internal Strategy StrategyStatus { get; set; }
+        protected internal Strategy StrategyStatus { private get; set; }
 
         #endregion
 
@@ -106,7 +106,7 @@ namespace KernelPanic.Entities.Units
             var path = mAStar.Path;
             if (path == null || path.Count == 0) // there is no path to be found
             {
-                target = FindNearestWalkableField(target);
+                target = FindNearestWalkableField();
                 mAStar = positionProvider.MakePathFinding(this, new[] {target});
                 mPathVisualizer = new Lazy<Visualizer>(() => positionProvider.Visualize(mAStar), false);
                 path = mAStar.Path;
@@ -162,7 +162,7 @@ namespace KernelPanic.Entities.Units
             mTarget = target;
         }
 
-        private Point FindNearestWalkableField(Point target)
+        private Point FindNearestWalkableField()
         {
             var result = mAStar.FindNearestField();
             return result ?? new Point((int)Sprite.Position.X, (int)Sprite.Position.Y);

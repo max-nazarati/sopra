@@ -151,7 +151,6 @@
     <Compile Include="SpriteManager.cs" />
     <Compile Include="Sprites\CompositeSprite.cs" />
     <Compile Include="Sprites\ImageSprite.cs" />
-    <Compile Include="Sprites\PatternSprite.cs" />
     <Compile Include="Sprites\Sprite.cs" />
     <Compile Include="Sprites\TextSprite.cs" />
     <Compile Include="EntityGraph.cs" />

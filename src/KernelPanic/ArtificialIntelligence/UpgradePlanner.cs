@@ -47,15 +47,17 @@ namespace KernelPanic.ArtificialIntelligence
             var tier3Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
             var tier4Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
             var tier5Distribution = new[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
-            mTierDistribution = new List<double[]>();
-            mTierDistribution.Add(new double[0]);
-            mTierDistribution.Add(tier1Distribution);
-            mTierDistribution.Add(tier2Distribution);
-            mTierDistribution.Add(tier3Distribution);
-            mTierDistribution.Add(tier4Distribution);
-            mTierDistribution.Add(tier5Distribution);
+            mTierDistribution = new List<double[]>
+            {
+                new double[0],
+                tier1Distribution,
+                tier2Distribution,
+                tier3Distribution,
+                tier4Distribution,
+                tier5Distribution
+            };
 
-            // initialize dictionnary of upgrades corresponding to their tiers
+            // initialize dictionary of upgrades corresponding to their tiers
             Upgrade.Id[] tier1Upgrades = new[]
                 {Upgrade.Id.IncreaseLp1, Upgrade.Id.IncreaseGs1, Upgrade.Id.IncreaseVs1, Upgrade.Id.DecreaseAi1};
             Upgrade.Id[] tier2Upgrades = new[]
@@ -75,13 +77,15 @@ namespace KernelPanic.ArtificialIntelligence
                 Upgrade.Id.CdBoomerang, Upgrade.Id.EmpTwoTargets, Upgrade.Id.AdditionalFirefox2,
                 Upgrade.Id.DoubleClick, Upgrade.Id.IncreaseWifi
             };
-            mTierDictionnary = new List<Upgrade.Id[]>();
-            mTierDictionnary.Add(new [] {Upgrade.Id.Invalid});
-            mTierDictionnary.Add(tier1Upgrades);
-            mTierDictionnary.Add(tier2Upgrades);
-            mTierDictionnary.Add(tier3Upgrades);
-            mTierDictionnary.Add(tier4Upgrades);
-            mTierDictionnary.Add(tier5Upgrades);
+            mTierDictionnary = new List<Upgrade.Id[]>
+            {
+                new[] {Upgrade.Id.Invalid},
+                tier1Upgrades,
+                tier2Upgrades,
+                tier3Upgrades,
+                tier4Upgrades,
+                tier5Upgrades
+            };
 
             var eventCenter = EventCenter.Default;
             mSubscriptions = new List<IDisposable>();

@@ -153,8 +153,6 @@ namespace KernelPanic.Entities
         #region Movement
 
         protected bool mSlowedDown;
-        private Vector2 mLastPosition;
-        private Vector2? mLastMoveTarget;
 
         /// <summary>
         /// Slows this unit for the next frame.
@@ -181,8 +179,6 @@ namespace KernelPanic.Entities
 
         protected virtual void DoMove(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            mLastPosition = Sprite.Position;
-            mLastMoveTarget = MoveTarget;
             var move = ShouldMove && MoveTarget is Vector2 target
                 ? PerformMove(target, positionProvider, inputManager)
                 : null;
@@ -248,24 +244,6 @@ namespace KernelPanic.Entities
             positionProvider.Target.Power = Math.Max(0, positionProvider.Target.Power - AttackStrength);
             positionProvider.Owner[this].UpdateHeroCount(GetType(), -1);
             WantsRemoval = true;
-        }
-        /*
-        internal virtual bool ResetMovement()
-        {
-            if (Sprite.Position == mLastPosition)
-                return false;
-
-            Sprite.Position = mLastPosition;
-            MoveTarget = mLastMoveTarget;
-            return true;
-        } */
-
-        // internal bool MovementResettable => Sprite.Position != mLastPosition;
-
-        internal virtual void SetInitialPosition(Vector2 position)
-        {
-            mLastPosition = position;
-            Sprite.Position = position;
         }
 
         #endregion

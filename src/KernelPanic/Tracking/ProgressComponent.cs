@@ -19,7 +19,7 @@ namespace KernelPanic.Tracking
         [JsonProperty] internal bool Positive { get; }
 
         private CompositeDisposable mDisposable;
-        internal bool Enabled { get; set; } = true;
+        private bool Enabled { get; set; } = true;
 
         protected ProgressComponent(Event.Id eventId, bool positive)
         {

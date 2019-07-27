@@ -21,10 +21,10 @@ namespace KernelPanic.Entities
     internal abstract class Building : Entity
     {
         protected Building(int price, Sprite sprite, SpriteManager spriteManager)
-            : base(price, new Point(Table.Grid.KachelSize), sprite, spriteManager)
+            : base(price, new Point(Grid.KachelSize), sprite, spriteManager)
         {
             BitcoinWorth = (int) (price * 0.8f);
-            sprite.ScaleToWidth(Table.Grid.KachelSize);
+            sprite.ScaleToWidth(Grid.KachelSize);
         }
 
         /// <summary>

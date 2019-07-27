@@ -372,9 +372,6 @@
     <Compile Include="..\KernelPanic\Sprites\ImageSprite.cs">
       <Link>Sprites\ImageSprite.cs</Link>
     </Compile>
-    <Compile Include="..\KernelPanic\Sprites\PatternSprite.cs">
-      <Link>Sprites\PatternSprite.cs</Link>
-    </Compile>
     <Compile Include="..\KernelPanic\Sprites\Sprite.cs">
       <Link>Sprites\Sprite.cs</Link>
     </Compile>

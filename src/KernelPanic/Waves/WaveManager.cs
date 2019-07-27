@@ -222,7 +222,7 @@ namespace KernelPanic.Waves
             }
             
             // 4d) It was unbalanced—if all units from the wave are spawned we'll start the next one.
-            if (Players.A.AttackingLane.UnitSpawner.Ready && Players.A.AttackingLane.UnitSpawner.QueuedUnits.Count() > 0 
+            if (Players.A.AttackingLane.UnitSpawner.Ready && Players.A.AttackingLane.UnitSpawner.QueuedUnits.Any() 
                 && Players.B.AttackingLane.UnitSpawner.Ready)
             {
                 Activate();

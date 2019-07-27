@@ -99,28 +99,6 @@ namespace KernelPanic.Table
             return tile;
         }
 
-        /// <summary>
-        /// Tests if the given point lies on this lane and if successful returns information about the hit tile.
-        /// </summary>
-        /// <param name="point">The point to test for.</param>
-        /// <param name="subTileCount">The number of sub-tiles to segment </param>
-        /// <param name="origin">If a tile is hit return its position according to this.</param>
-        /// <returns>
-        /// <c>null</c> if <paramref name="point"/> does not lie on this lane, otherwise the position of the hit
-        /// tile and the tiles size.
-        /// </returns>
-        /*
-        internal (Vector2 Position, float Size)? GridPointFromWorldPoint(
-            Vector2 point,
-            int subTileCount = 1,
-            RelativePosition origin = RelativePosition.Center)
-        {
-            if (TileFromWorldPoint(point, subTileCount) is TileIndex tile)
-                return GetTile(tile, origin);
-
-            return null;
-        } */
-
         internal TileIndex? TileFromWorldPoint(Vector2 point, int subTileCount = 1, bool cutoutAllowed = false)
         {
             if (!Contains(point, cutoutAllowed))

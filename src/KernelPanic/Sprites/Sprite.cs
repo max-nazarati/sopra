@@ -11,7 +11,7 @@ namespace KernelPanic.Sprites
 
         internal float Rotation { get; set; }
         /* internal */
-        internal float Scale { get; set; } = 1.0f;
+        internal float Scale { private get; set; } = 1.0f;
         
         /// <summary>
         /// The origin of a sprite is used as the center for rotation and as a offset for <see cref="Position"/>.
@@ -100,9 +100,7 @@ namespace KernelPanic.Sprites
         /// values.
         /// </para>
         /// <para>
-        /// The handling of <see cref="Origin"/> is at the implementers discretion. For example for
-        /// <see cref="PatternSprite"/> it is a negative offset and <see cref="ImageSprite"/> uses it directly in its
-        /// drawing call.
+        /// The handling of <see cref="Origin"/> is at the implementers discretion.
         /// </para>
         /// </summary>
         /// <param name="spriteBatch">The sprite batch into which is drawn.</param>
