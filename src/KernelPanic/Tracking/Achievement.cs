@@ -24,11 +24,11 @@ namespace KernelPanic.Tracking
         Lose100,
 
         IronFortress,
-        TowersWin,
-        HighInference,
         Nutcracker,
         ManyWires,
         Fool,
+        TowersWin,
+        HighInference,
 
         MinionSlayer,
         BitcoinAddict,
@@ -207,7 +207,11 @@ namespace KernelPanic.Tracking
                     progressConnector.ConnectCounter(Event.Id.BuildingPlaced, Event.Key.Price, 500, e => e.IsActivePlayer(Event.Key.Buyer));
                     break;
                 case Achievement.HighInference:
+                    // You must win the game.
                     progressConnector.ConnectCounter(Event.Id.GameWon);
+                    // You have to buy at least one building.
+                    progressConnector.ConnectCounter(Event.Id.BuildingPlaced, condition: e => e.IsActivePlayer(Event.Key.Buyer));
+                    // You shoudn't buy any building except wifi routers.
                     progressConnector.ConnectCounter(Event.Id.BuildingPlaced, condition: PlacedNonWifi, success: false);
                     break;
                 case Achievement.Nutcracker:
@@ -298,8 +302,6 @@ namespace KernelPanic.Tracking
                 Achievement.Lose100,
 
                 Achievement.IronFortress,
-                Achievement.TowersWin,
-                Achievement.HighInference,
                 Achievement.Nutcracker,
                 Achievement.ManyWires,
                 Achievement.Fool
@@ -316,9 +318,19 @@ namespace KernelPanic.Tracking
                 Achievement.Shockfield,
                 Achievement.Hacker,
                 Achievement.AntiVirus,
-                Achievement.JumpNRun
+                Achievement.JumpNRun,
+                Achievement.HighInference,
+                Achievement.TowersWin
             };
 
         #endregion
+    }
+
+    static class FuncHelpers
+    {
+        internal static Func<T, bool> Not<T>(this Func<T, bool> func)
+        {
+            return t => !func(t);
+        }
     }
 }
