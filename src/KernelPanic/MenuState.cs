@@ -155,12 +155,8 @@ namespace KernelPanic
                         gameStateManager,
                         StorageManager.LoadGame(slotAccessor(), gameStateManager));
                 }
-                catch (Exception e)
+                catch
                 {
-#if DEBUG
-                    Console.WriteLine("Couldn't load slot {0}", slotAccessor());
-                    Console.WriteLine(e);
-#endif
                     gameStateManager.Switch(CreatePlayMenu(gameStateManager, true));
                 }
             };

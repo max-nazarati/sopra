@@ -325,12 +325,4 @@ namespace KernelPanic.Tracking
 
         #endregion
     }
-
-    static class FuncHelpers
-    {
-        internal static Func<T, bool> Not<T>(this Func<T, bool> func)
-        {
-            return t => !func(t);
-        }
-    }
 }
