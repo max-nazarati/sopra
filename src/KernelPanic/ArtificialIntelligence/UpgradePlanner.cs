@@ -8,7 +8,7 @@ using KernelPanic.Upgrades;
 
 namespace KernelPanic.ArtificialIntelligence
 {
-    internal sealed class UpgradePlanner : Planner, IDisposable
+    internal sealed class UpgradePlanner : Planner
     {
         private readonly Func<Upgrade.Id, SinglePurchasableAction<Upgrade>> mUpgradeLookup;
         /// <summary>

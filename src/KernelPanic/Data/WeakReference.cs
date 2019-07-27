@@ -4,15 +4,11 @@ namespace KernelPanic.Data
 {
     internal sealed class WeakReference<T> : WeakReference where T : class
     {
-        internal WeakReference(T value) : base(value)
+        private WeakReference(T value) : base(value)
         {
         }
 
-        internal new T Target
-        {
-            get => (T)base.Target;
-            set => base.Target = value;
-        }
+        internal new T Target => (T)base.Target;
 
         public static implicit operator WeakReference<T>(T value)
         {

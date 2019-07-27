@@ -9,7 +9,7 @@ using KernelPanic.Purchasing;
 
 namespace KernelPanic.ArtificialIntelligence
 {
-    internal sealed class AttackPlanner : Planner, IDisposable
+    internal sealed class AttackPlanner : Planner
     {
         private readonly Dictionary<Type, PurchasableAction<Unit>> mActions;
         private readonly double[] mUnitDistribution;
