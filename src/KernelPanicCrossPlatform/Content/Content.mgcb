@@ -25,18 +25,6 @@
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/Arrow.png;Arrow.png
 
-#begin ../../KernelPanic/Content/ball.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/ball.png;Projectile.png
-
 #begin ../../KernelPanic/Content/Base.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -591,18 +579,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../KernelPanic/Content/tiles/lane_top_right.png;tiles/lane_top_right.png
-
-#begin ../../KernelPanic/Content/tower.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../KernelPanic/Content/tower.png;tower.png
 
 #begin ../../KernelPanic/Content/towers/antivirus.png
 /importer:TextureImporter
