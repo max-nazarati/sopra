@@ -598,7 +598,7 @@ namespace KernelPanic
             new AnimatedSprite(Lookup(Image.Nokia), TimeSpan.FromMilliseconds(300));
         
         internal AnimatedSprite CreateThunderbird() =>
-            new AnimatedSprite(Lookup(Image.Thunderbird), TimeSpan.FromMilliseconds(300));
+            new AnimatedSprite(Lookup(Image.Thunderbird), TimeSpan.FromMilliseconds(150));
         
         internal AnimatedSprite CreateVirus() =>
             new AnimatedSprite(Lookup(Image.Virus), TimeSpan.FromMilliseconds(300));
