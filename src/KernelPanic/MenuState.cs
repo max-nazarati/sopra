@@ -210,20 +210,24 @@ namespace KernelPanic
 
             //"      "
             var instructions = stateManager.Sprite.CreateText("" +
+                "ALLGEMEINES" +
                 "- Mauszeiger Bewegung / WASD:   Kamera-Bewegung.\n" +
-                "- Mittlerer Maus-Click:                      Erster Click Hero-Fähigkeit togglen, zweiter Click Fähigkeit ausführen.\n" +
-                "- Rechter Maus-Click:                      Bewegungsziel für den ausgewählten Hero angeben / un-togglet Hero-Fähigkeit.\n" +
-                "- Linker Maus-Click:                         Objekte kaufen / Objekte (un-)auswählen / GUI Buttons drücken /\n" +
-                "                                                                  Bau-Modus mit click auf die entsprechende Gebäude-Taste verlassen.\n" +
-                "- Scroll-Wheel:                                 Kamera-Zoom.\n\n" +
-                "- Esc-Taste:                      Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
-                "                                               ins vorherige Menu-Screen gelangen / aus Main-Menu das Spiel beenden.\n" +
-                "- Q-Taste:                         Alternative zu mittlerem Maus-Click.\n" +
-                "- E-Taste:                         Un-togglet Hero-Fähigkeit.\n" +
-                "- Zahlen 1-7:                     Gebäude-Auswahl zum bauen.\n");
+                "- Scroll-Wheel:                 Kamera-Zoom.\n\n" +
+                "- Linke Maus Taste:             Objekte kaufen / Objekte (un-)auswählen / GUI Buttons drücken /\n" +
+                "                                Bau-Modus mit Klick auf die entsprechende Gebäude-Taste verlassen.\n" +
+                "- Esc-Taste:                    Bau-Modus verlassen / ins Pause Menu kommen oder Pause-Menu verlassen /\n" +
+                "                                ins vorherige Menu-Screen gelangen / im Hauptmenü das Spiel beenden.\n\n" +
+                "- HELDEN:\n" +
+                "- Rechte Maustaste:             Bewegungsziel für den ausgewählten Helden angeben.\n" +
+                "- Mittlerer Maus-Click:         Erster Klick Hero-Fähigkeit auswählen, zweiter Click Fähigkeit ausführen.\n" +
+                "- Q-Taste:                      Alternative zu mittlerem Maus-Click.\n" +
+                "- E-Taste:                      Bricht die Helden Fähigkeit ab.\n\n" +
+                
+                "- Zahlen 1-7:                   Shortcut um ein Gebäude für den Kauf auszuwählen.\n");
 
 
             instructions.Y = title.Y + 50;
+            instructions.X = 70;
 
             return new MenuState(stateManager)
             {
