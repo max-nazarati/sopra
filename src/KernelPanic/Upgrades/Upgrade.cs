@@ -40,7 +40,7 @@ namespace KernelPanic.Upgrades
             IncreaseGsNokia,
             IncreaseGsFirefox,
             MoreTrojanChildren1,
-            IncreaseSettingsArea2, // TODO: was 5.3
+            IncreaseSettingsArea2,
 
             // Tier 4
             BeginningTier4,
@@ -120,7 +120,7 @@ namespace KernelPanic.Upgrades
                 case Id.MoreTrojanChildren1:
                     return "+5 Einheiten bei Trojaner";
                 case Id.IncreaseSettingsArea2:
-                    return "+10% Bereich von Settings"; // TODO
+                    return "+10% Bereich von Settings";
 
                 case Id.EmpDuration:
                     return "+40% Dauer EMP";

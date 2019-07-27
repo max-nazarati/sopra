@@ -49,7 +49,7 @@ namespace KernelPanic.Entities
         [DataMember]
         internal int RemainingLife { get; set; }
 
-        [DataMember] // TODO does this fix #270
+        [DataMember]
         protected bool ShouldMove { get; set; } // should the basic movement take place this cycle? 
 
         [DataMember]
