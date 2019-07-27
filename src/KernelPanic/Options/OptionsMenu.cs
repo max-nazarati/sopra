@@ -46,7 +46,7 @@ namespace KernelPanic.Options
             volumeRegulatorButton.Clicked += (button, input) => ChangeSoundVolume(volumeRegulatorButton, settings);
 
             var fullscreen = CreateButton(stateManager.Sprite, "Fullscreen", 430,150);
-            var fullScreenWindowButton = CreateButton(stateManager.Sprite, "aus", 430, -150);
+            var fullScreenWindowButton = CreateButton(stateManager.Sprite, YesNoTitle(settings.IsFullscreen), 430, -150);
             fullScreenWindowButton.Clicked += (button, input) =>
             {
                 settings.IsFullscreen = !settings.IsFullscreen;
