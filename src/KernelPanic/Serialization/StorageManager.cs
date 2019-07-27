@@ -59,6 +59,27 @@ namespace KernelPanic.Serialization
                 return (Storage.Info) CreateSerializer(gameStateManager).Deserialize(file, typeof(Storage.Info));
         }
 
+        internal static void RemoveGame(int slot)
+        {
+            try
+            {
+                File.Delete(DataPath(slot));
+            }
+            catch
+            {
+                // Ignore.
+            }
+
+            try
+            {
+                File.Delete(InfoPath(slot));
+            }
+            catch
+            {
+                // Ignore.
+            }
+        }
+
         internal static OptionsData LoadSettings() =>
             Load<OptionsData>(SettingsPath, out var data) ? data : null;
 

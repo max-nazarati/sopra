@@ -119,6 +119,7 @@ namespace KernelPanic
             if (gameState == Board.GameState.Playing)
                 return;
 
+            StorageManager.RemoveGame(SaveSlot);
             EventCenter.Default.Send(gameState == Board.GameState.AWon
                 ? Event.GameWon(mBoard.PlayerA, mBoard.PlayerB)
                 : Event.GameLost(mBoard.PlayerB, mBoard.PlayerA));
