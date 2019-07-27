@@ -7,9 +7,18 @@ namespace KernelPanic.Options
 {
     internal sealed class OptionsMenu : MenuState
     {
-        public OptionsMenu(GameStateManager gameStateManager) : base(gameStateManager)
+        public OptionsMenu(GameStateManager gameStateManager) : base(gameStateManager, CloseOptionsMenu(gameStateManager))
         {
             Components = InterfaceComponents(gameStateManager);
+        }
+
+        private static Action CloseOptionsMenu(GameStateManager gameStateManager)
+        {
+            return () =>
+            {
+                gameStateManager.Settings.Save();
+                gameStateManager.Pop();
+            };
         }
 
         private static InterfaceComponent[] InterfaceComponents(GameStateManager stateManager)
@@ -56,7 +65,8 @@ namespace KernelPanic.Options
             keyInputsButton.Clicked += (button, input) => stateManager.Push(new ControlsMenu(stateManager));
 
             var backButton = CreateButton(stateManager.Sprite, "Zurück", 800);
-            backButton.Clicked += stateManager.PopOnClick;
+            var backAction = CloseOptionsMenu(stateManager);
+            backButton.Clicked += delegate { backAction(); };
 
             return new InterfaceComponent[]
             {

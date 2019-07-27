@@ -65,7 +65,6 @@ namespace KernelPanic
             {
                 Statistics.Dispose();
                 AchievementPool.Dispose();
-                StorageManager.SaveSettings(Settings);
             }
 
             base.Dispose(disposing);

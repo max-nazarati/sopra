@@ -1,3 +1,4 @@
+using KernelPanic.Serialization;
 using Newtonsoft.Json;
 
 namespace KernelPanic.Options
@@ -10,5 +11,10 @@ namespace KernelPanic.Options
         [JsonProperty] internal bool IsFullscreen { get; set; }
         [JsonProperty] internal bool ScrollInverted { get; set; }
         [JsonProperty] internal KeyMap KeyMap { get; set; } = new KeyMap();
+
+        internal void Save()
+        {
+            StorageManager.SaveSettings(this);
+        }
     }
 }
