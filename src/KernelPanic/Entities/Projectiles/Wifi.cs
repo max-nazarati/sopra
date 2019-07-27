@@ -16,9 +16,9 @@ namespace KernelPanic.Entities.Projectiles
         
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            base.Update(positionProvider, inputManager, gameTime);
             var dist = Vector2.Distance(mTower.Sprite.Position, Sprite.Position);
             Sprite.Scale = dist * 0.015f;
+            base.Update(positionProvider, inputManager, gameTime);
         }
     }
 }
