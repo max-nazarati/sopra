@@ -33,12 +33,6 @@ namespace KernelPanic.Entities.Units
             Indicating, Starting, Active, Finished, CoolingDown
         }
 
-        protected internal enum Strategy
-        {
-            Human = 0,
-            Autonomous
-        }
-        
         #endregion
 
         [DataMember]
@@ -48,9 +42,11 @@ namespace KernelPanic.Entities.Units
         protected AStar mAStar; // save the AStar for path-drawing
         private Lazy<Visualizer> mPathVisualizer;
 
-        // internal double RemainingCooldownTime => Cooldown.RemainingCooldown.TotalSeconds;
+        [DataMember]
         protected AbilityState AbilityStatus { get; set; }
-        protected internal Strategy StrategyStatus { private get; set; }
+
+        [DataMember]
+        internal bool IsAutonomous { private get; set; }
 
         #endregion
 
@@ -144,7 +140,7 @@ namespace KernelPanic.Entities.Units
         /// <param name="inputManager"></param>
         private void UpdateTarget(PositionProvider positionProvider, InputManager inputManager)
         {
-            if (StrategyStatus == Strategy.Autonomous)
+            if (IsAutonomous)
             {
                 AutonomousAttack(inputManager, positionProvider);
                 return;
@@ -393,20 +389,11 @@ namespace KernelPanic.Entities.Units
 
         public override void Update(PositionProvider positionProvider, InputManager inputManager, GameTime gameTime)
         {
-            if (Selected)
-            {
-                // TODO remove this for the final version
-                if (inputManager.KeyPressed(Keys.Space))
-                {
-                    StrategyStatus = StrategyStatus == Strategy.Human ? Strategy.Autonomous : Strategy.Human;
-                }
-            }
             // also updates the cooldown
             UpdateAbility(positionProvider, gameTime, inputManager);
 
             // base.Update checks for ShouldMove
             base.Update(positionProvider, inputManager, gameTime);
-            
         }
         
         #endregion

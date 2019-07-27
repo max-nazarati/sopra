@@ -319,7 +319,7 @@ namespace KernelPanic.ArtificialIntelligence
             base.ApplyUpgrades(entity);
             if (entity is Hero hero)
             {
-                hero.StrategyStatus = Hero.Strategy.Autonomous;
+                hero.IsAutonomous = true;
             }
         }
 
