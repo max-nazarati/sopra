@@ -28,6 +28,7 @@ namespace KernelPanic.Table
 
             internal void Add(T unit)
             {
+                unit.Sprite.Position = mSpawnPoints[mSpawnIndex];
                 mSpawnIndex = (mSpawnIndex + 1) % mSpawnPoints.Length;
                 mQueue.Enqueue(unit);
             }
