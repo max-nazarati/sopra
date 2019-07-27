@@ -116,7 +116,6 @@ namespace KernelPanic.Entities.Units
 
         protected override void TryActivateAbility(InputManager inputManager, bool button = false)
         {
-            // TODO show the cooldown and disable the click ability (or make it active i dunno, im just a comment not a cop)
         }
 
         

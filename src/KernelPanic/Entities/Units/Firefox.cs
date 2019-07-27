@@ -32,6 +32,7 @@ namespace KernelPanic.Entities.Units
             : base(50, 6, 30, 10, TimeSpan.FromSeconds(5), HitBoxSize, spriteManager.CreateFirefox(), spriteManager)
         {
             mIndicator = spriteManager.CreateJumpIndicator();
+            mJumpedBuildings = new HashSet<Building>();
         }
 
         protected override void CompleteClone()
@@ -40,6 +41,7 @@ namespace KernelPanic.Entities.Units
             mAbility = new Stack<Vector2>(mAbility);
             Cooldown = new CooldownComponent(Cooldown.Cooldown, false);
             Cooldown.CooledDown += component => AbilityStatus = AbilityState.Ready;
+            mJumpedBuildings = new HashSet<Building>();
         }
 
         internal override void UpdateInformation()
@@ -64,7 +66,7 @@ namespace KernelPanic.Entities.Units
             ShouldMove = false;
 
             // Achievement Data
-            mJumpedBuildings = new HashSet<Building>();
+            mJumpedBuildings.Clear();
 
             // calculate the jump direction
             var mouse = mJumpTarget ?? inputManager.TranslatedMousePosition;
@@ -140,7 +142,6 @@ namespace KernelPanic.Entities.Units
             // TODO we are accessing entity graph twice here... makes me kinda sad
             if (positionProvider.HasEntityAt(Sprite.Position, EntityIsBuilding))
             {
-                // TODO we might get more towers here than we want...
                 var buildings = positionProvider.EntitiesAt<Building>(this);
                 foreach (var building in buildings)
                 {
@@ -196,9 +197,7 @@ namespace KernelPanic.Entities.Units
             // for (int i = 6; i < distance.Length - 1; i++)
             for (int i = distance.Length - 1; i >= 6; i--)
             {
-                // TODO find a good check if we should wait before jumping
-                //      so we dont waste it.
-                
+                // find a good check if we should wait before jumping
                 if (distance[i] < 300) // TODO this distance is hardcoded and therefore bad
                 {
                     mJumpTarget = positionProvider.Grid.GetTile(new TileIndex(path[i], 1)).Position;
